@@ -1,0 +1,100 @@
+//////////////////////////////////////////////////
+// Style guide for this GAM200/250 game project //
+//////////////////////////////////////////////////
+
+==================================================
+=  When in doubt? Fall back to the style guide   =
+=  Professor Mead had us use in CS120 / CS170    =
+==================================================
+
+---- FILE NAMES ----
+File names shall be named in UpperCamelCase.h/cpp
+
+---- INDENTATION ----
+Just like in our classes with Prof. Mead, we
+will be using 2 spaces to represent a single
+level of indentation. (Please no tabs :D)
+
+indent level 0
+  indent level 1
+    indent level 2
+
+---- FORMATTING ----
+Sometimes we just gotta line those things up :3
+That's why I request that you refrain from using
+the visual studio autoformat on a document where
+you aren't the only coder. Ask Connor if you
+want help disabling the auto format.
+
+auto myvar1        = Thing();
+auto longervarname = OtherThing();
+
+^ Lining things up like this is totally
+optional, but it's cool when you do.
+
+---- BRACE STYLE ----
+We'll be using BSD/Allman style, of course! :D
+
+function signature
+{
+  function body
+
+  branching statement
+  {
+  }
+
+  more body
+}
+
+---- POINTER AND REFERENCE ALIGNMENT ----
+Align pointers to the variable they bind to. 
+T *thing;
+
+Align references to the type. 
+T& thing;
+
+If you have a reference to a pointer, put a space on both sides. 
+T &* thing;
+
+---- NAMING CONVENTION ----
+Those of you who are familiar with java have
+nothing new to learn. We'll be following the
+standard java naming convention. Template
+parameters should be named with the same
+convention as classes, but can be single
+letters.
+
+int globalVariable; // Please avoid these though D:
+
+template <typename T>
+void globalFunction(T& functionParameter)
+{
+  int localVariable;
+}
+
+struct SimplePOD
+{
+  float x, y;
+  int longerVariable;
+};
+
+class UpperCamelCaseClasses
+{
+public:
+  UpperCamelCaseClasses()
+    : publicVariable(0), _privateVariable(0)
+  {
+  }
+
+  int publicVariable;
+  void publicMemberFunction();
+  
+private:
+  int _privateVariable;
+  void privateMemberFunction();
+};
+
+-- EXCEPTION TO NAMING CONVENTIONS --
+Generic classes designed to mimic the
+patterns of STL classes should use STL
+naming conventions (snake_case)

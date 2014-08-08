@@ -45,6 +45,8 @@ public:
 
   const GameTime& gameTime() { return _gameTime; }
 
+  GraphicsDevice *getGraphicsDevice() { return _graphicsDevice.get(); };
+
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
   GameTime _gameTime;

@@ -14,6 +14,7 @@ public:
   typedef std::chrono::high_resolution_clock clock;
   const double maxDt = 0.1;
   const double minDt = 0;
+  const double clock_period = clock::period::num / static_cast<double>(clock::period::den);
   
   void update()
   {
@@ -21,12 +22,12 @@ public:
     _currTime = clock::now();
 
     auto timeDiff = _currTime - _prevTime;
-    _dt = timeDiff.count() * clock::period::num / static_cast<double>(clock::period::den);
+    _dt = timeDiff.count() * clock_period;
 
     if (_dt > maxDt)
       _dt = maxDt;
     if (_dt < minDt)
-      _dt = minDt;
+      _dt = maxDt;
   }
   
   double dt() const
@@ -37,6 +38,14 @@ public:
   clock::duration runningTime() const
   {
     return _currTime - _initTime;
+  }
+
+  double currFrameTime() const
+  {
+    auto time = clock::now();
+    auto diff = time - _currTime;
+    
+    return diff.count() * clock_period;
   }
 
 private:

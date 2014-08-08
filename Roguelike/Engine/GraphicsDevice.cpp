@@ -150,7 +150,11 @@ bool WindowDevice::beginFrame()
 
 void WindowDevice::endFrame()
 {
-  _swapChain->Present(1, 0);
+  const double min_frame_time = 0.001;
+  while (getGame()->gameTime().currFrameTime() < min_frame_time)
+    Sleep(0);
+
+  _swapChain->Present(0, 0);
 }
 
 void GraphicsDevice::initializeD3DContext()

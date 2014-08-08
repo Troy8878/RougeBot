@@ -54,7 +54,7 @@ public:
   {
     _basicCircle = Shapes::makeCircle(_graphicsDevice->device(), 1000, 5);
 
-    _camera.position = math::Vector{0, 0, 20, 1};
+    _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
     _camera.init();
   }
@@ -77,14 +77,14 @@ public:
       const int update_res = 120;
       
       static float fps = 0;
-      if (dt > 0.00001) fps = (fps * (update_res - 1) + 1 / dt) / update_res;
+      fps = (fps * (update_res - 1) + 1 / dt) / update_res;
       auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
       SetWindowText(_graphicsDevice->window(), title.c_str());
     }
 
     _cubeTransform = XMMatrixRotationZ(dt * math::pi) * _cubeTransform.get();
 
-    _camera.position.z() += dt;
+    _camera.position.z() -= dt;
     _camera.update();
   }
 
@@ -94,10 +94,10 @@ public:
 
     _basicCircle->draw(_cubeTransform.get());
     _basicCircle->draw(_cubeTransform.get() *
-                       XMMatrixTranslation(10, 0, 5) * 
+                       XMMatrixTranslation(10, 0, 0) * 
                        XMMatrixRotationY(-20 * math::pi / 180));
     _basicCircle->draw(_cubeTransform.get() *
-                       XMMatrixTranslation(-10, 0, 5) * 
+                       XMMatrixTranslation(-10, 0, 0) * 
                        XMMatrixRotationY(20 * math::pi / 180));
   }
 

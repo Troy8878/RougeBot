@@ -9,10 +9,13 @@
 #include "Helpers\UseDirectX.h"
 #include "Helpers\FileSystem.h"
 
+struct ImageResource;
+
 class Texture
 {
 public:
   Texture(ID3D11Device *device, const fs::wpath& file);
+  Texture(ID3D11Device *device, ImageResource resource);
 
   ID3D11ShaderResourceView *getTexture();
 

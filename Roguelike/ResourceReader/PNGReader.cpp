@@ -9,7 +9,7 @@
 
 ImageResource LoadPNGFromFile(const std::wstring& path)
 {
-  auto data = fs::file_reader::readAllBytes(widen(path));
+  auto data = fs::file_reader::readAllBytes(path);
   return LoadPNGFromBinary(data.data, data.size);
 }
 

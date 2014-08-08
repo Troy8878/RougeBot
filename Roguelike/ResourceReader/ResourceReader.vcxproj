@@ -53,6 +53,9 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>windowscodecs.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -71,11 +74,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ImageResource.h" />
-    <ClInclude Include="PNGReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageResource.cpp" />
-    <ClCompile Include="PNGReader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

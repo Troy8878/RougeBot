@@ -191,6 +191,8 @@ namespace std { namespace tr2 { namespace sys
   {
     size_t size;
     shared_array<byte> data;
+
+    operator byte *() { return data; }
   };
 
   class file_reader
@@ -203,7 +205,7 @@ namespace std { namespace tr2 { namespace sys
       if (size == INVALID_FILE_SIZE)
         return {0, nullptr};
 
-      shared_array<byte> buffer { size };
+      shared_array<byte> buffer(size);
 
       FILE *pfile;
       if (_wfopen_s(&pfile, filename.c_str(), L"rb") != 0)

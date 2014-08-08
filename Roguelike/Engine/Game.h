@@ -47,12 +47,12 @@ public:
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
-  const std::string _title;
   GameTime _gameTime;
   bool _running = false;
 
 protected:
   HINSTANCE _hInstance;
+  const std::string _title;
   std::unique_ptr<WindowDevice> _graphicsDevice;
 
 public:

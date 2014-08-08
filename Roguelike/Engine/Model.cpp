@@ -28,6 +28,9 @@ void XM_CALLCONV Model::draw(DirectX::FXMMATRIX worldTransform) const
   context->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, offset);
   context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+  if (texture)
+    context->PSSetShaderResources(0, 1, &texture.getShaderRes());
+
   shader->draw(_indexCount);
 }
 

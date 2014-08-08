@@ -87,6 +87,8 @@ public:
 
   void processMessages();
 
+  HWND window() { return _window; }
+
 private:
   WindowDevice(const WindowCreationOptions& options);
   static LRESULT CALLBACK staticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

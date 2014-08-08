@@ -51,7 +51,7 @@ void Game::run()
       }
     }
   }
-#ifndef _DEBUG
+#if !defined(_DEBUG)
   catch(const std::exception& ex)
   {
     std::string message = "A fatal exception occurred: ";

@@ -92,7 +92,7 @@ private:
 
 template <class Interface>
 /** Safely releases DirectX interfaces */
-inline void releaseDXInterface(Interface * &interfaceToRelease)
+inline void releaseDXInterface(Interface *& interfaceToRelease)
 {
   if (interfaceToRelease)
   {
@@ -101,11 +101,37 @@ inline void releaseDXInterface(Interface * &interfaceToRelease)
   }
 }
 
+template <class Interface>
+class DXReleaser
+{
+public:
+  DXReleaser(Interface *& itr)
+    : itr(itr)
+  {
+  }
+
+  ~DXReleaser()
+  {
+    releaseDXInterface(itr);
+  }
+
+private:
+  Interface *& itr;
+};
+
+#define RELEASE_AFTER_SCOPE(itr) DXReleaser<std::remove_reference<decltype(*(itr))>::type> __##itr##__releaser{(itr)}
+
 #define PROTECTED_ACCESSIBLE(type, name) \
   type _##name = nullptr; public: \
   inline type const& name() { return _##name; } protected:
 
-#define CHECK_HRESULT(hr) if (FAILED(hr)) { throw DXFatalError(hr); }
+#define CHECK_HRESULT(hr) CheckHRESULT(hr)
+
+inline void CheckHRESULT(HRESULT hr)
+{
+  if (FAILED(hr)) 
+    throw DXFatalError(hr);
+}
 
 template <typename Interface>
 void setDXDebugName(Interface *object, const std::wstring& name)

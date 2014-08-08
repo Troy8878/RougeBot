@@ -15,17 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PNGReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImageResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PNGReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImageResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -8,6 +8,7 @@
 
 #include "Helpers\UseDirectX.h"
 #include "Camera.h"
+#include "Texture.h"
 
 struct Shader;
 
@@ -38,6 +39,7 @@ public:
   void XM_CALLCONV draw(DirectX::FXMMATRIX worldTransform) const;
   
   Shader *shader;
+  Texture2D texture;
 
 private:
   ID3D11Buffer *_vertexBuffer, *_indexBuffer;

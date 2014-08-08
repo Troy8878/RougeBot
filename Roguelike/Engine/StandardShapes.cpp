@@ -19,9 +19,9 @@ namespace Shapes
     assert(sides >= 3);
     assert(radius > 0);
 
-    XMMATRIX rotate = XMMatrixRotationZ(-math::pi / sides * 2);
+    XMMATRIX rotate = XMMatrixRotationZ(math::pi / sides * 2);
     XMVECTOR vertex = XMVectorSet(radius, 0, 0, 1);
-    XMVECTOR texvertex = XMVectorSet(0.5f, 0, 0, 1);
+    XMVECTOR texvertex = XMVectorSet(-0.5f, 0, 0, 1);
     XMVECTOR texoffset = XMVectorSet(0.5f, 0.5f, 0, 0);
 
     UINT vertexCount = sides + 1;
@@ -30,7 +30,7 @@ namespace Shapes
     TexturedVertex *vertices = new TexturedVertex[vertexCount];
     vertices[sides].position = XMVectorSet(0, 0, 0, 1);
     vertices[sides].color = color;
-    vertices[sides].texture = XMVectorSet(0, 0, 0, 1);
+    vertices[sides].texture = XMVectorSet(0.5f, 0.5f, 0, 1);
 
     unsigned *indices = new unsigned[indexCount];
     

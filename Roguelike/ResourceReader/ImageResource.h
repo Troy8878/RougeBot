@@ -6,21 +6,41 @@
 
 #pragma once
 
+#include "Helpers\SharedArray.h"
+#include "Helpers\UseDirectX.h"
+
 struct ImageResource
 {
-  typedef unsigned __int8 byte;
-
   enum class Format
   {
-    R8G8B8,
-    R8G8B8A8,
+    RGB,
+    RGBA,
+    BGR,
+    BGRA,
   };
 
-  int width, height;
-  Format format;
-  byte *data;
+  ImageResource() = default;
+  ImageResource(int width, int height, Format format, shared_array<byte> data)
+    : width(width), height(height), format(format), data(data)
+  {
+  }
 
-  void Dispose();
+  UINT width, height;
+  Format format;
+  shared_array<byte> data;
+
+  void to32BitColor(byte *destination, size_t dest_size);
+  template <size_t dest_size>
+  void to32BitColor(byte (&destination)[dest_size])
+  {
+    to32BitColor(destination, dest_size);
+  }
+  void to32BitColor(shared_array<byte>& destination)
+  {
+    to32BitColor(destination, destination.size());
+  }
+
+  static ImageResource fromFile(const std::wstring& file);
 };
 
 

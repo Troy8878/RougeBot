@@ -11,22 +11,29 @@
 
 struct ImageResource;
 
-class Texture
+class Texture2D
 {
 public:
-  Texture(ID3D11Device *device, const fs::wpath& file);
-  Texture(ID3D11Device *device, ImageResource resource);
+  Texture2D() = default;
+  Texture2D(ID3D11Device *device, const std::wstring& file);
+  Texture2D(ID3D11Device *device, ImageResource resource);
 
-  ID3D11ShaderResourceView *getTexture();
+  ID3D11ShaderResourceView * const & getShaderRes() const { return _res->resource; };
+  ID3D11Texture2D * const & getTexture() const { return _res->texture; };
+
+  operator bool() const { return !!_res; }
+
+  static Texture2D getNullTexture(ID3D11Device *device);
 
 private:
   struct TextureResource
   {
-    ID3D11ShaderResourceView *texture;
+    ID3D11Texture2D *texture;
+    ID3D11ShaderResourceView *resource;
 
     ~TextureResource();
   };
 
-  std::shared_ptr<TextureResource> resource;
+  std::shared_ptr<TextureResource> _res;
 };
 

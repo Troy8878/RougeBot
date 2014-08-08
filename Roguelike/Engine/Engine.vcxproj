@@ -100,9 +100,6 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\src\Engine\Style Guide.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="rubylib.rc" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +130,9 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Style Guide.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

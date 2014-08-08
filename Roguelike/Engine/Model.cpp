@@ -11,24 +11,23 @@
 static BasicVertex *BasicVertexPtr;
 
 Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount, 
-             ID3D11Buffer *indexBuffer, UINT indexCount)
+             ID3D11Buffer *indexBuffer, UINT indexCount, UINT stride)
              : _vertexBuffer(vertexBuffer), _vertexCount(vertexCount),
-               _indexBuffer(indexBuffer), _indexCount(indexCount)
+               _indexBuffer(indexBuffer), _indexCount(indexCount), _stride(stride)
 {
 }
 
 void XM_CALLCONV Model::draw(DirectX::FXMMATRIX worldTransform) const
 {
-  _shader->camera->worldMatrix = worldTransform;
+  shader->camera->worldMatrix = worldTransform;
 
-  unsigned stride = ARRAY_STRIDE(BasicVertexPtr);
   unsigned offset = 0;
 
-  auto context = _shader->device->deviceContext();
-  context->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
+  auto context = shader->device->deviceContext();
+  context->IASetVertexBuffers(0, 1, &_vertexBuffer, &_stride, &offset);
   context->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, offset);
   context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-  _shader->draw(_indexCount);
+  shader->draw(_indexCount);
 }
 

@@ -16,7 +16,7 @@
 class Roguelike : public Game
 {
 public:
-  Roguelike(const std::string& title, HINSTANCE hInstance) 
+  Roguelike(const std::string& title, HINSTANCE hInstance)
     : Game{title, hInstance}
   {
     initSettings.cullTriangles = false;
@@ -30,16 +30,27 @@ public:
 
     //_graphicsDevice->swapChain()->SetFullscreenState(true, nullptr);
 
-    _basicShader = Shader::loadShader(_graphicsDevice.get(), L"BasicVertexShader.cso", L"BasicPixelShader.cso");
+    _basicShader = Shader::loadShader(
+      _graphicsDevice.get(),
+      L"BasicVertexShader.cso",
+      L"BasicPixelShader.cso");
     _basicShader->initializeBasicShader();
+
+    _textureShader = Shader::loadShader(
+      _graphicsDevice.get(),
+      L"TexturedVertexShader.cso",
+      L"TexturedPixelShader.cso");
+    _textureShader->initializeTexturedShader();
+
     _basicCircle = Shapes::makeCircle(_graphicsDevice->device(), 1000000, 5);
 
     _camera.position = math::Vector{0, 0, 20, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
     _camera.init();
-    
+
     _basicShader->camera = &_camera;
-    _basicCircle->setShader(_basicShader);
+    _textureShader->camera = &_camera;
+    _basicCircle->shader = _basicShader;
   }
 
   void onUpdate(const GameTime& time) override
@@ -67,6 +78,7 @@ private:
   LookAtCamera _camera;
 
   Shader *_basicShader;
+  Shader *_textureShader;
   Model *_basicCircle;
 
   math::Matrix _cubeTransform = DirectX::XMMatrixIdentity();

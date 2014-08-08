@@ -124,3 +124,47 @@ void Shader::initializeBasicShader()
   CHECK_HRESULT(result);
 }
 
+void Shader::initializeTexturedShader()
+{
+  initCameraBuffer();
+
+  #pragma region Polygon Layout
+  static const D3D11_INPUT_ELEMENT_DESC polygonLayout[] =
+  {
+    {
+      "POSITION",
+      0,
+      DXGI_FORMAT_R32G32B32A32_FLOAT,
+      0,
+      0,
+      D3D11_INPUT_PER_VERTEX_DATA,
+      0
+    },
+    {
+      "COLOR",
+      0,
+      DXGI_FORMAT_R32G32B32A32_FLOAT,
+      0,
+      D3D11_APPEND_ALIGNED_ELEMENT,
+      D3D11_INPUT_PER_VERTEX_DATA,
+      0
+    },
+    {
+      "TEXCOORD",
+      0,
+      DXGI_FORMAT_R32G32B32A32_FLOAT,
+      0,
+      D3D11_APPEND_ALIGNED_ELEMENT,
+      D3D11_INPUT_PER_VERTEX_DATA,
+      0
+    }
+  };
+  #pragma endregion
+
+  auto result = device->device()->
+    CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
+                      vertexShaderData.data, vertexShaderData.size,
+                      &vertexLayout);
+  CHECK_HRESULT(result);
+}
+

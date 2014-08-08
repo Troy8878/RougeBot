@@ -59,9 +59,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\src\Engine\Style Guide.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="rubylib.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
@@ -135,5 +132,8 @@
     <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Style Guide.txt" />
   </ItemGroup>
 </Project>

@@ -28,7 +28,7 @@ class Model
 {
 public:
   Model(ID3D11Buffer *vertexBuffer, UINT vertexCount, 
-        ID3D11Buffer *indexBuffer, UINT indexCount);
+        ID3D11Buffer *indexBuffer, UINT indexCount, UINT stride);
 
   template <typename VertexType>
   Model(ID3D11Device *device,
@@ -36,15 +36,12 @@ public:
         UINT *indexBuffer, UINT indexCount);
 
   void XM_CALLCONV draw(DirectX::FXMMATRIX worldTransform) const;
-
-  void setShader(Shader *shader) { _shader = shader; }
-  Shader *getShader() const { return _shader; }
+  
+  Shader *shader;
 
 private:
   ID3D11Buffer *_vertexBuffer, *_indexBuffer;
-  UINT _vertexCount, _indexCount;
-
-  Shader *_shader;
+  UINT _vertexCount, _indexCount, _stride;
 };
 
 
@@ -54,6 +51,8 @@ Model::Model(ID3D11Device *device,
              UINT *indices, UINT indexCount)
              : _vertexCount(vertexCount), _indexCount(indexCount)
 {
+  _stride = ARRAY_STRIDE(vertices);
+
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
   HRESULT result;

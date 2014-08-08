@@ -54,7 +54,7 @@ Align references to the type.
 T& thing;
 
 If you have a reference to a pointer, put a space on both sides. 
-T &* thing;
+T *& thing;
 
 ---- NAMING CONVENTION ----
 Those of you who are familiar with java have

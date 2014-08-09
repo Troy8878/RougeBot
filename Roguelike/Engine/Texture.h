@@ -14,6 +14,8 @@ struct ImageResource;
 class Texture2D
 {
 public:
+  static std::string respack_container_name;
+
   Texture2D() = default;
   Texture2D(ID3D11Device *device, const std::wstring& file);
   Texture2D(ID3D11Device *device, ImageResource resource);

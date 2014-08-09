@@ -18,9 +18,21 @@
     <ClInclude Include="ImageResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResourcePack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcePack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TempFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

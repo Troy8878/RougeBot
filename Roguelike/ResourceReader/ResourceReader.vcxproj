@@ -79,9 +79,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ImageResource.h" />
+    <ClInclude Include="ResourcePack.h" />
+    <ClInclude Include="TempFile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageResource.cpp" />
+    <ClCompile Include="ResourcePack.cpp" />
+    <ClCompile Include="TempFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

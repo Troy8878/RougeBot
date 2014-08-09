@@ -52,7 +52,7 @@ public:
 
   void initObjects()
   {
-    _basicCircle = Shapes::makeCircle(_graphicsDevice->device(), 1000, 5);
+    _basicCircle = Shapes::makeCircle(_graphicsDevice->device(), 10000, 5);
 
     _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};

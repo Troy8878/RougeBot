@@ -8,6 +8,8 @@
 #include "Texture.h"
 #include "ResourceReader\ImageResource.h"
 
+std::string Texture2D::respack_container_name = "";
+
 Texture2D::Texture2D(ID3D11Device *device, const std::wstring& file)
   : Texture2D{device, ImageResource::fromFile(file)}
 {

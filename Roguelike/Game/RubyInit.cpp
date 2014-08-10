@@ -11,7 +11,7 @@
 
 extern "C"
 {
-
+  /*
   void mrb_init_mrblib(mrb_state *mrb)
   {
   }
@@ -22,6 +22,6 @@ extern "C"
 
   void mrb_final_mrbgems(mrb_state *mrb)
   {
-  }
+  }*/
 }
 

@@ -9,6 +9,11 @@
 class Level abstract
 {
 public:
+  void init();
+  void update();
+  void draw();
 
+protected:
+  virtual void onUpdate() = 0;
 };
 

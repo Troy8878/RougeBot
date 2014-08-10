@@ -90,6 +90,7 @@
     <ClInclude Include="Colors.h" />
     <ClInclude Include="EngineInit.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="EventHandlers.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GraphicsDevice.h" />

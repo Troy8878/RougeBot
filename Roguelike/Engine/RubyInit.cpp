@@ -41,7 +41,7 @@ extern "C"
 
   void mrb_init_mrblib(mrb_state *mrb)
   {
-    for each (auto res_id in libfiles)
+    for (auto res_id : libfiles)
     {
       loadRubyRes(mrb, res_id);
     }

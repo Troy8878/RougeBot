@@ -125,7 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="RubyInit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Roguelike.h" />

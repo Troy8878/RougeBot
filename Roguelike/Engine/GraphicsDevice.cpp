@@ -183,9 +183,14 @@ void GraphicsDevice::initializeD3DContext()
 
 #pragma region Create Device and Swap Chain
 
-  D3D_FEATURE_LEVEL  FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
-  UINT               numLevelsRequested = 1;
-  D3D_FEATURE_LEVEL  FeatureLevelsSupported;
+  D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
+  {
+    D3D_FEATURE_LEVEL_11_0,
+    D3D_FEATURE_LEVEL_10_1,
+    D3D_FEATURE_LEVEL_10_0,
+  };
+  UINT               numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
+  D3D_FEATURE_LEVEL  FeatureLevelSupported;
 
   // this is a big function call >.> just go to
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ff476879(v=vs.85).aspx
@@ -195,13 +200,13 @@ void GraphicsDevice::initializeD3DContext()
     D3D_DRIVER_TYPE_HARDWARE,
     NULL,
     0,
-    &FeatureLevelsRequested,
+    FeatureLevelsRequested,
     numLevelsRequested,
     D3D11_SDK_VERSION,
     &sd,
     &_swapChain,
     &_device,
-    &FeatureLevelsSupported,
+    &FeatureLevelSupported,
     &_deviceContext);
   CHECK_HRESULT(hr);
 

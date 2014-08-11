@@ -13,7 +13,7 @@
 
 #include "Engine\resource.h"
 
-static int libfiles[] = 
+static const int libfiles[] = 
 {
   IDR_RBARRAY,
   IDR_RBCLASS,

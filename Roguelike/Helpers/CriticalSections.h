@@ -27,6 +27,8 @@ public:
     guard(critical_section& crit);
     ~guard();
 
+    guard& operator=(const guard&) = delete;
+
   private:
     critical_section& crit;
   };

@@ -19,3 +19,7 @@
 #include <memory>
 #include <unordered_map>
 #include <random>
+#include <unordered_map>
+#include "Event.h"
+#include "Entity.h"
+#include "Component.h"

@@ -115,6 +115,8 @@ public:
     releaseDXInterface(itr);
   }
 
+  DXReleaser& operator=(const DXReleaser&) = delete;
+
 private:
   Interface *& itr;
 };

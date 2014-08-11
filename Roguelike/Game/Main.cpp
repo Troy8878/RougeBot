@@ -10,6 +10,19 @@
 
 #pragma comment(lib, "dxguid.lib")
 
+class a
+{
+  int c = 1;
+};
+
+class b : public a
+{
+  int d = 2;
+
+public:
+  void something() {debug << d;}
+};
+
 static void createConsole()
 {
   AllocConsole();
@@ -33,6 +46,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
     std::wcout << file.file_string() << std::endl;
   }
 #endif
+
+  void (a::*func)();
+  func = static_cast<void(a::*)()>(&b::something);
+  b b;
+  (b.*func)();
 
   Roguelike game("Game 200 Project", hInstance);
   game.run();

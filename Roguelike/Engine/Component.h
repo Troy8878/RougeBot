@@ -1,16 +1,16 @@
 /*********************************
- * RubyComponent.h
+ * Component.h
  * Connor Hilarides
- * Created 2014/05/30
+ * Created 2014/08/11
  *********************************/
 
 #pragma once
 
 #include "Common.h"
 
-class RubyComponent
+class Component abstract
 {
-  
+public:
+  virtual void initialize(Entity& parent);
 };
-
 

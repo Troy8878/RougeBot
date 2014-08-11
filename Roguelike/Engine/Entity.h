@@ -53,7 +53,7 @@ protected:
     Store all of your registered events here, keyed
     on the event id for fast lookup ;)
   */
-  std::unordered_map<event_id, std::unordered_map<Component *, component_handler>> _events;
+  std::unordered_map<event_id, std::vector<std::pair<Component *, component_handler>>> _events;
 
   /**
     In here you should write code that initializes the component

@@ -93,6 +93,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventHandlers.h" />
+    <ClInclude Include="EventTypes.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GraphicsDevice.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RubyComponent.h" />
+    <ClInclude Include="RubyInterop.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
@@ -133,6 +135,8 @@
     <ClCompile Include="GameStuffGem.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RubyClass.cpp" />
+    <ClCompile Include="RubyEngine.cpp" />
     <ClCompile Include="RubyInit.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="StandardShapes.cpp" />

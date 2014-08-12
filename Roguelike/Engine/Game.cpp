@@ -40,7 +40,13 @@ void Game::run()
       // Update
       _gameTime.update();
       onUpdate(_gameTime);
-      // TODO: Update current level context
+
+      // Raise update event
+      {
+        using namespace Events;
+        static event_id updateId = Event::createEventId("update");
+        
+      }
 
       if (_graphicsDevice->beginFrame())
       {

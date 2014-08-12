@@ -12,21 +12,21 @@ typedef ULONG_PTR event_id;
 
 namespace Events
 {
+  struct EventData;
+
   class EventMessage
   {
-    void *data;
+    EventData *data;
     event_id _eventId;
 #ifdef _DEBUG
-    std::type_index _event_type;
     bool _handleable = true;
 #endif
     bool _handled = false;
 
   public:
 #ifdef _DEBUG
-    template <typename T>
-    EventMessage(event_id eventId, T *data, bool handleable = true)
-      : data(data), _eventId(eventId), event_type(typeid(T)), _handleable(handleable)
+    EventMessage(event_id eventId, EventData *data, bool handleable = true)
+      : data(data), _eventId(eventId), _handleable(handleable)
     {
     }
 #else
@@ -37,19 +37,9 @@ namespace Events
     }
 #endif
 
-    template <typename T>
-    T& getData()
+    EventData *getData()
     {
-#ifdef _DEBUG
-      if (typeid(T) != _event_type)
-      {
-        if (IsDebuggerPresent())
-          __debugbreak();
-        else
-          throw std::exception("Tried to read event data as different type than stored");
-      }
-#endif
-      return *reinterpret_cast<T *>(data);
+      return data;
     }
 
     inline event_id eventId() const { return _eventId; }
@@ -63,8 +53,6 @@ namespace Events
       _handled = handled; 
     }
     inline bool handled() const { return _handled; }
-
-    static event_id createEventId(const std::string& name);
   };
 
   class EventReciever abstract
@@ -87,8 +75,10 @@ namespace Events
   {
   public:
     Event() {}
-    
-    template <typename T>
-    bool raise(T *data);
+
+    static event_id createEventId(const std::string& name);
+    static void raise(EventMessage& e, EventReciever& reciever = *Event::globalDispatcher);
+
+    static EventDispatcher *globalDispatcher;
   };
 }

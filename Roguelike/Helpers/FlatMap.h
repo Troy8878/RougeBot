@@ -35,6 +35,12 @@ private:
       Comp comp;
       return comp(a.first, b.first);
     }
+
+    bool operator()(const key_type& a, const pair_type& b)
+    {
+      Comp comp;
+      return comp(a, b.first);
+    }
   };
 
   typedef pair_comparator<Comparator> comparator_type;
@@ -46,7 +52,17 @@ public:
   iterator find(const key_type& key)
   {
     comparator_type comparator;
-    return std::lower_bound(begin(), end(), key, comparator);
+
+    auto _end = end();
+    auto it = std::lower_bound(begin(), _end, key, comparator);
+
+    if (it == _end)
+      return _end;
+
+    if (comparator(key, *it))
+      return _end;
+
+    return it;
   }
 
   value_type& operator[](const key_type& key)
@@ -86,7 +102,7 @@ public:
     if (find(key) != end())
       throw new std::exception("Key already exists in map");
 
-    _items.emplace_back(key, value);
+    _items.push_back({key, value});
     sortPairs();
   }
 

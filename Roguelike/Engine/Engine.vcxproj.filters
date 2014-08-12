@@ -15,56 +15,77 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{c9c66c84-ea59-46fa-9b23-ad880a0111f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{0980cdc9-09a2-4fa6-8525-7b484d8cc0e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Arch">
+      <UniqueIdentifier>{daa23e9c-879e-4f8e-8160-89c4fac4dcf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interop">
+      <UniqueIdentifier>{34a94018-da06-4479-8819-80647850b752}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{d105a3da-ee90-4687-8a3f-9d0702c85faf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Arch">
+      <UniqueIdentifier>{3bcb887b-7cad-4c0e-9cad-fc249cdfbbfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineInit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Colors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RubyComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StandardShapes.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="EventHandlers.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardShapes.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Header Files\Arch</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandlers.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTypes.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineInit.h">
+      <Filter>Header Files\Arch</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTime.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="RubyComponent.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="RubyInterop.h">
+      <Filter>Header Files\Interop</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -111,12 +132,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameStuffGem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -126,26 +141,38 @@
     <ClCompile Include="GameComponentGem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StandardShapes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RubyEngine.cpp">
+      <Filter>Header Files\Interop</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyClass.cpp">
+      <Filter>Header Files\Interop</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardShapes.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\Arch</Filter>
+    </ClCompile>
     <ClCompile Include="Event.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Arch</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Arch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

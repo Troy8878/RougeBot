@@ -10,7 +10,7 @@
 
 #define THREAD_EXCLUSIVE_SCOPE \
   static critical_section ___critSec___; \
-  critical_section::guard factory_guard{___critSec___}
+  critical_section::guard ___critSecGuard___{___critSec___}
 
 class critical_section
 {

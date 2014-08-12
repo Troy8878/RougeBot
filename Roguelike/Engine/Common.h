@@ -22,5 +22,6 @@
 #include <unordered_map>
 #include "Helpers\FlatMap.h"
 #include "Event.h"
+#include "EventTypes.h"
 #include "Entity.h"
 #include "Component.h"

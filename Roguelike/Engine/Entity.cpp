@@ -9,7 +9,7 @@
 bool Entity::canHandle(const Events::EventMessage& e)
 {
   auto iterator = _events.find(e.eventId());
-  return iterator != _events.end && !iterator->second.empty();
+  return iterator != _events.end() && !iterator->second.empty();
 }
 
 void Entity::handle(Events::EventMessage& e)

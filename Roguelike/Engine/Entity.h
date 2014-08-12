@@ -47,18 +47,12 @@ protected:
   /**
     Keep track of all your components :)
   */
-  std::unordered_map<std::type_index, Component *> _components;
+  flat_map<std::type_index, Component *> _components;
 
   /**
     Store all of your registered events here, keyed
     on the event id for fast lookup ;)
   */
-  std::unordered_map<event_id, std::unordered_map<Component *, component_handler>> _events;
-
-  /**
-    In here you should write code that initializes the component
-    event map for a certain id if it does not exist
-  */
-  void ensureEventMap(event_id id);
+  flat_map<event_id, flat_map<Component *, component_handler>> _events;
 };
 

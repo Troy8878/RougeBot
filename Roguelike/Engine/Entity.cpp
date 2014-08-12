@@ -22,3 +22,15 @@ void Entity::handle(Events::EventMessage& e)
     (componentPair.first ->* componentPair.second)(e);
 }
 
+void Entity::addEvent(Component *component, event_id id, component_handler handler)
+{
+  auto& handlers = _events[id];
+  handlers[component] = handler;
+}
+
+void Entity::removeEvent(Component *component, event_id id)
+{
+  auto& handlers = _events[id];
+  if (handlers.find(component) != handlers.end())
+    handlers.remove(component);
+}

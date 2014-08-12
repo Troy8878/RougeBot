@@ -36,7 +36,7 @@ public:
     This will be used when one of your components wants to
     connect to an event
   */
-  void addEvent(Component *component, event_id id, void(Component::*)(Events::EventMessage&));
+  void addEvent(Component *component, event_id id, component_handler handler);
   /**
     This will be used when one of your components no longer wants
     to recieve an event

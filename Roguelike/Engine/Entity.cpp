@@ -34,3 +34,4 @@ void Entity::removeEvent(Component *component, event_id id)
   if (handlers.find(component) != handlers.end())
     handlers.remove(component);
 }
+

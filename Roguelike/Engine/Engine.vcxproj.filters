@@ -30,6 +30,9 @@
     <Filter Include="Source Files\Arch">
       <UniqueIdentifier>{3bcb887b-7cad-4c0e-9cad-fc249cdfbbfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Ruby">
+      <UniqueIdentifier>{8b3a1775-3acc-4559-90c8-aa401889a9cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -132,23 +135,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameStuffGem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RubyInit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameComponentGem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RubyEngine.cpp">
-      <Filter>Header Files\Interop</Filter>
-    </ClCompile>
-    <ClCompile Include="RubyClass.cpp">
-      <Filter>Header Files\Interop</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -173,6 +161,21 @@
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Arch</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyEngine.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyClass.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyInit.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStuffGem.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="GameComponentGem.cpp">
+      <Filter>Source Files\Ruby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

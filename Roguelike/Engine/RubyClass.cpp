@@ -26,5 +26,11 @@ namespace ruby
     mrb_define_class_method(*_engine, _class, name, func, aspec);
   }
 
+  ruby_class ruby_class::define_class(const char *name, RClass *baseClass)
+  {
+    if (!baseClass)
+      baseClass = _engine->mrb_handle()->object_class;
 
+    return ruby_class{_engine, mrb_define_class_under(*_engine, _class, name, baseClass)};
+  }
 }

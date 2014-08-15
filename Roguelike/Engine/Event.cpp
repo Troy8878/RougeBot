@@ -33,9 +33,32 @@ namespace Events
 
   void Event::raise(EventMessage& e, EventReciever& reciever)
   {
+    pushEvent(e);
+
     if (reciever.canHandle(e))
       reciever.handle(e);
+
+    popEvent();
   }
 
+  ///////////////////////////////
+  // Event stack
+
+  static std::stack<EventMessage *> eventStack;
+
+  EventMessage& Event::currentEvent()
+  {
+    return *eventStack.top();
+  }
+
+  void Event::pushEvent(EventMessage& e)
+  {
+    eventStack.push(&e);
+  }
+
+  void Event::popEvent()
+  {
+    eventStack.pop();
+  }
 }
 

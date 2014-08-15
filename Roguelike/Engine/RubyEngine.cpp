@@ -49,5 +49,21 @@ namespace ruby
     mrb_define_global_const(mrb, name, value);
   }
 
+  ///////////////////////////////////////
+  // 'Other' ruby helper implementations
+
+  ruby_gc_guard::ruby_gc_guard(mrb_state *mrb)
+    : mrb(mrb), arena(mrb_gc_arena_save(mrb))
+  {
+  }
+
+  ruby_gc_guard::~ruby_gc_guard()
+  {
+    if (mrb)
+    {
+      mrb_gc_arena_restore(mrb, arena);
+      mrb_garbage_collect(mrb);
+    }
+  }
 }
 

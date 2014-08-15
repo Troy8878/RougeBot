@@ -80,5 +80,10 @@ namespace Events
     static void raise(EventMessage& e, EventReciever& reciever = *Event::globalDispatcher);
 
     static EventDispatcher *globalDispatcher;
+    static EventMessage& currentEvent();
+
+  private:
+    static void pushEvent(EventMessage& e);
+    static void popEvent();
   };
 }

@@ -149,3 +149,22 @@ void setDXDebugName(Interface *object, const std::string& name)
                                           name.c_str());
   CHECK_HRESULT(result);
 }
+
+template <typename Container>
+void variadic_push_container(Container&)
+{
+}
+
+template <typename Container, typename Arg>
+void variadic_push_container(Container& container, const Arg& param)
+{
+  container.push_back(param);
+}
+
+template <typename Container, typename Arg, typename... Args>
+void variadic_push_container(Container& containter, const Arg& param, const Args&&... params)
+{
+  container.push_back(param);
+  variadic_push_container(container, params...);
+}
+

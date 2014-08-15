@@ -28,6 +28,7 @@ namespace ruby
     ruby_engine(const ruby_engine&) = delete;
     ruby_engine& operator=(const ruby_engine&) = delete;
 
+    inline mrb_state *mrb_handle() { return mrb; }
     inline operator mrb_state *() { return mrb; }
 
     ruby_class define_class(const char *className, RClass *baseClass = nullptr);
@@ -56,9 +57,8 @@ namespace ruby
     void define_alias(const char *name1, const char *name2);
     void define_const(const char *name, mrb_value value);
     void define_method(const char *name, mrb_func_t func, mrb_aspec aspec);
-    void define_class(const char *name, mrb_aspec);
-
-    
+    void define_class_method(const char *name, mrb_func_t func, mrb_aspec aspec);
+    ruby_class define_class(const char *name, RClass *baseClass = nullptr);
   };
 
   class ruby_module : public ruby_class
@@ -68,6 +68,9 @@ namespace ruby
 
   public:
     ruby_module(ruby_engine *engine, RClass *module);
+
+    void define_method(const char *name, mrb_func_t func, mrb_aspec aspec);
+    
   };
 
   class ruby_value : mrb_value
@@ -75,7 +78,37 @@ namespace ruby
     ruby_engine *_engine;
 
   public:
-    ruby_value(ruby_engine *engine);
+    ruby_value(ruby_engine *engine, const mrb_value& value = mrb_nil_value());
+
+    ruby_value& operator=(const mrb_value& value);
+
+    ruby_value& operator=(nullptr_t);
+
+    ruby_value& operator=(int64_t i);
+    ruby_value& operator=(uint64_t i);
+    ruby_value& operator=(float f);
+    ruby_value& operator=(double d);
+    explicit operator int64_t();
+    explicit operator int32_t();
+    explicit operator uint64_t();
+    explicit operator uint32_t();
+    explicit operator float();
+    explicit operator double();
+
+    ruby_value& operator=(const char *string);
+    ruby_value& operator=(const std::string& string);
+    explicit operator const char *();
+    explicit operator std::string();
+  };
+
+  class ruby_gc_guard
+  {
+    mrb_state *mrb;
+    int arena;
+
+  public:
+    ruby_gc_guard(mrb_state *mrb);
+    ~ruby_gc_guard();
   };
 }
 

@@ -83,6 +83,7 @@
     <ClInclude Include="mruby_warning_restore.h" />
     <ClInclude Include="RubyHelp.h" />
     <ClInclude Include="SharedArray.h" />
+    <ClInclude Include="StackTrace.h" />
     <ClInclude Include="UseDirectX.h" />
     <ClInclude Include="VectorHelp.h" />
   </ItemGroup>
@@ -90,6 +91,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CriticalSections.cpp" />
     <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="StackTrace.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

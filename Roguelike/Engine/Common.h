@@ -21,8 +21,13 @@
 #include <unordered_map>
 #include <random>
 #include <unordered_map>
+
 #include "Helpers\FlatMap.h"
+#include "Helpers\Console.h"
+#include "Helpers\StackTrace.h"
+
 #include "Event.h"
 #include "EventTypes.h"
 #include "Entity.h"
 #include "Component.h"
+

@@ -81,6 +81,11 @@ LRESULT CALLBACK WindowDevice::staticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
 
 LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+  std::cout << console::fg::green;
+  std::cout << "Stack trace" << std::endl;
+  stack_trace::print_trace();
+  Sleep(100000);
+
   auto& game = *getGame();
   auto iter = game._wndprocCallbacks.find(msg);
   if (iter != game._wndprocCallbacks.end())

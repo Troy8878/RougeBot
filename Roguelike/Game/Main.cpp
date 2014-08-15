@@ -8,6 +8,7 @@
 #include "Helpers\Console.h"
 #include "Helpers\FileSystem.h"
 #include "Helpers\FlatMap.h"
+#include "Helpers\StackTrace.h"
 
 #pragma comment(lib, "dxguid.lib")
 
@@ -23,22 +24,6 @@ static void createConsole()
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-  IFDEBUG(debug << console::fg::red << "Starting game!" << std::endl);
-  IFDEBUG(debug.flush());
-
-#ifdef _DEBUG
-  flat_map<std::string, std::string> map;
-  
-  map["sdfg"] = "oh";
-  map["asdf"] = "hay";
-  map["bfla"] = "der";
-  map["gsdf"] = "sir";
-
-  map.remove("gsdf");
-
-  for (auto& pair : map)
-    debug << pair.first << ": " << pair.second << std::endl;
-#endif
 
   Roguelike game("Game 200 Project", hInstance);
   game.run();

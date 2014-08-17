@@ -6,6 +6,10 @@
 
 #include "Common.h"
 
+Entity::Entity()
+{
+}
+
 bool Entity::canHandle(const Events::EventMessage& e)
 {
   auto iterator = _events.find(e.eventId());

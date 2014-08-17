@@ -36,8 +36,10 @@ inline std::string narrow(const std::wstring& wide_string)
 
 #ifdef _DEBUG
 #define IFDEBUG(x) x
+#define IFNDEBUG(x) 
 #else
 #define IFDEBUG(x) 
+#define IFNDEBUG(x) x
 #endif
 
 // just a nice little helper to turn GetLastError() into a readable message

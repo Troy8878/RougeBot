@@ -30,7 +30,7 @@ namespace Events
     {
     }
 #else
-    inline EventMessage(event_id eventId, void *data, bool handleable = true)
+    inline EventMessage(event_id eventId, EventData *data, bool handleable = true)
       : data(data), _eventId(eventId)
     {
       UNREFERENCED_PARAMETER(handleable);
@@ -58,6 +58,8 @@ namespace Events
   class EventReciever abstract
   {
   public:
+    virtual ~EventReciever() {}
+
     virtual bool canHandle(const EventMessage& e) = 0;
     virtual void handle(EventMessage& e) = 0;
   };

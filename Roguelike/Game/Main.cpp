@@ -5,13 +5,10 @@
  *********************************/
 
 #include "Game\Roguelike.h"
-#include "Helpers\Console.h"
-#include "Helpers\FileSystem.h"
-#include "Helpers\FlatMap.h"
-#include "Helpers\StackTrace.h"
 
 #pragma comment(lib, "dxguid.lib")
 
+#ifdef _DEBUG
 static void createConsole()
 {
   AllocConsole();
@@ -20,10 +17,21 @@ static void createConsole()
   freopen_s(&file, "CONOUT$", "wt", stderr);
   freopen_s(&file, "CONIN$", "rt", stdin);
 }
+#endif
+
+template <typename T>
+void inferenceTest(std::string& str, void(T::*p)())
+{
+  UNREFERENCED_PARAMETER(p);
+  str = typeid(T).name();
+}
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
+
+  std::string t;
+  inferenceTest(t, &std::string::clear);
 
   Roguelike game("Game 200 Project", hInstance);
   game.run();

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "RubyInterop.h"
 #include "Common.h"
 
 namespace Events
@@ -14,7 +15,7 @@ namespace Events
 
   struct EventData abstract
   {
-
+    virtual ruby::ruby_value getRubyWrapper() = 0;
   };
 
   struct UpdateEvent

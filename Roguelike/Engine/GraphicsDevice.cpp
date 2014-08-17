@@ -48,8 +48,8 @@ HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
                              options.gameTitle.c_str(),
                              WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX,
                              CW_USEDEFAULT, CW_USEDEFAULT,
-                             static_cast<UINT>(options.size.x()),
-                             static_cast<UINT>(options.size.y()),
+                             static_cast<UINT>(options.size.x),
+                             static_cast<UINT>(options.size.y),
                              NULL, NULL, options.hInstance,
                              reinterpret_cast<void *>(this));
 
@@ -154,7 +154,7 @@ void WindowDevice::endFrame()
   while (getGame()->gameTime().currFrameTime() < min_frame_time)
     Sleep(0);
 
-  _swapChain->Present(0, 0);
+  _swapChain->Present(1, 0);
 }
 
 void GraphicsDevice::initializeD3DContext()
@@ -168,8 +168,8 @@ void GraphicsDevice::initializeD3DContext()
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
   sd.BufferCount = 1;
-  sd.BufferDesc.Width = static_cast<UINT>(contextSize.x());
-  sd.BufferDesc.Height = static_cast<UINT>(contextSize.y());
+  sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
+  sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // I don't even, it's what MSDN told me to use >.>
   sd.BufferDesc.RefreshRate.Numerator = 120;
   sd.BufferDesc.RefreshRate.Denominator = 1;
@@ -196,9 +196,9 @@ void GraphicsDevice::initializeD3DContext()
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ff476879(v=vs.85).aspx
   // if you have no idea, because it's too complex to describe here
   HRESULT hr = D3D11CreateDeviceAndSwapChain(
-    NULL,
+    nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
-    NULL,
+    nullptr,
     0,
     FeatureLevelsRequested,
     numLevelsRequested,
@@ -211,7 +211,8 @@ void GraphicsDevice::initializeD3DContext()
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
-  hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *) &backBuffer);
+  hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+                             reinterpret_cast<LPVOID *>(&backBuffer));
   CHECK_HRESULT(hr);
 
   hr = _device->CreateRenderTargetView(backBuffer, nullptr, &_renderTargetView);
@@ -225,8 +226,8 @@ void GraphicsDevice::initializeD3DContext()
 
   D3D11_TEXTURE2D_DESC depthBufferDesc;
   ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-  depthBufferDesc.Width = static_cast<UINT>(contextSize.x());
-  depthBufferDesc.Height = static_cast<UINT>(contextSize.y());
+  depthBufferDesc.Width = static_cast<UINT>(contextSize.x);
+  depthBufferDesc.Height = static_cast<UINT>(contextSize.y);
   depthBufferDesc.MipLevels = 1;
   depthBufferDesc.ArraySize = 1;
   depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -307,8 +308,8 @@ void GraphicsDevice::initializeD3DContext()
 #pragma region Viewport
 
   D3D11_VIEWPORT viewport;
-  viewport.Width = contextSize.x();
-  viewport.Height = contextSize.y();
+  viewport.Width = contextSize.x;
+  viewport.Height = contextSize.y;
   viewport.MinDepth = 0.0f;
   viewport.MaxDepth = 1.0f;
   viewport.TopLeftX = 0.0f;

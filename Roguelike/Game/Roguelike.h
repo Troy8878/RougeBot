@@ -4,7 +4,7 @@
  * Created 2014/05/28
  *********************************/
 
-#include "Helpers\UseDirectX.h"
+#include "Engine\Common.h"
 
 #include "Engine\Game.h"
 #include "Engine\Shader.h"
@@ -52,7 +52,7 @@ public:
 
   void initObjects()
   {
-    _basicCircle = Shapes::makeCircle(_graphicsDevice->device(), 10000, 5);
+    _basicShape = Shapes::makeRectangle(_graphicsDevice->device(), {10, 10});
 
     _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
@@ -63,8 +63,8 @@ public:
   {
     _basicShader->camera = &_camera;
     _textureShader->camera = &_camera;
-    _basicCircle->shader = _textureShader;
-    _basicCircle->texture = Texture2D{_graphicsDevice->device(), L"Assets/Textures/1384108156458.jpg"};
+    _basicShape->shader = _textureShader;
+    _basicShape->texture = Texture2D{_graphicsDevice->device(), L"Assets/Textures/1384108156458.jpg"};
   }
 
   void onUpdate(const GameTime& time) override
@@ -82,9 +82,20 @@ public:
       SetWindowText(_graphicsDevice->window(), title.c_str());
     }
 
-    _cubeTransform = XMMatrixRotationZ(dt * math::pi) * _cubeTransform.get();
+    static bool movein = true;
+    if (movein)
+    {
+      _camera.position.z -= dt * 10;
+      if (_camera.position.z < 0.5)
+        movein = false;
+    }
+    else
+    {
+      _camera.position.z += dt * 10;
+      if (_camera.position.z > 35)
+        movein = true;
+    }
 
-    _camera.position.z() -= dt;
     _camera.update();
   }
 
@@ -92,18 +103,16 @@ public:
   {
     using namespace DirectX;
 
-    _basicCircle->draw(_cubeTransform.get());
-    _basicCircle->draw(_cubeTransform.get() *
-                       XMMatrixTranslation(10, 0, 0) * 
-                       XMMatrixRotationY(-20 * math::pi / 180));
-    _basicCircle->draw(_cubeTransform.get() *
-                       XMMatrixTranslation(-10, 0, 0) * 
-                       XMMatrixRotationY(20 * math::pi / 180));
+    _basicShape->draw(XMMatrixIdentity());
+    _basicShape->draw(XMMatrixRotationY(-45 * math::pi / 180) *
+                      XMMatrixTranslation(9, 0, 4));
+    _basicShape->draw(XMMatrixRotationY(45 * math::pi / 180) *
+                      XMMatrixTranslation(-9, 0, 4));
   }
 
   void onFree() override
   {
-    delete _basicCircle;
+    delete _basicShape;
     delete _basicShader;
   }
 
@@ -112,7 +121,5 @@ private:
 
   Shader *_basicShader;
   Shader *_textureShader;
-  Model *_basicCircle;
-
-  math::Matrix _cubeTransform = DirectX::XMMatrixIdentity();
+  Model *_basicShape;
 };

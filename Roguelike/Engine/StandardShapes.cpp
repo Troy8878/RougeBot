@@ -13,6 +13,28 @@ static std::random_device shape_rng;
 namespace Shapes
 {
   using namespace DirectX;
+
+  Model *makeRectangle(ID3D11Device *device, math::Vector2D size, math::Vector color)
+  {
+    const float sx = size.x / 2;
+    const float sy = size.y / 2;
+
+    TexturedVertex vertices[] =
+    {
+      {{-sx,  sy, 0, 1}, color, {0, 0}},
+      {{ sx,  sy, 0, 1}, color, {1, 0}},
+      {{-sx, -sy, 0, 1}, color, {0, 1}},
+      {{ sx, -sy, 0, 1}, color, {1, 1}}
+    };
+
+    UINT indices[] =
+    {
+      0, 1, 2,
+      1, 2, 3
+    };
+
+    return new Model{device, vertices, indices};
+  }
   
   Model *makeCircle(ID3D11Device *device, unsigned sides, float radius, math::Vector color)
   {
@@ -60,7 +82,7 @@ namespace Shapes
   {
     const float csize = size / 2.0f;
 
-    BasicVertex vertices[] =
+    TexturedVertex vertices[] =
     {
       {{ csize,  csize,  csize, 1}, color},
       {{-csize,  csize,  csize, 1}, color},
@@ -82,14 +104,12 @@ namespace Shapes
       2, 3, 6, 6, 3, 7
     };
 
-    const UINT vertexCount = ARRAYSIZE(vertices);
-    const UINT indexCount = ARRAYSIZE(indices);
-
     if (color == Colors::Transparent)
     {
+      std::uniform_real_distribution<float> color_rand;
+
       for (auto& vertex : vertices)
       {
-        std::uniform_real_distribution<float> color_rand;
 
         vertex.color = math::Vector
         {
@@ -101,6 +121,6 @@ namespace Shapes
       }
     }
 
-    return new Model{device, vertices, vertexCount, indices, indexCount};
+    return new Model{device, vertices, indices};
   }
 }

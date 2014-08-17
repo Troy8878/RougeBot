@@ -88,17 +88,17 @@ namespace ruby
     ruby_value& operator=(uint64_t i);
     ruby_value& operator=(float f);
     ruby_value& operator=(double d);
-    explicit operator int64_t();
-    explicit operator int32_t();
-    explicit operator uint64_t();
-    explicit operator uint32_t();
-    explicit operator float();
-    explicit operator double();
+    operator int64_t();
+    operator int32_t();
+    operator uint64_t();
+    operator uint32_t();
+    operator float();
+    operator double();
 
     ruby_value& operator=(const char *string);
     ruby_value& operator=(const std::string& string);
-    explicit operator const char *();
-    explicit operator std::string();
+    operator const char *();
+    operator std::string();
   };
 
   class ruby_gc_guard

@@ -16,15 +16,13 @@ namespace math
 
   const float pi = 3.14159265358979f;
 
-  class Vector
+  class Vector : public XMFLOAT4A
   {
-    XMFLOAT4A _value;
-
   public:
     inline Vector() = default;
     inline Vector(CXMVECTOR v1)
     {
-      XMStoreFloat4A(&_value, v1);
+      XMStoreFloat4A(this, v1);
     }
 
     inline Vector(float x, float y, float z, float w)
@@ -32,47 +30,32 @@ namespace math
     {
     }
 
-    inline XMVECTOR XM_CALLCONV get() const { return XMLoadFloat4A(&_value); }
+    inline XMVECTOR XM_CALLCONV get() const { return XMLoadFloat4A(this); }
     inline Vector& XM_CALLCONV operator=(FXMVECTOR v1)
     {
-      XMStoreFloat4A(&_value, v1);
+      XMStoreFloat4A(this, v1);
       return *this;
     }
 
-    inline XMFLOAT4A& value() { return _value; }
-    inline float *buffer() { return reinterpret_cast<float *>(&_value.x); }
-
-    inline float& x() { return _value.x; }
-    inline float x() const { return _value.x; }
-    
-    inline float& y() { return _value.y; }
-    inline float y() const { return _value.y; }
-
-    inline float& z() { return _value.z; }
-    inline float z() const { return _value.z; }
-    
-    inline float& w() { return _value.w; }
-    inline float w() const { return _value.w; }
+    inline float *buffer() { return &x; }
 
     inline bool operator==(const Vector& other)
     {
       return 
-        x() == other.x() &&
-        y() == other.y() &&
-        z() == other.z() &&
-        w() == other.w();
+        x == other.x &&
+        y == other.y &&
+        z == other.z &&
+        w == other.w;
     }
   };
 
-  class Vector2D
+  class Vector2D : public XMFLOAT2A
   {
-    XMFLOAT2A _value;
-
   public:
     inline Vector2D() = default;
     inline Vector2D(CXMVECTOR v1)
     {
-      XMStoreFloat2A(&_value, v1);
+      XMStoreFloat2A(this, v1);
     }
 
     inline Vector2D(float x, float y)
@@ -80,27 +63,18 @@ namespace math
     {
     }
 
-    inline XMVECTOR XM_CALLCONV get() const { return XMLoadFloat2A(&_value); }
+    inline XMVECTOR XM_CALLCONV get() const { return XMLoadFloat2A(this); }
     inline Vector2D& XM_CALLCONV operator=(FXMVECTOR v1)
     {
-      XMStoreFloat2A(&_value, v1);
+      XMStoreFloat2A(this, v1);
       return *this;
     }
 
-    inline XMFLOAT2A& value() { return _value; }
-    inline float *buffer() { return reinterpret_cast<float *>(&_value.x); }
-
-    inline float& x() { return _value.x; }
-    inline float x() const { return _value.x; }
-    
-    inline float& y() { return _value.y; }
-    inline float y() const { return _value.y; }
-
     inline bool operator==(const Vector2D& other)
     {
-      return 
-        x() == other.x() &&
-        y() == other.y();
+      return
+        x == other.x &&
+        y == other.y;
     }
   };
 

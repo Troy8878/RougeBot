@@ -45,4 +45,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Engine\Style Guide.txt" />
+    <Text Include="Known Events.txt" />
+  </ItemGroup>
 </Project>

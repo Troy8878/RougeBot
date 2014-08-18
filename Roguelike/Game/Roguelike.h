@@ -33,6 +33,9 @@ public:
     initShaders();
     initObjects();
     initSetup();
+
+    static event_id resizeEvent = Events::Event::createEventId("window_resize");
+    setHandler(resizeEvent, &Roguelike::onResize);
   }
 
   void initShaders()
@@ -114,6 +117,14 @@ public:
   {
     delete _basicShape;
     delete _basicShader;
+  }
+
+  void onResize(Events::EventMessage& e)
+  {
+    auto& data = static_cast<Events::RudimentaryEventWrapper<math::Vector2D> *>(e.getData())->data;
+    
+    _camera.aspectRatio = data.x / data.y;
+    _camera.init();
   }
 
 private:

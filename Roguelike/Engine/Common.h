@@ -9,6 +9,8 @@
 
 #pragma once
 
+#pragma warning (disable: 4505) // It's okay if a function hasn't been used yet :/
+
 #include "Helpers\UseDirectX.h"
 #include <string>
 #include <unordered_map>

@@ -131,6 +131,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventHandlers.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameComponentGem.cpp" />
     <ClCompile Include="GameStuffGem.cpp" />
@@ -139,12 +140,11 @@
     <ClCompile Include="RubyClass.cpp" />
     <ClCompile Include="RubyEngine.cpp" />
     <ClCompile Include="RubyInit.cpp" />
+    <ClCompile Include="RubyModule.cpp" />
+    <ClCompile Include="RubyValue.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Style Guide.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

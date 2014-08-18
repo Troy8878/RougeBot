@@ -10,6 +10,7 @@
 #include "GraphicsDevice.h"
 #include "GameTime.h"
 #include "EngineInit.h"
+#include "EventHandlers.h"
 
 #include "Common.h"
 
@@ -23,7 +24,7 @@ GameType *getGame()
   return static_cast<GameType *>(getGame());
 }
 
-class Game abstract
+class Game abstract : public Events::BasicClassEventReciever<Game>
 {
 public:
   typedef std::function<void(HWND, UINT, WPARAM, LPARAM, LRESULT&)> wndproc_callback;
@@ -52,6 +53,8 @@ private:
   GameTime _gameTime;
   bool _running = false;
 
+  void graphicsOnInit();
+
 protected:
   HINSTANCE _hInstance;
   const std::string _title;
@@ -59,6 +62,7 @@ protected:
 
 public:
   EngineInitSettings initSettings;
+  Events::BasicEventDispatcher globalEventDispatcher;
 
   friend class WindowDevice;
 };

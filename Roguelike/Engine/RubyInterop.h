@@ -22,6 +22,8 @@ namespace ruby
   class ruby_engine
   {
   public:
+    static ruby_engine *global_engine;
+
     ruby_engine();
     ~ruby_engine();
 
@@ -45,6 +47,7 @@ namespace ruby
 
   class ruby_class
   {
+  protected:
     ruby_engine *_engine;
     RClass *_class;
     
@@ -63,9 +66,6 @@ namespace ruby
 
   class ruby_module : public ruby_class
   {
-    ruby_engine *_engine;
-    RClass *_module;
-
   public:
     ruby_module(ruby_engine *engine, RClass *module);
 
@@ -78,7 +78,7 @@ namespace ruby
     ruby_engine *_engine;
 
   public:
-    ruby_value(ruby_engine *engine, const mrb_value& value = mrb_nil_value());
+    ruby_value(const mrb_value& value = mrb_nil_value(), ruby_engine *engine = ruby_engine::global_engine);
 
     ruby_value& operator=(const mrb_value& value);
 

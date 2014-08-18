@@ -1,0 +1,24 @@
+All known events. Please update this file when you design a new one ;)
+Note, please don't ever choose an event ID number by hand D: I can't
+guarentee it will be the same number even between runs. Use
+Events::Event::createEventId(name) to get the ID, and save it statically
+because the number won't change per run.
+
+update
+  Data type: Events::UpdateEvent
+
+  Happens every frame regardless of other states. This event cannot
+  be handled. Most components shouldn't need to use this event.
+
+draw
+  Happens every frame when it's time to draw graphical components to
+  the screen. This is the only event under which resources should be
+  drawn to the screen.
+
+window_resize
+  Data type: Events::RudimentaryEventWrapper<math::Vector2D>
+
+  This will be called when the user resizes the play window. Don't do
+  anything too intensive here, and note that it will be called repeatedly
+  during the resizing :/ I'll look into changing this, but for now we
+  have to deal with it as is.

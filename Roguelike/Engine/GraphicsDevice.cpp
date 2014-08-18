@@ -46,7 +46,7 @@ HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
 
   HWND window = CreateWindow(wndc.lpszClassName,
                              options.gameTitle.c_str(),
-                             WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX,
+                             WS_OVERLAPPEDWINDOW,
                              CW_USEDEFAULT, CW_USEDEFAULT,
                              static_cast<UINT>(options.size.x),
                              static_cast<UINT>(options.size.y),
@@ -127,9 +127,39 @@ void WindowDevice::onResize(std::function<void(math::Vector2D)> callback)
   _onResize = callback;
 }
 
-void WindowDevice::setSize(math::Vector2D)
+void WindowDevice::setSize(math::Vector2D size)
 {
-  throw std::not_implemented_exception();
+  if (!_swapChain)
+    return;
+
+  // Release render target
+  _deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+  releaseDXInterface(_renderTargetView);
+
+  HRESULT hr;
+  hr = _swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+  CHECK_HRESULT(hr);
+
+  ID3D11Texture2D *pBuffer;
+  hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+                             reinterpret_cast<void **>(&pBuffer));
+  CHECK_HRESULT(hr);
+
+  hr = _device->CreateRenderTargetView(pBuffer, nullptr, &_renderTargetView);
+  releaseDXInterface(pBuffer);
+
+  _deviceContext->OMSetRenderTargets(1, &_renderTargetView, nullptr);
+
+  D3D11_VIEWPORT vp;
+  vp.Width = size.x;
+  vp.Height = size.y;
+  vp.MinDepth = 0.0f;
+  vp.MaxDepth = 1.0f;
+  vp.TopLeftX = 0;
+  vp.TopLeftY = 0;
+  _deviceContext->RSSetViewports(1, &vp);
+
+  _size = size;
 }
 
 math::Vector2D WindowDevice::getSize() const
@@ -340,7 +370,6 @@ void GraphicsDevice::initializeD3DContext()
   deviceContext()->OMSetBlendState(_blendState, nullptr, 0xFFFFFF);
 
 #pragma endregion
-
 }
 
 void GraphicsDevice::createInputLayout(byte* bytecode,

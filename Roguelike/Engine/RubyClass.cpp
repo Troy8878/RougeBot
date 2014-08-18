@@ -11,6 +11,11 @@
 
 namespace ruby
 {
+  ruby_class::ruby_class(ruby_engine *engine, RClass *_class)
+    : _engine(engine), _class(_class)
+  {
+  }
+
   void ruby_class::define_alias(const char *name1, const char *name2)
   {
     mrb_define_alias(*_engine, _class, name1, name2);

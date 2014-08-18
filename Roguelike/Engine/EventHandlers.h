@@ -6,58 +6,91 @@
 
 #pragma once
 
-#include "Common.h"
 #include "Event.h"
+
+class Game;
 
 namespace Events
 {
-
-  class BasicFPEventHandler : public EventHandler
+  class BasicEventDispatcher : public EventDispatcher
   {
-    typedef void (*function_type)(EventMessage&);
-    function_type func;
-
   public:
-    BasicFPEventHandler(function_type func, bool alwaysHandle)
-      : EventHandler(alwaysHandle), func(func)
-    {
-    }
+    bool canHandle(const EventMessage& e) override;
+    void handle(EventMessage& e) override;
 
-    virtual void operator()(EventMessage& event) override
-    {
-      func(event);
-    }
+    void addListener(EventReciever& reciever) override;
+    void removeListener(EventReciever& reciever) override;
+
+  private:
+    std::vector<std::pair<bool, EventReciever *>> recievers;
   };
 
-  template <typename Class>
-  class MemberFunctionEventHandler : public EventHandler
+  template <typename T>
+  class BasicClassEventReciever : public EventReciever
   {
-    typedef void (Class::*function_type)(EventMessage&);
-    function_type func;
-    Class *object;
-
   public:
-    MemberFunctionEventHandler(function_type func, Class *object, bool alwaysHandle)
-      : EventHandler(alwaysHandle), func(func), object(object)
+    BasicClassEventReciever(T *handler);
+
+    typedef void (T::*event_handler)(EventMessage& e);
+
+    bool canHandle(const EventMessage& e) override;
+    void handle(EventMessage& e) override;
+
+    void setHandler(event_id id, event_handler handler);
+    void removeHandler(event_id id);
+
+    template <typename Derived>
+    void setHandler(event_id id, void (Derived::*handler)(EventMessage& e))
     {
+      setHandler(id, static_cast<event_handler>(handler));
     }
 
-    virtual void operator()(EventMessage& event) override
-    {
-      (object ->* func)(event);
-    }
+  private:
+    T *handler;
+    flat_map<event_id, event_handler> handlers;
   };
 
-  class StdFuncEventHandler : public EventHandler
-  {
-    typedef std::function<void(EventMessage&)> function_type;
-    function_type func;
+// ----------------------------------------------------------------------------
 
-  public:
-    StdFuncEventHandler(function_type func, bool alwaysHandle)
-      : EventHandler(alwaysHandle), func(func)
-    {
-    }
-  };
+  template <typename T>
+  BasicClassEventReciever<T>::BasicClassEventReciever(T *handler)
+    : handler(handler)
+  {
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T>
+  bool BasicClassEventReciever<T>::canHandle(const EventMessage& e)
+  {
+    return handlers.find(e.eventId()) != handlers.end();
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T>
+  void BasicClassEventReciever<T>::handle(EventMessage& e)
+  {
+    (handler->*handlers[e.eventId()])(e);
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T>
+  void BasicClassEventReciever<T>::setHandler(event_id id, event_handler handler)
+  {
+    handlers[id] = handler;
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T>
+  void BasicClassEventReciever<T>::removeHandler(event_id id)
+  {
+    if (handlers.find(id) != handlers.end())
+      handlers.remove(id);
+  }
+
+// ----------------------------------------------------------------------------
 
 }

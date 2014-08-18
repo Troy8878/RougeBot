@@ -58,19 +58,23 @@ namespace Events
   class EventReciever abstract
   {
   public:
-    virtual ~EventReciever() {}
-
     virtual bool canHandle(const EventMessage& e) = 0;
     virtual void handle(EventMessage& e) = 0;
+
+  protected:
+    inline ~EventReciever() {}
   };
 
   class EventDispatcher abstract : public EventReciever
   {
   public:
-    virtual void addListener(EventReciever& reciever, event_id id) = 0;
-    virtual void removeListener(EventReciever& reciever, event_id id) = 0;
+    virtual void addListener(EventReciever& reciever) = 0;
+    virtual void removeListener(EventReciever& reciever) = 0;
 
     static std::unique_ptr<EventDispatcher> createDefaultDispatcher();
+
+  protected:
+    inline ~EventDispatcher() {}
   };
 
   class Event

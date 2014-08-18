@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="mrbgems\mruby-fiber\src\fiber.c" />
     <ClCompile Include="src\array.c" />
     <ClCompile Include="src\backtrace.c" />
     <ClCompile Include="src\class.c" />

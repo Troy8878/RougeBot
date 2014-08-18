@@ -39,6 +39,12 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{1af899eb-b6fd-46c7-bc8f-91b989964b9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Events">
+      <UniqueIdentifier>{5bfb41bd-690d-4a1e-ae72-9b689aafc153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{593eeba6-936a-4d0f-a02b-d41308d63e3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -72,15 +78,6 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Header Files\Arch</Filter>
-    </ClInclude>
-    <ClInclude Include="EventHandlers.h">
-      <Filter>Header Files\Arch</Filter>
-    </ClInclude>
-    <ClInclude Include="EventTypes.h">
-      <Filter>Header Files\Arch</Filter>
-    </ClInclude>
     <ClInclude Include="EngineInit.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
@@ -95,6 +92,15 @@
     </ClInclude>
     <ClInclude Include="RubyInterop.h">
       <Filter>Header Files\Interop</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTypes.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandlers.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -162,9 +168,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp">
-      <Filter>Source Files\Arch</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
@@ -186,8 +189,17 @@
     <ClCompile Include="Component.cpp">
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Style Guide.txt" />
+    <ClCompile Include="RubyValue.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyModule.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandlers.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

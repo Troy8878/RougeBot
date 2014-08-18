@@ -7,21 +7,32 @@
 #include "Common.h"
 #include "Game.h"
 
+// ----------------------------------------------------------------------------
+
 static Game *_gameInst;
 Game *getGame()
 {
   return _gameInst;
 }
 
+// ----------------------------------------------------------------------------
+
 Game::Game(const std::string& title, HINSTANCE hInstance)
-  : _title(title), _hInstance(hInstance)
+  : BasicClassEventReciever(this), _title(title), _hInstance(hInstance)
 {
+  Events::Event::globalDispatcher = &globalEventDispatcher;
   _gameInst = this;
+
+  globalEventDispatcher.addListener(*this);
 }
+
+// ----------------------------------------------------------------------------
 
 Game::~Game()
 {
 }
+
+// ----------------------------------------------------------------------------
 
 void Game::run()
 {
@@ -30,6 +41,7 @@ void Game::run()
   try
   {
     _graphicsDevice = GraphicsDevice::createWindow({_hInstance, {1280, 720}, _title});
+    graphicsOnInit();
 
     onInit();
 
@@ -72,8 +84,29 @@ void Game::run()
 #endif
 }
 
+// ----------------------------------------------------------------------------
+
 void Game::setProcHandler(UINT message, wndproc_callback callback)
 {
   _wndprocCallbacks[message] = callback;
 }
 
+// ----------------------------------------------------------------------------
+
+void Game::graphicsOnInit()
+{
+  setProcHandler(WM_SIZE, [this](HWND, UINT, WPARAM, LPARAM lparam, LRESULT&)
+  {
+    float nx = LOWORD(lparam);
+    float ny = HIWORD(lparam);
+    
+    this->getGraphicsDevice()->setSize({nx, ny});
+
+    static event_id eventId = Events::Event::createEventId("window_resize");
+    Events::RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};
+    Events::EventMessage message{eventId, &data, false};
+    Events::Event::raise(message);
+  });
+}
+
+// ----------------------------------------------------------------------------

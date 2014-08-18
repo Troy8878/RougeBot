@@ -76,6 +76,11 @@ namespace math
         x == other.x &&
         y == other.y;
     }
+
+    inline bool operator!=(const Vector2D& other)
+    {
+      return !(*this == other);
+    }
   };
 
   class Matrix

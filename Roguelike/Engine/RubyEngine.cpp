@@ -11,6 +11,9 @@
 
 namespace ruby
 {
+  static ruby_engine _global_engine;
+  ruby_engine *ruby_engine::global_engine = &_global_engine;
+
   ruby_engine::ruby_engine()
   {
     mrb = mrb_open();

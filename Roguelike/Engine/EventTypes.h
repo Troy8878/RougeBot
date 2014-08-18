@@ -13,9 +13,25 @@ namespace Events
 {
   class GameTime;
 
-  struct EventData abstract
+  struct EventData
   {
-    virtual ruby::ruby_value getRubyWrapper() = 0;
+    virtual ruby::ruby_value getRubyWrapper() 
+    { 
+      return ruby::ruby_value{}; 
+    };
+  };
+
+  template <typename T>
+  struct RudimentaryEventWrapper : public EventData
+  {
+    RudimentaryEventWrapper() = default;
+
+    RudimentaryEventWrapper(const T& data)
+      : data(data)
+    {
+    }
+
+    T data;
   };
 
   struct UpdateEvent

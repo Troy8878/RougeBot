@@ -11,7 +11,6 @@
 
 #pragma warning (disable: 4505) // It's okay if a function hasn't been used yet :/
 
-#include "Helpers\UseDirectX.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -24,10 +23,12 @@
 #include <random>
 #include <unordered_map>
 
+#include "Helpers\UseDirectX.h"
 #include "Helpers\FlatMap.h"
 #include "Helpers\Console.h"
 #include "Helpers\StackTrace.h"
 
+#include "GameTime.h"
 #include "Event.h"
 #include "EventTypes.h"
 #include "Entity.h"

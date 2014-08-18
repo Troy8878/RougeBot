@@ -32,6 +32,7 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
 
 Game::~Game()
 {
+  delete _respack;
 }
 
 // ----------------------------------------------------------------------------
@@ -39,6 +40,8 @@ Game::~Game()
 void Game::run()
 {
   _running = true;
+
+  _respack = new Respack::ResourcePack(initSettings.assetPack, initSettings.assetFolder);
 
   try
   {

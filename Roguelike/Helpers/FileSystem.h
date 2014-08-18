@@ -13,8 +13,8 @@
 
 namespace fs = std::tr2::sys;
 
-template <typename String, typename Traits, typename Append>
-inline fs::basic_path<String, Traits> operator/(const fs::basic_path<String, Traits>& path, const Append& append)
+template <typename String, typename Traits>
+inline fs::basic_path<String, Traits> operator/(const fs::basic_path<String, Traits>& path, const String& append)
 {
   fs::basic_path<String, Traits> copy(path);
   copy /= append;
@@ -37,6 +37,7 @@ namespace std { namespace tr2 { namespace sys
     std::wstring fullpath;
     std::wstring mask;
     mode smode;
+    int _itemCount = -1;
 
   public:
     class iterator final
@@ -83,7 +84,12 @@ namespace std { namespace tr2 { namespace sys
         initializePath();
       }
 
-      value_type operator*() const
+      value_type& operator*()
+      {
+        return _pathValue;
+      }
+
+      const value_type& operator*() const
       {
         return _pathValue;
       }
@@ -183,9 +189,19 @@ namespace std { namespace tr2 { namespace sys
     {
       return iterator{INVALID_HANDLE_VALUE};
     }
-  };
 
-  size_t fileSize(const wpath& file);
+    int itemCount()
+    {
+      if (_itemCount != -1)
+        return _itemCount;
+
+      _itemCount = 0;
+      for (auto it = begin(); it != end(); ++it)
+        _itemCount++;
+
+      return _itemCount;
+    }
+  };
 
   struct binary_file_data
   {
@@ -201,7 +217,7 @@ namespace std { namespace tr2 { namespace sys
     static binary_file_data readAllBytes(const wpath& file)
     {
       auto filename = file.file_string();
-      auto size = fileSize(file);
+      auto size = file_size(file);
       if (size == INVALID_FILE_SIZE)
         return {0, nullptr};
 

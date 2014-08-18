@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "Helpers\UseDirectX.h"
 #include "Common.h"
 
 // ----------------------------------------------------------------------------

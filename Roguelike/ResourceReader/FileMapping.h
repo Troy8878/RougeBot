@@ -20,6 +20,13 @@ public:
 
   FileMappingView mapView(size_t offset, size_t size);
 
+  template <typename Struct>
+  Struct readStruct(size_t offset)
+  {
+    auto view = mapView(offset, sizeof(Struct));
+    return *view.getAs<Struct>();
+  }
+
   NO_COPY_CONSTRUCTOR(FileMapping);
   NO_ASSIGNMENT_OPERATOR(FileMapping);
 
@@ -37,13 +44,28 @@ class FileMappingView
   friend class FileMapping;
 
 public:
+  FileMappingView() = default;
+
   template <typename T>
   inline T *getAs()
   {
     return reinterpret_cast<T *>(map->addr);
   }
 
-  inline operator byte *() { return getAs<byte>(); }
+  inline operator byte *() 
+  { 
+    return getAs<byte>(); 
+  }
+
+  void Release()
+  {
+    map = nullptr;
+  }
+
+  inline bool isValid()
+  {
+    return static_cast<bool>(map);
+  }
 
 private:
   struct MapWrapper

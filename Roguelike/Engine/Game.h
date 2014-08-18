@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include "Helpers\FixedWindows.h"
+#include "Common.h"
+
 #include "GraphicsDevice.h"
-#include "GameTime.h"
 #include "EngineInit.h"
 #include "EventHandlers.h"
+#include "ResourceReader\ResourcePack.h"
 
-#include "Common.h"
 
 // ----------------------------------------------------------------------------
 
@@ -49,15 +49,15 @@ public:
   void setProcHandler(UINT message, wndproc_callback callback);
 
   const GameTime& gameTime() { return _gameTime; }
-
   GraphicsDevice *getGraphicsDevice() { return _graphicsDevice.get(); };
+  Respack::ResourcePack& getRespack() { return *_respack; }
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
   GameTime _gameTime;
+  Respack::ResourcePack *_respack = nullptr;
+  Level *_currentLevel = nullptr;
   bool _running = false;
-
-  Level *_currentLevel;
 
   void graphicsOnInit();
 

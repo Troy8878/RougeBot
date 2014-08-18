@@ -22,7 +22,7 @@ static void createConsole()
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-  IFDEBUG(std::cout << sizeof(std::chrono::system_clock));
+  IFDEBUG(std::cout << sizeof(std::chrono::system_clock::time_point));
 
   Roguelike game("Game 200 Project", hInstance);
   game.run();

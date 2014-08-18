@@ -7,6 +7,8 @@
 #include "TempFile.h"
 #include <fstream>
 
+// ----------------------------------------------------------------------------
+
 TempFile TempFile::create(byte *data, size_t size)
 {
   auto path = getTempPath().file_string();
@@ -17,6 +19,17 @@ TempFile TempFile::create(byte *data, size_t size)
 
   return TempFile{path};
 }
+
+// ----------------------------------------------------------------------------
+
+TempFile TempFile::wrapNonTemp(const fs::wpath& path)
+{
+  TempFile file{path};
+  file.handle->istemp = false;
+  return file;
+}
+
+// ----------------------------------------------------------------------------
 
 fs::wpath TempFile::getTempPath()
 {
@@ -29,18 +42,27 @@ fs::wpath TempFile::getTempPath()
   return temp_file;
 }
 
+// ----------------------------------------------------------------------------
+
 TempFile::TempFile(const fs::wpath& path)
   : handle(std::make_shared<TempFileInternal>(path))
 {
 }
+
+// ----------------------------------------------------------------------------
 
 TempFile::TempFileInternal::TempFileInternal(const fs::wpath& path)
   : path(path)
 {
 }
 
+// ----------------------------------------------------------------------------
+
 TempFile::TempFileInternal::~TempFileInternal()
 {
-  DeleteFileW(path.file_string().c_str());
+  if (istemp)
+    DeleteFileW(path.file_string().c_str());
 }
+
+// ----------------------------------------------------------------------------
 

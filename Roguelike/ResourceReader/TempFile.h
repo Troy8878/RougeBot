@@ -12,6 +12,7 @@ class TempFile
 {
 public:
   static TempFile create(byte *data, size_t size);
+  static TempFile wrapNonTemp(const fs::wpath& path);
   static fs::wpath getTempPath();
 
   fs::wpath getPath() { return handle->path; }
@@ -21,6 +22,8 @@ private:
   
   struct TempFileInternal
   {
+    bool istemp = true;
+
     TempFileInternal(const fs::wpath& path);
     ~TempFileInternal();
 

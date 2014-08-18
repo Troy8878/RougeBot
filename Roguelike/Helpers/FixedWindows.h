@@ -4,9 +4,14 @@
  * Created 2014/05/28
  *********************************/
 
+// This file is for including windows.h and fixing some of the things it
+// does, but it's also the place for misfit helpers that have nowhere
+// else to go.
+
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 #include <wincodec.h>
 #include <comdef.h>
@@ -30,9 +35,6 @@ inline std::string narrow(const std::wstring& wide_string)
 
 #define CSTR_WIDEN(x) widen(x).c_str()
 #define CSTR_NARROW(x) narrow(x).c_str()
-
-#undef min
-#undef max
 
 #ifdef _DEBUG
 #define IFDEBUG(x) x
@@ -197,6 +199,8 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   variadic_push_container(container, params...);
 }
 
+
+#define strcmpi _strcmpi
 
 
 #define NO_COPY_CONSTRUCTOR(type) type(const type&) = delete

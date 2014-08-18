@@ -20,6 +20,8 @@ public:
     : Game{title, hInstance}
   {
     initSettings.cullTriangles = false;
+    initSettings.assetPack = L"./Assets.respack";
+    initSettings.assetFolder = L"./Assets";
   }
 
   void onInit() override

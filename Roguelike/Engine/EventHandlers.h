@@ -12,6 +12,9 @@ class Game;
 
 namespace Events
 {
+
+// ----------------------------------------------------------------------------
+
   class BasicEventDispatcher : public EventDispatcher
   {
   public:
@@ -24,6 +27,8 @@ namespace Events
   private:
     std::vector<std::pair<bool, EventReciever *>> recievers;
   };
+
+// ----------------------------------------------------------------------------
 
   template <typename T>
   class BasicClassEventReciever : public EventReciever

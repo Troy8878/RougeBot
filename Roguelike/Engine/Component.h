@@ -8,9 +8,13 @@
 
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 struct ComponentRegistration;
 class ComponentFactory;
 typedef std::unordered_map<std::string, ULONG_PTR> component_factory_data;
+
+// ----------------------------------------------------------------------------
 
 class Component abstract
 {
@@ -30,6 +34,8 @@ private:
   Entity* _parent;
 };
 
+// ----------------------------------------------------------------------------
+
 class ComponentManager
 {
 public:
@@ -38,6 +44,8 @@ public:
 private:
   static flat_map<std::string, ComponentRegistration>& components();
 };
+
+// ----------------------------------------------------------------------------
 
 class ComponentFactory abstract
 {
@@ -50,8 +58,7 @@ protected:
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// Helpers
+// ----------------------------------------------------------------------------
 
 struct ComponentRegistration
 {
@@ -77,6 +84,8 @@ private:
   friend class flat_map<std::string, ComponentRegistration>;
 };
 
+// ----------------------------------------------------------------------------
+
 template <typename T>
 class StaticComponentRegistration final
 {
@@ -90,4 +99,6 @@ public:
   StaticComponentRegistration(const StaticComponentRegistration&) = delete;
   StaticComponentRegistration& operator=(const StaticComponentRegistration&) = delete;
 };
+
+// ----------------------------------------------------------------------------
 

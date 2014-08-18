@@ -62,6 +62,13 @@ public:
   EngineInitSettings initSettings;
   Events::BasicEventDispatcher globalEventDispatcher;
 
+  struct LevelEventProxy : public Events::EventReciever
+  {
+    bool canHandle(const Events::EventMessage& e) override;
+    void handle(Events::EventMessage& e) override;
+
+  } levelEventProxy;
+
   friend class WindowDevice;
 };
 

@@ -6,14 +6,23 @@
 
 #pragma once
 
-class Level abstract
+#include "Common.h"
+#include "EventHandlers.h"
+
+class Game;
+
+class Level : public Events::BasicEventDispatcher
 {
 public:
-  void init();
-  void update();
-  void draw();
+  Level();
+
+  virtual void load() = 0;
+  virtual void init() = 0;
+  virtual void free() = 0;
+  virtual void unload() = 0;
 
 protected:
-  virtual void onUpdate() = 0;
+  Events::BasicClassEventReciever<Level> levelEvents;
+  friend class Game;
 };
 

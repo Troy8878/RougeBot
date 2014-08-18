@@ -92,6 +92,31 @@ private:
   COMError _error;
 };
 
+class string_exception : public std::exception
+{
+  std::string message;
+
+public:
+  string_exception(const std::string& message)
+    : message(message)
+  {
+  }
+
+  const char *what() const override
+  {
+    return message.c_str();
+  }
+};
+
+class win32_exception : public string_exception
+{
+public:
+  win32_exception()
+    : string_exception(GetLastErrorString())
+  {
+  }
+};
+
 template <class Interface>
 /** Safely releases DirectX interfaces */
 inline void releaseDXInterface(Interface *& interfaceToRelease)
@@ -127,7 +152,9 @@ private:
 
 #define PROTECTED_ACCESSIBLE(type, name) \
   type _##name = nullptr; public: \
-  inline type const& name() { return _##name; } protected:
+  inline type const& name() { \
+    return _##name; \
+  } protected:
 
 #define CHECK_HRESULT(hr) CheckHRESULT(hr)
 
@@ -170,5 +197,8 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   variadic_push_container(container, params...);
 }
 
+
+
+#define NO_COPY_CONSTRUCTOR(type) type(const type&) = delete
 #define NO_ASSIGNMENT_OPERATOR(type) type& operator=(const type&) = delete
 

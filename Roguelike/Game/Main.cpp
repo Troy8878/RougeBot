@@ -19,19 +19,10 @@ static void createConsole()
 }
 #endif
 
-template <typename T>
-void inferenceTest(std::string& str, void(T::*p)())
-{
-  UNREFERENCED_PARAMETER(p);
-  str = typeid(T).name();
-}
-
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-
-  std::string t;
-  inferenceTest(t, &std::string::clear);
+  IFDEBUG(std::cout << sizeof(std::chrono::system_clock));
 
   Roguelike game("Game 200 Project", hInstance);
   game.run();

@@ -80,11 +80,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileMapping.h" />
     <ClInclude Include="ImageResource.h" />
     <ClInclude Include="ResourcePack.h" />
     <ClInclude Include="TempFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileMapping.cpp" />
     <ClCompile Include="ImageResource.cpp" />
     <ClCompile Include="ResourcePack.cpp" />
     <ClCompile Include="TempFile.cpp" />

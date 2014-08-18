@@ -217,4 +217,14 @@ namespace std { namespace tr2 { namespace sys
       return {size, buffer};
     }
   };
+
+  class file_not_found_exception : public string_exception
+  {
+  public:
+    file_not_found_exception(const std::string& message)
+      : string_exception(message)
+    {
+    }
+  };
+
 }}}

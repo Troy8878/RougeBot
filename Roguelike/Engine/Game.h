@@ -38,8 +38,6 @@ public:
   void stop() { _running = false; }
 
   virtual void onInit() {}
-  virtual void onUpdate(const GameTime&) {}
-  virtual void onDraw() {}
   virtual void onFree() {}
 
   void setProcHandler(UINT message, wndproc_callback callback);

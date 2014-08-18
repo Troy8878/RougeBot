@@ -170,3 +170,5 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   variadic_push_container(container, params...);
 }
 
+#define NO_ASSIGNMENT_OPERATOR(type) type& operator=(const type&) = delete
+

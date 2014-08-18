@@ -9,9 +9,10 @@
 #include "RubyInterop.h"
 #include "Common.h"
 
+class GameTime;
+
 namespace Events
 {
-  class GameTime;
 
   struct EventData
   {
@@ -24,24 +25,27 @@ namespace Events
   template <typename T>
   struct RudimentaryEventWrapper : public EventData
   {
-    RudimentaryEventWrapper() = default;
+    T data;
 
+    RudimentaryEventWrapper() = default;
     RudimentaryEventWrapper(const T& data)
       : data(data)
     {
     }
 
-    T data;
+    NO_ASSIGNMENT_OPERATOR(RudimentaryEventWrapper<T>);
   };
 
-  struct UpdateEvent
+  struct UpdateEvent : public EventData
   {
-    UpdateEvent(GameTime *gameTime)
+    GameTime& gameTime;
+
+    UpdateEvent(GameTime& gameTime)
       : gameTime(gameTime)
     {
     }
 
-    GameTime *gameTime;
+    NO_ASSIGNMENT_OPERATOR(UpdateEvent);
   };
 
 }

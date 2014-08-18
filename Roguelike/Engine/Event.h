@@ -42,6 +42,12 @@ namespace Events
       return data;
     }
 
+    template <typename T>
+    T *getData()
+    {
+      return static_cast<T *>(getData());
+    }
+
     inline event_id eventId() const { return _eventId; }
 
     inline void handled(bool handled) 

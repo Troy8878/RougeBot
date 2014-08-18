@@ -34,6 +34,12 @@ public:
     initObjects();
     initSetup();
 
+    static event_id updateEvent = Events::Event::createEventId("update");
+    setHandler(updateEvent, &Roguelike::onUpdate);
+
+    static event_id drawEvent = Events::Event::createEventId("draw");
+    setHandler(drawEvent, &Roguelike::onDraw);
+
     static event_id resizeEvent = Events::Event::createEventId("window_resize");
     setHandler(resizeEvent, &Roguelike::onResize);
   }
@@ -70,8 +76,11 @@ public:
     _basicShape->texture = Texture2D{_graphicsDevice->device(), L"Assets/Textures/1384108156458.jpg"};
   }
 
-  void onUpdate(const GameTime& time) override
+  void onUpdate(Events::EventMessage& e)
   {
+    using namespace Events;
+    auto& time = e.getData<UpdateEvent>()->gameTime;
+
     using namespace DirectX;
     float dt = (float) time.dt();
 
@@ -102,7 +111,7 @@ public:
     _camera.update();
   }
 
-  void onDraw() override
+  void onDraw(Events::EventMessage&)
   {
     using namespace DirectX;
 
@@ -121,7 +130,8 @@ public:
 
   void onResize(Events::EventMessage& e)
   {
-    auto& data = static_cast<Events::RudimentaryEventWrapper<math::Vector2D> *>(e.getData())->data;
+    using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
+    auto& data = e.getData<event_type>()->data;
     
     _camera.aspectRatio = data.x / data.y;
     _camera.init();

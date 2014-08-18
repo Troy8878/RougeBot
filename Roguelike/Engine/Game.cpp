@@ -51,19 +51,25 @@ void Game::run()
 
       // Update
       _gameTime.update();
-      onUpdate(_gameTime);
 
       // Raise update event
       {
         using namespace Events;
         static event_id updateId = Event::createEventId("update");
-        
+        UpdateEvent edata{_gameTime};
+        EventMessage msg{updateId, &edata, false};
+
+        Event::raise(msg);
       }
 
+      // Raise draw event (and draw the frame)
       if (_graphicsDevice->beginFrame())
       {
-        onDraw();
-        // TODO: Draw more stuff
+        using namespace Events;
+        static event_id drawId = Event::createEventId("draw");
+        EventMessage msg{drawId, nullptr, false};
+
+        Event::raise(msg);
 
         _graphicsDevice->endFrame();
       }

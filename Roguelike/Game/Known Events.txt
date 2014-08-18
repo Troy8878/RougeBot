@@ -11,6 +11,8 @@ update
   be handled. Most components shouldn't need to use this event.
 
 draw
+  Data type: nullptr
+
   Happens every frame when it's time to draw graphical components to
   the screen. This is the only event under which resources should be
   drawn to the screen.

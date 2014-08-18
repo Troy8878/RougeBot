@@ -85,10 +85,11 @@ public:
     float dt = (float) time.dt();
 
     // Update FPS
+    if (dt > 0.001)
     {
-      const int update_res = 120;
+      const int update_res = 240;
       
-      static float fps = 0;
+      static float fps = 60;
       fps = (fps * (update_res - 1) + 1 / dt) / update_res;
       auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
       SetWindowText(_graphicsDevice->window(), title.c_str());

@@ -5,6 +5,8 @@
  *********************************/
 
 #include "ResourcePack.h"
+#include "FileMapping.h"
+#include <vector>
 
 // ----------------------------------------------------------------------------
 
@@ -33,9 +35,13 @@ struct ResPackHeader
 
 // ----------------------------------------------------------------------------
 
+const size_t firstResContainerOffset = sizeof(ResPackHeader);
+
 struct ResContainerHeader
 {
   unsigned __int16 resource_count;
+  signed   __int8  conatiner_name[32];
+  unsigned __int64 total_size;
 };
 
 // ----------------------------------------------------------------------------
@@ -51,17 +57,50 @@ struct ResHeader
 
 // ----------------------------------------------------------------------------
 
+struct MemContainerMapping
+{
+  ResContainerHeader header;
+  size_t map_offset;
+};
+
 struct ResPackImpl
 {
-  ResPackImpl(const fs::wpath& path);
+  ResPackImpl(const fs::wpath& path, const fs::wpath& fallback);
+  ResourceContainer *getContainer(const std::string& name);
+
+  ResourceContainer *getFallbackContainer(const std::wstring& name);
+  ResourceContainer *getMemoryContainer(const std::string& name);
+  bool memoryContainerExists(const std::string& name);
+
+  FileMapping packmap;
+  fs::wpath fallback;
+
+  std::vector<MemContainerMapping> memoryContainers;
 };
 
 // ----------------------------------------------------------------------------
 
-ResourcePack::ResourcePack(const fs::wpath& path)
-  : impl(std::make_shared<ResPackImpl>(path))
+ResourcePack::ResourcePack(const fs::wpath& path, const fs::wpath& fallbackFolder)
+  : impl(std::make_shared<ResPackImpl>(path, fallbackFolder))
 {
 }
+
+// ----------------------------------------------------------------------------
+
+ResourceContainer *ResourcePack::operator[](const std::string& containerName)
+{
+  return impl->getContainer(containerName);
+}
+
+// ----------------------------------------------------------------------------
+
+ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
+  : packmap(path), fallback(fallback)
+{
+
+}
+
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 

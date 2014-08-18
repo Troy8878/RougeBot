@@ -8,11 +8,17 @@
 
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 typedef ULONG_PTR event_id;
+
+// ----------------------------------------------------------------------------
 
 namespace Events
 {
   struct EventData;
+
+// ----------------------------------------------------------------------------
 
   class EventMessage
   {
@@ -61,6 +67,8 @@ namespace Events
     inline bool handled() const { return _handled; }
   };
 
+// ----------------------------------------------------------------------------
+
   class EventReciever abstract
   {
   public:
@@ -74,14 +82,16 @@ namespace Events
   class EventDispatcher abstract : public EventReciever
   {
   public:
-    virtual void addListener(EventReciever& reciever) = 0;
-    virtual void removeListener(EventReciever& reciever) = 0;
+    virtual void addListener(EventReciever *reciever) = 0;
+    virtual void removeListener(EventReciever *reciever) = 0;
 
     static std::unique_ptr<EventDispatcher> createDefaultDispatcher();
 
   protected:
     inline ~EventDispatcher() {}
   };
+
+// ----------------------------------------------------------------------------
 
   class Event
   {
@@ -98,4 +108,7 @@ namespace Events
     static void pushEvent(EventMessage& e);
     static void popEvent();
   };
+
+// ----------------------------------------------------------------------------
+
 }

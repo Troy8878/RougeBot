@@ -6,6 +6,7 @@
 
 #include "Common.h"
 #include "Game.h"
+#include "Level.h"
 
 // ----------------------------------------------------------------------------
 
@@ -23,7 +24,8 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
   Events::Event::globalDispatcher = &globalEventDispatcher;
   _gameInst = this;
 
-  globalEventDispatcher.addListener(*this);
+  globalEventDispatcher.addListener(this);
+  globalEventDispatcher.addListener(&levelEventProxy);
 }
 
 // ----------------------------------------------------------------------------
@@ -113,6 +115,24 @@ void Game::graphicsOnInit()
     Events::EventMessage message{eventId, &data, false};
     Events::Event::raise(message);
   });
+}
+
+// ----------------------------------------------------------------------------
+
+bool Game::LevelEventProxy::canHandle(const Events::EventMessage& e)
+{
+  static auto& game = *getGame();
+
+  return game._currentLevel && game._currentLevel->levelEvents.canHandle(e);
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::LevelEventProxy::handle(Events::EventMessage& e)
+{
+  static auto& game = *getGame();
+
+  game._currentLevel->levelEvents.handle(e);
 }
 
 // ----------------------------------------------------------------------------

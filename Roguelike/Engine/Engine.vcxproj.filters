@@ -87,9 +87,6 @@
     <ClInclude Include="GameTime.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
-    <ClInclude Include="RubyComponent.h">
-      <Filter>Header Files\Arch</Filter>
-    </ClInclude>
     <ClInclude Include="RubyInterop.h">
       <Filter>Header Files\Interop</Filter>
     </ClInclude>
@@ -101,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="Event.h">
       <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="RubyComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

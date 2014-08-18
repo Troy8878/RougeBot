@@ -21,8 +21,8 @@ namespace Events
     bool canHandle(const EventMessage& e) override;
     void handle(EventMessage& e) override;
 
-    void addListener(EventReciever& reciever) override;
-    void removeListener(EventReciever& reciever) override;
+    void addListener(EventReciever *reciever) override;
+    void removeListener(EventReciever *reciever) override;
 
   private:
     std::vector<std::pair<bool, EventReciever *>> recievers;

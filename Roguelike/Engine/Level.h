@@ -9,7 +9,11 @@
 #include "Common.h"
 #include "EventHandlers.h"
 
+// ----------------------------------------------------------------------------
+
 class Game;
+
+// ----------------------------------------------------------------------------
 
 class Level : public Events::BasicEventDispatcher
 {
@@ -25,4 +29,6 @@ protected:
   Events::BasicClassEventReciever<Level> levelEvents;
   friend class Game;
 };
+
+// ----------------------------------------------------------------------------
 

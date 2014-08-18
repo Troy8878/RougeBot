@@ -8,6 +8,8 @@
 
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 class GameTime
 {
 public:
@@ -15,6 +17,8 @@ public:
   const double maxDt = 0.1;
   const double minDt = 0;
   const double clock_period = clock::period::num / static_cast<double>(clock::period::den);
+
+// ----------------------------------------------------------------------------
   
   void update()
   {
@@ -29,16 +33,22 @@ public:
     if (_dt < minDt)
       _dt = maxDt;
   }
+
+// ----------------------------------------------------------------------------
   
   double dt() const
   {
     return _dt; 
   }
 
+// ----------------------------------------------------------------------------
+
   clock::duration runningTime() const
   {
     return _currTime - _initTime;
   }
+
+// ----------------------------------------------------------------------------
 
   double currFrameTime() const
   {
@@ -47,6 +57,8 @@ public:
     
     return diff.count() * clock_period;
   }
+
+// ----------------------------------------------------------------------------
 
 private:
   const clock::time_point _initTime = clock::now();
@@ -57,3 +69,5 @@ private:
 
   double _dt;
 };
+
+// ----------------------------------------------------------------------------

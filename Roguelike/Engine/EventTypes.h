@@ -9,10 +9,14 @@
 #include "RubyInterop.h"
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 class GameTime;
 
 namespace Events
 {
+
+// ----------------------------------------------------------------------------
 
   struct EventData
   {
@@ -21,6 +25,8 @@ namespace Events
       return ruby::ruby_value{}; 
     };
   };
+
+// ----------------------------------------------------------------------------
 
   template <typename T>
   struct RudimentaryEventWrapper : public EventData
@@ -36,6 +42,8 @@ namespace Events
     NO_ASSIGNMENT_OPERATOR(RudimentaryEventWrapper<T>);
   };
 
+// ----------------------------------------------------------------------------
+
   struct UpdateEvent : public EventData
   {
     GameTime& gameTime;
@@ -47,6 +55,8 @@ namespace Events
 
     NO_ASSIGNMENT_OPERATOR(UpdateEvent);
   };
+
+// ----------------------------------------------------------------------------
 
 }
 

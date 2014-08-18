@@ -10,7 +10,11 @@
 #include "Camera.h"
 #include "Texture.h"
 
+// ----------------------------------------------------------------------------
+
 struct Shader;
+
+// ----------------------------------------------------------------------------
 
 struct BasicVertex final
 {
@@ -18,12 +22,16 @@ struct BasicVertex final
   math::Vector color;
 };
 
+// ----------------------------------------------------------------------------
+
 struct TexturedVertex final
 {
   math::Vector position;
   math::Vector color;
   math::Vector2D texture;
 };
+
+// ----------------------------------------------------------------------------
 
 class Model
 {
@@ -56,6 +64,7 @@ private:
   UINT _vertexCount, _indexCount, _stride;
 };
 
+// ----------------------------------------------------------------------------
 
 template <typename VertexType>
 inline
@@ -66,6 +75,8 @@ Model::Model(ID3D11Device *device,
 {
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename VertexType, UINT vertexCount, UINT indexCount>
 inline
 Model::Model(ID3D11Device *device,
@@ -74,4 +85,6 @@ Model::Model(ID3D11Device *device,
              : Model{device, vertices, vertexCount, indices, indexCount}
 {
 }
+
+// ----------------------------------------------------------------------------
 

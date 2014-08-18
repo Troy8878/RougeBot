@@ -14,10 +14,15 @@
 
 namespace ruby
 {
+
+// ----------------------------------------------------------------------------
+
   class ruby_engine;
   class ruby_class;
   class ruby_module;
   class ruby_value;
+
+// ----------------------------------------------------------------------------
 
   class ruby_engine
   {
@@ -45,6 +50,8 @@ namespace ruby
     mrb_state *mrb;
   };
 
+// ----------------------------------------------------------------------------
+
   class ruby_class
   {
   protected:
@@ -64,6 +71,8 @@ namespace ruby
     ruby_class define_class(const char *name, RClass *baseClass = nullptr);
   };
 
+// ----------------------------------------------------------------------------
+
   class ruby_module : public ruby_class
   {
   public:
@@ -72,6 +81,8 @@ namespace ruby
     void define_method(const char *name, mrb_func_t func, mrb_aspec aspec);
     
   };
+
+// ----------------------------------------------------------------------------
 
   class ruby_value : mrb_value
   {
@@ -101,6 +112,8 @@ namespace ruby
     operator std::string();
   };
 
+// ----------------------------------------------------------------------------
+
   class ruby_gc_guard
   {
     mrb_state *mrb;
@@ -110,6 +123,9 @@ namespace ruby
     ruby_gc_guard(mrb_state *mrb);
     ~ruby_gc_guard();
   };
+
+// ----------------------------------------------------------------------------
+
 }
 
 

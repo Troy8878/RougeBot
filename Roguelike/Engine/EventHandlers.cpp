@@ -43,18 +43,18 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::addListener(EventReciever& reciever)
+  void BasicEventDispatcher::addListener(EventReciever *reciever)
   {
-    recievers.push_back({false, &reciever});
+    recievers.push_back({false, reciever});
   }
 
 // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::removeListener(EventReciever& reciever)
+  void BasicEventDispatcher::removeListener(EventReciever *reciever)
   {
     for (auto it = recievers.begin(); it != recievers.end(); ++it)
     {
-      if (it->second != &reciever)
+      if (it->second != reciever)
         continue;
 
       recievers.erase(it);

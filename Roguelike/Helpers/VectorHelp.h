@@ -142,6 +142,14 @@ namespace math
     XMVector4TransformStream(reinterpret_cast<XMFLOAT4 *>(output), outstride, 
                              reinterpret_cast<XMFLOAT4 *>(input), instride, count, matrix);
   }
+
+  /**
+    Converts degrees to radians
+  */
+  inline float degrees(float degs)
+  {
+    return degs * pi / 180.f;
+  }
 }
 
 inline DirectX::XMVECTOR XM_CALLCONV operator*(DirectX::FXMMATRIX matrix, DirectX::CXMVECTOR vect)

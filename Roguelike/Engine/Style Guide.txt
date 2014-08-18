@@ -98,3 +98,12 @@ private:
 Generic classes designed to mimic the
 patterns of STL classes should use STL
 naming conventions (snake_case)
+
+-- Separating items in files --
+
+Put a big long separator between all of your classes
+and method implementations like this one
+
+// ----------------------------------------------------------------------------
+
+Just copy it everywhere :P

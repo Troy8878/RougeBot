@@ -13,19 +13,27 @@
 
 class Resource abstract
 {
+public:
   virtual void Release();
 
   virtual size_t getSize() = 0;
   virtual TempFile getTempFile() = 0;
   virtual shared_array<byte> getData() = 0;
   virtual std::chrono::system_clock getModified() = 0;
+
+protected:
+  virtual ~Resource() {}
 };
 
 class ResourceContainer abstract
 {
+public:
   virtual void Release();
 
   virtual Resource *operator[](const std::string& resource) = 0;
+
+protected:
+  virtual ~ResourceContainer() {}
 };
 
 class ResPackImpl;

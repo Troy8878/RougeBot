@@ -9,9 +9,13 @@
 #include "Helpers\UseDirectX.h"
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 struct WindowCreationOptions;
 class GraphicsDevice;
 class WindowDevice;
+
+// ----------------------------------------------------------------------------
 
 class GraphicsDevice abstract
 {
@@ -61,12 +65,16 @@ public:
   math::Vector backgroundColor;
 };
 
+// ----------------------------------------------------------------------------
+
 struct WindowCreationOptions
 {
   HINSTANCE hInstance;
   math::Vector2D size;
   std::string gameTitle;
 };
+
+// ----------------------------------------------------------------------------
 
 class WindowDevice final : public GraphicsDevice
 {
@@ -98,3 +106,5 @@ private:
 
   friend class GraphicsDevice;
 };
+
+// ----------------------------------------------------------------------------

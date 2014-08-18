@@ -10,8 +10,12 @@
 #include "Helpers\FileSystem.h"
 #include "GraphicsDevice.h"
 
+// ----------------------------------------------------------------------------
+
 struct Camera;
 struct Texture;
+
+// ----------------------------------------------------------------------------
 
 struct Shader
 {
@@ -38,3 +42,5 @@ struct Shader
   void initializeBasicShader();
   void initializeTexturedShader();
 };
+
+// ----------------------------------------------------------------------------

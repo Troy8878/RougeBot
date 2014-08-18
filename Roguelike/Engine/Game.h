@@ -14,15 +14,21 @@
 
 #include "Common.h"
 
+// ----------------------------------------------------------------------------
+
 class Game;
 class Level;
 Game *getGame();
+
+// ----------------------------------------------------------------------------
 
 template <typename GameType>
 GameType *getGame()
 {
   return static_cast<GameType *>(getGame());
 }
+
+// ----------------------------------------------------------------------------
 
 class Game abstract : public Events::BasicClassEventReciever<Game>
 {
@@ -51,6 +57,8 @@ private:
   GameTime _gameTime;
   bool _running = false;
 
+  Level *_currentLevel;
+
   void graphicsOnInit();
 
 protected:
@@ -71,4 +79,6 @@ public:
 
   friend class WindowDevice;
 };
+
+// ----------------------------------------------------------------------------
 

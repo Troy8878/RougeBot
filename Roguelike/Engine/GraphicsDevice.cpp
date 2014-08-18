@@ -9,10 +9,14 @@
 #include "Helpers\Exceptions.h"
 #include "Engine\Game.h"
 
+// ----------------------------------------------------------------------------
+
 GraphicsDevice::~GraphicsDevice()
 {
   freeD3DContext();
 }
+
+// ----------------------------------------------------------------------------
 
 void GraphicsDevice::freeD3DContext()
 {
@@ -26,11 +30,15 @@ void GraphicsDevice::freeD3DContext()
   releaseDXInterface(_swapChain);
 }
 
+// ----------------------------------------------------------------------------
+
 std::unique_ptr<WindowDevice> GraphicsDevice::createWindow(const WindowCreationOptions& options)
 {
   auto *window = new WindowDevice(options);
   return std::unique_ptr < WindowDevice > {window};
 }
+
+// ----------------------------------------------------------------------------
 
 HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
 {
@@ -59,6 +67,8 @@ HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
   return window;
 }
 
+// ----------------------------------------------------------------------------
+
 WindowDevice::WindowDevice(const WindowCreationOptions& options)
   : _size(options.size)
 {
@@ -66,6 +76,8 @@ WindowDevice::WindowDevice(const WindowCreationOptions& options)
 
   initializeD3DContext();
 }
+
+// ----------------------------------------------------------------------------
 
 LRESULT CALLBACK WindowDevice::staticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -78,6 +90,8 @@ LRESULT CALLBACK WindowDevice::staticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
   auto *_this = reinterpret_cast<WindowDevice *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
   return _this->windowProc(hwnd, msg, wparam, lparam);
 }
+
+// ----------------------------------------------------------------------------
 
 LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -112,6 +126,8 @@ LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
   return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+// ----------------------------------------------------------------------------
+
 void WindowDevice::processMessages()
 {
   MSG message;
@@ -122,10 +138,14 @@ void WindowDevice::processMessages()
   }
 }
 
+// ----------------------------------------------------------------------------
+
 void WindowDevice::onResize(std::function<void(math::Vector2D)> callback)
 {
   _onResize = callback;
 }
+
+// ----------------------------------------------------------------------------
 
 void WindowDevice::setSize(math::Vector2D size)
 {
@@ -162,10 +182,14 @@ void WindowDevice::setSize(math::Vector2D size)
   _size = size;
 }
 
+// ----------------------------------------------------------------------------
+
 math::Vector2D WindowDevice::getSize() const
 {
   return _size;
 }
+
+// ----------------------------------------------------------------------------
 
 bool WindowDevice::beginFrame()
 {
@@ -178,14 +202,28 @@ bool WindowDevice::beginFrame()
   return true;
 }
 
+// ----------------------------------------------------------------------------
+
 void WindowDevice::endFrame()
 {
-  const double min_frame_time = 0.001;
-  while (getGame()->gameTime().currFrameTime() < min_frame_time)
-    Sleep(0);
+  static bool vsync = getGame()->initSettings.vsync;
+  if (vsync)
+  {
+    _swapChain->Present(1, 0);
+  }
+  else
+  {
+    const double min_frame_time = 0.001;
 
-  _swapChain->Present(1, 0);
+    static auto& time = getGame()->gameTime();
+    while (time.currFrameTime() < min_frame_time)
+      Sleep(0);
+
+    _swapChain->Present(0, 0);
+  }
 }
+
+// ----------------------------------------------------------------------------
 
 void GraphicsDevice::initializeD3DContext()
 {
@@ -372,6 +410,8 @@ void GraphicsDevice::initializeD3DContext()
 #pragma endregion
 }
 
+// ----------------------------------------------------------------------------
+
 void GraphicsDevice::createInputLayout(byte* bytecode,
                                        UINT bytecodeSize,
                                        D3D11_INPUT_ELEMENT_DESC* layoutDesc,
@@ -398,3 +438,5 @@ void GraphicsDevice::createInputLayout(byte* bytecode,
     bytecodeSize,
     layout);
 }
+
+// ----------------------------------------------------------------------------

@@ -56,20 +56,20 @@ Model::Model(ID3D11Device *device,
   CHECK_HRESULT(result);
 }
 
-void XM_CALLCONV Model::draw(DirectX::FXMMATRIX worldTransform) const
+void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
   shader->camera->worldMatrix = worldTransform;
 
   unsigned offset = 0;
 
-  auto context = shader->device->deviceContext;
+  auto context = shader->device->DeviceContext;
   context->IASetVertexBuffers(0, 1, &_vertexBuffer, &_stride, &offset);
   context->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, offset);
   context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   if (texture)
-    context->PSSetShaderResources(0, 1, &texture.getShaderRes());
+    context->PSSetShaderResources(0, 1, &texture.ShaderRes);
 
-  shader->draw(_indexCount);
+  shader->Draw(_indexCount);
 }
 

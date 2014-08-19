@@ -18,12 +18,12 @@
 
 class Game;
 class Level;
-Game *getGame();
+Game *GetGame();
 
 // ----------------------------------------------------------------------------
 
 template <typename GameType>
-GameType *getGame()
+GameType *GetGame()
 {
   return static_cast<GameType *>(getGame());
 }
@@ -40,17 +40,17 @@ public:
 
   Game& operator=(const Game&) = delete;
 
-  void run();
-  void stop() { _running = false; }
+  void Run();
+  void Stop() { _running = false; }
 
-  virtual void onInit() {}
-  virtual void onFree() {}
+  virtual void OnInit() {}
+  virtual void OnFree() {}
 
-  void setProcHandler(UINT message, wndproc_callback callback);
+  void SetProcHandler(UINT message, wndproc_callback callback);
 
-  __declspec(property(get = __getGameTime)) const GameTime& gameTime;
-  __declspec(property(get = __getGraphicsDevice)) GraphicsDevice *graphicsDevice;
-  __declspec(property(get = __getRespack)) Respack::ResourcePack& respack;
+  __declspec(property(get = __getGameTime)) const GameTime& Time;
+  __declspec(property(get = __getGraphicsDevice)) GraphicsDevice *GameDevice;
+  __declspec(property(get = __getRespack)) Respack::ResourcePack& Respack;
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
@@ -59,7 +59,7 @@ private:
   Level *_currentLevel = nullptr;
   bool _running = false;
 
-  void graphicsOnInit();
+  void GraphicsOnInit();
 
 protected:
   HINSTANCE _hInstance;
@@ -72,8 +72,8 @@ public:
 
   struct LevelEventProxy : public Events::EventReciever
   {
-    bool canHandle(const Events::EventMessage& e) override;
-    void handle(Events::EventMessage& e) override;
+    bool CanHandle(const Events::EventMessage& e) override;
+    void Handle(Events::EventMessage& e) override;
 
   } levelEventProxy;
   

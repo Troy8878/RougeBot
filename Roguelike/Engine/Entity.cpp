@@ -9,22 +9,23 @@
 // ----------------------------------------------------------------------------
 
 Entity::Entity()
+  : _id(CreateEntityId())
 {
 }
 
 // ----------------------------------------------------------------------------
 
-bool Entity::canHandle(const Events::EventMessage& e)
+bool Entity::CanHandle(const Events::EventMessage& e)
 {
-  auto iterator = _events.find(e.eventId());
+  auto iterator = _events.find(e.EventId);
   return iterator != _events.end() && !iterator->second.empty();
 }
 
 // ----------------------------------------------------------------------------
 
-void Entity::handle(Events::EventMessage& e)
+void Entity::Handle(Events::EventMessage& e)
 {
-  auto& handlers = _events[e.eventId()];
+  auto& handlers = _events[e.EventId];
 
   // Execute all of the handlers on the components
   for (auto& componentPair : handlers)
@@ -34,7 +35,7 @@ void Entity::handle(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::addEvent(Component *component, event_id id, component_handler handler)
+void Entity::AddEvent(Component *component, event_id id, component_handler handler)
 {
   auto& handlers = _events[id];
   handlers[component] = handler;
@@ -42,11 +43,21 @@ void Entity::addEvent(Component *component, event_id id, component_handler handl
 
 // ----------------------------------------------------------------------------
 
-void Entity::removeEvent(Component *component, event_id id)
+void Entity::RemoveEvent(Component *component, event_id id)
 {
   auto& handlers = _events[id];
   if (handlers.find(component) != handlers.end())
     handlers.remove(component);
+}
+
+// ----------------------------------------------------------------------------
+
+entity_id Entity::CreateEntityId()
+{
+  THREAD_EXCLUSIVE_SCOPE;
+
+  static entity_id id = 0;
+  return ++id;
 }
 
 // ----------------------------------------------------------------------------

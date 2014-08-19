@@ -26,7 +26,7 @@ public:
     initSettings.assetFolder = L"./Assets";
   }
 
-  void onInit() override
+  void OnInit() override
   {
     using namespace DirectX;
 
@@ -34,59 +34,60 @@ public:
 
     //_graphicsDevice->swapChain()->SetFullscreenState(true, nullptr);
 
-    initShaders();
-    initObjects();
-    initSetup();
+    InitShaders();
+    InitObjects();
+    InitSetup();
 
-    static event_id updateEvent = Events::Event::createEventId("update");
-    setHandler(updateEvent, &Roguelike::onUpdate);
+    using namespace Events;
+    static EventId updateEvent("update");
+    SetHandler(updateEvent, &Roguelike::OnUpdate);
 
-    static event_id drawEvent = Events::Event::createEventId("draw");
-    setHandler(drawEvent, &Roguelike::onDraw);
+    static EventId drawEvent("draw");
+    SetHandler(drawEvent, &Roguelike::OnDraw);
 
-    static event_id resizeEvent = Events::Event::createEventId("window_resize");
-    setHandler(resizeEvent, &Roguelike::onResize);
+    static EventId resizeEvent("window_resize");
+    SetHandler(resizeEvent, &Roguelike::OnResize);
   }
 
-  void initShaders()
+  void InitShaders()
   {
-    _basicShader = Shader::loadShader(
+    _basicShader = Shader::LoadShader(
       _graphicsDevice.get(),
       "BasicVertexShader.cso",
       "BasicPixelShader.cso");
-    _basicShader->initializeBasicShader();
+    _basicShader->InitializeBasicShader();
 
-    _textureShader = Shader::loadShader(
+    _textureShader = Shader::LoadShader(
       _graphicsDevice.get(),
       "TexturedVertexShader.cso",
       "TexturedPixelShader.cso");
-    _textureShader->initializeTexturedShader();
+    _textureShader->InitializeTexturedShader();
   }
 
-  void initObjects()
+  void InitObjects()
   {
-    _basicShape = Shapes::makeRectangle(_graphicsDevice->device, {10, 10});
+    _basicShape = Shapes::MakeRectangle(_graphicsDevice->Device, {10, 10});
 
     _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
-    _camera.init();
+    _camera.Init();
   }
 
-  void initSetup()
+  void InitSetup()
   {
     _basicShader->camera = &_camera;
     _textureShader->camera = &_camera;
     _basicShape->shader = _textureShader;
-    _basicShape->texture = Texture2D{_graphicsDevice->device, "1384108156458.jpg"};
+    _basicShape->texture = Texture2D{_graphicsDevice->Device, "1384108156458.jpg"};
   }
 
-  void onUpdate(Events::EventMessage& e)
+  void OnUpdate(Events::EventMessage& e)
   {
     using namespace Events;
-    auto& time = e.getData<UpdateEvent>()->gameTime;
+    auto& time = e.GetData<UpdateEvent>()->gameTime;
 
     using namespace DirectX;
-    float dt = (float) time.dt();
+    float dt = (float) time.Dt;
 
     // Update FPS
     if (dt > 0.001)
@@ -102,7 +103,7 @@ public:
         prev_fps = fps;
 
         auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
-        SetWindowText(_graphicsDevice->window, title.c_str());
+        SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }
 
@@ -120,33 +121,33 @@ public:
         movein = true;
     }
 
-    _camera.update();
+    _camera.Update();
   }
 
-  void onDraw(Events::EventMessage&)
+  void OnDraw(Events::EventMessage&)
   {
     using namespace DirectX;
 
-    _basicShape->draw(XMMatrixIdentity());
-    _basicShape->draw(XMMatrixRotationY(-45 * math::pi / 180) *
+    _basicShape->Draw(XMMatrixIdentity());
+    _basicShape->Draw(XMMatrixRotationY(-45 * math::pi / 180) *
                       XMMatrixTranslation(9, 0, 4));
-    _basicShape->draw(XMMatrixRotationY(45 * math::pi / 180) *
+    _basicShape->Draw(XMMatrixRotationY(45 * math::pi / 180) *
                       XMMatrixTranslation(-9, 0, 4));
   }
 
-  void onFree() override
+  void OnFree() override
   {
     delete _basicShape;
     delete _basicShader;
   }
 
-  void onResize(Events::EventMessage& e)
+  void OnResize(Events::EventMessage& e)
   {
     using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
-    auto& data = e.getData<event_type>()->data;
+    auto& data = e.GetData<event_type>()->data;
     
     _camera.aspectRatio = data.x / data.y;
-    _camera.init();
+    _camera.Init();
   }
 
 private:

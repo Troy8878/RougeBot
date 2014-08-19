@@ -20,7 +20,7 @@ namespace Events
 
   struct EventData
   {
-    virtual ruby::ruby_value getRubyWrapper() 
+    virtual ruby::ruby_value GetRubyWrapper() 
     { 
       return ruby::ruby_value{}; 
     };

@@ -27,6 +27,7 @@
 #include "Helpers\FlatMap.h"
 #include "Helpers\Console.h"
 #include "Helpers\StackTrace.h"
+#include "Helpers\CriticalSections.h"
 
 #include "GameTime.h"
 #include "Event.h"

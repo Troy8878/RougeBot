@@ -14,7 +14,7 @@ namespace Shapes
 {
   using namespace DirectX;
 
-  Model *makeRectangle(ID3D11Device *device, math::Vector2D size, math::Vector color)
+  Model *MakeRectangle(ID3D11Device *device, math::Vector2D size, math::Vector color)
   {
     const float sx = size.x / 2;
     const float sy = size.y / 2;
@@ -36,7 +36,7 @@ namespace Shapes
     return new Model{device, vertices, indices};
   }
   
-  Model *makeCircle(ID3D11Device *device, unsigned sides, float radius, math::Vector color)
+  Model *MakeCircle(ID3D11Device *device, unsigned sides, float radius, math::Vector color)
   {
     assert(sides >= 3);
     assert(radius > 0);
@@ -78,7 +78,7 @@ namespace Shapes
     return model;
   }
 
-  Model *makeCube(ID3D11Device *device, float size, math::Vector color)
+  Model *MakeCube(ID3D11Device *device, float size, math::Vector color)
   {
     const float csize = size / 2.0f;
 

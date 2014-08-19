@@ -28,13 +28,13 @@ struct Basic3DCamera : Camera
   float aspectRatio = 1280.f / 720.f;
   float nearField = 0.1f, farField = 10000;
 
-  void init()
+  void Init()
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
   }
 
-  void update()
+  void Update()
   {
     using namespace DirectX;
     auto rotate = XMMatrixRotationRollPitchYawFromVector(rotation.get());
@@ -56,13 +56,13 @@ struct LookAtCamera : Camera
   float aspectRatio = 1280.f / 720.f;
   float nearField = 0.1f, farField = 10000;
 
-  void init()
+  void Init()
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
   }
 
-  void update()
+  void Update()
   {
     using namespace DirectX;
 

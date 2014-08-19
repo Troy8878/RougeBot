@@ -10,38 +10,36 @@
 
 // ----------------------------------------------------------------------------
 
-void Component::initialize(Entity& parent)
+ComponentManager ComponentManager::Instance;
+
+// ----------------------------------------------------------------------------
+
+void Component::Initialize(Entity *owner)
 {
-  _parent = &parent;
+  Owner = owner;
 }
 
 // ----------------------------------------------------------------------------
 
-void Component::cleanup()
+void Component::Cleanup()
 {
 }
 
 // ----------------------------------------------------------------------------
 
-Entity& Component::getParent()
+void ComponentManager::RegisterComponent(const ComponentRegistration& registration)
 {
-  return *_parent;
+  Components[registration.componentName] = registration;
 }
 
 // ----------------------------------------------------------------------------
 
-void ComponentManager::registerComponent(const ComponentRegistration& registration)
-{
-  auto& regs = components();
-  regs[registration.componentName] = registration;
-}
-
-// ----------------------------------------------------------------------------
-
-flat_map<std::string, ComponentRegistration>& ComponentManager::components()
+flat_map<std::string, ComponentRegistration>& ComponentManager::_GetComponents()
 {
   static flat_map<std::string, ComponentRegistration> registrations;
   return registrations;
 }
+
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------

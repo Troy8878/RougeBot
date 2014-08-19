@@ -121,7 +121,7 @@ public:
 
 template <class Interface>
 /** Safely releases DirectX interfaces */
-inline void releaseDXInterface(Interface *& interfaceToRelease)
+inline void ReleaseDXInterface(Interface *& interfaceToRelease)
 {
   if (interfaceToRelease)
   {
@@ -141,7 +141,7 @@ public:
 
   ~DXReleaser()
   {
-    releaseDXInterface(itr);
+    ReleaseDXInterface(itr);
   }
 
   DXReleaser& operator=(const DXReleaser&) = delete;
@@ -232,39 +232,55 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
 
 #define W_PROPERTY(pType, pName)  \
   _PROPERTY_STORAGE(pType, pName) \
+  private:                        \
+  _PROPERTY_GET(pType, pName)     \
+  public:                         \
   _PROPERTY_SET(pType, pName)     \
-  __declspec(property(            \
-    put = _PropSet ## pName)      \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName
 
 #define R_PROPERTY(pType, pName)  \
   _PROPERTY_STORAGE(pType, pName) \
   _PROPERTY_GET(pType, pName)     \
-  __declspec(property(            \
-    get = _PropGet ## pName)      \
+  private:                        \
+  _PROPERTY_SET(pType, pName)     \
+  public:                         \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName
 
 #define RW_PROPERTY(pType, pName) \
   _PROPERTY_STORAGE(pType, pName) \
   _PROPERTY_GET(pType, pName)     \
   _PROPERTY_SET(pType, pName)     \
-  __declspec(property(            \
-    get = _PropGet ## pName,      \
-    put = _PropSet ## pName)      \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName
 
 #define IW_PROPERTY(pType, pName) \
   _PROPERTY_STORAGE(pType, pName) \
+  private:                        \
+  _IPROPERTY_GET(pType, pName)    \
+  public:                         \
   _IPROPERTY_SET(pType, pName)    \
-  __declspec(property(            \
-    put = _PropSet ## pName)      \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName
 
 #define IR_PROPERTY(pType, pName) \
   _PROPERTY_STORAGE(pType, pName) \
   _IPROPERTY_GET(pType, pName)    \
-  __declspec(property(            \
-    get = _PropGet ## pName)      \
+  private:                        \
+  _IPROPERTY_SET(pType, pName)    \
+  public:                         \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName
 
 #define IRW_PROPERTY(pType, pName) \

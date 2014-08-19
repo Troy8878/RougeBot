@@ -102,6 +102,9 @@
     <ClInclude Include="RubyComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="EntitySection.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rubylib.rc">

@@ -22,17 +22,10 @@ namespace Events
 
   class EventMessage
   {
-    EventData *data;
-    event_id _eventId;
-#ifdef _DEBUG
-    bool _handleable = true;
-#endif
-    bool _handled = false;
-
   public:
 #ifdef _DEBUG
     EventMessage(event_id eventId, EventData *data, bool handleable = true)
-      : data(data), _eventId(eventId), _handleable(handleable)
+      : _Data(data), _EventId(eventId), _handleable(handleable)
     {
     }
 #else
@@ -43,20 +36,23 @@ namespace Events
     }
 #endif
 
-    EventData *getData()
-    {
-      return data;
-    }
+    IR_PROPERTY(EventData *, Data);
+    IR_PROPERTY(event_id, EventId);
 
     template <typename T>
-    T *getData()
+    T *GetData()
     {
-      return static_cast<T *>(getData());
+      return static_cast<T *>(Data);
     }
 
-    inline event_id eventId() const { return _eventId; }
+    #pragma region Handled Property
+#ifdef _DEBUG
+    bool _handleable = true;
+#endif
+    bool _handled = false;
 
-    inline void handled(bool handled) 
+    __declspec(property(get = _GetHandled, put = _SetHandled)) bool Handled;
+    inline void _SetHandled(bool handled) 
     { 
 #ifdef _DEBUG
       if (handled && !_handleable)
@@ -64,7 +60,8 @@ namespace Events
 #endif
       _handled = handled; 
     }
-    inline bool handled() const { return _handled; }
+    inline bool _GetHandled() const { return _handled; }
+    #pragma endregion
   };
 
 // ----------------------------------------------------------------------------
@@ -72,8 +69,8 @@ namespace Events
   class EventReciever abstract
   {
   public:
-    virtual bool canHandle(const EventMessage& e) = 0;
-    virtual void handle(EventMessage& e) = 0;
+    virtual bool CanHandle(const EventMessage& e) = 0;
+    virtual void Handle(EventMessage& e) = 0;
 
   protected:
     inline ~EventReciever() {}
@@ -82,10 +79,10 @@ namespace Events
   class EventDispatcher abstract : public EventReciever
   {
   public:
-    virtual void addListener(EventReciever *reciever) = 0;
-    virtual void removeListener(EventReciever *reciever) = 0;
+    virtual void AddListener(EventReciever *reciever) = 0;
+    virtual void RemoveListener(EventReciever *reciever) = 0;
 
-    static std::unique_ptr<EventDispatcher> createDefaultDispatcher();
+    static std::unique_ptr<EventDispatcher> CreateDefaultDispatcher();
 
   protected:
     inline ~EventDispatcher() {}
@@ -98,15 +95,25 @@ namespace Events
   public:
     Event() {}
 
-    static event_id createEventId(const std::string& name);
-    static void raise(EventMessage& e, EventReciever& reciever = *Event::globalDispatcher);
+    static event_id CreateEventId(const std::string& name);
+    static void Raise(EventMessage& e, EventReciever& reciever = *Event::GlobalDispatcher);
 
-    static EventDispatcher *globalDispatcher;
-    static EventMessage& currentEvent();
+    static EventDispatcher *GlobalDispatcher;
+  };
 
-  private:
-    static void pushEvent(EventMessage& e);
-    static void popEvent();
+// ----------------------------------------------------------------------------
+
+  class EventId
+  {
+    event_id _id;
+
+  public:
+    EventId(const std::string& str)
+      : _id(Event::CreateEventId(str))
+    {
+    }
+
+    inline operator event_id() { return _id; }
   };
 
 // ----------------------------------------------------------------------------

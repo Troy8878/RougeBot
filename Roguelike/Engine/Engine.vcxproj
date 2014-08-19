@@ -91,6 +91,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineInit.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntitySection.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventHandlers.h" />
     <ClInclude Include="EventTypes.h" />

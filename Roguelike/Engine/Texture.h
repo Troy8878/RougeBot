@@ -22,12 +22,12 @@ public:
   Texture2D(ID3D11Device *device, const std::string& asset);
   Texture2D(ID3D11Device *device, ImageResource resource);
 
-  ID3D11ShaderResourceView * const & getShaderRes() const { return _res->resource; };
-  ID3D11Texture2D * const & getTexture() const { return _res->texture; };
+  __declspec(property(get = _GetShaderRes)) ID3D11ShaderResourceView * const & ShaderRes;
+  __declspec(property(get = _GetTexture)) ID3D11Texture2D * const & Texture;
 
   operator bool() const { return !!_res; }
 
-  static Texture2D getNullTexture(ID3D11Device *device);
+  static Texture2D GetNullTexture(ID3D11Device *device);
 
 private:
   struct TextureResource
@@ -39,6 +39,10 @@ private:
   };
 
   std::shared_ptr<TextureResource> _res;
+
+public:
+  ID3D11ShaderResourceView * const & _GetShaderRes() const { return _res->resource; };
+  ID3D11Texture2D * const & _GetTexture() const { return _res->texture; };
 };
 
 // ----------------------------------------------------------------------------

@@ -23,35 +23,34 @@ public:
 
   virtual ~GraphicsDevice();
 
-  virtual HWND getContextWindow() = 0;
+  virtual HWND GetContextWindow() = 0;
 
-  virtual void onResize(std::function<void(math::Vector2D)>) = 0;
-  virtual void setSize(math::Vector2D newSize) = 0;
-  virtual math::Vector2D getSize() const = 0;
+  virtual void SetSize(math::Vector2D newSize) = 0;
+  virtual math::Vector2D GetSize() const = 0;
 
-  virtual bool beginFrame() = 0;
-  virtual void endFrame() = 0;
+  virtual bool BeginFrame() = 0;
+  virtual void EndFrame() = 0;
 
-  static std::unique_ptr<WindowDevice> createWindow(const WindowCreationOptions& options);
-  void createInputLayout(byte* bytecode,
+  static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions& options);
+  void CreateInputLayout(byte* bytecode,
                          UINT bytecodeSize,
                          D3D11_INPUT_ELEMENT_DESC* layoutDesc,
                          UINT layoutDescNumElements,
                          ID3D11InputLayout** layout);
 
-  IR_PROPERTY(IDXGISwapChain *, swapChain);
-  IR_PROPERTY(ID3D11Device *, device);
-  IR_PROPERTY(ID3D11DeviceContext *, deviceContext);
-  IR_PROPERTY(ID3D11RenderTargetView *, renderTargetView);
-  IR_PROPERTY(ID3D11Texture2D *, depthStencilBuffer);
-  IR_PROPERTY(ID3D11DepthStencilState *, depthStencilState);
-  IR_PROPERTY(ID3D11DepthStencilView *, depthStencilView);
-  IR_PROPERTY(ID3D11RasterizerState *, rasterState);
-  IR_PROPERTY(ID3D11BlendState *, blendState);
+  IR_PROPERTY(IDXGISwapChain *, SwapChain);
+  IR_PROPERTY(ID3D11Device *, Device);
+  IR_PROPERTY(ID3D11DeviceContext *, DeviceContext);
+  IR_PROPERTY(ID3D11RenderTargetView *, RenderTargetView);
+  IR_PROPERTY(ID3D11Texture2D *, DepthStencilBuffer);
+  IR_PROPERTY(ID3D11DepthStencilState *, DepthStencilState);
+  IR_PROPERTY(ID3D11DepthStencilView *, DepthStencilView);
+  IR_PROPERTY(ID3D11RasterizerState *, RasterState);
+  IR_PROPERTY(ID3D11BlendState *, BlendState);
 
 protected:
-  void initializeD3DContext();
-  void freeD3DContext();
+  void InitializeD3DContext();
+  void FreeD3DContext();
 
 public:
   math::Vector backgroundColor;
@@ -72,28 +71,25 @@ class WindowDevice final : public GraphicsDevice
 {
   math::Vector2D _size;
 
-  std::function<void(math::Vector2D)> _onResize;
-
 public:
-  HWND getContextWindow() override { return _window; }
+  HWND GetContextWindow() override { return Window; }
 
-  void onResize(std::function<void(math::Vector2D)>) final override;
-  void setSize(math::Vector2D newSize) final override;
-  math::Vector2D getSize() const final override;
+  void SetSize(math::Vector2D newSize) final override;
+  math::Vector2D GetSize() const final override;
 
-  bool beginFrame() override;
-  void endFrame() override;
+  bool BeginFrame() override;
+  void EndFrame() override;
 
-  void processMessages();
+  void ProcessMessages();
 
-  IR_PROPERTY(HWND, window);
+  IR_PROPERTY(HWND, Window);
 
 private:
   WindowDevice(const WindowCreationOptions& options);
-  static LRESULT CALLBACK staticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+  static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-  HWND WindowDevice::initializeWindow(const WindowCreationOptions& options);
-  LRESULT windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+  HWND InitializeWindow(const WindowCreationOptions& options);
+  LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
   friend class GraphicsDevice;
 };

@@ -25,13 +25,10 @@ public:
 
   // Please call this in your implementations
   // just at the top do Component::initialize(parent)
-  virtual void initialize(Entity& parent);
-  virtual void cleanup();
+  virtual void Initialize(Entity *owner);
+  virtual void Cleanup();
 
-  Entity& getParent();
-
-private:
-  Entity* _parent;
+  IR_PROPERTY(Entity *, Owner);
 };
 
 // ----------------------------------------------------------------------------
@@ -39,10 +36,18 @@ private:
 class ComponentManager
 {
 public:
-  static void registerComponent(const ComponentRegistration& registration);
+  typedef flat_map<std::string, ComponentRegistration> component_map;
+
+  static ComponentManager Instance;
+
+  void RegisterComponent(const ComponentRegistration& registration);
+  __declspec(property(get = _GetComponents)) component_map Components;
 
 private:
-  static flat_map<std::string, ComponentRegistration>& components();
+  ComponentManager();
+
+public:
+  static component_map& _GetComponents();
 };
 
 // ----------------------------------------------------------------------------
@@ -94,6 +99,7 @@ public:
                                        ComponentFactory* factory = &T::factory)
   {
     ComponentRegistration registration{typeid(T), typeid(T).name(), factory};
+    ComponentManager::Instance.RegisterComponent(registration);
   }
 
   StaticComponentRegistration(const StaticComponentRegistration&) = delete;

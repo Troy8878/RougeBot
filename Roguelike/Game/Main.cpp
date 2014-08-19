@@ -27,5 +27,5 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
   });
 
   Roguelike game("Game 200 Project", hInstance);
-  game.run();
+  game.Run();
 }

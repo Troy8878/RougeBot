@@ -18,11 +18,11 @@ namespace Events
   class BasicEventDispatcher : public EventDispatcher
   {
   public:
-    bool canHandle(const EventMessage& e) override;
-    void handle(EventMessage& e) override;
+    bool CanHandle(const EventMessage& e) override;
+    void Handle(EventMessage& e) override;
 
-    void addListener(EventReciever *reciever) override;
-    void removeListener(EventReciever *reciever) override;
+    void AddListener(EventReciever *reciever) override;
+    void RemoveListener(EventReciever *reciever) override;
 
   private:
     std::vector<std::pair<bool, EventReciever *>> recievers;
@@ -38,16 +38,16 @@ namespace Events
 
     typedef void (T::*event_handler)(EventMessage& e);
 
-    bool canHandle(const EventMessage& e) override;
-    void handle(EventMessage& e) override;
+    bool CanHandle(const EventMessage& e) override;
+    void Handle(EventMessage& e) override;
 
-    void setHandler(event_id id, event_handler handler);
-    void removeHandler(event_id id);
+    void SetHandler(event_id id, event_handler handler);
+    void RemoveHandler(event_id id);
 
     template <typename Derived>
-    void setHandler(event_id id, void (Derived::*handler)(EventMessage& e))
+    void SetHandler(event_id id, void (Derived::*handler)(EventMessage& e))
     {
-      setHandler(id, static_cast<event_handler>(handler));
+      SetHandler(id, static_cast<event_handler>(handler));
     }
 
   private:
@@ -66,23 +66,23 @@ namespace Events
 // ----------------------------------------------------------------------------
 
   template <typename T>
-  bool BasicClassEventReciever<T>::canHandle(const EventMessage& e)
+  bool BasicClassEventReciever<T>::CanHandle(const EventMessage& e)
   {
-    return handlers.find(e.eventId()) != handlers.end();
+    return handlers.find(e.EventId) != handlers.end();
   }
 
 // ----------------------------------------------------------------------------
 
   template <typename T>
-  void BasicClassEventReciever<T>::handle(EventMessage& e)
+  void BasicClassEventReciever<T>::Handle(EventMessage& e)
   {
-    (handler->*handlers[e.eventId()])(e);
+    (handler->*handlers[e.EventId])(e);
   }
 
 // ----------------------------------------------------------------------------
 
   template <typename T>
-  void BasicClassEventReciever<T>::setHandler(event_id id, event_handler handler)
+  void BasicClassEventReciever<T>::SetHandler(event_id id, event_handler handler)
   {
     handlers[id] = handler;
   }
@@ -90,7 +90,7 @@ namespace Events
 // ----------------------------------------------------------------------------
 
   template <typename T>
-  void BasicClassEventReciever<T>::removeHandler(event_id id)
+  void BasicClassEventReciever<T>::RemoveHandler(event_id id)
   {
     if (handlers.find(id) != handlers.end())
       handlers.remove(id);

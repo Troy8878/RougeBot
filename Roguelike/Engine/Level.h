@@ -20,10 +20,10 @@ class Level : public Events::BasicEventDispatcher
 public:
   Level();
 
-  virtual void load() = 0;
-  virtual void init() = 0;
-  virtual void free() = 0;
-  virtual void unload() = 0;
+  virtual void Load() = 0;
+  virtual void Init() = 0;
+  virtual void Free() = 0;
+  virtual void Unload() = 0;
 
 protected:
   Events::BasicClassEventReciever<Level> levelEvents;

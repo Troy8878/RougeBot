@@ -31,16 +31,16 @@ struct Shader
   shared_array<byte> pixelShaderData;
 
   virtual ~Shader();
-  void draw(unsigned indexCount);
+  void Draw(unsigned indexCount);
 
-  static Shader *loadShader(
+  static Shader *LoadShader(
     GraphicsDevice *device,
     const std::string& vertexAsset,
     const std::string& pixelAsset);
 
-  void initCameraBuffer();
-  void initializeBasicShader();
-  void initializeTexturedShader();
+  void InitCameraBuffer();
+  void InitializeBasicShader();
+  void InitializeTexturedShader();
 };
 
 // ----------------------------------------------------------------------------

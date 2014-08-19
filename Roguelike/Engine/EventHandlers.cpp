@@ -12,13 +12,13 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
-  bool BasicEventDispatcher::canHandle(const EventMessage& e)
+  bool BasicEventDispatcher::CanHandle(const EventMessage& e)
   {
     bool any = false;
 
     for (auto& hpair : recievers)
     {
-      hpair.first = hpair.second->canHandle(e);
+      hpair.first = hpair.second->CanHandle(e);
       if (hpair.first)
         any = true;
     }
@@ -28,29 +28,29 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::handle(EventMessage& e)
+  void BasicEventDispatcher::Handle(EventMessage& e)
   {
     for (auto& hpair : recievers)
     {
       if (!hpair.first)
         continue;
 
-      hpair.second->handle(e);
-      if (e.handled())
+      hpair.second->Handle(e);
+      if (e.Handled)
         return;
     }
   }
 
 // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::addListener(EventReciever *reciever)
+  void BasicEventDispatcher::AddListener(EventReciever *reciever)
   {
     recievers.push_back({false, reciever});
   }
 
 // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::removeListener(EventReciever *reciever)
+  void BasicEventDispatcher::RemoveListener(EventReciever *reciever)
   {
     for (auto it = recievers.begin(); it != recievers.end(); ++it)
     {

@@ -134,7 +134,7 @@ ImageResource ImageResource::fromFile(const std::wstring& file)
 
 ImageResource ImageResource::fromAsset(const std::string& container, const std::string& asset)
 {
-  auto& pack = getGame()->respack;
+  auto& pack = GetGame()->Respack;
 
   auto *rescontainer = pack[container];
   RELEASE_AFTER_SCOPE(rescontainer);

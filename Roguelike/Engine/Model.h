@@ -54,7 +54,7 @@ public:
         VertexType (&vertices)[vertexCount],
         UINT (&indices)[indexCount]);
 
-  void XM_CALLCONV draw(DirectX::FXMMATRIX worldTransform) const;
+  void XM_CALLCONV Draw(DirectX::FXMMATRIX worldTransform) const;
   
   Shader *shader;
   Texture2D texture;

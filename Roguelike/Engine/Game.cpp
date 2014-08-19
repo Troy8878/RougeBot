@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 static Game *_gameInst;
-Game *getGame()
+Game *GetGame()
 {
   return _gameInst;
 }
@@ -21,11 +21,11 @@ Game *getGame()
 Game::Game(const std::string& title, HINSTANCE hInstance)
   : BasicClassEventReciever(this), _title(title), _hInstance(hInstance)
 {
-  Events::Event::globalDispatcher = &globalEventDispatcher;
+  Events::Event::GlobalDispatcher = &globalEventDispatcher;
   _gameInst = this;
 
-  globalEventDispatcher.addListener(this);
-  globalEventDispatcher.addListener(&levelEventProxy);
+  globalEventDispatcher.AddListener(this);
+  globalEventDispatcher.AddListener(&levelEventProxy);
 }
 
 // ----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ Game::~Game()
 
 // ----------------------------------------------------------------------------
 
-void Game::run()
+void Game::Run()
 {
   _running = true;
 
@@ -45,38 +45,38 @@ void Game::run()
 
   try
   {
-    _graphicsDevice = GraphicsDevice::createWindow({_hInstance, {1280, 720}, _title});
-    graphicsOnInit();
+    _graphicsDevice = GraphicsDevice::CreateGameWindow({_hInstance, {1280, 720}, _title});
+    GraphicsOnInit();
 
-    onInit();
+    OnInit();
 
     while (_running)
     {
-      _graphicsDevice->processMessages();
+      _graphicsDevice->ProcessMessages();
 
       // Update
-      _gameTime.update();
+      _gameTime.Update();
 
       // Raise update event
       {
         using namespace Events;
-        static event_id updateId = Event::createEventId("update");
+        static EventId updateId("update");
+
         UpdateEvent edata{_gameTime};
         EventMessage msg{updateId, &edata, false};
-
-        Event::raise(msg);
+        Event::Raise(msg);
       }
 
       // Raise draw event (and draw the frame)
-      if (_graphicsDevice->beginFrame())
+      if (_graphicsDevice->BeginFrame())
       {
         using namespace Events;
-        static event_id drawId = Event::createEventId("draw");
+        static EventId drawId("draw");
+
         EventMessage msg{drawId, nullptr, false};
+        Event::Raise(msg);
 
-        Event::raise(msg);
-
-        _graphicsDevice->endFrame();
+        _graphicsDevice->EndFrame();
       }
     }
   }
@@ -97,45 +97,48 @@ void Game::run()
 
 // ----------------------------------------------------------------------------
 
-void Game::setProcHandler(UINT message, wndproc_callback callback)
+void Game::SetProcHandler(UINT message, wndproc_callback callback)
 {
   _wndprocCallbacks[message] = callback;
 }
 
 // ----------------------------------------------------------------------------
 
-void Game::graphicsOnInit()
+void Game::GraphicsOnInit()
 {
-  setProcHandler(WM_SIZE, [this](HWND, UINT, WPARAM, LPARAM lparam, LRESULT&)
+  SetProcHandler(WM_SIZE, [this](HWND, UINT, WPARAM, LPARAM lparam, LRESULT&)
   {
     float nx = LOWORD(lparam);
     float ny = HIWORD(lparam);
     
-    this->graphicsDevice->setSize({nx, ny});
+    GameDevice->SetSize({nx, ny});
 
-    static event_id eventId = Events::Event::createEventId("window_resize");
-    Events::RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};
-    Events::EventMessage message{eventId, &data, false};
-    Events::Event::raise(message);
+    using namespace Events;
+    static EventId eventId("window_resize");
+
+    RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};
+    EventMessage message{eventId, &data, false};
+
+    Event::Raise(message);
   });
 }
 
 // ----------------------------------------------------------------------------
 
-bool Game::LevelEventProxy::canHandle(const Events::EventMessage& e)
+bool Game::LevelEventProxy::CanHandle(const Events::EventMessage& e)
 {
-  static auto& game = *getGame();
+  static auto& game = *GetGame();
 
-  return game._currentLevel && game._currentLevel->levelEvents.canHandle(e);
+  return game._currentLevel && game._currentLevel->levelEvents.CanHandle(e);
 }
 
 // ----------------------------------------------------------------------------
 
-void Game::LevelEventProxy::handle(Events::EventMessage& e)
+void Game::LevelEventProxy::Handle(Events::EventMessage& e)
 {
-  static auto& game = *getGame();
+  static auto& game = *GetGame();
 
-  game._currentLevel->levelEvents.handle(e);
+  game._currentLevel->levelEvents.Handle(e);
 }
 
 // ----------------------------------------------------------------------------

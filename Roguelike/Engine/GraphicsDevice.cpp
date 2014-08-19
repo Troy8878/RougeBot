@@ -13,26 +13,26 @@
 
 GraphicsDevice::~GraphicsDevice()
 {
-  freeD3DContext();
+  FreeD3DContext();
 }
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::freeD3DContext()
+void GraphicsDevice::FreeD3DContext()
 {
-  releaseDXInterface(rasterState);
-  releaseDXInterface(depthStencilView);
-  releaseDXInterface(depthStencilState);
-  releaseDXInterface(depthStencilBuffer);
-  releaseDXInterface(renderTargetView);
-  releaseDXInterface(deviceContext);
-  releaseDXInterface(device);
-  releaseDXInterface(swapChain);
+  ReleaseDXInterface(RasterState);
+  ReleaseDXInterface(DepthStencilView);
+  ReleaseDXInterface(DepthStencilState);
+  ReleaseDXInterface(DepthStencilBuffer);
+  ReleaseDXInterface(RenderTargetView);
+  ReleaseDXInterface(DeviceContext);
+  ReleaseDXInterface(Device);
+  ReleaseDXInterface(SwapChain);
 }
 
 // ----------------------------------------------------------------------------
 
-std::unique_ptr<WindowDevice> GraphicsDevice::createWindow(const WindowCreationOptions& options)
+std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions& options)
 {
   auto *window = new WindowDevice(options);
   return std::unique_ptr < WindowDevice > {window};
@@ -40,14 +40,14 @@ std::unique_ptr<WindowDevice> GraphicsDevice::createWindow(const WindowCreationO
 
 // ----------------------------------------------------------------------------
 
-HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
+HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
 {
   std::string className = std::to_string(reinterpret_cast<size_t>(this));
 
   WNDCLASSEX wndc = {sizeof(wndc)};
   wndc.cbWndExtra = sizeof(WindowDevice *);
   wndc.hInstance = options.hInstance;
-  wndc.lpfnWndProc = staticWindowProc;
+  wndc.lpfnWndProc = StaticWindowProc;
   wndc.lpszClassName = className.c_str();
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
   RegisterClassEx(&wndc);
@@ -72,14 +72,14 @@ HWND WindowDevice::initializeWindow(const WindowCreationOptions& options)
 WindowDevice::WindowDevice(const WindowCreationOptions& options)
   : _size(options.size)
 {
-  _window = initializeWindow(options);
+  Window = InitializeWindow(options);
 
-  initializeD3DContext();
+  InitializeD3DContext();
 }
 
 // ----------------------------------------------------------------------------
 
-LRESULT CALLBACK WindowDevice::staticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   if (msg == WM_CREATE)
   {
@@ -88,14 +88,14 @@ LRESULT CALLBACK WindowDevice::staticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
   }
 
   auto *_this = reinterpret_cast<WindowDevice *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-  return _this->windowProc(hwnd, msg, wparam, lparam);
+  return _this->WindowProc(hwnd, msg, wparam, lparam);
 }
 
 // ----------------------------------------------------------------------------
 
-LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-  auto& game = *getGame();
+  auto& game = *GetGame();
   auto iter = game._wndprocCallbacks.find(msg);
   if (iter != game._wndprocCallbacks.end())
   {
@@ -118,7 +118,7 @@ LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
     case WM_CLOSE:
     {
-      getGame()->stop();
+      GetGame()->Stop();
       return 0;
     }
   }
@@ -128,10 +128,10 @@ LRESULT WindowDevice::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 // ----------------------------------------------------------------------------
 
-void WindowDevice::processMessages()
+void WindowDevice::ProcessMessages()
 {
   MSG message;
-  while (PeekMessage(&message, _window, 0, 0, TRUE))
+  while (PeekMessage(&message, Window, 0, 0, TRUE))
   {
     TranslateMessage(&message);
     DispatchMessage(&message);
@@ -140,35 +140,28 @@ void WindowDevice::processMessages()
 
 // ----------------------------------------------------------------------------
 
-void WindowDevice::onResize(std::function<void(math::Vector2D)> callback)
+void WindowDevice::SetSize(math::Vector2D size)
 {
-  _onResize = callback;
-}
-
-// ----------------------------------------------------------------------------
-
-void WindowDevice::setSize(math::Vector2D size)
-{
-  if (!swapChain)
+  if (!SwapChain)
     return;
 
   // Release render target
-  deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-  releaseDXInterface(renderTargetView);
+  DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+  ReleaseDXInterface(RenderTargetView);
 
   HRESULT hr;
-  hr = swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+  hr = SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
-  hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+  hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
                             reinterpret_cast<void **>(&pBuffer));
   CHECK_HRESULT(hr);
 
-  hr = device->CreateRenderTargetView(pBuffer, nullptr, &renderTargetView);
-  releaseDXInterface(pBuffer);
+  hr = Device->CreateRenderTargetView(pBuffer, nullptr, &RenderTargetView);
+  ReleaseDXInterface(pBuffer);
 
-  deviceContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
+  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
 
   D3D11_VIEWPORT vp;
   vp.Width = size.x;
@@ -177,58 +170,58 @@ void WindowDevice::setSize(math::Vector2D size)
   vp.MaxDepth = 1.0f;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
-  deviceContext->RSSetViewports(1, &vp);
+  DeviceContext->RSSetViewports(1, &vp);
 
   _size = size;
 }
 
 // ----------------------------------------------------------------------------
 
-math::Vector2D WindowDevice::getSize() const
+math::Vector2D WindowDevice::GetSize() const
 {
   return _size;
 }
 
 // ----------------------------------------------------------------------------
 
-bool WindowDevice::beginFrame()
+bool WindowDevice::BeginFrame()
 {
-  if (deviceContext == nullptr)
+  if (DeviceContext == nullptr)
     return false;
 
-  deviceContext->ClearRenderTargetView(renderTargetView, backgroundColor.buffer());
-  deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+  DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
+  DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   return true;
 }
 
 // ----------------------------------------------------------------------------
 
-void WindowDevice::endFrame()
+void WindowDevice::EndFrame()
 {
-  static bool vsync = getGame()->initSettings.vsync;
+  static bool vsync = GetGame()->initSettings.vsync;
   if (vsync)
   {
-    swapChain->Present(1, 0);
+    SwapChain->Present(1, 0);
   }
   else
   {
     const double min_frame_time = 0.001;
 
-    static auto& time = getGame()->gameTime;
-    while (time.currFrameTime() < min_frame_time)
+    static auto& time = GetGame()->Time;
+    while (time.CurrFrameTime < min_frame_time)
       Sleep(0);
 
-    swapChain->Present(0, 0);
+    SwapChain->Present(0, 0);
   }
 }
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::initializeD3DContext()
+void GraphicsDevice::InitializeD3DContext()
 {
-  auto contextSize = getSize();
-  auto _window = getContextWindow();
+  auto contextSize = GetSize();
+  auto _window = GetContextWindow();
   CHECK_HRESULT(GetLastError());
 
 #pragma region Initialize Swap Chain
@@ -272,21 +265,21 @@ void GraphicsDevice::initializeD3DContext()
     numLevelsRequested,
     D3D11_SDK_VERSION,
     &sd,
-    &swapChain,
-    &device,
+    &SwapChain,
+    &Device,
     &FeatureLevelSupported,
-    &deviceContext);
+    &DeviceContext);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
-  hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+  hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
                             reinterpret_cast<LPVOID *>(&backBuffer));
   CHECK_HRESULT(hr);
 
-  hr = device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
+  hr = Device->CreateRenderTargetView(backBuffer, nullptr, &RenderTargetView);
   CHECK_HRESULT(hr);
 
-  releaseDXInterface(backBuffer);
+  ReleaseDXInterface(backBuffer);
 
 #pragma endregion
 
@@ -306,7 +299,7 @@ void GraphicsDevice::initializeD3DContext()
   depthBufferDesc.CPUAccessFlags = 0;
   depthBufferDesc.MiscFlags = 0;
 
-  hr = device->CreateTexture2D(&depthBufferDesc, nullptr, &depthStencilBuffer);
+  hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
   CHECK_HRESULT(hr);
 
 #pragma endregion
@@ -330,10 +323,10 @@ void GraphicsDevice::initializeD3DContext()
   depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
   depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-  hr = device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
+  hr = Device->CreateDepthStencilState(&depthStencilDesc, &DepthStencilState);
   CHECK_HRESULT(hr);
 
-  deviceContext->OMSetDepthStencilState(depthStencilState, 1);
+  DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
 
 #pragma endregion
 
@@ -345,17 +338,17 @@ void GraphicsDevice::initializeD3DContext()
   depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   depthStencilViewDesc.Texture2D.MipSlice = 0;
 
-  hr = device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
+  hr = Device->CreateDepthStencilView(DepthStencilBuffer, &depthStencilViewDesc, &DepthStencilView);
   CHECK_HRESULT(hr);
 
-  deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 
 #pragma endregion
 
 #pragma region Rasterizer
 
   D3D11_RASTERIZER_DESC rasterDesc;
-  rasterDesc.CullMode = getGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
+  rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
   rasterDesc.DepthBias = 0;
   rasterDesc.DepthBiasClamp = 0.0f;
   rasterDesc.DepthClipEnable = false;
@@ -366,10 +359,10 @@ void GraphicsDevice::initializeD3DContext()
   rasterDesc.SlopeScaledDepthBias = 0.0f;
   rasterDesc.AntialiasedLineEnable = true;
 
-  hr = device->CreateRasterizerState(&rasterDesc, &rasterState);
+  hr = Device->CreateRasterizerState(&rasterDesc, &RasterState);
   CHECK_HRESULT(hr);
 
-  deviceContext->RSSetState(rasterState);
+  DeviceContext->RSSetState(RasterState);
 
 #pragma endregion
 
@@ -383,7 +376,7 @@ void GraphicsDevice::initializeD3DContext()
   viewport.TopLeftX = 0.0f;
   viewport.TopLeftY = 0.0f;
 
-  deviceContext->RSSetViewports(1, &viewport);
+  DeviceContext->RSSetViewports(1, &viewport);
 
 #pragma endregion
 
@@ -402,17 +395,17 @@ void GraphicsDevice::initializeD3DContext()
   blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
   blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-  HRESULT result = device->CreateBlendState(&blendStateDesc, &blendState);
+  HRESULT result = Device->CreateBlendState(&blendStateDesc, &BlendState);
   CHECK_HRESULT(result);
 
-  deviceContext->OMSetBlendState(blendState, nullptr, 0xFFFFFF);
+  DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
 
 #pragma endregion
 }
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::createInputLayout(byte* bytecode,
+void GraphicsDevice::CreateInputLayout(byte* bytecode,
                                        UINT bytecodeSize,
                                        D3D11_INPUT_ELEMENT_DESC* layoutDesc,
                                        UINT layoutDescNumElements,
@@ -431,7 +424,7 @@ void GraphicsDevice::createInputLayout(byte* bytecode,
     layoutDescNumElements = ARRAYSIZE(basicVertexLayoutDesc);
   }
 
-  device->CreateInputLayout(
+  Device->CreateInputLayout(
     layoutDesc,
     layoutDescNumElements,
     bytecode,

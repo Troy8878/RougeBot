@@ -11,12 +11,12 @@
 
 Shader::~Shader()
 {
-  releaseDXInterface(vertexShader);
-  releaseDXInterface(pixelShader);
-  releaseDXInterface(cameraBuffer);
+  ReleaseDXInterface(vertexShader);
+  ReleaseDXInterface(pixelShader);
+  ReleaseDXInterface(cameraBuffer);
 }
 
-Shader *Shader::loadShader(
+Shader *Shader::LoadShader(
   GraphicsDevice *device,
   const std::string& vertexAsset,
   const std::string& pixelAsset)
@@ -25,7 +25,7 @@ Shader *Shader::loadShader(
   auto *shader = new Shader;
   shader->device = device;
 
-  auto& respack = getGame()->respack;
+  auto& respack = GetGame()->Respack;
   auto *shadersContainer = respack["Shaders"];
   RELEASE_AFTER_SCOPE(shadersContainer);
 
@@ -41,7 +41,7 @@ Shader *Shader::loadShader(
   assert(shader->vertexShaderData);
   assert(shader->pixelShaderData);
 
-  result = device->device->CreateVertexShader(
+  result = device->Device->CreateVertexShader(
     shader->vertexShaderData,
     shader->vertexShaderData.size(),
     nullptr, &shader->vertexShader);
@@ -49,7 +49,7 @@ Shader *Shader::loadShader(
 
   setDXDebugName(shader->vertexShader, L"VertexShader{" + widen(vertexAsset) + L"}");
 
-  result = device->device->CreatePixelShader(
+  result = device->Device->CreatePixelShader(
     shader->pixelShaderData,
     shader->pixelShaderData.size(),
     nullptr, &shader->pixelShader);
@@ -60,10 +60,10 @@ Shader *Shader::loadShader(
   return shader;
 }
 
-void Shader::draw(unsigned indexCount)
+void Shader::Draw(unsigned indexCount)
 {
   using namespace DirectX;
-  auto *context = device->deviceContext;
+  auto *context = device->DeviceContext;
   HRESULT result;
 
   D3D11_MAPPED_SUBRESOURCE mappedCameraRes;
@@ -84,7 +84,7 @@ void Shader::draw(unsigned indexCount)
   context->DrawIndexed(indexCount, 0, 0);
 }
 
-void Shader::initCameraBuffer()
+void Shader::InitCameraBuffer()
 {
   D3D11_BUFFER_DESC cameraBufferDesc;
 
@@ -95,14 +95,14 @@ void Shader::initCameraBuffer()
   cameraBufferDesc.MiscFlags = 0;
   cameraBufferDesc.StructureByteStride = 0;
 
-  HRESULT result = device->device->CreateBuffer(&cameraBufferDesc,
+  HRESULT result = device->Device->CreateBuffer(&cameraBufferDesc,
                                                 nullptr, &cameraBuffer);
   CHECK_HRESULT(result);
 }
 
-void Shader::initializeBasicShader()
+void Shader::InitializeBasicShader()
 {
-  initCameraBuffer();
+  InitCameraBuffer();
 
   #pragma region Polygon Layout
   static const D3D11_INPUT_ELEMENT_DESC polygonLayout[] =
@@ -128,16 +128,16 @@ void Shader::initializeBasicShader()
   };
   #pragma endregion
 
-  auto result = device->device->
+  auto result = device->Device->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
                       vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);
   CHECK_HRESULT(result);
 }
 
-void Shader::initializeTexturedShader()
+void Shader::InitializeTexturedShader()
 {
-  initCameraBuffer();
+  InitCameraBuffer();
 
   #pragma region Polygon Layout
   static const D3D11_INPUT_ELEMENT_DESC polygonLayout[] =
@@ -172,7 +172,7 @@ void Shader::initializeTexturedShader()
   };
   #pragma endregion
 
-  auto result = device->device->
+  auto result = device->Device->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
                       vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);

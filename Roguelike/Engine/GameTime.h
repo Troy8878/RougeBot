@@ -20,37 +20,35 @@ public:
 
 // ----------------------------------------------------------------------------
   
-  void update()
+  void Update()
   {
     _prevTime = _currTime;
     _currTime = clock::now();
 
     auto timeDiff = _currTime - _prevTime;
-    _dt = timeDiff.count() * clock_period;
+    Dt = timeDiff.count() * clock_period;
 
-    if (_dt > maxDt)
-      _dt = maxDt;
-    if (_dt < minDt)
-      _dt = maxDt;
+    if (Dt > maxDt)
+      Dt = maxDt;
+    if (Dt < minDt)
+      Dt = maxDt;
   }
 
 // ----------------------------------------------------------------------------
   
-  double dt() const
-  {
-    return _dt; 
-  }
+  IR_PROPERTY(double, Dt);
 
 // ----------------------------------------------------------------------------
 
-  clock::duration runningTime() const
+  clock::duration RunningTime() const
   {
     return _currTime - _initTime;
   }
 
 // ----------------------------------------------------------------------------
 
-  double currFrameTime() const
+  __declspec(property(get = _GetCurrFrameTime)) double CurrFrameTime;
+  double _GetCurrFrameTime() const
   {
     auto time = clock::now();
     auto diff = time - _currTime;
@@ -66,8 +64,6 @@ private:
   clock::time_point _currTime = clock::now();
 
   GameTime& operator=(const GameTime&) = delete;
-
-  double _dt;
 };
 
 // ----------------------------------------------------------------------------

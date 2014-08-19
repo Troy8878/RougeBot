@@ -71,7 +71,7 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
 
 // ----------------------------------------------------------------------------
 
-Texture2D Texture2D::getNullTexture(ID3D11Device *device)
+Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
 {
   static bool initialized = false;
   static Texture2D nullTexture;
@@ -87,8 +87,8 @@ Texture2D Texture2D::getNullTexture(ID3D11Device *device)
 
 Texture2D::TextureResource::~TextureResource()
 {
-  releaseDXInterface(resource);
-  releaseDXInterface(texture);
+  ReleaseDXInterface(resource);
+  ReleaseDXInterface(texture);
 }
 
 // ----------------------------------------------------------------------------

@@ -62,22 +62,33 @@ FileMapping::~FileMapping()
 
 FileMappingView FileMapping::mapView(size_t offset, size_t size)
 {
+  size_t add_offset = 0;
+  auto mod = offset % (64 * 1024);
+  if (mod)
+  {
+    add_offset = mod;
+    offset -= mod;
+    size += add_offset;
+  }
+
   void *addr = MapViewOfFile(mapHandle,
                              viewAccess,
                              HIDWORD(offset),
                              LODWORD(offset),
                              size);
 
+  auto msg = GetLastErrorString();
+
   if (addr == nullptr)
     throw win32_exception();
   
-  return FileMappingView{addr};
+  return FileMappingView{addr, add_offset};
 }
 
 // ----------------------------------------------------------------------------
 
-FileMappingView::FileMappingView(void *address)
-  : map(std::make_shared<MapWrapper>(address))
+FileMappingView::FileMappingView(void *address, size_t offset)
+  : map(std::make_shared<MapWrapper>(address)), offset(offset)
 {
 }
 

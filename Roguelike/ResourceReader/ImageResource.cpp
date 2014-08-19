@@ -5,8 +5,12 @@
  *********************************/
 
 #include "ImageResource.h"
-#include "Helpers\FileSystem.h"
+#include "Engine\Common.h"
 #include "Helpers\CriticalSections.h"
+#include "Engine\Game.h"
+#include "ResourcePack.h"
+
+// ----------------------------------------------------------------------------
 
 void ImageResource::to32BitColor(byte *destination, size_t dest_size)
 {
@@ -49,6 +53,8 @@ void ImageResource::to32BitColor(byte *destination, size_t dest_size)
   }
 }
 
+// ----------------------------------------------------------------------------
+
 static IWICImagingFactory *getImagingFactory()
 {
   THREAD_EXCLUSIVE_SCOPE;
@@ -67,6 +73,8 @@ static IWICImagingFactory *getImagingFactory()
 
   return factory;
 }
+
+// ----------------------------------------------------------------------------
 
 ImageResource ImageResource::fromFile(const std::wstring& file)
 {
@@ -121,4 +129,25 @@ ImageResource ImageResource::fromFile(const std::wstring& file)
 
   return image;
 }
+
+// ----------------------------------------------------------------------------
+
+ImageResource ImageResource::fromAsset(const std::string& container, const std::string& asset)
+{
+  auto& pack = getGame()->getRespack();
+
+  auto *rescontainer = pack[container];
+  RELEASE_AFTER_SCOPE(rescontainer);
+
+  auto *resource = rescontainer->getResource(asset);
+  RELEASE_AFTER_SCOPE(resource);
+
+  if (resource == nullptr)
+    throw string_exception(container + " asset '" + asset + "' could not be found!");
+
+  auto file = resource->getTempFile();
+  return ImageResource::fromFile(file.getPath());
+}
+
+// ----------------------------------------------------------------------------
 

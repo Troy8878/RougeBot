@@ -11,58 +11,11 @@
 #include <unordered_map>
 #include <string>
 
+#include "ResourcePackBinaryHeaders.h"
+
+// ----------------------------------------------------------------------------
+
 using namespace Respack;
-
-// ----------------------------------------------------------------------------
-
-#pragma pack(push, 1)
-
-// File layout
-//  [2 bytes  | container_count]
-//  [{containers}              ]
-//
-// Container layout
-//  [2 bytes  | resource_count]
-//  [32 bytes | container_name]
-//  [8 bytes  | total_size    ]
-//  [{resources}              ]
-//
-// Resource layout
-//  [32 bytes | resource_name ]
-//  [8 bytes  | updated_at    ]
-//  [4 bytes  | resource_size ]
-//  [{resource contents}      ]
-
-struct ResPackHeader
-{
-  unsigned __int16 container_count;
-};
-
-// ----------------------------------------------------------------------------
-
-const size_t firstResContainerOffset = sizeof(ResPackHeader);
-
-struct ResContainerHeader
-{
-  unsigned __int16 resource_count;
-           __int8  container_name[32];
-  unsigned __int64 total_size;
-};
-
-// ----------------------------------------------------------------------------
-
-struct ResHeader
-{
-  typedef std::chrono::system_clock::time_point time_point;
-
-  unsigned __int16 resource_size;
-           __int8  resource_name[32];
-        time_point updated_at;
-};
-
-#pragma pack(pop)
-
-// ----------------------------------------------------------------------------
 
 template <typename Header>
 struct MemMapping
@@ -217,11 +170,16 @@ ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
     packmap = new FileMapping(path);
     mapContainerHeads();
   }
-  catch (...)
+#ifdef _DEBUG
+  catch (void *)
+#else
+  catch (std::exception& e)
+#endif
   {
     std::cerr << console::fg::yellow << "[WARN] "
               << "Resource pack could not be loaded. "
               << "Reading files in fallback mode" << std::endl;
+    IFNDEBUG(std::cerr << "  " << e.what() << std::endl);
 
     // run in fallback mode, only reading from
     // the fallback folder
@@ -255,6 +213,8 @@ void ResPackImpl::mapContainerHeads()
     
     offset += sizeof(ResContainerHeader);
     offset += mapping.header.total_size;
+
+    memoryContainers.push_back(mapping);
   }
 }
 
@@ -344,8 +304,8 @@ void ResMemoryContainer::Release()
 
 void ResMemoryContainer::mapResources()
 {
-  auto offset = mapping.map_offset;
-  for (unsigned i = 0; i < mapping.header.resource_count; ++i)
+  auto offset = this->mapping.map_offset;
+  for (unsigned i = 0; i < this->mapping.header.resource_count; ++i)
   {
     MemResourceMapping mapping;
     mapping.map_offset = offset + sizeof(ResHeader);
@@ -356,6 +316,8 @@ void ResMemoryContainer::mapResources()
 
     offset += sizeof(ResHeader);
     offset += mapping.header.resource_size;
+
+    memoryResources.push_back(mapping);
   }
 }
 

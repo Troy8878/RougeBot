@@ -7,6 +7,7 @@
 #include "Common.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Game.h"
 
 Shader::~Shader()
 {
@@ -17,34 +18,44 @@ Shader::~Shader()
 
 Shader *Shader::loadShader(
   GraphicsDevice *device,
-  const fs::wpath& vertexfile,
-  const fs::wpath& pixelfile)
+  const std::string& vertexAsset,
+  const std::string& pixelAsset)
 {
   HRESULT result;
   auto *shader = new Shader;
   shader->device = device;
 
-  shader->vertexShaderData = fs::file_reader::readAllBytes(vertexfile);
-  shader->pixelShaderData = fs::file_reader::readAllBytes(pixelfile);
+  auto& respack = getGame()->getRespack();
+  auto *shadersContainer = respack["Shaders"];
+  RELEASE_AFTER_SCOPE(shadersContainer);
 
-  assert(shader->vertexShaderData.data);
-  assert(shader->pixelShaderData.data);
+  auto *vertexRes = shadersContainer->getResource(vertexAsset);
+  RELEASE_AFTER_SCOPE(vertexRes);
+
+  auto pixelRes = shadersContainer->getResource(pixelAsset);
+  RELEASE_AFTER_SCOPE(pixelRes);
+
+  shader->vertexShaderData = shared_array<byte>{vertexRes->getData(), vertexRes->getSize()};
+  shader->pixelShaderData = shared_array<byte>{pixelRes->getData(), pixelRes->getSize()};
+
+  assert(shader->vertexShaderData);
+  assert(shader->pixelShaderData);
 
   result = device->device()->CreateVertexShader(
-    shader->vertexShaderData.data,
-    shader->vertexShaderData.size,
+    shader->vertexShaderData,
+    shader->vertexShaderData.size(),
     nullptr, &shader->vertexShader);
   CHECK_HRESULT(result);
 
-  setDXDebugName(shader->vertexShader, L"VertexShader{" + vertexfile.filename() + L"}");
+  setDXDebugName(shader->vertexShader, L"VertexShader{" + widen(vertexAsset) + L"}");
 
   result = device->device()->CreatePixelShader(
-    shader->pixelShaderData.data,
-    shader->pixelShaderData.size,
+    shader->pixelShaderData,
+    shader->pixelShaderData.size(),
     nullptr, &shader->pixelShader);
   CHECK_HRESULT(result);
 
-  setDXDebugName(shader->pixelShader, L"PixelShader{" + pixelfile.filename() + L"}");
+  setDXDebugName(shader->pixelShader, L"PixelShader{" + widen(pixelAsset) + L"}");
 
   return shader;
 }
@@ -119,7 +130,7 @@ void Shader::initializeBasicShader()
 
   auto result = device->device()->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
-                      vertexShaderData.data, vertexShaderData.size,
+                      vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);
   CHECK_HRESULT(result);
 }
@@ -163,7 +174,7 @@ void Shader::initializeTexturedShader()
 
   auto result = device->device()->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
-                      vertexShaderData.data, vertexShaderData.size,
+                      vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);
   CHECK_HRESULT(result);
 }

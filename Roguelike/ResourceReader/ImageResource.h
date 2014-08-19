@@ -9,6 +9,8 @@
 #include "Helpers\SharedArray.h"
 #include "Helpers\UseDirectX.h"
 
+// ----------------------------------------------------------------------------
+
 struct ImageResource
 {
   enum class Format
@@ -41,6 +43,9 @@ struct ImageResource
   }
 
   static ImageResource fromFile(const std::wstring& file);
+  static ImageResource fromAsset(const std::string& container, const std::string& asset);
 };
+
+// ----------------------------------------------------------------------------
 
 

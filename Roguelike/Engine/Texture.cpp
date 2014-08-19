@@ -7,13 +7,17 @@
 #include "Common.h"
 #include "Texture.h"
 #include "ResourceReader\ImageResource.h"
+#include "Game.h"
+#include "ResourceReader\ResourcePack.h"
 
-std::string Texture2D::respack_container_name = "";
+// ----------------------------------------------------------------------------
 
-Texture2D::Texture2D(ID3D11Device *device, const std::wstring& file)
-  : Texture2D{device, ImageResource::fromFile(file)}
+Texture2D::Texture2D(ID3D11Device *device, const std::string& asset)
+  : Texture2D{device, ImageResource::fromAsset("Textures", asset)}
 {
 }
+
+// ----------------------------------------------------------------------------
 
 Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
 {
@@ -65,6 +69,8 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
   _res->resource = res;
 }
 
+// ----------------------------------------------------------------------------
+
 Texture2D Texture2D::getNullTexture(ID3D11Device *device)
 {
   static bool initialized = false;
@@ -77,9 +83,13 @@ Texture2D Texture2D::getNullTexture(ID3D11Device *device)
   return nullTexture;
 }
 
+// ----------------------------------------------------------------------------
+
 Texture2D::TextureResource::~TextureResource()
 {
   releaseDXInterface(resource);
   releaseDXInterface(texture);
 }
+
+// ----------------------------------------------------------------------------
 

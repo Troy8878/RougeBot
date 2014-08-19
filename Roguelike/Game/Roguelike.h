@@ -50,14 +50,14 @@ public:
   {
     _basicShader = Shader::loadShader(
       _graphicsDevice.get(),
-      L"Assets/Shaders/BasicVertexShader.cso",
-      L"Assets/Shaders/BasicPixelShader.cso");
+      "BasicVertexShader.cso",
+      "BasicPixelShader.cso");
     _basicShader->initializeBasicShader();
 
     _textureShader = Shader::loadShader(
       _graphicsDevice.get(),
-      L"Assets/Shaders/TexturedVertexShader.cso",
-      L"Assets/Shaders/TexturedPixelShader.cso");
+      "TexturedVertexShader.cso",
+      "TexturedPixelShader.cso");
     _textureShader->initializeTexturedShader();
   }
 
@@ -75,7 +75,7 @@ public:
     _basicShader->camera = &_camera;
     _textureShader->camera = &_camera;
     _basicShape->shader = _textureShader;
-    _basicShape->texture = Texture2D{_graphicsDevice->device(), L"Assets/Textures/1384108156458.jpg"};
+    _basicShape->texture = Texture2D{_graphicsDevice->device(), "1384108156458.jpg"};
   }
 
   void onUpdate(Events::EventMessage& e)

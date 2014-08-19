@@ -40,6 +40,13 @@ public:
     for (auto& item : items)
       *data++ = item;
   }
+  shared_array(T *items, size_t size)
+    : shared_array(size)
+  {
+    T *data = get();
+    for (int i = 0; i < size; ++i)
+      *data++ = items[i];
+  }
 
   operator T *() { return ptr->data; }
   T *get() { return ptr->data; }

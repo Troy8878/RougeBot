@@ -27,16 +27,16 @@ struct Shader
   Camera *camera;
   Texture *texture = nullptr;
 
-  fs::binary_file_data vertexShaderData;
-  fs::binary_file_data pixelShaderData;
+  shared_array<byte> vertexShaderData;
+  shared_array<byte> pixelShaderData;
 
   virtual ~Shader();
   void draw(unsigned indexCount);
 
   static Shader *loadShader(
     GraphicsDevice *device,
-    const fs::wpath& vertexfile,
-    const fs::wpath& pixelfile);
+    const std::string& vertexAsset,
+    const std::string& pixelAsset);
 
   void initCameraBuffer();
   void initializeBasicShader();

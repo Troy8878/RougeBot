@@ -40,7 +40,7 @@ private:
 
 class FileMappingView
 {
-  FileMappingView(void *address);
+  FileMappingView(void *address, size_t offset);
   friend class FileMapping;
 
 public:
@@ -49,7 +49,7 @@ public:
   template <typename T>
   inline T *getAs()
   {
-    return reinterpret_cast<T *>(map->addr);
+    return reinterpret_cast<T *>(reinterpret_cast<byte *>(map->addr) + offset);
   }
 
   inline operator byte *() 
@@ -80,6 +80,7 @@ private:
   };
 
   std::shared_ptr<MapWrapper> map;
+  size_t offset;
 };
 
 // ----------------------------------------------------------------------------

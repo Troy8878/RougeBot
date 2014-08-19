@@ -20,14 +20,14 @@ GraphicsDevice::~GraphicsDevice()
 
 void GraphicsDevice::freeD3DContext()
 {
-  releaseDXInterface(_rasterState);
-  releaseDXInterface(_depthStencilView);
-  releaseDXInterface(_depthStencilState);
-  releaseDXInterface(_depthStencilBuffer);
-  releaseDXInterface(_renderTargetView);
-  releaseDXInterface(_deviceContext);
-  releaseDXInterface(_device);
-  releaseDXInterface(_swapChain);
+  releaseDXInterface(rasterState);
+  releaseDXInterface(depthStencilView);
+  releaseDXInterface(depthStencilState);
+  releaseDXInterface(depthStencilBuffer);
+  releaseDXInterface(renderTargetView);
+  releaseDXInterface(deviceContext);
+  releaseDXInterface(device);
+  releaseDXInterface(swapChain);
 }
 
 // ----------------------------------------------------------------------------
@@ -149,26 +149,26 @@ void WindowDevice::onResize(std::function<void(math::Vector2D)> callback)
 
 void WindowDevice::setSize(math::Vector2D size)
 {
-  if (!_swapChain)
+  if (!swapChain)
     return;
 
   // Release render target
-  _deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-  releaseDXInterface(_renderTargetView);
+  deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+  releaseDXInterface(renderTargetView);
 
   HRESULT hr;
-  hr = _swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+  hr = swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
-  hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-                             reinterpret_cast<void **>(&pBuffer));
+  hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+                            reinterpret_cast<void **>(&pBuffer));
   CHECK_HRESULT(hr);
 
-  hr = _device->CreateRenderTargetView(pBuffer, nullptr, &_renderTargetView);
+  hr = device->CreateRenderTargetView(pBuffer, nullptr, &renderTargetView);
   releaseDXInterface(pBuffer);
 
-  _deviceContext->OMSetRenderTargets(1, &_renderTargetView, nullptr);
+  deviceContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
   D3D11_VIEWPORT vp;
   vp.Width = size.x;
@@ -177,7 +177,7 @@ void WindowDevice::setSize(math::Vector2D size)
   vp.MaxDepth = 1.0f;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
-  _deviceContext->RSSetViewports(1, &vp);
+  deviceContext->RSSetViewports(1, &vp);
 
   _size = size;
 }
@@ -193,11 +193,11 @@ math::Vector2D WindowDevice::getSize() const
 
 bool WindowDevice::beginFrame()
 {
-  if (_deviceContext == nullptr)
+  if (deviceContext == nullptr)
     return false;
 
-  _deviceContext->ClearRenderTargetView(_renderTargetView, backgroundColor.buffer());
-  _deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+  deviceContext->ClearRenderTargetView(renderTargetView, backgroundColor.buffer());
+  deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   return true;
 }
@@ -209,17 +209,17 @@ void WindowDevice::endFrame()
   static bool vsync = getGame()->initSettings.vsync;
   if (vsync)
   {
-    _swapChain->Present(1, 0);
+    swapChain->Present(1, 0);
   }
   else
   {
     const double min_frame_time = 0.001;
 
-    static auto& time = getGame()->gameTime();
+    static auto& time = getGame()->gameTime;
     while (time.currFrameTime() < min_frame_time)
       Sleep(0);
 
-    _swapChain->Present(0, 0);
+    swapChain->Present(0, 0);
   }
 }
 
@@ -272,18 +272,18 @@ void GraphicsDevice::initializeD3DContext()
     numLevelsRequested,
     D3D11_SDK_VERSION,
     &sd,
-    &_swapChain,
-    &_device,
+    &swapChain,
+    &device,
     &FeatureLevelSupported,
-    &_deviceContext);
+    &deviceContext);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
-  hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
-                             reinterpret_cast<LPVOID *>(&backBuffer));
+  hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+                            reinterpret_cast<LPVOID *>(&backBuffer));
   CHECK_HRESULT(hr);
 
-  hr = _device->CreateRenderTargetView(backBuffer, nullptr, &_renderTargetView);
+  hr = device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
   CHECK_HRESULT(hr);
 
   releaseDXInterface(backBuffer);
@@ -306,7 +306,7 @@ void GraphicsDevice::initializeD3DContext()
   depthBufferDesc.CPUAccessFlags = 0;
   depthBufferDesc.MiscFlags = 0;
 
-  hr = _device->CreateTexture2D(&depthBufferDesc, nullptr, &_depthStencilBuffer);
+  hr = device->CreateTexture2D(&depthBufferDesc, nullptr, &depthStencilBuffer);
   CHECK_HRESULT(hr);
 
 #pragma endregion
@@ -330,10 +330,10 @@ void GraphicsDevice::initializeD3DContext()
   depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
   depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-  hr = _device->CreateDepthStencilState(&depthStencilDesc, &_depthStencilState);
+  hr = device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
   CHECK_HRESULT(hr);
 
-  _deviceContext->OMSetDepthStencilState(_depthStencilState, 1);
+  deviceContext->OMSetDepthStencilState(depthStencilState, 1);
 
 #pragma endregion
 
@@ -345,10 +345,10 @@ void GraphicsDevice::initializeD3DContext()
   depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   depthStencilViewDesc.Texture2D.MipSlice = 0;
 
-  hr = _device->CreateDepthStencilView(_depthStencilBuffer, &depthStencilViewDesc, &_depthStencilView);
+  hr = device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
   CHECK_HRESULT(hr);
 
-  _deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
+  deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 #pragma endregion
 
@@ -366,10 +366,10 @@ void GraphicsDevice::initializeD3DContext()
   rasterDesc.SlopeScaledDepthBias = 0.0f;
   rasterDesc.AntialiasedLineEnable = true;
 
-  hr = _device->CreateRasterizerState(&rasterDesc, &_rasterState);
+  hr = device->CreateRasterizerState(&rasterDesc, &rasterState);
   CHECK_HRESULT(hr);
 
-  _deviceContext->RSSetState(_rasterState);
+  deviceContext->RSSetState(rasterState);
 
 #pragma endregion
 
@@ -383,7 +383,7 @@ void GraphicsDevice::initializeD3DContext()
   viewport.TopLeftX = 0.0f;
   viewport.TopLeftY = 0.0f;
 
-  _deviceContext->RSSetViewports(1, &viewport);
+  deviceContext->RSSetViewports(1, &viewport);
 
 #pragma endregion
 
@@ -402,10 +402,10 @@ void GraphicsDevice::initializeD3DContext()
   blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
   blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-  HRESULT result = device()->CreateBlendState(&blendStateDesc, &_blendState);
+  HRESULT result = device->CreateBlendState(&blendStateDesc, &blendState);
   CHECK_HRESULT(result);
 
-  deviceContext()->OMSetBlendState(_blendState, nullptr, 0xFFFFFF);
+  deviceContext->OMSetBlendState(blendState, nullptr, 0xFFFFFF);
 
 #pragma endregion
 }
@@ -431,7 +431,7 @@ void GraphicsDevice::createInputLayout(byte* bytecode,
     layoutDescNumElements = ARRAYSIZE(basicVertexLayoutDesc);
   }
 
-  _device->CreateInputLayout(
+  device->CreateInputLayout(
     layoutDesc,
     layoutDescNumElements,
     bytecode,

@@ -152,11 +152,6 @@ private:
 
 #define RELEASE_AFTER_SCOPE(itr) DXReleaser<std::remove_reference<decltype(*(itr))>::type> __##itr##__releaser{(itr)}
 
-#define PROTECTED_ACCESSIBLE(type, name) \
-  type _##name = nullptr; public: \
-  inline type const& name() { \
-    return _##name; \
-  } protected:
 
 #define CHECK_HRESULT(hr) CheckHRESULT(hr)
 
@@ -206,3 +201,77 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
 #define NO_COPY_CONSTRUCTOR(type) type(const type&) = delete
 #define NO_ASSIGNMENT_OPERATOR(type) type& operator=(const type&) = delete
 
+#define _PROPERTY_GET(pType, pName)                 \
+  virtual pType& _PropGet ## pName() {              \
+    return this->_##pName;                          \
+  }                                                 \
+  virtual pType const & _PropGet ## pName() const { \
+    return this->_##pName;                          \
+  }
+
+#define _PROPERTY_SET(pType, pName)              \
+  virtual void _PropSet ## pName(pType value) {  \
+    this->_##pName = value;                      \
+  }
+
+#define _IPROPERTY_GET(pType, pName)                 \
+  inline pType& _PropGet ## pName() {              \
+    return this->_##pName;                          \
+  }                                                 \
+  inline pType const & _PropGet ## pName() const { \
+    return this->_##pName;                          \
+  }
+
+#define _IPROPERTY_SET(pType, pName)              \
+  inline void _PropSet ## pName(pType value) {  \
+    this->_##pName = value;                      \
+  }
+
+#define _PROPERTY_STORAGE(pType, pName) \
+  private: pType _##pName; public:
+
+#define W_PROPERTY(pType, pName)  \
+  _PROPERTY_STORAGE(pType, pName) \
+  _PROPERTY_SET(pType, pName)     \
+  __declspec(property(            \
+    put = _PropSet ## pName)      \
+  ) pType pName
+
+#define R_PROPERTY(pType, pName)  \
+  _PROPERTY_STORAGE(pType, pName) \
+  _PROPERTY_GET(pType, pName)     \
+  __declspec(property(            \
+    get = _PropGet ## pName)      \
+  ) pType pName
+
+#define RW_PROPERTY(pType, pName) \
+  _PROPERTY_STORAGE(pType, pName) \
+  _PROPERTY_GET(pType, pName)     \
+  _PROPERTY_SET(pType, pName)     \
+  __declspec(property(            \
+    get = _PropGet ## pName,      \
+    put = _PropSet ## pName)      \
+  ) pType pName
+
+#define IW_PROPERTY(pType, pName)  \
+  _PROPERTY_STORAGE(pType, pName) \
+  _IPROPERTY_SET(pType, pName)     \
+  __declspec(property(            \
+    put = _PropSet ## pName)      \
+  ) pType pName
+
+#define IR_PROPERTY(pType, pName)  \
+  _PROPERTY_STORAGE(pType, pName) \
+  _IPROPERTY_GET(pType, pName)     \
+  __declspec(property(            \
+    get = _PropGet ## pName)      \
+  ) pType pName
+
+#define IRW_PROPERTY(pType, pName) \
+  _PROPERTY_STORAGE(pType, pName) \
+  _IPROPERTY_GET(pType, pName)     \
+  _IPROPERTY_SET(pType, pName)     \
+  __declspec(property(            \
+    get = _PropGet ## pName,      \
+    put = _PropSet ## pName)      \
+  ) pType pName

@@ -111,7 +111,7 @@ void Game::graphicsOnInit()
     float nx = LOWORD(lparam);
     float ny = HIWORD(lparam);
     
-    this->getGraphicsDevice()->setSize({nx, ny});
+    this->graphicsDevice->setSize({nx, ny});
 
     static event_id eventId = Events::Event::createEventId("window_resize");
     Events::RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};

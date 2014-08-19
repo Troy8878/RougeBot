@@ -48,9 +48,9 @@ public:
 
   void setProcHandler(UINT message, wndproc_callback callback);
 
-  const GameTime& gameTime() { return _gameTime; }
-  GraphicsDevice *getGraphicsDevice() { return _graphicsDevice.get(); };
-  Respack::ResourcePack& getRespack() { return *_respack; }
+  __declspec(property(get = __getGameTime)) const GameTime& gameTime;
+  __declspec(property(get = __getGraphicsDevice)) GraphicsDevice *graphicsDevice;
+  __declspec(property(get = __getRespack)) Respack::ResourcePack& respack;
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
@@ -76,6 +76,10 @@ public:
     void handle(Events::EventMessage& e) override;
 
   } levelEventProxy;
+  
+  inline const GameTime& __getGameTime() { return _gameTime; }
+  inline GraphicsDevice *__getGraphicsDevice() { return _graphicsDevice.get(); }
+  inline Respack::ResourcePack& __getRespack() { return *_respack; }
 
   friend class WindowDevice;
 };

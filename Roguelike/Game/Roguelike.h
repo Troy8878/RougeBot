@@ -63,7 +63,7 @@ public:
 
   void initObjects()
   {
-    _basicShape = Shapes::makeRectangle(_graphicsDevice->device(), {10, 10});
+    _basicShape = Shapes::makeRectangle(_graphicsDevice->device, {10, 10});
 
     _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
@@ -75,7 +75,7 @@ public:
     _basicShader->camera = &_camera;
     _textureShader->camera = &_camera;
     _basicShape->shader = _textureShader;
-    _basicShape->texture = Texture2D{_graphicsDevice->device(), "1384108156458.jpg"};
+    _basicShape->texture = Texture2D{_graphicsDevice->device, "1384108156458.jpg"};
   }
 
   void onUpdate(Events::EventMessage& e)
@@ -89,12 +89,19 @@ public:
     // Update FPS
     if (dt > 0.001)
     {
-      const int update_res = 240;
+      const int update_res = 60;
       
+      static float prev_fps = 60;
       static float fps = 60;
       fps = (fps * (update_res - 1) + 1 / dt) / update_res;
-      auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
-      SetWindowText(_graphicsDevice->window(), title.c_str());
+
+      if (fps != prev_fps)
+      {
+        prev_fps = fps;
+
+        auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
+        SetWindowText(_graphicsDevice->window, title.c_str());
+      }
     }
 
     static bool movein = true;

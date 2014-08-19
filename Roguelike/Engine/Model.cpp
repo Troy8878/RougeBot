@@ -62,7 +62,7 @@ void XM_CALLCONV Model::draw(DirectX::FXMMATRIX worldTransform) const
 
   unsigned offset = 0;
 
-  auto context = shader->device->deviceContext();
+  auto context = shader->device->deviceContext;
   context->IASetVertexBuffers(0, 1, &_vertexBuffer, &_stride, &offset);
   context->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, offset);
   context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

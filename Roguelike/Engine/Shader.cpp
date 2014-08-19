@@ -25,7 +25,7 @@ Shader *Shader::loadShader(
   auto *shader = new Shader;
   shader->device = device;
 
-  auto& respack = getGame()->getRespack();
+  auto& respack = getGame()->respack;
   auto *shadersContainer = respack["Shaders"];
   RELEASE_AFTER_SCOPE(shadersContainer);
 
@@ -41,7 +41,7 @@ Shader *Shader::loadShader(
   assert(shader->vertexShaderData);
   assert(shader->pixelShaderData);
 
-  result = device->device()->CreateVertexShader(
+  result = device->device->CreateVertexShader(
     shader->vertexShaderData,
     shader->vertexShaderData.size(),
     nullptr, &shader->vertexShader);
@@ -49,7 +49,7 @@ Shader *Shader::loadShader(
 
   setDXDebugName(shader->vertexShader, L"VertexShader{" + widen(vertexAsset) + L"}");
 
-  result = device->device()->CreatePixelShader(
+  result = device->device->CreatePixelShader(
     shader->pixelShaderData,
     shader->pixelShaderData.size(),
     nullptr, &shader->pixelShader);
@@ -63,7 +63,7 @@ Shader *Shader::loadShader(
 void Shader::draw(unsigned indexCount)
 {
   using namespace DirectX;
-  auto *context = device->deviceContext();
+  auto *context = device->deviceContext;
   HRESULT result;
 
   D3D11_MAPPED_SUBRESOURCE mappedCameraRes;
@@ -95,8 +95,8 @@ void Shader::initCameraBuffer()
   cameraBufferDesc.MiscFlags = 0;
   cameraBufferDesc.StructureByteStride = 0;
 
-  HRESULT result = device->device()->CreateBuffer(&cameraBufferDesc,
-                                                  nullptr, &cameraBuffer);
+  HRESULT result = device->device->CreateBuffer(&cameraBufferDesc,
+                                                nullptr, &cameraBuffer);
   CHECK_HRESULT(result);
 }
 
@@ -128,7 +128,7 @@ void Shader::initializeBasicShader()
   };
   #pragma endregion
 
-  auto result = device->device()->
+  auto result = device->device->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
                       vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);
@@ -172,7 +172,7 @@ void Shader::initializeTexturedShader()
   };
   #pragma endregion
 
-  auto result = device->device()->
+  auto result = device->device->
     CreateInputLayout(polygonLayout, ARRAYSIZE(polygonLayout),
                       vertexShaderData, vertexShaderData.size(),
                       &vertexLayout);

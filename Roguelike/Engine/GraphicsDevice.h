@@ -32,11 +32,6 @@ public:
   virtual bool beginFrame() = 0;
   virtual void endFrame() = 0;
 
-  inline bool isResourceInvalid(const resource_token_t& token)
-  {
-    return token == _deviceCreated;
-  }
-
   static std::unique_ptr<WindowDevice> createWindow(const WindowCreationOptions& options);
   void createInputLayout(byte* bytecode,
                          UINT bytecodeSize,
@@ -44,19 +39,17 @@ public:
                          UINT layoutDescNumElements,
                          ID3D11InputLayout** layout);
 
+  IR_PROPERTY(IDXGISwapChain *, swapChain);
+  IR_PROPERTY(ID3D11Device *, device);
+  IR_PROPERTY(ID3D11DeviceContext *, deviceContext);
+  IR_PROPERTY(ID3D11RenderTargetView *, renderTargetView);
+  IR_PROPERTY(ID3D11Texture2D *, depthStencilBuffer);
+  IR_PROPERTY(ID3D11DepthStencilState *, depthStencilState);
+  IR_PROPERTY(ID3D11DepthStencilView *, depthStencilView);
+  IR_PROPERTY(ID3D11RasterizerState *, rasterState);
+  IR_PROPERTY(ID3D11BlendState *, blendState);
+
 protected:
-  resource_token_t _deviceCreated;
-
-  PROTECTED_ACCESSIBLE(IDXGISwapChain *, swapChain);
-  PROTECTED_ACCESSIBLE(ID3D11Device *, device);
-  PROTECTED_ACCESSIBLE(ID3D11DeviceContext *, deviceContext);
-  PROTECTED_ACCESSIBLE(ID3D11RenderTargetView *, renderTargetView);
-  PROTECTED_ACCESSIBLE(ID3D11Texture2D *, depthStencilBuffer);
-  PROTECTED_ACCESSIBLE(ID3D11DepthStencilState *, depthStencilState);
-  PROTECTED_ACCESSIBLE(ID3D11DepthStencilView *, depthStencilView);
-  PROTECTED_ACCESSIBLE(ID3D11RasterizerState *, rasterState);
-  PROTECTED_ACCESSIBLE(ID3D11BlendState *, blendState);
-
   void initializeD3DContext();
   void freeD3DContext();
 
@@ -77,7 +70,6 @@ struct WindowCreationOptions
 
 class WindowDevice final : public GraphicsDevice
 {
-  HWND _window;
   math::Vector2D _size;
 
   std::function<void(math::Vector2D)> _onResize;
@@ -94,7 +86,7 @@ public:
 
   void processMessages();
 
-  HWND window() { return _window; }
+  IR_PROPERTY(HWND, window);
 
 private:
   WindowDevice(const WindowCreationOptions& options);

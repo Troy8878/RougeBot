@@ -1,6 +1,7 @@
 // ResourcePacker.cpp : main project file.
 
 #include "stdafx.h"
+#include <cassert>
 
 using namespace System;
 

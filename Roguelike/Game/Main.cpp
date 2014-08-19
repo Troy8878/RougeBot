@@ -4,7 +4,7 @@
  * Created 2014/05/28
  *********************************/
 
-#include "Game\Roguelike.h"
+#include "Common.h"
 
 #pragma comment(lib, "dxguid.lib")
 

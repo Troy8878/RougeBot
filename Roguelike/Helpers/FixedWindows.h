@@ -253,25 +253,25 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
     put = _PropSet ## pName)      \
   ) pType pName
 
-#define IW_PROPERTY(pType, pName)  \
+#define IW_PROPERTY(pType, pName) \
   _PROPERTY_STORAGE(pType, pName) \
-  _IPROPERTY_SET(pType, pName)     \
+  _IPROPERTY_SET(pType, pName)    \
   __declspec(property(            \
     put = _PropSet ## pName)      \
   ) pType pName
 
-#define IR_PROPERTY(pType, pName)  \
+#define IR_PROPERTY(pType, pName) \
   _PROPERTY_STORAGE(pType, pName) \
-  _IPROPERTY_GET(pType, pName)     \
+  _IPROPERTY_GET(pType, pName)    \
   __declspec(property(            \
     get = _PropGet ## pName)      \
   ) pType pName
 
 #define IRW_PROPERTY(pType, pName) \
-  _PROPERTY_STORAGE(pType, pName) \
+  _PROPERTY_STORAGE(pType, pName)  \
   _IPROPERTY_GET(pType, pName)     \
   _IPROPERTY_SET(pType, pName)     \
-  __declspec(property(            \
-    get = _PropGet ## pName,      \
-    put = _PropSet ## pName)      \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
   ) pType pName

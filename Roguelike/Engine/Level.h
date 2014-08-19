@@ -32,3 +32,11 @@ protected:
 
 // ----------------------------------------------------------------------------
 
+template <typename T>
+class LevelRegistration
+{
+  LevelRegistration(const std::string& name);
+};
+
+// ----------------------------------------------------------------------------
+

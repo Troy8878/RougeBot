@@ -4,6 +4,8 @@
  * Created 2014/05/28
  *********************************/
 
+#pragma once
+
 #include "Engine\Common.h"
 
 #include "Engine\Game.h"

@@ -12,7 +12,7 @@
 
 struct ComponentRegistration;
 class ComponentFactory;
-typedef std::unordered_map<std::string, ULONG_PTR> component_factory_data;
+typedef std::unordered_map<std::string, std::string> component_factory_data;
 
 // ----------------------------------------------------------------------------
 

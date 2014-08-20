@@ -104,6 +104,7 @@
     <ClInclude Include="RubyComponent.h" />
     <ClInclude Include="RubyInterop.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
@@ -144,6 +145,7 @@
     <ClCompile Include="RubyModule.cpp" />
     <ClCompile Include="RubyValue.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>

@@ -105,6 +105,9 @@
     <ClInclude Include="EntitySection.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rubylib.rc">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="EventHandlers.cpp">
       <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

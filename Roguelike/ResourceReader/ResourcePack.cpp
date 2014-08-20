@@ -170,16 +170,14 @@ ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
     packmap = new FileMapping(path);
     mapContainerHeads();
   }
-#ifdef _DEBUG
-  catch (void *)
-#else
+
   catch (std::exception& e)
-#endif
+
   {
     std::cerr << console::fg::yellow << "[WARN] "
               << "Resource pack could not be loaded. "
               << "Reading files in fallback mode" << std::endl;
-    IFNDEBUG(std::cerr << "  " << e.what() << std::endl);
+    std::cerr << "  " << e.what() << std::endl;
 
     // run in fallback mode, only reading from
     // the fallback folder

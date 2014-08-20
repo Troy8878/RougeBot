@@ -291,3 +291,8 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
     get = _PropGet ## pName,       \
     put = _PropSet ## pName)       \
   ) pType pName
+
+#define PROPERTY(spec) __declspec(property(spec))
+
+#define INTERFACE __interface
+

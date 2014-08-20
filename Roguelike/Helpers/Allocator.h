@@ -1,22 +1,21 @@
 /*********************************
- * MainMenu.h
+ * Allocator.h
  * Connor Hilarides
- * Created 2014/08/19
+ * Created 2014/08/20
  *********************************/
 
 #pragma once
 
-#include "Engine\Common.h"
-
-#include "Engine\Game.h"
-#include "Engine\Shader.h"
-#include "Engine\Model.h"
-#include "Engine\Camera.h"
-#include "Engine\Colors.h"
-#include "Engine\Level.h"
-
 // ----------------------------------------------------------------------------
 
+class Allocator abstract
+{
+public:
+  virtual void *Allocate() = 0;
+  virtual void Free(void *) = 0;
 
+protected:
+  inline ~Allocator() {}
+};
 
 // ----------------------------------------------------------------------------

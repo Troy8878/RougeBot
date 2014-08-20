@@ -72,6 +72,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Allocator.h" />
+    <ClInclude Include="BucketAllocator.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CriticalSections.h" />
     <ClInclude Include="Exceptions.h" />
@@ -88,6 +90,7 @@
     <ClInclude Include="VectorHelp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BucketAllocator.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CriticalSections.cpp" />
     <ClCompile Include="FileSystem.cpp" />

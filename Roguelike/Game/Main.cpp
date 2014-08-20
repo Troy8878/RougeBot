@@ -5,6 +5,7 @@
  *********************************/
 
 #include "Common.h"
+#include "Helpers\BucketAllocator.h"
 
 #pragma comment(lib, "dxguid.lib")
 
@@ -25,6 +26,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
   {
     createConsole();
   });
+
+  RegisterEngineComponents();
 
   Roguelike game("Game 200 Project", hInstance);
   game.Run();

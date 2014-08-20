@@ -5,10 +5,21 @@
  *********************************/
 
 #include "Common.h"
-#include "Texture.h"
 #include "ResourceReader\ImageResource.h"
-#include "Game.h"
 #include "ResourceReader\ResourcePack.h"
+#include "Game.h"
+#include "Texture.h"
+
+// ----------------------------------------------------------------------------
+
+TextureManager TextureManager::Instance;
+
+// ----------------------------------------------------------------------------
+
+Texture2D::Texture2D(const std::shared_ptr<TextureResource>& resource)
+  : _res(resource)
+{
+}
 
 // ----------------------------------------------------------------------------
 
@@ -75,6 +86,7 @@ Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
 {
   static bool initialized = false;
   static Texture2D nullTexture;
+
   if (initialized)
     return nullTexture;
 
@@ -89,6 +101,47 @@ Texture2D::TextureResource::~TextureResource()
 {
   ReleaseDXInterface(resource);
   ReleaseDXInterface(texture);
+}
+
+// ----------------------------------------------------------------------------
+
+TextureManager::TextureManager()
+{
+}
+
+// ----------------------------------------------------------------------------
+
+Texture2D TextureManager::LoadTexture(const std::string& asset)
+{
+  auto it = _resources.find(asset);
+  if (it != _resources.end())
+  {
+    auto weak_ref = it->second;
+    auto strong_ref = weak_ref.lock();
+    if (strong_ref)
+    {
+      return Texture2D{strong_ref};
+    }
+    else
+    {
+      _resources.erase(it);
+    }
+  }
+
+  auto device = GetGame()->GameDevice->Device;
+  Texture2D texture{device, asset};
+
+  _resources[asset] = texture._res;
+
+  return texture;
+}
+
+// ----------------------------------------------------------------------------
+
+bool TextureManager::IsTextureCached(const std::string& asset)
+{
+  auto it = _resources.find(asset);
+  return it != _resources.end() && !it->second.expired();
 }
 
 // ----------------------------------------------------------------------------

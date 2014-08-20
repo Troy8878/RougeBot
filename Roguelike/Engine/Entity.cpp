@@ -15,6 +15,18 @@ Entity::Entity()
 
 // ----------------------------------------------------------------------------
 
+Component *Entity::AddComponent(const std::string& name, component_factory_data& data)
+{
+  auto *component = ComponentManager::Instance.InstantiateComponent(name, data);
+
+  component->Initialize(this, name);
+  _components[name] = component;
+
+  return component;
+}
+
+// ----------------------------------------------------------------------------
+
 bool Entity::CanHandle(const Events::EventMessage& e)
 {
   auto iterator = _events.find(e.EventId);

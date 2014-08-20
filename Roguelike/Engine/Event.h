@@ -30,7 +30,7 @@ namespace Events
     }
 #else
     inline EventMessage(event_id eventId, EventData *data, bool handleable = true)
-      : data(data), _eventId(eventId)
+      : _Data(data), _EventId(eventId)
     {
       UNREFERENCED_PARAMETER(handleable);
     }

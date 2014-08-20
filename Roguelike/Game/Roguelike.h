@@ -30,23 +30,28 @@ public:
   {
     using namespace DirectX;
 
-    _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
+    _graphicsDevice->backgroundColor = XMVectorSet(1, 0.5, 0, 1);
 
-    //_graphicsDevice->swapChain()->SetFullscreenState(true, nullptr);
+    //_graphicsDevice->SwapChain->SetFullscreenState(true, nullptr);
 
     InitShaders();
     InitObjects();
     InitSetup();
 
     using namespace Events;
-    static EventId updateEvent("update");
-    SetHandler(updateEvent, &Roguelike::OnUpdate);
+    //static EventId updateEvent("update");
+    //SetHandler(updateEvent, &Roguelike::OnUpdate);
 
-    static EventId drawEvent("draw");
-    SetHandler(drawEvent, &Roguelike::OnDraw);
+    //static EventId drawEvent("draw");
+    //SetHandler(drawEvent, &Roguelike::OnDraw);
 
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
+
+    Entity ent;
+    component_factory_data spdata;
+    spdata["texture"] = "1384108156458.jpg";
+    ent.AddComponent("SpriteComponent", spdata);
   }
 
   void InitShaders()
@@ -56,12 +61,14 @@ public:
       "BasicVertexShader.cso",
       "BasicPixelShader.cso");
     _basicShader->InitializeBasicShader();
+    RegisteredShaders["Basic"] = _basicShader;
 
     _textureShader = Shader::LoadShader(
       _graphicsDevice.get(),
       "TexturedVertexShader.cso",
       "TexturedPixelShader.cso");
     _textureShader->InitializeTexturedShader();
+    RegisteredShaders["Textured"] = _textureShader;
   }
 
   void InitObjects()
@@ -78,7 +85,7 @@ public:
     _basicShader->camera = &_camera;
     _textureShader->camera = &_camera;
     _basicShape->shader = _textureShader;
-    _basicShape->texture = Texture2D{_graphicsDevice->Device, "1384108156458.jpg"};
+    _basicShape->texture = TextureManager::Instance.LoadTexture("1384108156458.jpg");
   }
 
   void OnUpdate(Events::EventMessage& e)

@@ -48,9 +48,9 @@ public:
 
   void SetProcHandler(UINT message, wndproc_callback callback);
 
-  __declspec(property(get = __getGameTime)) const GameTime& Time;
-  __declspec(property(get = __getGraphicsDevice)) GraphicsDevice *GameDevice;
-  __declspec(property(get = __getRespack)) Respack::ResourcePack& Respack;
+  PROPERTY(get = __getGameTime) const GameTime& Time;
+  PROPERTY(get = __getGraphicsDevice) GraphicsDevice *GameDevice;
+  PROPERTY(get = __getRespack) Respack::ResourcePack& Respack;
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;

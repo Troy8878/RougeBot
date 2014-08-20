@@ -9,12 +9,16 @@
 #include "Camera.h"
 #include "Game.h"
 
+// ----------------------------------------------------------------------------
+
 Shader::~Shader()
 {
   ReleaseDXInterface(vertexShader);
   ReleaseDXInterface(pixelShader);
   ReleaseDXInterface(cameraBuffer);
 }
+
+// ----------------------------------------------------------------------------
 
 Shader *Shader::LoadShader(
   GraphicsDevice *device,
@@ -60,6 +64,8 @@ Shader *Shader::LoadShader(
   return shader;
 }
 
+// ----------------------------------------------------------------------------
+
 void Shader::Draw(unsigned indexCount)
 {
   using namespace DirectX;
@@ -84,6 +90,8 @@ void Shader::Draw(unsigned indexCount)
   context->DrawIndexed(indexCount, 0, 0);
 }
 
+// ----------------------------------------------------------------------------
+
 void Shader::InitCameraBuffer()
 {
   D3D11_BUFFER_DESC cameraBufferDesc;
@@ -99,6 +107,8 @@ void Shader::InitCameraBuffer()
                                                 nullptr, &cameraBuffer);
   CHECK_HRESULT(result);
 }
+
+// ----------------------------------------------------------------------------
 
 void Shader::InitializeBasicShader()
 {
@@ -134,6 +144,8 @@ void Shader::InitializeBasicShader()
                       &vertexLayout);
   CHECK_HRESULT(result);
 }
+
+// ----------------------------------------------------------------------------
 
 void Shader::InitializeTexturedShader()
 {
@@ -178,4 +190,10 @@ void Shader::InitializeTexturedShader()
                       &vertexLayout);
   CHECK_HRESULT(result);
 }
+
+// ----------------------------------------------------------------------------
+
+std::unordered_map<std::string, Shader *> RegisteredShaders;
+
+// ----------------------------------------------------------------------------
 

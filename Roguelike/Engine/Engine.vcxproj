@@ -100,6 +100,7 @@
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="RenderSet.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RubyComponent.h" />
     <ClInclude Include="RubyInterop.h" />

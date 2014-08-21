@@ -44,14 +44,11 @@ SpriteComponent::~SpriteComponent()
 void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
-
-  static Events::EventId drawId("draw");
-  owner->AddEvent(this, drawId, &SpriteComponent::Draw);
 }
 
 // ----------------------------------------------------------------------------
 
-void SpriteComponent::Draw(Events::EventMessage&)
+void SpriteComponent::Draw()
 {
   UnitSquare->texture = _textures[0];
   UnitSquare->Draw(DirectX::XMMatrixIdentity());

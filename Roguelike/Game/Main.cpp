@@ -8,6 +8,7 @@
 #include "Helpers\BucketAllocator.h"
 
 #pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "DXGI.lib")
 
 #ifdef _DEBUG
 static void createConsole()

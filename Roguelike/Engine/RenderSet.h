@@ -7,6 +7,8 @@
 #pragma once
 
 #include "Helpers\FixedWindows.h"
+#include "Event.h"
+#include "EventHandlers.h"
 #include <unordered_map>
 #include <vector>
 
@@ -17,7 +19,7 @@ struct Camera;
 
 // ----------------------------------------------------------------------------
 
-INTERFACE Drawable
+__interface Drawable
 {
   void Draw();
 };
@@ -27,22 +29,46 @@ INTERFACE Drawable
 class RenderSet
 {
 public:
-  RenderSet();
+  RenderSet(Camera *camera);
 
   void AddDrawable(Drawable *drawable, Shader *shader);
+  void RemoveDrawable(Drawable *drawable);
+
+  void Draw();
 
 private:
-  std::unordered_map<Shader *, std::vector<Drawable *>> drawables;
+  struct DrawablePair
+  {
+    DrawablePair() = default;
+    DrawablePair(Drawable *drawable, Shader *shader)
+      : drawable(drawable), shader(shader)
+    {
+    }
+    
+    Drawable *drawable = nullptr;
+    Shader *shader = nullptr;
+
+    inline bool operator<(const DrawablePair& other)
+    {
+      return shader < other.shader;
+    }
+  };
+
+  std::vector<DrawablePair> drawables;
+  Camera *camera;
 };
 
 // ----------------------------------------------------------------------------
 
-class RenderGroup
+class RenderGroup : Events::BasicClassEventReciever<RenderGroup>
 {
 public:
   RenderGroup();
 
-  void CreateSet(Camera *)
+  RenderSet *CreateSet(const std::string& name, Camera *camera);
+  void RemoveSet(const std::string& name);
+
+  void Draw(Events::EventMessage&);
 
 private:
   std::unordered_map<std::string, RenderSet *> sets;

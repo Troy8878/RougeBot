@@ -33,7 +33,7 @@ public:
 private:
   std::vector<Texture2D> _textures;
 
-  void Draw(Events::EventMessage&);
+  void Draw();
 
   static Model *GetSpriteModel();
 };

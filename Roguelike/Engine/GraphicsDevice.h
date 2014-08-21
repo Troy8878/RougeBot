@@ -25,7 +25,7 @@ public:
 
   virtual HWND GetContextWindow() = 0;
 
-  virtual void SetSize(math::Vector2D newSize) = 0;
+  virtual void SetSize(math::Vector2D newSize, bool overrideFullscreen = false) = 0;
   virtual math::Vector2D GetSize() const = 0;
 
   virtual bool BeginFrame() = 0;
@@ -74,7 +74,7 @@ class WindowDevice final : public GraphicsDevice
 public:
   HWND GetContextWindow() override { return Window; }
 
-  void SetSize(math::Vector2D newSize) final override;
+  void SetSize(math::Vector2D newSize, bool overrideFullscreen = false) final override;
   math::Vector2D GetSize() const final override;
 
   bool BeginFrame() override;
@@ -92,6 +92,56 @@ private:
   LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
   friend class GraphicsDevice;
+};
+
+// ----------------------------------------------------------------------------
+
+struct DisplayMode : public DXGI_MODE_DESC
+{
+  DisplayMode() = default;
+  DisplayMode(const DXGI_MODE_DESC& mode);
+
+  DisplayMode& operator=(const DXGI_MODE_DESC& other) 
+  { 
+    DXGI_MODE_DESC::operator=(other); 
+  }
+};
+
+// ----------------------------------------------------------------------------
+
+struct DisplaySetting;
+
+struct DisplayOutput : public DXGI_OUTPUT_DESC
+{
+  DisplayOutput(IDXGIOutput *output);
+
+  std::vector<DisplayMode> DisplayModes;
+
+  void CreateResolutionList(std::vector<DisplaySetting>& settings);
+};
+
+// ----------------------------------------------------------------------------
+
+struct DisplayAdapter
+{
+  static void GetAdapters(std::vector<DisplayAdapter>& adapters);
+  
+  DisplayAdapter(IDXGIAdapter *dxgAdapter);
+
+  std::vector<DisplayOutput> DisplayOutputs;
+};
+
+// ----------------------------------------------------------------------------
+
+struct DisplaySetting
+{
+  DisplaySetting(const DXGI_MODE_DESC& mode)
+    : Width(mode.Width), Height(mode.Height), Variants({mode})
+  {
+  }
+
+  UINT Width, Height;
+  std::vector<DisplayMode> Variants;
 };
 
 // ----------------------------------------------------------------------------

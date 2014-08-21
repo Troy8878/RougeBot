@@ -75,7 +75,7 @@ public:
   {
   }
 
-  const char *what() const
+  const char *what() const override
   {
     return reinterpret_cast<const char *>(_error.ErrorMessage());
   }
@@ -214,17 +214,17 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
     this->_##pName = value;                      \
   }
 
-#define _IPROPERTY_GET(pType, pName)                 \
+#define _IPROPERTY_GET(pType, pName)               \
   inline pType& _PropGet ## pName() {              \
-    return this->_##pName;                          \
-  }                                                 \
+    return this->_##pName;                         \
+  }                                                \
   inline pType const & _PropGet ## pName() const { \
-    return this->_##pName;                          \
+    return this->_##pName;                         \
   }
 
-#define _IPROPERTY_SET(pType, pName)              \
+#define _IPROPERTY_SET(pType, pName)            \
   inline void _PropSet ## pName(pType value) {  \
-    this->_##pName = value;                      \
+    this->_##pName = value;                     \
   }
 
 #define _PROPERTY_STORAGE(pType, pName) \
@@ -236,9 +236,9 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   _PROPERTY_GET(pType, pName)     \
   public:                         \
   _PROPERTY_SET(pType, pName)     \
-  __declspec(property(             \
-    get = _PropGet ## pName,       \
-    put = _PropSet ## pName)       \
+  __declspec(property(            \
+    get = _PropGet ## pName,      \
+    put = _PropSet ## pName)      \
   ) pType pName
 
 #define R_PROPERTY(pType, pName)  \
@@ -247,9 +247,9 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   private:                        \
   _PROPERTY_SET(pType, pName)     \
   public:                         \
-  __declspec(property(             \
-    get = _PropGet ## pName,       \
-    put = _PropSet ## pName)       \
+  __declspec(property(            \
+    get = _PropGet ## pName,      \
+    put = _PropSet ## pName)      \
   ) pType pName
 
 #define RW_PROPERTY(pType, pName) \
@@ -293,6 +293,4 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   ) pType pName
 
 #define PROPERTY(spec) __declspec(property(spec))
-
-#define INTERFACE __interface
 

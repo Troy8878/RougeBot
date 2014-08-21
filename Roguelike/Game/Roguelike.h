@@ -15,6 +15,8 @@
 #include "Engine\StandardShapes.h"
 #include "Engine\Colors.h"
 
+// ----------------------------------------------------------------------------
+
 class Roguelike : public Game
 {
 public:
@@ -47,11 +49,6 @@ public:
 
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
-
-    Entity ent;
-    component_factory_data spdata;
-    spdata["texture"] = "1384108156458.jpg";
-    ent.AddComponent("SpriteComponent", spdata);
   }
 
   void InitShaders()
@@ -146,6 +143,7 @@ public:
   {
     delete _basicShape;
     delete _basicShader;
+    delete _textureShader;
   }
 
   void OnResize(Events::EventMessage& e)
@@ -164,3 +162,5 @@ private:
   Shader *_textureShader;
   Model *_basicShape;
 };
+
+// ----------------------------------------------------------------------------

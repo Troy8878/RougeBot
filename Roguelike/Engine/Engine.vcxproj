@@ -140,6 +140,7 @@
     <ClCompile Include="GameStuffGem.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="RenderSet.cpp" />
     <ClCompile Include="RubyClass.cpp" />
     <ClCompile Include="RubyEngine.cpp" />
     <ClCompile Include="RubyInit.cpp" />

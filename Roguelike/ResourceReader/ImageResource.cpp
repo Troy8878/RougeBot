@@ -80,8 +80,6 @@ ImageResource ImageResource::fromFile(const std::wstring& file)
 {
   ImageResource image;
 
-  auto fileData = fs::file_reader::readAllBytes(file);
-
   IWICImagingFactory *factory = getImagingFactory();
   HRESULT hr;
   

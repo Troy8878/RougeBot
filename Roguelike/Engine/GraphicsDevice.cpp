@@ -140,17 +140,25 @@ void WindowDevice::ProcessMessages()
 
 // ----------------------------------------------------------------------------
 
-void WindowDevice::SetSize(math::Vector2D size)
+void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
 {
   if (!SwapChain)
     return;
+
+  if (!overrideFullscreen)
+  {
+    BOOL fullscreen;
+    SwapChain->GetFullscreenState(&fullscreen, nullptr);
+    if (fullscreen)
+      return;
+  }
 
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
   ReleaseDXInterface(RenderTargetView);
 
   HRESULT hr;
-  hr = SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+  hr = SwapChain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
@@ -272,7 +280,7 @@ void GraphicsDevice::InitializeD3DContext()
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
-  hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+  hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
                             reinterpret_cast<LPVOID *>(&backBuffer));
   CHECK_HRESULT(hr);
 
@@ -385,7 +393,7 @@ void GraphicsDevice::InitializeD3DContext()
   D3D11_BLEND_DESC blendStateDesc;
   ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
   blendStateDesc.AlphaToCoverageEnable = FALSE;
-  blendStateDesc.IndependentBlendEnable = FALSE;        
+  blendStateDesc.IndependentBlendEnable = FALSE;
   blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
   blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
   blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -433,3 +441,92 @@ void GraphicsDevice::CreateInputLayout(byte* bytecode,
 }
 
 // ----------------------------------------------------------------------------
+
+void DisplayAdapter::GetAdapters(std::vector<DisplayAdapter>& adapters)
+{
+  IDXGIFactory1 *dxgFactory = nullptr;
+  auto result = CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&dxgFactory));
+  CHECK_HRESULT(result);
+  RELEASE_AFTER_SCOPE(dxgFactory);
+
+  IDXGIAdapter1 *dxgAdapter;
+  for (UINT i = 0; dxgFactory->EnumAdapters1(i, &dxgAdapter) != DXGI_ERROR_NOT_FOUND; ++i)
+  {
+    adapters.emplace_back(dxgAdapter);
+
+    auto last = adapters.end() - 1;
+    if (last->DisplayOutputs.empty())
+      adapters.pop_back();
+
+    ReleaseDXInterface(dxgAdapter);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+DisplayAdapter::DisplayAdapter(IDXGIAdapter *dxgAdapter)
+{
+  IDXGIOutput *dxgOutput = nullptr;
+  for (UINT i = 0; dxgAdapter->EnumOutputs(i, &dxgOutput) != DXGI_ERROR_NOT_FOUND; ++i)
+  {
+    DisplayOutputs.emplace_back(dxgOutput);
+
+    ReleaseDXInterface(dxgOutput);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+DisplayOutput::DisplayOutput(IDXGIOutput *dxgOutput)
+{
+  auto hr = dxgOutput->GetDesc(this);
+  CHECK_HRESULT(hr);
+
+  UINT numModes = 0;
+  const DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
+  const UINT flags = 0;
+
+  hr = dxgOutput->GetDisplayModeList(format, flags, &numModes, nullptr);
+  CHECK_HRESULT(hr);
+
+  std::vector<DXGI_MODE_DESC> modeStructs(numModes);
+  hr = dxgOutput->GetDisplayModeList(format, flags, &numModes, modeStructs.data());
+  CHECK_HRESULT(hr);
+
+  for (auto& mode : modeStructs)
+    DisplayModes.emplace_back(mode);
+}
+
+// ----------------------------------------------------------------------------
+
+void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
+{
+  for (auto& mode : DisplayModes)
+  {
+    auto pred = [&mode] (const DisplaySetting& setting)
+    {
+      return mode.Width == setting.Width &&
+             mode.Height == setting.Height;
+    };
+
+    auto it = std::find_if(settings.begin(), settings.end(), pred);
+    if (it != settings.end())
+    {
+      it->Variants.push_back(mode);
+    }
+    else
+    {
+      settings.emplace_back(mode);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+DisplayMode::DisplayMode(const DXGI_MODE_DESC& desc)
+  : DXGI_MODE_DESC(desc)
+{
+}
+
+// ----------------------------------------------------------------------------
+

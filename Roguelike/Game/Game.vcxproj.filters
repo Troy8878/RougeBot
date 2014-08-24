@@ -63,5 +63,6 @@
   <ItemGroup>
     <Text Include="..\Engine\Style Guide.txt" />
     <Text Include="Known Events.txt" />
+    <Text Include="Component Info.txt" />
   </ItemGroup>
 </Project>

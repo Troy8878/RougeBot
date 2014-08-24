@@ -9,23 +9,31 @@
 #include "Common.h"
 #include "Texture.h"
 #include "Model.h"
+#include "RenderSet.h"
 
 #include "Helpers\BucketAllocator.h"
 
-class SpriteComponentFactory;
+// ----------------------------------------------------------------------------
 
-class SpriteComponent : public Component
+class SpriteComponentFactory;
+class TransformComponent;
+
+// ----------------------------------------------------------------------------
+
+class SpriteComponent : public Component, public Drawable
 {
 public:
   // Constructors and Destructor
-  SpriteComponent(Texture2D texture);
-  SpriteComponent(const std::vector<Texture2D>& textures);
+  SpriteComponent(Texture2D texture, Shader *shader);
+  SpriteComponent(const std::vector<Texture2D>& textures, Shader *shader);
   ~SpriteComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
+  void Draw() override;
 
-  IRW_PROPERTY(Camera *, RenderCamera);
   IR_PROPERTY(Model *, UnitSquare);
+  IR_PROPERTY(Shader *, ModelShader);
+  IR_PROPERTY(TransformComponent *, Transform);
   
   // Component factory to make sprite component
   static SpriteComponentFactory factory;
@@ -33,10 +41,10 @@ public:
 private:
   std::vector<Texture2D> _textures;
 
-  void Draw();
-
   static Model *GetSpriteModel();
 };
+
+// ----------------------------------------------------------------------------
 
 class SpriteComponentFactory : public ComponentFactory
 {
@@ -50,3 +58,5 @@ public:
 private:
   BucketAllocator allocator;
 };
+
+// ----------------------------------------------------------------------------

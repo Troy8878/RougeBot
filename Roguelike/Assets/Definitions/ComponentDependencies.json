@@ -1,0 +1,4 @@
+{
+  "TransformComponent": [],
+  "SpriteComponent": ["TransformComponent"]
+}

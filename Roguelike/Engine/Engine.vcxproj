@@ -108,6 +108,7 @@
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rubylib.rc" />
@@ -150,6 +151,7 @@
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,6 +27,28 @@ Component *Entity::AddComponent(const std::string& name, component_factory_data&
 
 // ----------------------------------------------------------------------------
 
+void Entity::RemoveComponent(const std::string& name)
+{
+  auto compit = _components.find(name);
+  auto comp = compit->second;
+
+  for (auto& event : _events)
+  {
+    event.second.erase(comp);
+  }
+
+  _components.erase(compit);
+}
+
+// ----------------------------------------------------------------------------
+
+Component *Entity::GetComponent(const std::string& name)
+{
+  return _components.find(name)->second;
+}
+
+// ----------------------------------------------------------------------------
+
 bool Entity::CanHandle(const Events::EventMessage& e)
 {
   auto iterator = _events.find(e.EventId);
@@ -59,7 +81,7 @@ void Entity::RemoveEvent(Component *component, event_id id)
 {
   auto& handlers = _events[id];
   if (handlers.find(component) != handlers.end())
-    handlers.remove(component);
+    handlers.erase(component);
 }
 
 // ----------------------------------------------------------------------------

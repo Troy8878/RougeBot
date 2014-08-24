@@ -17,4 +17,12 @@ class RubyComponent
 
 // ----------------------------------------------------------------------------
 
+class RubyComponentFactory
+{
+public:
+  RubyComponentFactory(ruby::ruby_class rclass);
+};
+
+// ----------------------------------------------------------------------------
+
 

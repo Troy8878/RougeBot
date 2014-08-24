@@ -1,0 +1,5 @@
+SpriteComponent
+  Initialization data
+    texture: The asset name of the texture to use
+    shader: The named registered shader to use
+    render_target: The name of the renderset to draw to

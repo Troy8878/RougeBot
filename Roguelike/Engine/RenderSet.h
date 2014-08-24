@@ -36,6 +36,8 @@ public:
 
   void Draw();
 
+  IR_PROPERTY(Camera *, SetCamera);
+
 private:
   struct DrawablePair
   {
@@ -55,7 +57,6 @@ private:
   };
 
   std::vector<DrawablePair> drawables;
-  Camera *camera;
 };
 
 // ----------------------------------------------------------------------------
@@ -63,15 +64,19 @@ private:
 class RenderGroup : Events::BasicClassEventReciever<RenderGroup>
 {
 public:
-  RenderGroup();
-
-  RenderSet *CreateSet(const std::string& name, Camera *camera);
+  RenderSet *GetSet(const std::string& name);
+  RenderSet *CreateSet(const std::string& name, Camera *camera, bool perma);
   void RemoveSet(const std::string& name);
+  void ClearSets();
 
   void Draw(Events::EventMessage&);
 
+  static RenderGroup Instance;
+
 private:
-  std::unordered_map<std::string, RenderSet *> sets;
+  RenderGroup();
+
+  std::unordered_map<std::string, std::pair<RenderSet *, bool>> sets;
 };
 
 // ----------------------------------------------------------------------------

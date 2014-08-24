@@ -26,7 +26,7 @@ namespace math
     }
 
     inline Vector(float x, float y, float z, float w)
-      : Vector(XMVectorSet(x, y, z, w))
+      : XMFLOAT4A(x, y, z, w)
     {
     }
 
@@ -59,7 +59,7 @@ namespace math
     }
 
     inline Vector2D(float x, float y)
-      : Vector2D(XMVectorSet(x, y, 0, 0))
+      : XMFLOAT2A(x, y)
     {
     }
 

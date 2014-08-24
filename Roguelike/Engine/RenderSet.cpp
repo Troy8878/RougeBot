@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 RenderSet::RenderSet(Camera *camera)
-  : camera(camera)
+  : _SetCamera(camera)
 {
 }
 
@@ -40,19 +40,16 @@ void RenderSet::RemoveDrawable(Drawable *drawable)
 
 void RenderSet::Draw()
 {
-  Shader *shader = nullptr;
-
   for (auto& pair : drawables)
   {
-    if (pair.shader != shader)
-    {
-      shader = pair.shader;
-      shader->camera = camera;
-    }
-    
+    pair.shader->camera = SetCamera;
     pair.drawable->Draw();
   }
 }
+
+// ----------------------------------------------------------------------------
+
+RenderGroup RenderGroup::Instance;
 
 // ----------------------------------------------------------------------------
 
@@ -63,17 +60,41 @@ RenderGroup::RenderGroup()
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera)
+RenderSet *RenderGroup::GetSet(const std::string& name)
 {
-  return sets[name] = new RenderSet(camera);
+  return sets.find(name)->second.first;
+}
+
+// ----------------------------------------------------------------------------
+
+RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, bool perma)
+{
+  std::pair<RenderSet *, bool> pair{new RenderSet(camera), perma};
+  sets[name] = pair;
+  return pair.first;
 }
 
 // ----------------------------------------------------------------------------
 
 void RenderGroup::RemoveSet(const std::string& name)
 {
-  delete sets[name];
+  delete sets[name].first;
   sets.erase(name);
+}
+
+// ----------------------------------------------------------------------------
+
+void RenderGroup::ClearSets()
+{
+  for (auto& pair : sets)
+  {
+    if (pair.second.second)
+      continue;
+
+    RemoveSet(pair.first);
+    ClearSets();
+    return;
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -82,7 +103,7 @@ void RenderGroup::Draw(Events::EventMessage&)
 {
   for (auto& set : sets)
   {
-    set.second->Draw();
+    set.second.first->Draw();
   }
 }
 

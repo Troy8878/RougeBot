@@ -21,10 +21,10 @@ namespace Shapes
 
     TexturedVertex vertices[] =
     {
-      {{-sx,  sy, 0, 1}, color, {0, 0}},
-      {{ sx,  sy, 0, 1}, color, {1, 0}},
-      {{-sx, -sy, 0, 1}, color, {0, 1}},
-      {{ sx, -sy, 0, 1}, color, {1, 1}}
+      {{-sx,  sy, 0, 1}, color, {1, 0}},
+      {{ sx,  sy, 0, 1}, color, {0, 0}},
+      {{-sx, -sy, 0, 1}, color, {1, 1}},
+      {{ sx, -sy, 0, 1}, color, {0, 1}}
     };
 
     UINT indices[] =

@@ -14,6 +14,7 @@
 #include "Engine\Camera.h"
 #include "Engine\StandardShapes.h"
 #include "Engine\Colors.h"
+#include "Engine\RenderSet.h"
 
 // ----------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ class Roguelike : public Game
 {
 public:
   Roguelike(const std::string& title, HINSTANCE hInstance)
-    : Game{title, hInstance}
+    : Game(title, hInstance)
   {
     initSettings.cullTriangles = false;
     initSettings.assetPack = L"./Assets.respack";
@@ -38,17 +39,32 @@ public:
 
     InitShaders();
     InitObjects();
-    InitSetup();
 
     using namespace Events;
-    //static EventId updateEvent("update");
-    //SetHandler(updateEvent, &Roguelike::OnUpdate);
+    static EventId updateEvent("update");
+    SetHandler(updateEvent, &Roguelike::OnUpdate);
 
-    //static EventId drawEvent("draw");
-    //SetHandler(drawEvent, &Roguelike::OnDraw);
+    static EventId drawEvent("draw");
+    SetHandler(drawEvent, &Roguelike::OnDraw);
 
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
+
+    RenderGroup::Instance.CreateSet("global_hud", &_camera, true);
+
+    component_factory_data tcdata;
+    tcdata["position"] = "0 0 0 0";
+    tcdata["rotation"] = "0 0 0 0";
+    tcdata["scale"] = "<10, 10, 10, 1>";
+    _testEntity.AddComponent("TransformComponent", tcdata);
+
+    component_factory_data scdata;
+    scdata["texture"] = "1384108156458.jpg";
+    scdata["shader"] = "Textured";
+    scdata["render_target"] = "global_hud";
+    _testEntity.AddComponent("SpriteComponent", scdata);
+
+    Event::GlobalDispatcher->AddListener(&_testEntity);
   }
 
   void InitShaders()
@@ -70,19 +86,9 @@ public:
 
   void InitObjects()
   {
-    _basicShape = Shapes::MakeRectangle(_graphicsDevice->Device, {10, 10});
-
     _camera.position = math::Vector{0, 0, 60, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
     _camera.Init();
-  }
-
-  void InitSetup()
-  {
-    _basicShader->camera = &_camera;
-    _textureShader->camera = &_camera;
-    _basicShape->shader = _textureShader;
-    _basicShape->texture = TextureManager::Instance.LoadTexture("1384108156458.jpg");
   }
 
   void OnUpdate(Events::EventMessage& e)
@@ -128,20 +134,13 @@ public:
     _camera.Update();
   }
 
-  void OnDraw(Events::EventMessage&)
+  void OnDraw(Events::EventMessage& e)
   {
-    using namespace DirectX;
-
-    _basicShape->Draw(XMMatrixIdentity());
-    _basicShape->Draw(XMMatrixRotationY(-45 * math::pi / 180) *
-                      XMMatrixTranslation(9, 0, 4));
-    _basicShape->Draw(XMMatrixRotationY(45 * math::pi / 180) *
-                      XMMatrixTranslation(-9, 0, 4));
+    RenderGroup::Instance.Draw(e);
   }
 
   void OnFree() override
   {
-    delete _basicShape;
     delete _basicShader;
     delete _textureShader;
   }
@@ -160,7 +159,8 @@ private:
 
   Shader *_basicShader;
   Shader *_textureShader;
-  Model *_basicShape;
+
+  Entity _testEntity;
 };
 
 // ----------------------------------------------------------------------------

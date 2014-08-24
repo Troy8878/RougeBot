@@ -78,10 +78,65 @@ flat_map<std::string, ComponentRegistration>& ComponentManager::_GetComponentReg
 // ----------------------------------------------------------------------------
 
 #include "SpriteComponent.h"
+#include "TransformComponent.h"
 
 void RegisterEngineComponents()
 {
   RegisterStaticComponent<SpriteComponent>("SpriteComponent");
+  RegisterStaticComponent<TransformComponent>("TransformComponent");
+}
+
+// ----------------------------------------------------------------------------
+
+ruby::ruby_module Component::GetComponentRModule()
+{
+  THREAD_EXCLUSIVE_SCOPE;
+
+  static bool init = false;
+  auto *engine = ruby::ruby_engine::global_engine;
+
+  if (init)
+  {
+    return engine->get_module("Components");
+  }
+  else
+  {
+    init = true;
+    return engine->define_module("Components");
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_component_register(mrb_state *mrb, mrb_value self)
+{
+  (mrb, self);
+  return mrb_nil_value();
+
+  
+}
+
+// ----------------------------------------------------------------------------
+
+ruby::ruby_class Component::GetComponentRClass()
+{
+  THREAD_EXCLUSIVE_SCOPE;
+
+  static bool init = false;
+  static ruby::ruby_class comp_class;
+
+  if (init)
+    return comp_class;
+  
+  auto& engine = *ruby::ruby_engine::global_engine;
+  comp_class = engine.define_class("ComponentBase");
+
+  comp_class.define_class_method("register_component", 
+                                 rb_component_register, 
+                                 ARGS_REQ(1));
+
+  init = true;
+  return comp_class;
 }
 
 // ----------------------------------------------------------------------------

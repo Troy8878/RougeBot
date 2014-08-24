@@ -34,6 +34,15 @@ public:
 
   IR_PROPERTY(Entity *, Owner);
   IR_PROPERTY(std::string, Name);
+
+  virtual ruby::ruby_value GetRubyWrapper()
+  {
+    return ruby::ruby_value{};
+  }
+
+protected:
+  ruby::ruby_module GetComponentRModule();
+  ruby::ruby_class GetComponentRClass();
 };
 
 // ----------------------------------------------------------------------------

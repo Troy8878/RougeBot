@@ -9,6 +9,7 @@
 #include "StandardShapes.h"
 #include "Game.h"
 #include "Shader.h"
+#include "TransformComponent.h"
 
 // ----------------------------------------------------------------------------
 
@@ -17,19 +18,19 @@ SpriteComponentFactory SpriteComponent::factory;
 // ----------------------------------------------------------------------------
 
 // Constructor if only one Texture/Sprite is needed (unanimated)
-SpriteComponent::SpriteComponent(Texture2D texture)
-  : SpriteComponent(std::vector<Texture2D>{texture})
+SpriteComponent::SpriteComponent(Texture2D texture, Shader *shader)
+  : SpriteComponent(std::vector<Texture2D>{texture}, shader)
 {
 }
 
 // ----------------------------------------------------------------------------
 
 // Constructor if several Textures/Sprites are needed (animated)
-SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures)
+SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, Shader *shader)
   : _textures(textures)
 {
-  RenderCamera = nullptr;
   UnitSquare = GetSpriteModel();
+  ModelShader = shader;
 }
 
 // ----------------------------------------------------------------------------
@@ -44,14 +45,19 @@ SpriteComponent::~SpriteComponent()
 void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
+
+  Transform = Owner->GetComponent<TransformComponent>("TransformComponent");
 }
 
 // ----------------------------------------------------------------------------
 
 void SpriteComponent::Draw()
 {
+  auto& trans = Transform->Matrix;
+
+  UnitSquare->shader = ModelShader;
   UnitSquare->texture = _textures[0];
-  UnitSquare->Draw(DirectX::XMMatrixIdentity());
+  UnitSquare->Draw(trans.get());
 }
 
 // ----------------------------------------------------------------------------
@@ -66,8 +72,6 @@ Model *SpriteComponent::GetSpriteModel()
     return unitSquare;
 
   unitSquare = Shapes::MakeRectangle(GetGame()->GameDevice->Device, {1, 1});
-  unitSquare->shader = RegisteredShaders["Textured"];
-  
   return unitSquare;
 }
 
@@ -80,10 +84,15 @@ SpriteComponentFactory::SpriteComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-Component *SpriteComponentFactory::operator()(void *memory, component_factory_data& data)
+Component *SpriteComponentFactory::operator()(
+  void *memory, component_factory_data& data)
 {
   auto texture = TextureManager::Instance.LoadTexture(data["texture"]);
-  SpriteComponent *component = new (memory) SpriteComponent(texture);
+  auto shader = RegisteredShaders[data["shader"]];
+  auto set = RenderGroup::Instance.GetSet(data["render_target"]);
+
+  SpriteComponent *component = new (memory) SpriteComponent(texture, shader);
+  set->AddDrawable(component, shader);
 
   return component;
 }

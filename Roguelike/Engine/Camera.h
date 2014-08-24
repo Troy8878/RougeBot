@@ -31,7 +31,8 @@ struct Basic3DCamera : Camera
   void Init()
   {
     using namespace DirectX;
-    projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
+    projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 
+                                                nearField, farField);
   }
 
   void Update()

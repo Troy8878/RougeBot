@@ -60,6 +60,12 @@ public:
   */
   Component *GetComponent(const std::string& name);
 
+  template <typename DerivedComponent>
+  DerivedComponent *GetComponent(const std::string& name)
+  {
+    return static_cast<DerivedComponent *>(GetComponent(name));
+  }
+
   #pragma endregion
 
   #pragma region Events
@@ -107,7 +113,8 @@ protected:
     Store all of your registered events here, keyed
     on the event id for fast lookup ;)
   */
-  std::unordered_map<event_id, flat_map<Component *, component_handler>> _events;
+  typedef std::unordered_map<Component *, component_handler> event_registrations;
+  std::unordered_map<event_id, event_registrations> _events;
   #pragma endregion
 
   #pragma region Other fields and helpers

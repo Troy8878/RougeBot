@@ -24,6 +24,20 @@ ruby_value::~ruby_value()
   *this = nullptr;
 }
 
+ruby_value::ruby_value(ruby_value&& moving)
+  : ruby_value(static_cast<const ruby_value&>(moving))
+{
+  moving.mrb_value::operator=(mrb_nil_value());
+}
+
+ruby_value& ruby_value::operator=(ruby_value&& moving)
+{
+  operator=(static_cast<const ruby_value&>(moving));
+  moving.mrb_value::operator=(mrb_nil_value());
+
+  return *this;
+}
+
 ruby_value& ruby_value::operator=(const mrb_value& value)
 {
   set_mrbv(value);
@@ -80,9 +94,14 @@ ruby_value::operator std::string()
   return std::string(static_cast<const char *>(*this));
 }
 
+// ----------------------------------------------------------------------------
+
 void ruby_value::set_mrbv(const mrb_value& val)
 {
   mrb_gc_mark_value(*_engine, *this);
+
   mrb_value::operator=(val);
 }
+
+// ----------------------------------------------------------------------------
 

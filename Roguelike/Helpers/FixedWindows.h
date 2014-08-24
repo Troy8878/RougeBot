@@ -194,6 +194,26 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
   variadic_push_container(container, params...);
 }
 
+template <typename T>
+void variadic_push_array(T *, size_t)
+{
+}
+
+template <typename T, typename Arg>
+void variadic_push_array(T *array, size_t index,
+                         const Arg& param)
+{
+  array[index] = param;
+}
+
+template <typename T, typename Arg, typename... Args>
+void variadic_push_array(T *array, size_t index, 
+                         const Arg& param, const Args&&... params)
+{
+  array[index] = param;
+  variadic_push_array(array, index + 1, param, params);
+}
+
 
 #define strcmpi _strcmpi
 

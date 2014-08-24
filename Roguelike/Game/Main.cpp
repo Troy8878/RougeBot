@@ -21,6 +21,16 @@ static void createConsole()
 }
 #endif
 
+static mrb_value rb_test_method(mrb_state *mrb, mrb_value value)
+{
+  mrb_value num;
+
+  mrb_get_args(mrb, "i", &num);
+
+  std::cout << mrb_fixnum(num) << std::endl;
+  return value;
+}
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(
@@ -29,6 +39,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
   });
 
   RegisterEngineComponents();
+
+  using namespace ruby;
+  auto tclass = ruby_engine::global_engine->define_class("TestClass");
+  tclass.define_class_method("asdf", rb_test_method, ARGS_REQ(1));
+
+  auto cval = mrb_obj_value(tclass.mrb_handle());
+  mrb_funcall(*ruby_engine::global_engine, cval, "asdf", 1, mrb_fixnum_value(20));
 
   Roguelike game("Game 200 Project", hInstance);
   game.Run();

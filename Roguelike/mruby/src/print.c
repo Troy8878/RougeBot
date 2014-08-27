@@ -8,6 +8,8 @@
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
+#pragma warning(disable : 4244)
+
 static void
 printstr(mrb_state *mrb, mrb_value obj)
 {

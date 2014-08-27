@@ -84,7 +84,7 @@ SpriteComponentFactory::SpriteComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-Component *SpriteComponentFactory::operator()(
+Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
   auto texture = TextureManager::Instance.LoadTexture(data["texture"]);

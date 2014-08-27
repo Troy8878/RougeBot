@@ -20,8 +20,8 @@ class Texture2D
 public:
   Texture2D() = default;
 
-  __declspec(property(get = _GetShaderRes)) ID3D11ShaderResourceView * const & ShaderRes;
-  __declspec(property(get = _GetTexture)) ID3D11Texture2D * const & Texture;
+  PROPERTY(get = _GetShaderRes) ID3D11ShaderResourceView * const & ShaderRes;
+  PROPERTY(get = _GetTexture) ID3D11Texture2D * const & Texture;
 
   operator bool() const { return !!_res; }
 

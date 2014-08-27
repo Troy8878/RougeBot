@@ -7,6 +7,8 @@
 #ifndef MRUBY_CLASS_H
 #define MRUBY_CLASS_H
 
+#include "Helpers/mruby_warning_disable.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -73,5 +75,7 @@ void mrb_gc_free_mt(mrb_state*, struct RClass*);
 #if defined(__cplusplus)
 }  /* extern "C" { */
 #endif
+
+#include "Helpers/mruby_warning_restore.h"
 
 #endif  /* MRUBY_CLASS_H */

@@ -10,14 +10,14 @@
 
 // ----------------------------------------------------------------------------
 
-class RubyComponent
+class RubyComponent : public Component
 {
   
 };
 
 // ----------------------------------------------------------------------------
 
-class RubyComponentFactory
+class RubyComponentFactory : public IComponentFactory
 {
 public:
   RubyComponentFactory(ruby::ruby_class rclass);

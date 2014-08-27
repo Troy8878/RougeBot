@@ -43,10 +43,15 @@ void Game::Run()
 
   _respack = new Respack::ResourcePack(initSettings.assetPack, initSettings.assetFolder);
 
+  ruby::ruby_engine mrb;
+  ruby::ruby_engine::global_engine = &mrb;
+
   try
   {
     _graphicsDevice = GraphicsDevice::CreateGameWindow({_hInstance, {1280, 720}, _title});
     GraphicsOnInit();
+
+    RegisterEngineComponents();
 
     OnInit();
 
@@ -78,6 +83,8 @@ void Game::Run()
 
         _graphicsDevice->EndFrame();
       }
+
+      mrb_incremental_gc(mrb);
     }
   }
 #if !defined(_DEBUG)

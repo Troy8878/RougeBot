@@ -33,14 +33,14 @@ Shader *Shader::LoadShader(
   auto *shadersContainer = respack["Shaders"];
   RELEASE_AFTER_SCOPE(shadersContainer);
 
-  auto *vertexRes = shadersContainer->getResource(vertexAsset);
+  auto *vertexRes = shadersContainer->GetResource(vertexAsset);
   RELEASE_AFTER_SCOPE(vertexRes);
 
-  auto pixelRes = shadersContainer->getResource(pixelAsset);
+  auto pixelRes = shadersContainer->GetResource(pixelAsset);
   RELEASE_AFTER_SCOPE(pixelRes);
 
-  shader->vertexShaderData = shared_array<byte>{vertexRes->getData(), vertexRes->getSize()};
-  shader->pixelShaderData = shared_array<byte>{pixelRes->getData(), pixelRes->getSize()};
+  shader->vertexShaderData = shared_array<byte>{vertexRes->Data, vertexRes->Size};
+  shader->pixelShaderData = shared_array<byte>{pixelRes->Data, pixelRes->Size};
 
   assert(shader->vertexShaderData);
   assert(shader->pixelShaderData);

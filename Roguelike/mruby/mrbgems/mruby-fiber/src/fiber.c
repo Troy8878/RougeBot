@@ -3,6 +3,8 @@
 #include "mruby/class.h"
 #include "mruby/proc.h"
 
+#pragma warning(disable : 4244)
+
 #define fiber_ptr(o) ((struct RFiber*)mrb_ptr(o))
 
 #define FIBER_STACK_INIT_SIZE 64

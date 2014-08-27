@@ -46,14 +46,14 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class SpriteComponentFactory : public ComponentFactory
+class SpriteComponentFactory : public IComponentFactory
 {
 public:
   SpriteComponentFactory();
 
-  Component *operator()(void *memory, component_factory_data& data) override;
+  Component *CreateObject(void *memory, component_factory_data& data) override;
 
-  ::Allocator *GetAllocator() { return &allocator; }
+  IAllocator *_GetAllocator() override { return &allocator; }
 
 private:
   BucketAllocator allocator;

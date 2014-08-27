@@ -137,13 +137,13 @@ ImageResource ImageResource::fromAsset(const std::string& container, const std::
   auto *rescontainer = pack[container];
   RELEASE_AFTER_SCOPE(rescontainer);
 
-  auto *resource = rescontainer->getResource(asset);
+  auto *resource = rescontainer->GetResource(asset);
   RELEASE_AFTER_SCOPE(resource);
 
   if (resource == nullptr)
     throw string_exception(container + " asset '" + asset + "' could not be found!");
 
-  auto file = resource->getTempFile();
+  auto file = resource->GetTempFile();
   return ImageResource::fromFile(file.getPath());
 }
 

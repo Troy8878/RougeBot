@@ -16,6 +16,8 @@
 #include "mruby/numeric.h"
 #include "mruby/string.h"
 
+#pragma warning(disable : 4244)
+
 #ifdef MRB_USE_FLOAT
 #define floor(f) floorf(f)
 #define ceil(f) ceilf(f)
@@ -585,7 +587,7 @@ flo_round(mrb_state *mrb, mrb_value num)
 {
   double number, f;
   mrb_int ndigits = 0;
-  int i;
+  mrb_int i;
 
   mrb_get_args(mrb, "|i", &ndigits);
   number = mrb_float(num);
@@ -600,7 +602,7 @@ flo_round(mrb_state *mrb, mrb_value num)
   }
 
   f = 1.0;
-  i = abs(ndigits);
+  i = ndigits >= 0 ? ndigits : -ndigits;
   while  (--i >= 0)
     f = f*10.0;
 
@@ -711,7 +713,7 @@ mrb_fixnum_mul(mrb_state *mrb, mrb_value x, mrb_value y)
     b = mrb_fixnum(y);
     if (FIT_SQRT_INT(a) && FIT_SQRT_INT(b))
       return mrb_fixnum_value(a*b);
-    c = a * b;
+    c = (mrb_float)a * b;
     if ((a != 0 && c/a != b) || !FIXABLE(c)) {
       return mrb_float_value(mrb, (mrb_float)a*(mrb_float)b);
     }
@@ -830,7 +832,7 @@ fix_divmod(mrb_state *mrb, mrb_value x)
     mrb_value a, b;
 
     flodivmod(mrb, (mrb_float)mrb_fixnum(x), mrb_to_flo(mrb, y), &div, &mod);
-    a = mrb_float_value(mrb, (mrb_int)div);
+    a = mrb_float_value(mrb, (mrb_float)(mrb_int)div);
     b = mrb_float_value(mrb, mod);
     return mrb_assoc_new(mrb, a, b);
   }
@@ -846,7 +848,7 @@ flo_divmod(mrb_state *mrb, mrb_value x)
   mrb_get_args(mrb, "o", &y);
 
   flodivmod(mrb, mrb_float(x), mrb_to_flo(mrb, y), &div, &mod);
-  a = mrb_float_value(mrb, (mrb_int)div);
+  a = mrb_float_value(mrb, (mrb_float)(mrb_int)div);
   b = mrb_float_value(mrb, mod);
   return mrb_assoc_new(mrb, a, b);
 }

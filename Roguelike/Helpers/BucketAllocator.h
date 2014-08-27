@@ -16,7 +16,7 @@
   Useful for allocating in 'buckets' to improve
   average allocation performance and memory locality
 */
-class BucketAllocator : public Allocator
+class BucketAllocator : public IAllocator
 {
 public:
   /**

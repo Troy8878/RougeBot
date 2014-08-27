@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 struct ComponentRegistration;
-class ComponentFactory;
+__interface IComponentFactory;
 
 #ifndef COMP_FACTORY_DATA_DEF
 #define COMP_FACTORY_DATA_DEF
@@ -70,18 +70,12 @@ public:
 
 // ----------------------------------------------------------------------------
 
-class ComponentFactory abstract
+__interface IComponentFactory
 {
-public:
-  virtual Component *operator()(void *memory, component_factory_data& data) = 0;
-  virtual Allocator *GetAllocator() = 0;
+  Component *CreateObject(void *memory, component_factory_data& data);
 
-  PROPERTY(get = GetAllocator) Allocator *Allocator;
-
-protected:
-  virtual ~ComponentFactory()
-  {
-  }
+  PROPERTY(get = _GetAllocator) IAllocator *Allocator;
+  IAllocator *_GetAllocator();
 };
 
 // ----------------------------------------------------------------------------
@@ -90,8 +84,8 @@ struct ComponentRegistration
 {
   ComponentRegistration(std::type_index const& componentType,
                         std::string const& componentName,
-                        ComponentFactory *factory,
-                        Allocator *allocator)
+                        IComponentFactory *factory,
+                        IAllocator *allocator)
     : componentName(componentName),
       componentType(componentType),
       factory(factory),
@@ -101,15 +95,11 @@ struct ComponentRegistration
 
   std::string componentName;
   std::type_index componentType;
-  ComponentFactory *factory;
-  Allocator *allocator;
-
+  IComponentFactory *factory;
+  IAllocator *allocator;
   
-  inline ComponentFactory& _GetFactory() { return *factory; }
-  PROPERTY(get = _GetFactory) ComponentFactory& Factory;
-
-  inline Allocator& _GetAllocator() { return *allocator; }
-  PROPERTY(get = _GetAllocator) Allocator& Allocator;
+  PROPERTY(get = _GetFactory) IComponentFactory& Factory;
+  PROPERTY(get = _GetAllocator) IAllocator& Allocator;
 
 private:
   ComponentRegistration()
@@ -118,6 +108,10 @@ private:
   }
 
   friend class flat_map<std::string, ComponentRegistration>;
+
+public:
+  inline IComponentFactory& _GetFactory() { return *factory; }
+  inline IAllocator& _GetAllocator() { return *allocator; }
 };
 
 // ----------------------------------------------------------------------------
@@ -128,7 +122,7 @@ void RegisterEngineComponents();
 
 template <typename T>
 void RegisterStaticComponent(const std::string& name,
-                             ComponentFactory *factory = &T::factory)
+                             IComponentFactory *factory = &T::factory)
 {
   ComponentRegistration registration{typeid(T), name, factory, factory->Allocator};
   ComponentManager::Instance.RegisterComponent(registration);

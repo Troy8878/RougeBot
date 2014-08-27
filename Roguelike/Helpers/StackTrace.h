@@ -30,8 +30,9 @@ public:
 
   const std::vector<trace_line>& get_lines() const { return _lines; };
 
-
 private:
+  stack_trace();
+
   std::vector<trace_line> _lines;
 
   static trace_line get_trace_line(void *stack_addr);

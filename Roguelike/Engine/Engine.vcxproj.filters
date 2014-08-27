@@ -21,9 +21,6 @@
     <Filter Include="Header Files\Arch">
       <UniqueIdentifier>{daa23e9c-879e-4f8e-8160-89c4fac4dcf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Interop">
-      <UniqueIdentifier>{34a94018-da06-4479-8819-80647850b752}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{d105a3da-ee90-4687-8a3f-9d0702c85faf}</UniqueIdentifier>
     </Filter>
@@ -44,6 +41,9 @@
     </Filter>
     <Filter Include="Source Files\Events">
       <UniqueIdentifier>{593eeba6-936a-4d0f-a02b-d41308d63e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Ruby">
+      <UniqueIdentifier>{34a94018-da06-4479-8819-80647850b752}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -88,7 +88,7 @@
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
     <ClInclude Include="RubyInterop.h">
-      <Filter>Header Files\Interop</Filter>
+      <Filter>Header Files\Ruby</Filter>
     </ClInclude>
     <ClInclude Include="EventTypes.h">
       <Filter>Header Files\Events</Filter>
@@ -193,9 +193,6 @@
       <Filter>Source Files\Ruby</Filter>
     </ClCompile>
     <ClCompile Include="GameStuffGem.cpp">
-      <Filter>Source Files\Ruby</Filter>
-    </ClCompile>
-    <ClCompile Include="GameComponentGem.cpp">
       <Filter>Source Files\Ruby</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">

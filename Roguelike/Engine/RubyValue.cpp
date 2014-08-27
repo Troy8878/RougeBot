@@ -11,6 +11,9 @@
 
 #include "mruby/value.h"
 #include "mruby/string.h"
+#include "mruby/data.h"
+#include "mruby/class.h"
+#include "mruby/array.h"
 
 using namespace ruby;
 
@@ -19,16 +22,29 @@ ruby_value::ruby_value(const mrb_value& value, ruby_engine *engine)
 {
 }
 
+// ----------------------------------------------------------------------------
+
 ruby_value::~ruby_value()
 {
   *this = nullptr;
 }
+
+// ----------------------------------------------------------------------------
 
 ruby_value::ruby_value(ruby_value&& moving)
   : ruby_value(static_cast<const ruby_value&>(moving))
 {
   moving.mrb_value::operator=(mrb_nil_value());
 }
+
+// ----------------------------------------------------------------------------
+
+ruby_class ruby_value::get_class()
+{
+  return ruby_class{_engine, mrb_class(*_engine, *this)};
+}
+
+// ----------------------------------------------------------------------------
 
 ruby_value& ruby_value::operator=(ruby_value&& moving)
 {
@@ -38,39 +54,46 @@ ruby_value& ruby_value::operator=(ruby_value&& moving)
   return *this;
 }
 
+// ----------------------------------------------------------------------------
+
 ruby_value& ruby_value::operator=(const mrb_value& value)
 {
-  set_mrbv(value);
-  return *this;
+  return set_mrbv(value);
 }
 
-ruby_value& ruby_value::operator=(nullptr_t)
+// ----------------------------------------------------------------------------
+
+ruby_value::operator int64_t() 
 {
-  set_mrbv(mrb_nil_value());
-  return *this;
+  mrb_value res = functions["to_i"].call();
+  return mrb_fixnum(res);
 }
 
-ruby_value& ruby_value::operator=(mrb_int i)
+// ----------------------------------------------------------------------------
+
+ruby_value::operator int32_t() 
 {
-  set_mrbv(mrb_fixnum_value(i));
-  return *this;
+  mrb_value res = functions["to_i"].call();
+  return (int32_t) mrb_fixnum(res);
 }
 
-ruby_value& ruby_value::operator=(mrb_float f)
+// ----------------------------------------------------------------------------
+
+ruby_value::operator double() 
 {
-  set_mrbv(mrb_float_value(*_engine, f));
-  return *this;
+  mrb_value res = functions["to_f"].call();
+  return mrb_float(res);
 }
 
-ruby_value::operator _mrb_int()
+// ----------------------------------------------------------------------------
+
+ruby_value::operator float() 
 {
-  return mrb_fixnum(*this);
+  mrb_value res = functions["to_f"].call();
+  return (float) mrb_float(res);
 }
 
-ruby_value::operator _mrb_float()
-{
-  return mrb_float(*this);
-}
+// ----------------------------------------------------------------------------
 
 ruby_value& ruby_value::operator=(const char *string)
 {
@@ -78,29 +101,67 @@ ruby_value& ruby_value::operator=(const char *string)
   return *this;
 }
 
+// ----------------------------------------------------------------------------
+
 ruby_value& ruby_value::operator=(const std::string& string)
 {
   set_mrbv(mrb_str_new(*_engine, string.c_str(), string.size()));
   return *this;
 }
 
+// ----------------------------------------------------------------------------
+
 ruby_value::operator const char *()
 {
   return mrb_string_value_cstr(*_engine, this);
 }
 
-ruby_value::operator std::string()
+// ----------------------------------------------------------------------------
+
+ruby_value::operator std::vector<ruby_value>()
 {
-  return std::string(static_cast<const char *>(*this));
+  auto len = mrb_ary_len(*_engine, *this);
+  
+  std::vector<ruby_value> values;
+  for (int i = 0; i < len; ++i)
+  {
+    ruby_value v{mrb_ary_entry(*this, i), _engine};
+    values.push_back(v);
+  }
+
+  return values;
 }
 
 // ----------------------------------------------------------------------------
 
-void ruby_value::set_mrbv(const mrb_value& val)
+ruby_value& ruby_value::set_mrbv(const mrb_value& val)
 {
   mrb_gc_mark_value(*_engine, *this);
 
   mrb_value::operator=(val);
+  return *this;
+}
+
+// ----------------------------------------------------------------------------
+
+ruby_value& ruby_value::operator=(const math::Vector& vector)
+{
+  auto vclass = _engine->get_class("Vector");
+  auto vinst = vclass.new_inst(vector.x, vector.y, vector.z, vector.w);
+
+  return set_mrbv(vinst);
+}
+
+// ----------------------------------------------------------------------------
+
+ruby_value::operator math::Vector()
+{
+  float x = (float) functions["x"].call().functions["to_f"].call();
+  float y = (float) functions["y"].call().functions["to_f"].call();
+  float z = (float) functions["z"].call().functions["to_f"].call();
+  float w = (float) functions["w"].call().functions["to_f"].call();
+  
+  return math::Vector{x, y, z, w};
 }
 
 // ----------------------------------------------------------------------------

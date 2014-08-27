@@ -40,14 +40,14 @@ public:
 
 // ----------------------------------------------------------------------------
 
-class TransformComponentFactory : public ComponentFactory
+class TransformComponentFactory : public IComponentFactory
 {
 public:
   TransformComponentFactory();
 
-  Component *operator()(void *memory, component_factory_data& data) override;
+  Component *CreateObject(void *memory, component_factory_data& data) override;
 
-  ::Allocator *GetAllocator() { return &allocator; }
+  IAllocator *_GetAllocator() override { return &allocator; }
 
 private:
   BucketAllocator allocator;

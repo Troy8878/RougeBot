@@ -96,6 +96,7 @@ trace_line stack_trace::get_trace_line(void *stack_addr)
     trace.file = line.FileName;
     trace.line = line.LineNumber;
 
+    // Because for some reason it always reports the /next/ line as being correct :/
     if (SymGetLinePrev64(GetCurrentProcess(), &line))
     {
       trace.line = line.LineNumber;

@@ -19,19 +19,7 @@ event_id Event::CreateEventId(const std::string& name)
 {
   THREAD_EXCLUSIVE_SCOPE;
 
-  static flat_map<std::string, event_id> events;
-  static int static_id = 0;
-
-  // Check if an ID record already exists
-  auto iter = events.find(name);
-  if (iter != events.end())
-    return iter->second;
-
-  // Make a new ID record
-  auto id = ++static_id;
-  events[name] = id;
-
-  return id;
+  return mrb_intern_cstr(*ruby::ruby_engine::global_engine, name.c_str());
 }
 
 // ----------------------------------------------------------------------------

@@ -12,6 +12,8 @@
 #include "mruby/variable.h"
 #include "mruby/error.h"
 
+#pragma warning(disable : 4244)
+
 typedef enum {
   NOEX_PUBLIC    = 0x00,
   NOEX_NOSUPER   = 0x01,

@@ -7,6 +7,8 @@
 #ifndef MRUBY_ARRAY_H
 #define MRUBY_ARRAY_H
 
+#include "Helpers/mruby_warning_disable.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -66,5 +68,7 @@ mrb_ary_len(mrb_state *mrb, mrb_value ary)
 #if defined(__cplusplus)
 }  /* extern "C" { */
 #endif
+
+#include "Helpers/mruby_warning_restore.h"
 
 #endif  /* MRUBY_ARRAY_H */

@@ -12,6 +12,8 @@
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
+#pragma warning(disable : 4244)
+
 /* a function to get hash value of a float number */
 mrb_int mrb_float_id(mrb_float f);
 

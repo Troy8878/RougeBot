@@ -7,6 +7,8 @@
 #ifndef MRUBY_COMPILE_H
 #define MRUBY_COMPILE_H
 
+#include "Helpers/mruby_warning_disable.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -181,5 +183,7 @@ mrb_value mrb_load_nstring_cxt(mrb_state *mrb, const char *s, int len, mrbc_cont
 #if defined(__cplusplus)
 }  /* extern "C" { */
 #endif
+
+#include "Helpers/mruby_warning_restore.h"
 
 #endif /* MRUBY_COMPILE_H */

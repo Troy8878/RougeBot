@@ -195,23 +195,16 @@ void variadic_push_container(Container& containter, const Arg& param, const Args
 }
 
 template <typename T>
-void variadic_push_array(T *, size_t)
+void variadic_push_array(T [], size_t)
 {
 }
 
-template <typename T, typename Arg>
-void variadic_push_array(T *array, size_t index,
-                         const Arg& param)
+template <typename T, typename First, typename... Rest>
+void variadic_push_array(T array[], size_t index, 
+                         const First& param, const Rest&... params)
 {
   array[index] = param;
-}
-
-template <typename T, typename Arg, typename... Args>
-void variadic_push_array(T *array, size_t index, 
-                         const Arg& param, const Args&&... params)
-{
-  array[index] = param;
-  variadic_push_array(array, index + 1, param, params);
+  variadic_push_array(array, index + 1, params...);
 }
 
 

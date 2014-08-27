@@ -17,6 +17,8 @@
 #include "mruby/variable.h"
 #include "mruby/gc.h"
 
+#pragma warning(disable : 4244)
+
 /*
   = Tri-color Incremental Garbage Collection
 

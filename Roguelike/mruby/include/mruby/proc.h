@@ -7,12 +7,14 @@
 #ifndef MRUBY_PROC_H
 #define MRUBY_PROC_H
 
+#include "Helpers/mruby_warning_disable.h"
 #include "mruby/irep.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
+  
+#pragma warning ( disable : 4214 )
 struct REnv {
   MRB_OBJECT_HEADER;
   mrb_value *stack;
@@ -33,6 +35,7 @@ struct RProc {
   struct RClass *target_class;
   struct REnv *env;
 };
+#pragma warning ( default : 4214 )
 
 /* aspec access */
 #define MRB_ASPEC_REQ(a)          (((a) >> 18) & 0x1f)
@@ -69,5 +72,7 @@ KHASH_DECLARE(mt, mrb_sym, struct RProc*, TRUE)
 #if defined(__cplusplus)
 }  /* extern "C" { */
 #endif
+
+#include "Helpers/mruby_warning_restore.h"
 
 #endif  /* MRUBY_PROC_H */

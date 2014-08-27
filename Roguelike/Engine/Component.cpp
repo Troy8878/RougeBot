@@ -52,7 +52,7 @@ Component *ComponentManager::InstantiateComponent(const std::string& compName,
   auto& reg = it->second;
 
   auto *memory = reg.Allocator.Allocate();
-  auto *component = reg.Factory(memory, data);
+  auto *component = reg.Factory.CreateObject(memory, data);
 
   return component;
 }
@@ -93,16 +93,16 @@ ruby::ruby_module Component::GetComponentRModule()
   THREAD_EXCLUSIVE_SCOPE;
 
   static bool init = false;
-  auto *engine = ruby::ruby_engine::global_engine;
+  auto& engine = *ruby::ruby_engine::global_engine;
 
   if (init)
   {
-    return engine->get_module("Components");
+    return engine.get_module("Components");
   }
   else
   {
     init = true;
-    return engine->define_module("Components");
+    return engine.define_module("Components");
   }
 }
 
@@ -131,8 +131,8 @@ ruby::ruby_class Component::GetComponentRClass()
   auto& engine = *ruby::ruby_engine::global_engine;
   comp_class = engine.define_class("ComponentBase");
 
-  comp_class.define_class_method("register_component", 
-                                 rb_component_register, 
+  comp_class.define_class_method("register_component",
+                                 rb_component_register,
                                  ARGS_REQ(1));
 
   init = true;

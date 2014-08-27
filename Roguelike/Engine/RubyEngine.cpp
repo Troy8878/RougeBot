@@ -8,15 +8,18 @@
 
 #include "Common.h"
 #include "RubyInterop.h"
+#include "Game.h"
+
 #include "mruby/data.h"
 #include "mruby/class.h"
+#include "mruby/compile.h"
+#include "mruby/string.h"
 
 // ----------------------------------------------------------------------------
 
 using namespace ruby;
 
-static ruby_engine _global_engine;
-ruby_engine *ruby_engine::global_engine = &_global_engine;
+ruby_engine *ruby_engine::global_engine;
 
 // ----------------------------------------------------------------------------
 
@@ -28,9 +31,40 @@ ruby_engine::ruby_engine()
 
 // ----------------------------------------------------------------------------
 
+ruby_engine::ruby_engine(mrb_state *mrb)
+  : mrb(mrb), transient(true), symbols(*this)
+{
+}
+
+// ----------------------------------------------------------------------------
+
 ruby_engine::~ruby_engine()
 {
-  mrb_close(mrb);
+  if (!transient)
+    mrb_close(mrb);
+}
+
+// ----------------------------------------------------------------------------
+
+bool ruby_engine::evaluate_asset(const std::string& asset)
+{
+  auto container = GetGame()->Respack["Scripts"];
+  RELEASE_AFTER_SCOPE(container);
+
+  auto resource = container->GetResource(asset);
+  RELEASE_AFTER_SCOPE(resource);
+
+  if (!resource)
+    return false;
+
+  auto size = resource->Size + 1;
+  char *data = new char[size];
+  memcpy_s(data, size, resource->Data, resource->Size);
+  data[size - 1] = 0;
+
+  mrb_load_string(mrb, data);
+
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -137,18 +171,27 @@ ruby_func ruby_function_manager::operator[](const char *name) const
 
 // ----------------------------------------------------------------------------
 
-ruby_value ruby_func::operator()(const ruby_value *values, mrb_int num)
+ruby_value ruby_func::call_argv(const ruby_value *values, mrb_int num)
 {
-  mrb_value mvalues[128];
+  mrb_value mvalues[128] = {0};
+
   if (num > 128)
-    throw std::exception("Over 128 params? >.> y u do dis?");
+    throw std::exception("Over 128 params? >.> y u do dis? srsly, tell me");
 
   for (int i = 0; i < num; ++i)
     mvalues[i] = values[i];
 
   ruby_value result{mrb_nil_value(), engine};
-  result = mrb_funcall_argv(*engine, invokee, funid, num, values);
+  result = mrb_funcall_argv(*engine, invokee, funid, num, mvalues);
   return result;
+}
+
+// ----------------------------------------------------------------------------
+
+template <>
+ruby_value ruby_func::call()
+{
+  return call_argv(nullptr, 0);
 }
 
 // ----------------------------------------------------------------------------

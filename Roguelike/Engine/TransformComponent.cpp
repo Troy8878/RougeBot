@@ -70,7 +70,7 @@ TransformComponentFactory::TransformComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-Component *TransformComponentFactory::operator()(
+Component *TransformComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
   math::Vector position, rotation, scale;
@@ -154,10 +154,8 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
     comp_class.define_method("initialize", rb_transform_initialize, ARGS_REQ(1));
   }
 
-  
-
   auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);
-  return comp_class.new_inst(&compwrap, 1);
+  return comp_class.new_inst_argv(&compwrap, 1);
 }
 
 // ----------------------------------------------------------------------------

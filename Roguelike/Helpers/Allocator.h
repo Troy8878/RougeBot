@@ -8,14 +8,11 @@
 
 // ----------------------------------------------------------------------------
 
-class Allocator abstract
+__interface IAllocator
 {
 public:
-  virtual void *Allocate() = 0;
-  virtual void Free(void *) = 0;
-
-protected:
-  inline ~Allocator() {}
+  void *Allocate();
+  void Free(void *);
 };
 
 // ----------------------------------------------------------------------------

@@ -7,6 +7,8 @@
 #include "Common.h"
 #include "Helpers\BucketAllocator.h"
 
+#include <iomanip>
+
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "DXGI.lib")
 
@@ -21,31 +23,34 @@ static void createConsole()
 }
 #endif
 
-static mrb_value rb_test_method(mrb_state *mrb, mrb_value value)
+static mrb_value rb_print_all_params(mrb_state *mrb, mrb_value self)
 {
-  mrb_value num;
+  ruby::ruby_engine engine{mrb}; // wrap the engine for the ruby_value helper
 
-  mrb_get_args(mrb, "i", &num);
+  mrb_value *argv;
+  mrb_int argc;
 
-  std::cout << mrb_fixnum(num) << std::endl;
-  return value;
+  // just get the args as an array
+  mrb_get_args(mrb, "*", &argv, &argc);
+
+  // print all of the values with to_s
+  ruby::ruby_value v{mrb_nil_value(), &engine};
+  for (int i = 0; i < argc; ++i)
+  {
+    v = argv[i];
+    v = v.functions["to_s"].call();
+
+    std::cout << static_cast<std::string>(v) << std::endl;
+  }
+
+  return self;
 }
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
-  IFDEBUG(
-  {
-    createConsole();
-  });
+  IFDEBUG(createConsole());
 
-  RegisterEngineComponents();
-
-  using namespace ruby;
-  auto tclass = ruby_engine::global_engine->define_class("TestClass");
-  tclass.define_class_method("asdf", rb_test_method, ARGS_REQ(1));
-
-  auto cval = mrb_obj_value(tclass.mrb_handle());
-  mrb_funcall(*ruby_engine::global_engine, cval, "asdf", 1, mrb_fixnum_value(20));
+  widen("");
 
   Roguelike game("Game 200 Project", hInstance);
   game.Run();

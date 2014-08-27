@@ -1,12 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{BD50ED62-4180-48A3-9471-C4DACE557FD9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F134B250-AE9A-4839-B424-068A5BCA82CB} = {F134B250-AE9A-4839-B424-068A5BCA82CB}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{D81A2E95-8B9E-4EC9-96B3-FD49B21742DA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -14,6 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj",
 		{BD50ED62-4180-48A3-9471-C4DACE557FD9} = {BD50ED62-4180-48A3-9471-C4DACE557FD9}
 		{9FEAAB94-8EC8-4A60-A9D2-453EBA9DA2B9} = {9FEAAB94-8EC8-4A60-A9D2-453EBA9DA2B9}
 		{59F1D1E6-3E1D-4DD3-AB9A-17E411236C5A} = {59F1D1E6-3E1D-4DD3-AB9A-17E411236C5A}
+		{D1667FF1-6054-440B-B5CB-3A30D830E4C8} = {D1667FF1-6054-440B-B5CB-3A30D830E4C8}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mruby", "mruby\mruby.vcxproj", "{F134B250-AE9A-4839-B424-068A5BCA82CB}"
@@ -23,6 +21,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Helpers", "Helpers\Helpers.vcxproj", "{9FEAAB94-8EC8-4A60-A9D2-453EBA9DA2B9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourcePacker", "ResourcePacker\ResourcePacker.vcxproj", "{3884EC7D-7F04-4446-9FB3-706EE4F53D05}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9FEAAB94-8EC8-4A60-A9D2-453EBA9DA2B9} = {9FEAAB94-8EC8-4A60-A9D2-453EBA9DA2B9}
+		{59F1D1E6-3E1D-4DD3-AB9A-17E411236C5A} = {59F1D1E6-3E1D-4DD3-AB9A-17E411236C5A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "json", "json\json.vcxproj", "{D1667FF1-6054-440B-B5CB-3A30D830E4C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,10 @@ Global
 		{3884EC7D-7F04-4446-9FB3-706EE4F53D05}.Debug|x64.Build.0 = Debug|x64
 		{3884EC7D-7F04-4446-9FB3-706EE4F53D05}.Release|x64.ActiveCfg = Release|x64
 		{3884EC7D-7F04-4446-9FB3-706EE4F53D05}.Release|x64.Build.0 = Release|x64
+		{D1667FF1-6054-440B-B5CB-3A30D830E4C8}.Debug|x64.ActiveCfg = Debug|x64
+		{D1667FF1-6054-440B-B5CB-3A30D830E4C8}.Debug|x64.Build.0 = Debug|x64
+		{D1667FF1-6054-440B-B5CB-3A30D830E4C8}.Release|x64.ActiveCfg = Release|x64
+		{D1667FF1-6054-440B-B5CB-3A30D830E4C8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

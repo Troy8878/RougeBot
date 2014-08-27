@@ -60,7 +60,7 @@ ruby_class ruby_class::define_class(const char *name, RClass *baseClass)
 
 // ----------------------------------------------------------------------------
 
-ruby_value ruby_class::new_inst(ruby_value *values, mrb_int num)
+ruby_value ruby_class::new_inst_argv(ruby_value *values, mrb_int num)
 {
   if (num > 128)
     throw std::exception("WTF ARE YOU DOING?! OVER 128 PARAMS?!");
@@ -70,7 +70,15 @@ ruby_value ruby_class::new_inst(ruby_value *values, mrb_int num)
   for (int i = 0; i < num; ++i)
     items[i] = values[i];
 
-  return mrb_obj_new(*_engine, _class, num, items);
+  return ruby_value{mrb_obj_new(*_engine, _class, num, items), _engine};
+}
+
+// ----------------------------------------------------------------------------
+
+template <>
+ruby_value ruby_class::new_inst()
+{
+  return new_inst_argv(nullptr, 0);
 }
 
 // ----------------------------------------------------------------------------

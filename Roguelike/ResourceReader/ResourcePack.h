@@ -22,10 +22,14 @@ namespace Respack
   {
     void Release();
 
-    size_t getSize();
-    byte *getData();
-    TempFile getTempFile();
-    std::chrono::system_clock::time_point getModified();
+    size_t GetSize();
+    byte *GetData();
+    TempFile GetTempFile();
+    std::chrono::system_clock::time_point GetModified();
+
+    PROPERTY(get = GetSize) size_t Size;
+    PROPERTY(get = GetData) byte *Data;
+    PROPERTY(get = GetModified) std::chrono::system_clock::time_point Modified;
   };
 
 // ----------------------------------------------------------------------------
@@ -34,9 +38,12 @@ namespace Respack
   {
     void Release();
 
-    UINT getResourceCount();
-    const char *getContainerName();
-    Resource *getResource(const std::string& name);
+    UINT GetResourceCount();
+    const char *GetContainerName();
+    Resource *GetResource(const std::string& name);
+
+    PROPERTY(get = GetResourceCount) UINT ResourceCount;
+    PROPERTY(get = GetContainerName) const char *ContainerName;
   };
 
 // ----------------------------------------------------------------------------

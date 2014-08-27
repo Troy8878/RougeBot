@@ -34,7 +34,10 @@ namespace ruby
     ruby_engine& engine;
 
   public:
-    ruby_symbol_manager(ruby_engine& engine) : engine(engine) {};
+    ruby_symbol_manager(ruby_engine& engine) 
+      : engine(engine) 
+    {
+    };
 
     mrb_sym operator[](const char *name) const;
 
@@ -50,7 +53,10 @@ namespace ruby
     mrb_value invokee;
 
   public:
-    ruby_function_manager(ruby_engine& engine, mrb_value invokee);
+    ruby_function_manager(ruby_engine& engine, mrb_value invokee) 
+      : engine(engine), invokee(invokee) 
+    {
+    };
 
     ruby_func operator[](mrb_sym funid) const;
     ruby_func operator[](const char *name) const;
@@ -66,6 +72,8 @@ namespace ruby
     static ruby_engine *global_engine;
 
     ruby_engine();
+    ruby_engine(mrb_state *mrb);
+
     ~ruby_engine();
 
     const ruby_symbol_manager symbols;
@@ -75,6 +83,8 @@ namespace ruby
 
     inline mrb_state *mrb_handle() { return mrb; }
     inline operator mrb_state *() { return mrb; }
+
+    bool evaluate_asset(const std::string& asset);
 
     ruby_class define_class(const char *className, RClass *baseClass = nullptr);
     ruby_class get_class(const char *className);
@@ -92,6 +102,7 @@ namespace ruby
 
   private:
     mrb_state *mrb;
+    bool transient = false;
   };
 
 // ----------------------------------------------------------------------------
@@ -115,10 +126,13 @@ namespace ruby
     void define_class_method(const char *name, mrb_func_t func, mrb_aspec aspec);
     ruby_class define_class(const char *name, RClass *baseClass = nullptr);
 
-    ruby_value new_inst(ruby_value *values, mrb_int num);
+    ruby_value new_inst_argv(ruby_value *values, mrb_int num);
 
     template <mrb_int count>
-    ruby_value new_inst(ruby_value (&values)[count]);
+    ruby_value new_inst_argv(ruby_value (&values)[count]);
+
+    template <typename... Args>
+    ruby_value new_inst(const Args&... args);
 
     PROPERTY(get = _GetFuncMgr) ruby_function_manager functions;
 
@@ -145,8 +159,6 @@ namespace ruby
   class ruby_value : public mrb_value
   {
     ruby_engine *_engine;
-    typedef mrb_int _mrb_int;
-    typedef mrb_float _mrb_float;
 
   public:
     ruby_value(const mrb_value& value = mrb_nil_value(), ruby_engine *engine = ruby_engine::global_engine);
@@ -155,26 +167,36 @@ namespace ruby
     ruby_value(ruby_value&& moving);
     ruby_value& operator=(ruby_value&& moving);
 
+    ruby_class get_class();
+
     ruby_value& operator=(const mrb_value& value);
 
-    ruby_value& operator=(nullptr_t);
+    ruby_value& operator=(nullptr_t) { return set_mrbv(mrb_nil_value()); }
 
-    ruby_value& operator=(mrb_int i);
-    ruby_value& operator=(mrb_float f);
-    operator _mrb_int();
-    operator _mrb_float();
+    ruby_value& operator=(int64_t i) { return set_mrbv(mrb_fixnum_value(i)); }
+    ruby_value& operator=(int32_t i) { return set_mrbv(mrb_fixnum_value(i)); }
+    ruby_value& operator=(double f) { return set_mrbv(mrb_float_value(*_engine, f)); }
+    operator int64_t();
+    explicit operator int32_t();
+    operator double();
+    explicit operator float();
 
     ruby_value& operator=(const char *string);
     ruby_value& operator=(const std::string& string);
     operator const char *();
-    operator std::string();
+
+    operator std::vector<ruby_value>();
+
+    // Custom class conversions
+    ruby_value& operator=(const math::Vector& vector);
+    operator math::Vector();
 
     void silent_reset() { mrb_value::operator=(mrb_nil_value()); }
 
     PROPERTY(get = _GetFuncMgr) ruby_function_manager functions;
 
   private:
-    void set_mrbv(const mrb_value& val);
+    ruby_value& set_mrbv(const mrb_value& val);
 
   public:
     ruby_function_manager _GetFuncMgr()
@@ -197,10 +219,10 @@ namespace ruby
     {
     }
 
-    ruby_value operator()(const ruby_value *values, mrb_int num);
+    ruby_value call_argv(const ruby_value *values, mrb_int num);
 
     template <typename... Args>
-    ruby_value operator()(Args... args);
+    ruby_value call(const Args&... args);
   };
 
 // ----------------------------------------------------------------------------
@@ -218,9 +240,24 @@ namespace ruby
 // ----------------------------------------------------------------------------
 
   template <mrb_int count>
-  ruby_value ruby_class::new_inst(ruby_value (&values)[count])
+  ruby_value ruby_class::new_inst_argv(ruby_value (&values)[count])
   {
-    return new_inst(values, count);
+    return new_inst_argv(values, count);
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <>
+  ruby_value ruby_class::new_inst();
+
+  template <typename... Args>
+  ruby_value ruby_class::new_inst(const Args&... args)
+  {
+    ruby_value values[sizeof...(args)];
+
+    variadic_push_array(values, 0, args...);
+
+    return new_inst_argv(values);
   }
 
 // ----------------------------------------------------------------------------
@@ -246,15 +283,17 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  template <> 
+  ruby_value ruby_func::call();
+
   template <typename... Args>
-  ruby_value ruby_func::operator()(Args... args)
+  ruby_value ruby_func::call(const Args&... args)
   {
     ruby_value values[sizeof...(args)];
-    for (auto& value : values)
-      value = ruby_value{mrb_nil_value(), engine};
+
     variadic_push_array(values, 0, args...);
 
-    operator()(values, sizeof...(args));
+    return call_argv(values, sizeof...(args));
   }
 
 // ----------------------------------------------------------------------------

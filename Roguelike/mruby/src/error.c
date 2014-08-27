@@ -17,6 +17,8 @@
 #include "mruby/error.h"
 #include "mrb_throw.h"
 
+#pragma warning(disable : 4244)
+
 mrb_value
 mrb_exc_new(mrb_state *mrb, struct RClass *c, const char *ptr, long len)
 {

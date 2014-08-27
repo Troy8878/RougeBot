@@ -10,6 +10,8 @@
 #include "mruby/string.h"
 #include "mruby/array.h"
 
+#pragma warning(disable : 4244)
+
 #define RANGE_CLASS (mrb_class_get(mrb, "Range"))
 
 static void

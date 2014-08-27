@@ -7,6 +7,10 @@
 #ifndef MRUBY_VALUE_H
 #define MRUBY_VALUE_H
 
+#define MRB_INT64 
+
+#include "Helpers/mruby_warning_disable.h"
+
 #ifdef MRB_USE_FLOAT
   typedef float mrb_float;
 # define mrb_float_to_str(buf, i) sprintf(buf, "%.7e", i)
@@ -531,5 +535,7 @@ mrb_bool_value(mrb_bool boolean)
   MRB_SET_VALUE(v, boolean ? MRB_TT_TRUE : MRB_TT_FALSE, value.i, 1);
   return v;
 }
+
+#include "Helpers/mruby_warning_restore.h"
 
 #endif  /* MRUBY_VALUE_H */

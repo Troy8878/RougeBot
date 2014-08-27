@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)mruby\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAs>CompileAsC</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -65,7 +65,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)mruby\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -108,6 +108,31 @@
     <ClCompile Include="src\version.c" />
     <ClCompile Include="src\vm.c" />
     <ClCompile Include="src\y.tab.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\mrbconf.h" />
+    <ClInclude Include="include\mruby.h" />
+    <ClInclude Include="include\mruby\array.h" />
+    <ClInclude Include="include\mruby\class.h" />
+    <ClInclude Include="include\mruby\compile.h" />
+    <ClInclude Include="include\mruby\data.h" />
+    <ClInclude Include="include\mruby\debug.h" />
+    <ClInclude Include="include\mruby\dump.h" />
+    <ClInclude Include="include\mruby\error.h" />
+    <ClInclude Include="include\mruby\gc.h" />
+    <ClInclude Include="include\mruby\hash.h" />
+    <ClInclude Include="include\mruby\irep.h" />
+    <ClInclude Include="include\mruby\khash.h" />
+    <ClInclude Include="include\mruby\numeric.h" />
+    <ClInclude Include="include\mruby\opcode.h" />
+    <ClInclude Include="include\mruby\proc.h" />
+    <ClInclude Include="include\mruby\range.h" />
+    <ClInclude Include="include\mruby\re.h" />
+    <ClInclude Include="include\mruby\string.h" />
+    <ClInclude Include="include\mruby\value.h" />
+    <ClInclude Include="include\mruby\variable.h" />
+    <ClInclude Include="include\mruby\version.h" />
+    <ClInclude Include="include\mruby\y.tab.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

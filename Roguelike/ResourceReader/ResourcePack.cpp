@@ -66,9 +66,9 @@ struct ResMemoryContainer : public ResourceContainer
 
   void mapResources();
 
-  UINT getResourceCount() override;
-  const char *getContainerName() override;
-  Resource *getResource(const std::string& name) override;
+  UINT GetResourceCount() override;
+  const char *GetContainerName() override;
+  Resource *GetResource(const std::string& name) override;
 
   bool memoryResourceExists(const std::string& name);
   bool fileResourceExists(const std::wstring& name);
@@ -93,10 +93,10 @@ struct MemoryResource : public Resource
 
   void Release() override;
 
-  size_t getSize() override;
-  byte *getData() override;
-  TempFile getTempFile() override;
-  std::chrono::system_clock::time_point getModified() override;
+  size_t GetSize() override;
+  byte *GetData() override;
+  TempFile GetTempFile() override;
+  std::chrono::system_clock::time_point GetModified() override;
 
   MemResourceMapping mapping;
   FileMappingView view;
@@ -113,9 +113,9 @@ struct ResFallbackContainer : public ResourceContainer
 
   void Release() override;
 
-  UINT getResourceCount() override;
-  const char *getContainerName() override;
-  Resource *getResource(const std::string& name) override;
+  UINT GetResourceCount() override;
+  const char *GetContainerName() override;
+  Resource *GetResource(const std::string& name) override;
 
   std::string name;
   fs::wpath folder;
@@ -133,10 +133,10 @@ struct FileResource : public Resource
 
   void Release() override;
 
-  size_t getSize() override;
-  byte *getData() override;
-  TempFile getTempFile() override;
-  std::chrono::system_clock::time_point getModified() override;
+  size_t GetSize() override;
+  byte *GetData() override;
+  TempFile GetTempFile() override;
+  std::chrono::system_clock::time_point GetModified() override;
 
   fs::wpath path;
   bool loaded = false;
@@ -321,21 +321,21 @@ void ResMemoryContainer::mapResources()
 
 // ----------------------------------------------------------------------------
 
-UINT ResMemoryContainer::getResourceCount()
+UINT ResMemoryContainer::GetResourceCount()
 {
   return mapping.header.resource_count;
 }
 
 // ----------------------------------------------------------------------------
 
-const char *ResMemoryContainer::getContainerName()
+const char *ResMemoryContainer::GetContainerName()
 {
   return mapping.header.container_name;
 }
 
 // ----------------------------------------------------------------------------
 
-Resource *ResMemoryContainer::getResource(const std::string& name)
+Resource *ResMemoryContainer::GetResource(const std::string& name)
 {
   auto wname = widen(name);
 
@@ -411,7 +411,7 @@ void ResFallbackContainer::Release()
 
 // ----------------------------------------------------------------------------
 
-UINT ResFallbackContainer::getResourceCount()
+UINT ResFallbackContainer::GetResourceCount()
 {
   if (itemCount != -1)
     return itemCount;
@@ -422,14 +422,14 @@ UINT ResFallbackContainer::getResourceCount()
 
 // ----------------------------------------------------------------------------
 
-const char *ResFallbackContainer::getContainerName()
+const char *ResFallbackContainer::GetContainerName()
 {
   return name.c_str();
 }
 
 // ----------------------------------------------------------------------------
 
-Resource *ResFallbackContainer::getResource(const std::string& name)
+Resource *ResFallbackContainer::GetResource(const std::string& name)
 {
   return new FileResource(folder / widen(name));
 }
@@ -450,28 +450,28 @@ void MemoryResource::Release()
 
 // ----------------------------------------------------------------------------
 
-size_t MemoryResource::getSize()
+size_t MemoryResource::GetSize()
 {
   return mapping.header.resource_size;
 }
 
 // ----------------------------------------------------------------------------
 
-byte *MemoryResource::getData()
+byte *MemoryResource::GetData()
 {
   return view;
 }
 
 // ----------------------------------------------------------------------------
 
-TempFile MemoryResource::getTempFile()
+TempFile MemoryResource::GetTempFile()
 {
-  return TempFile::create(view, getSize());
+  return TempFile::create(view, GetSize());
 }
 
 // ----------------------------------------------------------------------------
 
-std::chrono::system_clock::time_point MemoryResource::getModified()
+std::chrono::system_clock::time_point MemoryResource::GetModified()
 {
   return mapping.header.updated_at;
 }
@@ -492,14 +492,14 @@ void FileResource::Release()
 
 // ----------------------------------------------------------------------------
 
-size_t FileResource::getSize()
+size_t FileResource::GetSize()
 {
   return fs::file_size(path);
 }
 
 // ----------------------------------------------------------------------------
 
-byte *FileResource::getData()
+byte *FileResource::GetData()
 {
   if (!loaded)
   {
@@ -511,14 +511,14 @@ byte *FileResource::getData()
 
 // ----------------------------------------------------------------------------
 
-TempFile FileResource::getTempFile()
+TempFile FileResource::GetTempFile()
 {
   return TempFile::wrapNonTemp(path);
 }
 
 // ----------------------------------------------------------------------------
 
-std::chrono::system_clock::time_point FileResource::getModified()
+std::chrono::system_clock::time_point FileResource::GetModified()
 {
   return std::chrono::system_clock::from_time_t(fs::last_write_time(path));
 }

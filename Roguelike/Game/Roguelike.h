@@ -16,6 +16,10 @@
 #include "Engine\Colors.h"
 #include "Engine\RenderSet.h"
 
+#include "mruby/data.h"
+#include "mruby/value.h"
+#include "mruby/class.h"
+
 // ----------------------------------------------------------------------------
 
 class Roguelike : public Game
@@ -59,12 +63,18 @@ public:
     _testEntity.AddComponent("TransformComponent", tcdata);
 
     component_factory_data scdata;
-    scdata["texture"] = "1384108156458.jpg";
+    scdata["texture"] = "Squares.png";//"1384108156458.jpg";
     scdata["shader"] = "Textured";
     scdata["render_target"] = "global_hud";
     _testEntity.AddComponent("SpriteComponent", scdata);
 
     Event::GlobalDispatcher->AddListener(&_testEntity);
+
+    ruby::ruby_value v;
+    v = math::Vector{1, 2, 3, 4};
+
+    math::Vector vect = v;
+    std::cout << vect.get() << std::endl;
   }
 
   void InitShaders()
@@ -121,14 +131,8 @@ public:
     if (movein)
     {
       _camera.position.z -= dt * 10;
-      if (_camera.position.z < 0.5)
+      if (_camera.position.z < 20)
         movein = false;
-    }
-    else
-    {
-      _camera.position.z += dt * 10;
-      if (_camera.position.z > 35)
-        movein = true;
     }
 
     _camera.Update();

@@ -14,6 +14,8 @@
 #include "mruby/debug.h"
 #include "mruby/error.h"
 
+#pragma warning(disable : 4244)
+
 #ifdef ENABLE_STDIO
 
 typedef void (*output_stream_func)(mrb_state*, void*, int, const char*, ...);

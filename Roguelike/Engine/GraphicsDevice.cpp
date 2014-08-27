@@ -392,7 +392,7 @@ void GraphicsDevice::InitializeD3DContext()
 
   D3D11_BLEND_DESC blendStateDesc;
   ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
-  blendStateDesc.AlphaToCoverageEnable = FALSE;
+  blendStateDesc.AlphaToCoverageEnable = TRUE;
   blendStateDesc.IndependentBlendEnable = FALSE;
   blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
   blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;

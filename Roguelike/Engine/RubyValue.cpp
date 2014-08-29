@@ -136,7 +136,11 @@ ruby_value::operator std::vector<ruby_value>()
 
 ruby_value& ruby_value::set_mrbv(const mrb_value& val)
 {
-  mrb_gc_mark_value(*_engine, *this);
+  if (_engine)
+  {
+    _engine->log_and_clear_error();
+    mrb_gc_mark_value(*_engine, *this);
+  }
 
   mrb_value::operator=(val);
   return *this;

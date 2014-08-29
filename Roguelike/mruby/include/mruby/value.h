@@ -7,8 +7,6 @@
 #ifndef MRUBY_VALUE_H
 #define MRUBY_VALUE_H
 
-#define MRB_INT64 
-
 #include "Helpers/mruby_warning_disable.h"
 
 #ifdef MRB_USE_FLOAT

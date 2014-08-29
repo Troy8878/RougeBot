@@ -37,12 +37,8 @@ void TransformComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void TransformComponent::OnUpdate(Events::EventMessage& e)
+void TransformComponent::OnUpdate(Events::EventMessage&)
 {
-  auto& time = e.GetData<Events::UpdateEvent>()->gameTime;
-
-  Rotation.y += (float) time.Dt;
-
   UpdateMatrix();
 }
 

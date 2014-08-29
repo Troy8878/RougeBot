@@ -41,8 +41,10 @@ public:
   }
 
 protected:
-  ruby::ruby_module GetComponentRModule();
-  ruby::ruby_class GetComponentRClass();
+  static ruby::ruby_module GetComponentRModule();
+  static ruby::ruby_class GetComponentRClass();
+  
+  friend void RegisterEngineComponents();
 };
 
 // ----------------------------------------------------------------------------
@@ -126,6 +128,12 @@ void RegisterStaticComponent(const std::string& name,
 {
   ComponentRegistration registration{typeid(T), name, factory, factory->Allocator};
   ComponentManager::Instance.RegisterComponent(registration);
+
+  auto prevfg = console::fg_color();
+  std::cout << console::fg::yellow
+            << "Registered static component '" 
+            << registration.componentName << "'" << std::endl
+            << prevfg;
 }
 
 // ----------------------------------------------------------------------------

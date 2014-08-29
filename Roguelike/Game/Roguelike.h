@@ -56,25 +56,25 @@ public:
 
     RenderGroup::Instance.CreateSet("global_hud", &_camera, true);
 
+    _testEntity = new Entity;
+
     component_factory_data tcdata;
     tcdata["position"] = "0 0 0 0";
     tcdata["rotation"] = "0 0 0 0";
     tcdata["scale"] = "<10, 10, 10, 1>";
-    _testEntity.AddComponent("TransformComponent", tcdata);
+    _testEntity->AddComponent("TransformComponent", tcdata);
 
     component_factory_data scdata;
     scdata["texture"] = "Squares.png";//"1384108156458.jpg";
     scdata["shader"] = "Textured";
     scdata["render_target"] = "global_hud";
-    _testEntity.AddComponent("SpriteComponent", scdata);
+    _testEntity->AddComponent("SpriteComponent", scdata);
 
-    Event::GlobalDispatcher->AddListener(&_testEntity);
+    component_factory_data stdata;
+    stdata["speed"] = "2";
+    _testEntity->AddComponent("SpinnyThingComponent", stdata);
 
-    ruby::ruby_value v;
-    v = math::Vector{1, 2, 3, 4};
-
-    math::Vector vect = v;
-    std::cout << vect.get() << std::endl;
+    Event::GlobalDispatcher->AddListener(_testEntity);
   }
 
   void InitShaders()
@@ -96,7 +96,7 @@ public:
 
   void InitObjects()
   {
-    _camera.position = math::Vector{0, 0, 60, 1};
+    _camera.position = math::Vector{0, 0, 1000, 1};
     _camera.lookAt = math::Vector{0, 0, 0, 0};
     _camera.Init();
   }
@@ -109,7 +109,16 @@ public:
     using namespace DirectX;
     float dt = (float) time.Dt;
 
-    // Update FPS
+    UpdateTitleFPS(dt);
+
+    if (_camera.position.z > 20)
+      _camera.position.z -= dt * _camera.position.z;
+
+    _camera.Update();
+  }
+
+  void UpdateTitleFPS(float dt)
+  {
     if (dt > 0.001)
     {
       const int update_res = 60;
@@ -126,16 +135,6 @@ public:
         SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }
-
-    static bool movein = true;
-    if (movein)
-    {
-      _camera.position.z -= dt * 10;
-      if (_camera.position.z < 20)
-        movein = false;
-    }
-
-    _camera.Update();
   }
 
   void OnDraw(Events::EventMessage& e)
@@ -145,6 +144,7 @@ public:
 
   void OnFree() override
   {
+    delete _testEntity;
     delete _basicShader;
     delete _textureShader;
   }
@@ -164,7 +164,7 @@ private:
   Shader *_basicShader;
   Shader *_textureShader;
 
-  Entity _testEntity;
+  Entity *_testEntity;
 };
 
 // ----------------------------------------------------------------------------

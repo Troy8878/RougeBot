@@ -38,6 +38,7 @@ public:
   NO_ASSIGNMENT_OPERATOR(Entity);
 
   PROPERTY(get = _GetEntityId) entity_id Id;
+  PROPERTY(get = GetRubyWrapper) ruby::ruby_value RubyWrapper;
 
   #pragma endregion
 
@@ -120,11 +121,14 @@ protected:
   #pragma region Other fields and helpers
 public:
   entity_id _GetEntityId();
+  ruby::ruby_value GetRubyWrapper();
 
 private:
   entity_id _id;
+  ruby::ruby_value rwrapper;
 
   static entity_id CreateEntityId();
+  static ruby::ruby_class GetWrapperRClass();
   #pragma endregion
 
 };

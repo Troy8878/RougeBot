@@ -7,5 +7,5 @@
 #include "Console.h"
 
 std::ostream& debug = std::cout;
-console::fg console::current_fg;
-console::bg console::current_bg;
+console::fg console::current_fg = fg::white;
+console::bg console::current_bg = bg::black;

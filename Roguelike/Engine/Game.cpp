@@ -8,6 +8,8 @@
 #include "Game.h"
 #include "Level.h"
 
+#include "mruby/debug.h"
+
 // ----------------------------------------------------------------------------
 
 static Game *_gameInst;
@@ -86,6 +88,8 @@ void Game::Run()
 
       mrb_incremental_gc(mrb);
     }
+
+    OnFree();
   }
 #if !defined(_DEBUG)
   catch(const std::exception& ex)

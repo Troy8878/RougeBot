@@ -15,7 +15,7 @@
 //#define MRB_INT16
 
 /* add -DMRB_INT64 to use 64bit integer for mrb_int; conflict with MRB_INT16 */
-//#define MRB_INT64
+#define MRB_INT64
 
 /* represent mrb_value in boxed double; conflict with MRB_USE_FLOAT */
 //#define MRB_NAN_BOXING
@@ -27,7 +27,7 @@
 //#define MRB_WORD_BOXING
 
 /* argv max size in mrb_funcall */
-//#define MRB_FUNCALL_ARGC_MAX 16
+#define MRB_FUNCALL_ARGC_MAX 128
 
 /* number of object per heap page */
 //#define MRB_HEAP_PAGE_SIZE 1024
@@ -45,7 +45,7 @@
 //#define KHASH_DEFAULT_SIZE 32
 
 /* allocated memory address alignment */
-//#define POOL_ALIGNMENT 4
+#define POOL_ALIGNMENT 8
 
 /* page size of memory pool */
 //#define POOL_PAGE_SIZE 16000
@@ -63,16 +63,18 @@
 //#define DISABLE_STDIO		/* use of stdio */
 
 /* -DENABLE_XXXX to enable following features */
-//#define ENABLE_DEBUG		/* hooks for debugger */
+#ifdef _DEBUG
+# define ENABLE_DEBUG		/* hooks for debugger */
+#endif
 
 /* end of configuration */
 
 /* define ENABLE_XXXX from DISABLE_XXX */
 #ifndef DISABLE_STDIO
-#define ENABLE_STDIO
+# define ENABLE_STDIO
 #endif
 #ifndef ENABLE_DEBUG
-#define DISABLE_DEBUG
+# define DISABLE_DEBUG
 #endif
 
 #ifdef ENABLE_STDIO

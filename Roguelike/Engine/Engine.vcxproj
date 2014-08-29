@@ -142,6 +142,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="RenderSet.cpp" />
     <ClCompile Include="RubyClass.cpp" />
+    <ClCompile Include="RubyComponent.cpp" />
     <ClCompile Include="RubyEngine.cpp" />
     <ClCompile Include="RubyInit.cpp" />
     <ClCompile Include="RubyModule.cpp" />

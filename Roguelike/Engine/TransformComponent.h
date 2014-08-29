@@ -46,7 +46,6 @@ public:
   TransformComponentFactory();
 
   Component *CreateObject(void *memory, component_factory_data& data) override;
-
   IAllocator *_GetAllocator() override { return &allocator; }
 
 private:

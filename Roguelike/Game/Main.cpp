@@ -9,6 +9,8 @@
 
 #include <iomanip>
 
+#include "mruby/error.h"
+
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "DXGI.lib")
 
@@ -49,8 +51,6 @@ static mrb_value rb_print_all_params(mrb_state *mrb, mrb_value self)
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-
-  widen("");
 
   Roguelike game("Game 200 Project", hInstance);
   game.Run();

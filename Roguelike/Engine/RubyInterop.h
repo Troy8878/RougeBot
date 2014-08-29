@@ -100,6 +100,8 @@ namespace ruby
     template <typename MapType>
     ruby_value hash_from_map(const MapType& map);
 
+    void log_and_clear_error();
+
   private:
     mrb_state *mrb;
     bool transient = false;
@@ -191,9 +193,16 @@ namespace ruby
     ruby_value& operator=(const math::Vector& vector);
     operator math::Vector();
 
-    void silent_reset() { mrb_value::operator=(mrb_nil_value()); }
+    mrb_value silent_reset() 
+    { 
+      mrb_value c = *this; 
+      mrb_value::operator=(mrb_nil_value()); 
+      return c;
+    }
 
     PROPERTY(get = _GetFuncMgr) ruby_function_manager functions;
+
+    inline bool is_nil() { return mrb_nil_p(*this); }
 
   private:
     ruby_value& set_mrbv(const mrb_value& val);

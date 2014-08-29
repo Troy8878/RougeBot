@@ -14,6 +14,8 @@
 #include "mruby/class.h"
 #include "mruby/compile.h"
 #include "mruby/string.h"
+#include "mruby/error.h"
+#include "mruby/array.h"
 
 // ----------------------------------------------------------------------------
 
@@ -63,6 +65,7 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
   data[size - 1] = 0;
 
   mrb_load_string(mrb, data);
+  log_and_clear_error();
 
   return true;
 }
@@ -107,24 +110,16 @@ void ruby_engine::define_const(const char *name, mrb_value value)
 
 // ----------------------------------------------------------------------------
 
-mrb_data_type ruby::mrb_dt_native_ptr = {"NativePtrWrapper"};
+ruby_value ruby_engine::wrap_native_ptr(void *ptr)
+{
+  return ruby_value{mrb_cptr_value(mrb, ptr), this};
+}
 
 // ----------------------------------------------------------------------------
 
-ruby_value ruby_engine::wrap_native_ptr(void *ptr)
+void *ruby_engine::unwrap_native_ptr(mrb_value value)
 {
-  static ruby_class native_data_class;
-  static bool data_class_init = false;
-
-  if (!data_class_init)
-  {
-    data_class_init = true;
-    native_data_class = define_class("NativeData");
-  }
-  
-  mrb_data_object_alloc(mrb, native_data_class, ptr, &mrb_dt_native_ptr);
-
-  return ruby_value{};
+  return mrb_cptr(value);
 }
 
 // ----------------------------------------------------------------------------
@@ -183,6 +178,9 @@ ruby_value ruby_func::call_argv(const ruby_value *values, mrb_int num)
 
   ruby_value result{mrb_nil_value(), engine};
   result = mrb_funcall_argv(*engine, invokee, funid, num, mvalues);
+
+  engine->log_and_clear_error();
+
   return result;
 }
 
@@ -192,6 +190,25 @@ template <>
 ruby_value ruby_func::call()
 {
   return call_argv(nullptr, 0);
+}
+
+// ----------------------------------------------------------------------------
+
+void ruby_engine::log_and_clear_error()
+{
+  if (!mrb->exc)
+    return;
+
+  auto prevcolor = console::fg_color();
+
+  std::cerr << console::fg::yellow 
+            << "[WARNING] mruby error" << std::endl;
+  mrb_print_error(mrb);
+  std::cerr << std::endl;
+
+  std::cerr << prevcolor;
+
+  mrb->exc = nullptr;
 }
 
 // ----------------------------------------------------------------------------

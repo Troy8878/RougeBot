@@ -20,6 +20,12 @@ public:
 
 // ----------------------------------------------------------------------------
   
+  IR_PROPERTY(double, Dt);
+  PROPERTY(get = _GetRunningTime) clock::duration RunningTime;
+  PROPERTY(get = _GetCurrFrameTime) double CurrFrameTime;
+
+// ----------------------------------------------------------------------------
+  
   void Update()
   {
     _prevTime = _currTime;
@@ -35,19 +41,14 @@ public:
   }
 
 // ----------------------------------------------------------------------------
-  
-  IR_PROPERTY(double, Dt);
 
-// ----------------------------------------------------------------------------
-
-  clock::duration RunningTime() const
+  clock::duration _GetRunningTime() const
   {
     return _currTime - _initTime;
   }
 
 // ----------------------------------------------------------------------------
 
-  __declspec(property(get = _GetCurrFrameTime)) double CurrFrameTime;
   double _GetCurrFrameTime() const
   {
     auto time = clock::now();

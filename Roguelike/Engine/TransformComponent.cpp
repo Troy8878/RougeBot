@@ -14,6 +14,8 @@
 #include "mruby/class.h"
 #include "mruby/variable.h"
 
+#include "RubyWrappers.h"
+
 // ----------------------------------------------------------------------------
 
 TransformComponent::TransformComponent(
@@ -123,13 +125,42 @@ math::Vector TransformComponentFactory::ParseVector(const std::string& str)
 static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value tc_wrapper;
-
   mrb_get_args(mrb, "o", &tc_wrapper);
 
-  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "");
+  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
   mrb_iv_set(mrb, self, tc_wrapper_sym, tc_wrapper);
 
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static TransformComponent *get_rb_tc_wrapper(mrb_state *mrb, mrb_value self)
+{
+  ruby::ruby_engine engine{mrb};
+
+  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
+  auto tc_wrapper = mrb_iv_get(mrb, self, tc_wrapper_sym);
+
+  return (TransformComponent *) engine.unwrap_native_ptr(tc_wrapper);
+}
+
+static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+  return ruby::wrap_memory_vector(&comp->Position);
+}
+
+static mrb_value rb_transform_rotation(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+  return ruby::wrap_memory_vector(&comp->Rotation);
+}
+
+static mrb_value rb_transform_scale(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+  return ruby::wrap_memory_vector(&comp->Scale);
 }
 
 // ----------------------------------------------------------------------------
@@ -148,6 +179,9 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
     comp_class = comp_mod.define_class("TransformComponent", comp_base);
 
     comp_class.define_method("initialize", rb_transform_initialize, ARGS_REQ(1));
+    comp_class.define_method("position", rb_transform_position, ARGS_NONE());
+    comp_class.define_method("rotation", rb_transform_rotation, ARGS_NONE());
+    comp_class.define_method("scale", rb_transform_scale, ARGS_NONE());
   }
 
   auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);

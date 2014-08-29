@@ -21,10 +21,15 @@ public:
   RubyComponent(ruby::ruby_class rclass, component_factory_data& data);
 
   void Initialize(Entity *owner, const std::string& name) override;
+  void OnEvent(Events::EventMessage& e);
+
+  void AddEventHandler(event_id event, mrb_sym handler);
+  void RemoveEventHandler(event_id event);
 
   static RubyComponentFactory factory;
 
 private:
+  std::unordered_map<event_id, mrb_sym> events;
   mrb_value component_inst;
 
   friend class RubyComponentFactory;

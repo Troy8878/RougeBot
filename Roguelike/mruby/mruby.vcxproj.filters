@@ -104,6 +104,9 @@
     <ClCompile Include="mrbgems\mruby-fiber\src\fiber.c">
       <Filter>Gem Code</Filter>
     </ClCompile>
+    <ClCompile Include="mrbgems\mruby-print\src\mrbprint-print.c">
+      <Filter>Gem Code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mrbconf.h">

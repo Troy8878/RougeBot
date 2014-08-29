@@ -114,6 +114,9 @@
     <ClInclude Include="TransformComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="RubyWrappers.h">
+      <Filter>Header Files\Ruby</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rubylib.rc">
@@ -221,6 +224,12 @@
     </ClCompile>
     <ClCompile Include="RubyComponent.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyWrappers.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTypes.cpp">
+      <Filter>Header Files\Ruby</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

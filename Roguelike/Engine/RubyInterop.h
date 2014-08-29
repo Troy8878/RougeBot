@@ -9,6 +9,7 @@
 #include "mruby.h"
 #include "mruby/data.h"
 #include "mruby/hash.h"
+#include "mruby/value.h"
 
 #include <string>
 
@@ -54,7 +55,7 @@ namespace ruby
 
   public:
     ruby_function_manager(ruby_engine& engine, mrb_value invokee) 
-      : engine(engine), invokee(invokee) 
+      : engine(engine), invokee(invokee)
     {
     };
 

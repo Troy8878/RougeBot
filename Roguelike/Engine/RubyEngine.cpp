@@ -10,13 +10,15 @@
 #include "RubyInterop.h"
 #include "Game.h"
 
+#include "mruby/string.h"
 #include "mruby/data.h"
 #include "mruby/class.h"
 #include "mruby/compile.h"
-#include "mruby/string.h"
 #include "mruby/error.h"
 #include "mruby/array.h"
 #include "mruby/compile.h"
+
+#include <sstream>
 
 // ----------------------------------------------------------------------------
 
@@ -223,7 +225,8 @@ void ruby_engine::log_and_clear_error()
     fwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1, stderr);
     putc('\n', stderr);
   }
-
+  
+  mrb_gc_mark_value(mrb, mrb_obj_value(mrb->exc));
   mrb->exc = nullptr;
 
   // Now print the backtrace
@@ -233,11 +236,33 @@ void ruby_engine::log_and_clear_error()
   std::cerr << "Backtrace:" << std::endl;
   size_t i = 0;
 
+#ifdef _DEBUG
+  std::ostringstream btb;
+#endif
+
   for (auto& line : btrace_lines)
   {
     std::cerr << "  [" << ++i << "] " 
               << static_cast<std::string>(line) << std::endl;
+#ifdef _DEBUG
+    btb << "  [" << i << "] " 
+        << static_cast<std::string>(line) << std::endl;
+#endif
+
+    mrb_gc_mark_value(mrb, line);
   }
+
+#ifdef _DEBUG
+  std::string error_message = std::string(RSTRING_PTR(s), RSTRING_PTR(s) + RSTRING_LEN(s));
+  std::string backtrace = btb.str();
+
+  __debugbreak();
+#endif
+
+  mrb_gc_mark_value(mrb, s);
+  mrb_gc_mark_value(mrb, b);
+
+  mrb_full_gc(mrb);
 }
 
 // ----------------------------------------------------------------------------

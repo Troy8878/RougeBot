@@ -50,11 +50,18 @@ extern "C"
   // mrbgem protos
   void mrb_mruby_fiber_gem_init(mrb_state* mrb);
   void mrb_mruby_gamestuff_gem_init(mrb_state *mrb);
+  void mrb_mruby_print_gem_init(mrb_state* mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
+    ruby::ruby_engine engine{mrb};
+
     mrb_mruby_fiber_gem_init(mrb);
+    mrb_mruby_print_gem_init(mrb);
+    engine.evaluate_asset("Gems/mrb-print/print.rb");
+
     loadRubyRes(mrb, IDR_RB_GEM_ENUMERATOR);
+
     mrb_mruby_gamestuff_gem_init(mrb);
   }
 

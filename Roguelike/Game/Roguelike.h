@@ -31,6 +31,7 @@ public:
     initSettings.cullTriangles = false;
     initSettings.assetPack = L"./Assets.respack";
     initSettings.assetFolder = L"./Assets";
+    initSettings.vsync = true;
   }
 
   void OnInit() override
@@ -65,13 +66,13 @@ public:
     _testEntity->AddComponent("TransformComponent", tcdata);
 
     component_factory_data scdata;
-    scdata["texture"] = "Squares.png";//"1384108156458.jpg";
+    scdata["texture"] = "1384108156458.jpg";
     scdata["shader"] = "Textured";
     scdata["render_target"] = "global_hud";
     _testEntity->AddComponent("SpriteComponent", scdata);
 
     component_factory_data stdata;
-    stdata["speed"] = "2";
+    stdata["speed"] = "20";
     _testEntity->AddComponent("SpinnyThingComponent", stdata);
 
     Event::GlobalDispatcher->AddListener(_testEntity);

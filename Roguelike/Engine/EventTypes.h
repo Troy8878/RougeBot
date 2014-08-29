@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "RubyInterop.h"
 #include "Common.h"
+#include "RubyInterop.h"
 
 // ----------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ namespace Events
 
   struct EventData
   {
-    virtual ruby::ruby_value GetRubyWrapper() 
+    virtual mrb_value GetRubyWrapper()
     { 
       return ruby::ruby_value{}; 
     };
@@ -52,6 +52,8 @@ namespace Events
       : gameTime(gameTime)
     {
     }
+
+    mrb_value GetRubyWrapper() override;
 
     NO_ASSIGNMENT_OPERATOR(UpdateEvent);
   };

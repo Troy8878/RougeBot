@@ -57,15 +57,9 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
   RELEASE_AFTER_SCOPE(container);
 
   auto resource = container->GetResource(asset);
-  RELEASE_AFTER_SCOPE(resource);
 
   if (!resource)
     return false;
-  
-  auto size = resource->Size + 1;
-  char *data = new char[size];
-  memcpy_s(data, size, resource->Data, resource->Size);
-  data[size - 1] = 0;
   
   mrbc_context *cxt = mrbc_context_new(mrb);
 
@@ -77,10 +71,11 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
   strcpy_s(cxt->filename, fname_size, asset.c_str());
 #endif
 
-  mrb_load_string_cxt(mrb, data, cxt);
+  mrb_load_nstring_cxt(mrb, (char *) resource->Data, (int) resource->Size, cxt);
+
+  resource->Release();
 
   log_and_clear_error();
-
   return true;
 }
 

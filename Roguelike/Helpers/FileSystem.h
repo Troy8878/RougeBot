@@ -230,6 +230,8 @@ namespace std { namespace tr2 { namespace sys
       if (fread_s(buffer, size, sizeof(byte), size, pfile) != size)
         return {0, nullptr};
 
+      fclose(pfile);
+
       return {size, buffer};
     }
   };

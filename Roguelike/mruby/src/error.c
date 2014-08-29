@@ -130,8 +130,8 @@ exc_inspect(mrb_state *mrb, mrb_value exc)
   mrb_bool append_mesg;
 
   mesg = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "mesg"));
-  file = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "file"));
-  line = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "line"));
+  file = mrb_nil_value();//mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "file"));
+  line = mrb_nil_value();//mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "line"));
 
   append_mesg = !mrb_nil_p(mesg);
   if (append_mesg) {

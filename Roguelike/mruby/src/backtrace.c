@@ -14,6 +14,8 @@
 #include "mruby/debug.h"
 #include "mruby/error.h"
 
+#include "Helpers/CStackTrace.h"
+
 #pragma warning(disable : 4244)
 
 #ifdef ENABLE_STDIO
@@ -75,9 +77,13 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
     filename = NULL;
     lineno = -1;
 
+    struct st_trace *proc_trace = NULL;
+
     if (!ci->proc) continue;
     if (MRB_PROC_CFUNC_P(ci->proc)) {
-      continue;
+      proc_trace = st_get_trace(ci->proc->body.func);
+      filename = proc_trace->file;
+      lineno = proc_trace->line;
     }
     else {
       mrb_irep *irep = ci->proc->body.irep;
@@ -95,7 +101,13 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
       filename = mrb_debug_get_filename(irep, (uint32_t)(pc - irep->iseq));
       lineno = mrb_debug_get_line(irep, (uint32_t)(pc - irep->iseq));
     }
-    if (lineno == -1) continue;
+    if (lineno == -1)
+    {
+      if (proc_trace)
+        st_free_trace(proc_trace);
+      continue;
+    }
+
     if (ci->target_class == ci->proc->target_class)
       sep = ".";
     else
@@ -106,7 +118,7 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
     }
 
     if (tracehead) {
-      func(mrb, stream, 1, "trace:\n");
+      func(mrb, stream, 1, "Error backtrace:\n");
       tracehead = 0;
     }
     method = mrb_sym2name(mrb, ci->mid);
@@ -114,21 +126,24 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
       const char *cn = mrb_class_name(mrb, ci->proc->target_class);
 
       if (cn) {
-        func(mrb, stream, 1, "\t[%d] ", i);
+        func(mrb, stream, 1, "  [%d] ", i);
         func(mrb, stream, 0, "%s:%d:in %s%s%s", filename, lineno, cn, sep, method);
         func(mrb, stream, 1, "\n");
       }
       else {
-        func(mrb, stream, 1, "\t[%d] ", i);
+        func(mrb, stream, 1, "  [%d] ", i);
         func(mrb, stream, 0, "%s:%d:in %s", filename, lineno, method);
         func(mrb, stream, 1, "\n");
       }
     }
     else {
-        func(mrb, stream, 1, "\t[%d] ", i);
+        func(mrb, stream, 1, "  [%d] ", i);
         func(mrb, stream, 0, "%s:%d", filename, lineno);
         func(mrb, stream, 1, "\n");
     }
+
+    if (proc_trace)
+      st_free_trace(proc_trace);
   }
 }
 

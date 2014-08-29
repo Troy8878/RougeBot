@@ -16,6 +16,7 @@
 #include "mruby/string.h"
 #include "mruby/error.h"
 #include "mruby/array.h"
+#include "mruby/compile.h"
 
 // ----------------------------------------------------------------------------
 
@@ -58,13 +59,24 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
 
   if (!resource)
     return false;
-
+  
   auto size = resource->Size + 1;
   char *data = new char[size];
   memcpy_s(data, size, resource->Data, resource->Size);
   data[size - 1] = 0;
+  
+  mrbc_context *cxt = mrbc_context_new(mrb);
 
-  mrb_load_string(mrb, data);
+#ifdef _DEBUG
+  cxt->capture_errors = true;
+
+  size_t fname_size = asset.length() + 1;
+  cxt->filename = new char[fname_size];
+  strcpy_s(cxt->filename, fname_size, asset.c_str());
+#endif
+
+  mrb_load_string_cxt(mrb, data, cxt);
+
   log_and_clear_error();
 
   return true;
@@ -199,16 +211,33 @@ void ruby_engine::log_and_clear_error()
   if (!mrb->exc)
     return;
 
-  auto prevcolor = console::fg_color();
+  std::cerr << console::fg::red;
 
-  std::cerr << console::fg::yellow 
-            << "[WARNING] mruby error" << std::endl;
-  mrb_print_error(mrb);
-  std::cerr << std::endl;
+  // Get the backtrace because the error ruins it
+  mrb_value b = mrb_exc_backtrace(mrb, mrb_obj_value(mrb->exc));
 
-  std::cerr << prevcolor;
+  // Print the error
+  mrb_value s = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+  if (mrb_string_p(s)) 
+  {
+    fwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1, stderr);
+    putc('\n', stderr);
+  }
 
   mrb->exc = nullptr;
+
+  // Now print the backtrace
+  ruby_value btrace{b, this};
+  std::vector<ruby_value> btrace_lines = btrace;
+
+  std::cerr << "Backtrace:" << std::endl;
+  size_t i = 0;
+
+  for (auto& line : btrace_lines)
+  {
+    std::cerr << "  [" << ++i << "] " 
+              << static_cast<std::string>(line) << std::endl;
+  }
 }
 
 // ----------------------------------------------------------------------------

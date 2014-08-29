@@ -76,6 +76,7 @@
     <ClInclude Include="BucketAllocator.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CriticalSections.h" />
+    <ClInclude Include="CStackTrace.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="FixedWindows.h" />

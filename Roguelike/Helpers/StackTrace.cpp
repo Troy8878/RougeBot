@@ -5,9 +5,12 @@
  *********************************/
 
 #include "StackTrace.h"
+#include "CStackTrace.h"
 #include "FixedWindows.h"
 #include "FileSystem.h"
 #include <DbgHelp.h>
+#include <regex>
+#include <sstream>
 
 #pragma comment(lib, "dbghelp.lib")
 
@@ -104,5 +107,39 @@ trace_line stack_trace::get_trace_line(void *stack_addr)
   }
 
   return trace;
+}
+
+extern "C" struct st_trace *st_get_trace(void *addr)
+{
+  auto line = stack_trace::get_trace_line(addr);
+  auto *trace = new st_trace;
+
+  std::ostringstream sfile;
+
+  std::regex path_begin{"(.*)Roguelike\\\\", std::regex::icase};
+  std::regex_replace(std::ostreambuf_iterator<char>(sfile), 
+                     line.file.begin(), line.file.end(), 
+                     path_begin, "");
+
+  line.file = sfile.str();
+
+  size_t fsize = line.file.size() + 1;
+  size_t nsize = line.method.size() + 1;
+
+  trace->file = new char[fsize];
+  trace->name = new char[nsize];
+  trace->line = (int) line.line;
+  
+  strcpy_s(trace->file, fsize, line.file.c_str());
+  strcpy_s(trace->name, nsize, line.method.c_str());
+
+  return trace;
+}
+
+extern "C" void st_free_trace(struct st_trace *trace)
+{
+  delete[] trace->file;
+  delete[] trace->name;
+  delete trace;
 }
 

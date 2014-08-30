@@ -72,7 +72,7 @@ public:
     _testEntity->AddComponent("SpriteComponent", scdata);
 
     component_factory_data stdata;
-    stdata["speed"] = "20";
+    stdata["speed"] = "5";
     _testEntity->AddComponent("SpinnyThingComponent", stdata);
 
     Event::GlobalDispatcher->AddListener(_testEntity);

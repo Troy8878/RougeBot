@@ -185,7 +185,7 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
   }
 
   auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);
-  return comp_class.new_inst_argv(&compwrap, 1);
+  return comp_class.new_inst(compwrap).silent_reset();
 }
 
 // ----------------------------------------------------------------------------

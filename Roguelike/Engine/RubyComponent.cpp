@@ -83,10 +83,11 @@ void RubyComponent::OnEvent(Events::EventMessage& e)
   if (e.Data)
   {
     edata = e.Data->GetRubyWrapper();
-    mrb_gc_protect(mrb, edata);
   }
+  
+  mrb_funcall(mrb, component_inst, mrb_sym2name(mrb, events[e.EventId]), 1, edata);
 
-  ruby::ruby_func{&mrb, component_inst, events[e.EventId]}.call(edata);
+  mrb_gc_mark_value(mrb, edata);
 }
 
 // ----------------------------------------------------------------------------

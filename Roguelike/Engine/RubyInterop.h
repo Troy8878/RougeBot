@@ -95,7 +95,7 @@ namespace ruby
 
     void define_const(const char *name, mrb_value value);
 
-    ruby_value wrap_native_ptr(void *ptr);
+    mrb_value wrap_native_ptr(void *ptr);
     void *unwrap_native_ptr(mrb_value value);
 
     template <typename MapType>

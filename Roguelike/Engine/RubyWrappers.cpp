@@ -98,8 +98,8 @@ mrb_value ruby::wrap_memory_vector(math::Vector *vect)
 {
   static auto rclass = create_memory_vector_class();
 
-  auto ptr = ruby::ruby_engine::global_engine->wrap_native_ptr(vect).silent_reset();
-  return rclass.new_inst(ptr).silent_reset();
+  auto ptr = ruby::ruby_engine::global_engine->wrap_native_ptr(vect);
+  return rclass.new_inst(ptr);
 }
 
 // ----------------------------------------------------------------------------

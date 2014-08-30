@@ -9,6 +9,7 @@
 #include "Level.h"
 
 #include "mruby/debug.h"
+#include "mruby/variable.h"
 
 // ----------------------------------------------------------------------------
 
@@ -47,6 +48,7 @@ void Game::Run()
 
   ruby::ruby_engine mrb;
   ruby::ruby_engine::global_engine = &mrb;
+  mrb.mrb_handle()->gc_full = true;
 
   try
   {
@@ -86,7 +88,9 @@ void Game::Run()
         _graphicsDevice->EndFrame();
       }
 
-      mrb_incremental_gc(mrb);
+      
+
+      mrb_full_gc(mrb);
     }
 
     OnFree();

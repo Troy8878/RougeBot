@@ -41,22 +41,21 @@ static mrb_value rb_update_event_init(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
-static ruby::ruby_class rb_update_event_class()
+static mrb_value rb_update_event_class(GameTime *gt)
 {
-  auto rclass = ruby::ruby_engine::global_engine->define_class("UpdateEvent");
+  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto rclass = mrb.define_class("UpdateEvent");
 
   rclass.define_method("initialize", rb_update_event_init, ARGS_REQ(1));
   rclass.define_method("dt", rb_update_event_dt, ARGS_NONE());
 
-  return rclass;
+  return rclass.new_inst(mrb.wrap_native_ptr(gt)).silent_reset();
 }
 
 mrb_value Events::UpdateEvent::GetRubyWrapper()
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
-  static auto rclass = rb_update_event_class();
-
-  return rclass.new_inst(mrb.wrap_native_ptr(&gameTime)).silent_reset();
+  static auto wrapper = rb_update_event_class(&gameTime);
+  return wrapper;
 }
 
 // ----------------------------------------------------------------------------

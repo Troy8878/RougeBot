@@ -119,12 +119,12 @@ void ruby_engine::define_const(const char *name, mrb_value value)
 
 // ----------------------------------------------------------------------------
 
-ruby_value ruby_engine::wrap_native_ptr(void *ptr)
-{
-  return ruby_value{mrb_cptr_value(mrb, ptr), this};
-}
 
-// ----------------------------------------------------------------------------
+
+mrb_value ruby_engine::wrap_native_ptr(void *ptr)
+{
+  return mrb_cptr_value(mrb, ptr);
+}
 
 void *ruby_engine::unwrap_native_ptr(mrb_value value)
 {

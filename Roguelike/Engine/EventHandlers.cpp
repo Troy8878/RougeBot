@@ -18,24 +18,33 @@ namespace Events
 
     for (auto& hpair : recievers)
     {
-      hpair.first = hpair.second->CanHandle(e);
+      hpair.second = hpair.first->CanHandle(e);
       if (hpair.first)
         any = true;
     }
-
-    return any;
+    
+    static EventId recieverDestroyedId("event_reciever_destroyed");
+    return any || e.EventId == recieverDestroyedId;
   }
 
 // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::Handle(EventMessage& e)
   {
+    static EventId recieverDestroyedId("event_reciever_destroyed");
+
+    if (e.EventId == recieverDestroyedId)
+    {
+      auto rec = e.GetData<EventRecieverDestroyedEvent>()->reciever;
+      RemoveListener(rec);
+    }
+
     for (auto& hpair : recievers)
     {
-      if (!hpair.first)
+      if (!hpair.second)
         continue;
 
-      hpair.second->Handle(e);
+      hpair.first->Handle(e);
       if (e.Handled)
         return;
     }
@@ -45,21 +54,18 @@ namespace Events
 
   void BasicEventDispatcher::AddListener(EventReciever *reciever)
   {
-    recievers.push_back({false, reciever});
+    recievers[reciever] = false;
   }
 
 // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::RemoveListener(EventReciever *reciever)
   {
-    for (auto it = recievers.begin(); it != recievers.end(); ++it)
-    {
-      if (it->second != reciever)
-        continue;
-
-      recievers.erase(it);
+    auto it = recievers.find(reciever);
+    if (it == recievers.end())
       return;
-    }
+
+    recievers.erase(it);
   }
 
 // ----------------------------------------------------------------------------

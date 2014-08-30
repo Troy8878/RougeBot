@@ -68,7 +68,7 @@ private:
   private:
     Bucket() = default;
     BucketAllocator *_allocator = nullptr;
-
+    
     byte *memory = nullptr;
     bool *allocations = nullptr;
     size_t contained = 0;

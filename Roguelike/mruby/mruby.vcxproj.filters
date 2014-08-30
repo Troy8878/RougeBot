@@ -104,7 +104,16 @@
     <ClCompile Include="mrbgems\mruby-fiber\src\fiber.c">
       <Filter>Gem Code</Filter>
     </ClCompile>
-    <ClCompile Include="mrbgems\mruby-print\src\mrbprint-print.c">
+    <ClCompile Include="mrbgems\mruby-math\src\mrbgem-math.c">
+      <Filter>Gem Code</Filter>
+    </ClCompile>
+    <ClCompile Include="mrbgems\mruby-print\src\mrbgem-print.c">
+      <Filter>Gem Code</Filter>
+    </ClCompile>
+    <ClCompile Include="mrbgems\mruby-hash-ext\src\mrbgem-hash-ext.c">
+      <Filter>Gem Code</Filter>
+    </ClCompile>
+    <ClCompile Include="mrbgems\mruby-array-ext\src\mrbgem-array-ext.c">
       <Filter>Gem Code</Filter>
     </ClCompile>
   </ItemGroup>

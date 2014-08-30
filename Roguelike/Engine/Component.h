@@ -13,11 +13,6 @@
 struct ComponentRegistration;
 __interface IComponentFactory;
 
-#ifndef COMP_FACTORY_DATA_DEF
-#define COMP_FACTORY_DATA_DEF
-typedef std::unordered_map<std::string, std::string> component_factory_data;
-#endif
-
 // ----------------------------------------------------------------------------
 
 class Component abstract

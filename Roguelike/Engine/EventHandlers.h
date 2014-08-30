@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Event.h"
+#include <unordered_set>
 
 class Game;
 
@@ -25,7 +26,7 @@ namespace Events
     void RemoveListener(EventReciever *reciever) override;
 
   private:
-    std::vector<std::pair<bool, EventReciever *>> recievers;
+    std::unordered_map<EventReciever *, bool> recievers;
   };
 
 // ----------------------------------------------------------------------------

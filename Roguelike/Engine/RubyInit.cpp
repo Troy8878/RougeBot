@@ -52,6 +52,8 @@ extern "C"
   void mrb_mruby_gamestuff_gem_init(mrb_state *mrb);
   void mrb_mruby_print_gem_init(mrb_state* mrb);
   void mrb_mruby_math_gem_init(mrb_state* mrb);
+  void mrb_mruby_array_ext_gem_init(mrb_state* mrb);
+  void mrb_mruby_hash_ext_gem_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -69,6 +71,12 @@ extern "C"
 
     // Load the core library
     loadRubyRes(mrb, IDR_RB_GEM_ENUMERATOR);
+
+    // I like doing stuff with arrays and hashes :P
+    mrb_mruby_array_ext_gem_init(mrb);
+    engine.evaluate_asset("Gems/mrb-array-ext/array.rb");
+    mrb_mruby_hash_ext_gem_init(mrb);
+    engine.evaluate_asset("Gems/mrb-hash-ext/hash.rb");
 
     // Load the gamestuff that I've defined to help out
     mrb_mruby_gamestuff_gem_init(mrb);

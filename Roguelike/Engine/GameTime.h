@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Common.h"
+#include <cstdint>
 
 // ----------------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ public:
 // ----------------------------------------------------------------------------
   
   IR_PROPERTY(double, Dt);
+  IR_PROPERTY(uint64_t, Frame);
   PROPERTY(get = _GetRunningTime) clock::duration RunningTime;
   PROPERTY(get = _GetCurrFrameTime) double CurrFrameTime;
 
@@ -28,6 +30,8 @@ public:
   
   void Update()
   {
+    ++Frame;
+
     _prevTime = _currTime;
     _currTime = clock::now();
 

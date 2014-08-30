@@ -78,8 +78,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="mrbgems\mruby-array-ext\src\mrbgem-array-ext.c" />
     <ClCompile Include="mrbgems\mruby-fiber\src\fiber.c" />
-    <ClCompile Include="mrbgems\mruby-print\src\mrbprint-print.c" />
+    <ClCompile Include="mrbgems\mruby-hash-ext\src\mrbgem-hash-ext.c" />
+    <ClCompile Include="mrbgems\mruby-math\src\mrbgem-math.c" />
+    <ClCompile Include="mrbgems\mruby-print\src\mrbgem-print.c" />
     <ClCompile Include="src\array.c" />
     <ClCompile Include="src\backtrace.c" />
     <ClCompile Include="src\class.c" />

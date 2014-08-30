@@ -60,5 +60,17 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
+  struct EventRecieverDestroyedEvent : public EventData
+  {
+    EventReciever *reciever;
+
+    EventRecieverDestroyedEvent(EventReciever *reciever)
+      : reciever(reciever)
+    {
+    }
+  };
+
+// ----------------------------------------------------------------------------
+
 }
 

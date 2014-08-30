@@ -14,11 +14,6 @@ class Component;
 
 typedef unsigned __int64 entity_id;
 
-#ifndef COMP_FACTORY_DATA_DEF
-#define COMP_FACTORY_DATA_DEF
-typedef std::unordered_map<std::string, std::string> component_factory_data;
-#endif
-
 // ----------------------------------------------------------------------------
 
 class Entity : public Events::EventReciever
@@ -32,6 +27,7 @@ public:
   #pragma region Constructors and Properties
 
   Entity();
+  ~Entity();
 
   // Entities are going to have way too many references to move
   NO_COPY_CONSTRUCTOR(Entity);
@@ -131,6 +127,18 @@ private:
   static ruby::ruby_class GetWrapperRClass();
   #pragma endregion
 
+};
+
+// ----------------------------------------------------------------------------
+
+typedef std::unordered_map<std::string, component_factory_data> entity_factory_data;
+
+class EntityFactory
+{
+public:
+  static Entity *CreateEntity(const std::string& entdef, 
+                              const entity_factory_data& data);
+  static void DestroyEntity(Entity *entity);
 };
 
 // ----------------------------------------------------------------------------

@@ -23,6 +23,17 @@
 #include <random>
 #include <unordered_map>
 
+struct component_factory_data : public std::unordered_map<std::string, std::string>
+{
+  typedef std::unordered_map<std::string, std::string> base;
+
+  component_factory_data() = default;
+  component_factory_data(const std::initializer_list<value_type>& list)
+    : base(list)
+  {
+  }
+};
+
 #include "Helpers\UseDirectX.h"
 #include "Helpers\FlatMap.h"
 #include "Helpers\Console.h"
@@ -35,4 +46,5 @@
 #include "EventTypes.h"
 #include "Entity.h"
 #include "Component.h"
+#include "Game.h"
 

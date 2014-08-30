@@ -48,7 +48,6 @@ void Game::Run()
 
   ruby::ruby_engine mrb;
   ruby::ruby_engine::global_engine = &mrb;
-  mrb.mrb_handle()->gc_full = true;
 
   try
   {
@@ -88,9 +87,12 @@ void Game::Run()
         _graphicsDevice->EndFrame();
       }
 
+      // Perform a full GC every 120 frames, otherwise just do it incrementally
+      if (Time.Frame % 120)
+        mrb_incremental_gc(mrb);
+      else
+        mrb_full_gc(mrb);
       
-
-      mrb_full_gc(mrb);
     }
 
     OnFree();

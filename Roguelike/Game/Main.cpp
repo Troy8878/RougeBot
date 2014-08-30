@@ -48,10 +48,11 @@ static mrb_value rb_print_all_params(mrb_state *mrb, mrb_value self)
   return self;
 }
 
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, INT)
+Roguelike game("Game 200 Project", GetModuleHandle(NULL));
+
+INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
 
-  Roguelike game("Game 200 Project", hInstance);
   game.Run();
 }

@@ -57,24 +57,15 @@ public:
 
     RenderGroup::Instance.CreateSet("global_hud", &_camera, true);
 
-    _testEntity = new Entity;
-
-    component_factory_data tcdata;
-    tcdata["position"] = "0 0 0 0";
-    tcdata["rotation"] = "0 0 0 0";
-    tcdata["scale"] = "<10, 10, 10, 1>";
-    _testEntity->AddComponent("TransformComponent", tcdata);
-
-    component_factory_data scdata;
-    scdata["texture"] = "1384108156458.jpg";
-    scdata["shader"] = "Textured";
-    scdata["render_target"] = "global_hud";
-    _testEntity->AddComponent("SpriteComponent", scdata);
-
-    component_factory_data stdata;
-    stdata["speed"] = "5";
-    _testEntity->AddComponent("SpinnyThingComponent", stdata);
-
+    _testEntity = EntityFactory::CreateEntity("PancakeFace.entitydef", 
+    {
+      {
+        "SpriteComponent",
+        {
+          {"render_target", "global_hud"}
+        }
+      }
+    });
     Event::GlobalDispatcher->AddListener(_testEntity);
   }
 
@@ -123,7 +114,7 @@ public:
     if (dt > 0.001)
     {
       const int update_res = 60;
-      
+
       static float prev_fps = 60;
       static float fps = 60;
       fps = (fps * (update_res - 1) + 1 / dt) / update_res;
@@ -132,7 +123,7 @@ public:
       {
         prev_fps = fps;
 
-        auto title = _title + " [" + std::to_string((int)(fps + 0.5f)) + " fps]";
+        auto title = _title + " [" + std::to_string((int) (fps + 0.5f)) + " fps]";
         SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }
@@ -145,16 +136,16 @@ public:
 
   void OnFree() override
   {
-    delete _testEntity;
+    EntityFactory::DestroyEntity(_testEntity);
     delete _basicShader;
     delete _textureShader;
   }
 
   void OnResize(Events::EventMessage& e)
   {
-    using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
+    using event_type = Events::RudimentaryEventWrapper < math::Vector2D > ;
     auto& data = e.GetData<event_type>()->data;
-    
+
     _camera.aspectRatio = data.x / data.y;
     _camera.Init();
   }

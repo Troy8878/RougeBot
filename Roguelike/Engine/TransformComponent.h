@@ -24,6 +24,8 @@ public:
 
   void Initialize(Entity *owner, const std::string& name) override;
 
+  PROPERTY(get = _GetIsStatic, put = _SetIsStatic) bool Static;
+
   IRW_PROPERTY(math::Vector, Position);
   IRW_PROPERTY(math::Vector, Rotation);
   IRW_PROPERTY(math::Vector, Scale);
@@ -36,6 +38,13 @@ public:
   ruby::ruby_value GetRubyWrapper() override;
 
   static TransformComponentFactory factory;
+
+private:
+  bool _static = false;
+
+public:
+  bool _GetIsStatic() { return _static; }
+  void _SetIsStatic(bool value);
 };
 
 // ----------------------------------------------------------------------------

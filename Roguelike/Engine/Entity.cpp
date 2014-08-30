@@ -5,9 +5,12 @@
  *********************************/
 
 #include "Common.h"
+#include "Helpers\BucketAllocator.h"
 
 #include "mruby/variable.h"
 #include "mruby/string.h"
+
+#include "json/json.h"
 
 // ----------------------------------------------------------------------------
 
@@ -18,7 +21,18 @@ Entity::Entity()
 
 // ----------------------------------------------------------------------------
 
-Component *Entity::AddComponent(const std::string& name, component_factory_data& data)
+Entity::~Entity()
+{
+  for (auto& pair : _components)
+  {
+    ComponentManager::Instance.ReleaseComponent(pair.second);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+Component *Entity::AddComponent(const std::string& name, 
+                                component_factory_data& data)
 {
   auto *component = ComponentManager::Instance.InstantiateComponent(name, data);
 
@@ -72,7 +86,8 @@ void Entity::Handle(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::AddEvent(Component *component, event_id id, component_handler handler)
+void Entity::AddEvent(Component *component, event_id id, 
+                      component_handler handler)
 {
   auto& handlers = _events[id];
   handlers[component] = handler;
@@ -169,6 +184,86 @@ ruby::ruby_class Entity::GetWrapperRClass()
                        ARGS_REQ(1));
   
   return rclass;
+}
+
+// ----------------------------------------------------------------------------
+
+static BucketAllocator entityAllocator{sizeof(Entity)};
+
+// ----------------------------------------------------------------------------
+
+Entity *EntityFactory::CreateEntity(const std::string& entdef, 
+                                    const entity_factory_data& data)
+{
+  auto entity = entityAllocator.Create<Entity>();
+
+  // Read entdef
+  entity_factory_data entdata;
+  {
+    auto entdefs = GetGame()->Respack["Entitydefs"];
+    RELEASE_AFTER_SCOPE(entdefs);
+
+    auto entdef_res = entdefs->GetResource(entdef);
+    RELEASE_AFTER_SCOPE(entdef_res);
+
+    ibufferstream<char> entbuf{(char *) entdef_res->Data, entdef_res->Size};
+    std::istream entstream{&entbuf};
+
+    auto tree = json::value::parse(entstream);
+    if (!tree.is_object_of<json::value::object_t>())
+      throw std::exception("Incorrect entity definition file");
+
+    auto parts = tree.as_object_of<json::value::object_t>();
+    for (auto& part : parts)
+    {
+      auto& datamap = entdata[part.first];
+
+      for (auto& prop : part.second)
+      {
+        if (prop.second.is(json::json_type::jstring))
+        {
+          datamap[prop.first] = prop.second.as_string();
+        }
+        else
+        {
+          datamap[prop.first] = prop.second.serialize();
+        }
+      }
+    }
+  }
+
+  // Merge entdef with data
+  for (auto& part : data)
+  {
+    auto& datamap = entdata[part.first];
+
+    for (auto& prop : part.second)
+    {
+      datamap[prop.first] = prop.second;
+    }
+  }
+
+  // Create all of the components
+  for (auto& cpair : entdata)
+  {
+    entity->AddComponent(cpair.first, cpair.second);
+  }
+
+  return entity;
+}
+
+// ----------------------------------------------------------------------------
+
+void EntityFactory::DestroyEntity(Entity *entity)
+{
+  {
+    static Events::EventId recieverDestroyedId("event_reciever_destroyed");
+    Events::EventRecieverDestroyedEvent data{entity};
+    Events::EventMessage message{recieverDestroyedId, &data, false};
+    Events::Event::Raise(message);
+  }
+
+  entityAllocator.Destroy(entity);
 }
 
 // ----------------------------------------------------------------------------

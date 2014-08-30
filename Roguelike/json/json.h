@@ -172,6 +172,8 @@ namespace json
       : std::exception(message), position(pos)
     {
     }
+
+    json_syntax_exception& operator=(const json_syntax_exception&) = delete;
   };
 
   #pragma endregion

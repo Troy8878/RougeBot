@@ -305,5 +305,15 @@ void variadic_push_array(T array[], size_t index,
     put = _PropSet ## pName)       \
   ) pType pName
 
-#define PROPERTY(spec) __declspec(property(spec))
+#define PROPERTY(...) __declspec(property(__VA_ARGS__))
+
+template <typename CharT, typename TraitsT = std::char_traits<CharT>>
+class ibufferstream : public std::basic_streambuf<CharT, TraitsT>
+{
+public:
+  ibufferstream(CharT *start, size_t size)
+  {
+    setg(start, start, start + size);
+  }
+};
 

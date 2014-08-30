@@ -50,9 +50,35 @@ void TransformComponent::UpdateMatrix()
 {
   using namespace DirectX;
 
+  // Fix rotations so they don't fall prey to large number rounding errors
+  Rotation.x = fmod(Rotation.x, math::pi * 2);
+  Rotation.y = fmod(Rotation.y, math::pi * 2);
+  Rotation.z = fmod(Rotation.z, math::pi * 2);
+
   Matrix = XMMatrixScalingFromVector(Scale.get()) *
            XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
            XMMatrixTranslationFromVector(Position.get());
+}
+
+// ----------------------------------------------------------------------------
+
+void TransformComponent::_SetIsStatic(bool value)
+{
+  if (value == _static)
+    return;
+
+  _static = value;
+
+  static Events::EventId updateId("update");
+  if (_static)
+  {
+    UpdateMatrix();
+    Owner->RemoveEvent(this, updateId);
+  }
+  else
+  {
+    Owner->AddEvent(this, updateId, &TransformComponent::OnUpdate);
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -165,6 +191,25 @@ static mrb_value rb_transform_scale(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_transform_get_static(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+  return mrb_bool_value(comp->Static);
+}
+
+static mrb_value rb_transform_set_static(mrb_state *mrb, mrb_value self)
+{
+  mrb_bool newval;
+  mrb_get_args(mrb, "b", &newval);
+
+  auto comp = get_rb_tc_wrapper(mrb, self);
+  comp->Static = !!newval;
+
+  return mrb_bool_value(newval);
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_value TransformComponent::GetRubyWrapper()
 {
   THREAD_EXCLUSIVE_SCOPE;
@@ -182,6 +227,9 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
     comp_class.define_method("position", rb_transform_position, ARGS_NONE());
     comp_class.define_method("rotation", rb_transform_rotation, ARGS_NONE());
     comp_class.define_method("scale", rb_transform_scale, ARGS_NONE());
+
+    comp_class.define_method("static", rb_transform_get_static, ARGS_NONE());
+    comp_class.define_method("static=", rb_transform_set_static, ARGS_NONE());
   }
 
   auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);

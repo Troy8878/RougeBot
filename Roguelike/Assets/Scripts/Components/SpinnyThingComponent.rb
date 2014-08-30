@@ -10,7 +10,7 @@ class SpinnyThingComponent < ComponentBase
     @transform = self.owner.get_component "TransformComponent"
     self.register_event :update, :on_update
 
-    @speed = (data["speed"] || 1.0).to_f
+    @speed = data.fetch("speed"){ 1 }.to_f
   end
 
   def on_update(e)

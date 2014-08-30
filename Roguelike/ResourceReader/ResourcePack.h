@@ -27,9 +27,13 @@ namespace Respack
     TempFile GetTempFile();
     std::chrono::system_clock::time_point GetModified();
 
+    std::istream& GetStream();
+    void ResetStream();
+
     PROPERTY(get = GetSize) size_t Size;
     PROPERTY(get = GetData) byte *Data;
     PROPERTY(get = GetModified) std::chrono::system_clock::time_point Modified;
+    PROPERTY(get = GetStream) std::istream& Stream;
   };
 
 // ----------------------------------------------------------------------------

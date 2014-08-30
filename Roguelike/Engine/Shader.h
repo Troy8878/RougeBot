@@ -33,14 +33,16 @@ struct Shader
   virtual ~Shader();
   void Draw(unsigned indexCount);
 
+  static void LoadShader(
+    GraphicsDevice *device,
+    const std::string& asset);
+
+private:
+  void InitCameraBuffer();
   static Shader *LoadShader(
     GraphicsDevice *device,
     const std::string& vertexAsset,
     const std::string& pixelAsset);
-
-  void InitCameraBuffer();
-  void InitializeBasicShader();
-  void InitializeTexturedShader();
 };
 
 // ----------------------------------------------------------------------------

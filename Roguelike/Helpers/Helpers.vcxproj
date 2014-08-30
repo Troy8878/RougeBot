@@ -84,6 +84,7 @@
     <ClInclude Include="ModuleResource.h" />
     <ClInclude Include="mruby_warning_disable.h" />
     <ClInclude Include="mruby_warning_restore.h" />
+    <ClInclude Include="RandomHelpers.h" />
     <ClInclude Include="RubyHelp.h" />
     <ClInclude Include="SharedArray.h" />
     <ClInclude Include="StackTrace.h" />

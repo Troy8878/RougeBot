@@ -62,6 +62,9 @@
     <ClInclude Include="CStackTrace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RandomHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">

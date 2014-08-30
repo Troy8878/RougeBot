@@ -206,10 +206,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
     auto entdef_res = entdefs->GetResource(entdef);
     RELEASE_AFTER_SCOPE(entdef_res);
 
-    ibufferstream<char> entbuf{(char *) entdef_res->Data, entdef_res->Size};
-    std::istream entstream{&entbuf};
-
-    auto tree = json::value::parse(entstream);
+    auto tree = json::value::parse(entdef_res->Stream);
     if (!tree.is_object_of<json::value::object_t>())
       throw std::exception("Incorrect entity definition file");
 

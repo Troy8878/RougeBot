@@ -71,19 +71,8 @@ public:
 
   void InitShaders()
   {
-    _basicShader = Shader::LoadShader(
-      _graphicsDevice.get(),
-      "BasicVertexShader.cso",
-      "BasicPixelShader.cso");
-    _basicShader->InitializeBasicShader();
-    RegisteredShaders["Basic"] = _basicShader;
-
-    _textureShader = Shader::LoadShader(
-      _graphicsDevice.get(),
-      "TexturedVertexShader.cso",
-      "TexturedPixelShader.cso");
-    _textureShader->InitializeTexturedShader();
-    RegisteredShaders["Textured"] = _textureShader;
+    Shader::LoadShader(_graphicsDevice.get(), "Basic.shaderdef");
+    Shader::LoadShader(_graphicsDevice.get(), "Textured.shaderdef");
   }
 
   void InitObjects()

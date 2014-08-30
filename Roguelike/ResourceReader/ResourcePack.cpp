@@ -60,7 +60,8 @@ struct ResPackImpl
 
 struct ResMemoryContainer : public ResourceContainer
 {
-  ResMemoryContainer(const MemContainerMapping& mapping, FileMapping& file, const fs::wpath& fallback);
+  ResMemoryContainer(const MemContainerMapping& mapping, 
+                     FileMapping& file, const fs::wpath& fallback);
 
   void Release() override;
 
@@ -98,8 +99,14 @@ struct MemoryResource : public Resource
   TempFile GetTempFile() override;
   std::chrono::system_clock::time_point GetModified() override;
 
+  std::istream& GetStream() override;
+  void ResetStream() override;
+
   MemResourceMapping mapping;
   FileMappingView view;
+  std::istream datastream;
+  ibufferstream<char> databuf;
+  bool streaminit = false;
 
   NO_COPY_CONSTRUCTOR(MemoryResource);
   NO_ASSIGNMENT_OPERATOR(MemoryResource);
@@ -138,9 +145,13 @@ struct FileResource : public Resource
   TempFile GetTempFile() override;
   std::chrono::system_clock::time_point GetModified() override;
 
+  std::istream& GetStream() override;
+  void ResetStream() override;
+
   fs::wpath path;
   bool loaded = false;
   shared_array<byte> data;
+  std::ifstream filestream;
 
   NO_COPY_CONSTRUCTOR(FileResource);
   NO_ASSIGNMENT_OPERATOR(FileResource);
@@ -266,7 +277,12 @@ ResourceContainer *ResPackImpl::getMemoryContainer(const std::string& name)
   if (mapping == nullptr)
     return nullptr;
 
-  auto *container = new ResMemoryContainer{*mapping, *packmap, fallback / widen(name)};
+  auto *container = new ResMemoryContainer
+  {
+    *mapping, 
+    *packmap, 
+    fallback / widen(name)
+  };
   memContainers[name] = container;
 
   return container;
@@ -397,7 +413,8 @@ Resource *ResMemoryContainer::getFileResource(const std::wstring& name)
 
 // ----------------------------------------------------------------------------
 
-ResFallbackContainer::ResFallbackContainer(const fs::wpath& folder, const std::wstring& name)
+ResFallbackContainer::ResFallbackContainer(const fs::wpath& folder, 
+                                           const std::wstring& name)
   : folder(folder / name), name(narrow(name))
 {
 }
@@ -437,7 +454,10 @@ Resource *ResFallbackContainer::GetResource(const std::string& name)
 // ----------------------------------------------------------------------------
 
 MemoryResource::MemoryResource(const MemResourceMapping& mapping, FileMapping& file)
-  : mapping(mapping), view(file.mapView(mapping.map_offset, mapping.header.resource_size))
+  : mapping(mapping), 
+    view(file.mapView(mapping.map_offset, mapping.header.resource_size)),
+    databuf{nullptr, 0},
+    datastream{&databuf}
 {
 }
 
@@ -474,6 +494,29 @@ TempFile MemoryResource::GetTempFile()
 std::chrono::system_clock::time_point MemoryResource::GetModified()
 {
   return mapping.header.updated_at;
+}
+
+// ----------------------------------------------------------------------------
+
+std::istream& MemoryResource::GetStream()
+{
+  if (!streaminit)
+  {
+    ResetStream();
+  }
+
+  return datastream;
+}
+
+// ----------------------------------------------------------------------------
+
+void MemoryResource::ResetStream()
+{
+  if (!streaminit)
+    databuf = ibufferstream<char>{(char *) Data, Size};
+
+  datastream.rdbuf(&databuf);
+  datastream.seekg(0);
 }
 
 // ----------------------------------------------------------------------------
@@ -521,6 +564,26 @@ TempFile FileResource::GetTempFile()
 std::chrono::system_clock::time_point FileResource::GetModified()
 {
   return std::chrono::system_clock::from_time_t(fs::last_write_time(path));
+}
+
+// ----------------------------------------------------------------------------
+
+std::istream& FileResource::GetStream()
+{
+  if (!filestream.is_open())
+    ResetStream();
+
+  return filestream;
+}
+
+// ----------------------------------------------------------------------------
+
+void FileResource::ResetStream()
+{
+  if (filestream.is_open())
+    filestream.close();
+
+  filestream.open(path);
 }
 
 // ----------------------------------------------------------------------------

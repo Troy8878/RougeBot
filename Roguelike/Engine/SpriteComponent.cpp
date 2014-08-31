@@ -29,7 +29,7 @@ SpriteComponent::SpriteComponent(Texture2D texture,
 // Constructor if several Textures/Sprites are needed (animated)
 SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, 
                                  Shader *shader, RenderSet *set)
-  : _textures(textures), renderTarget(set)
+  : _textures(textures), renderTarget(set), _TextureIndex(0)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;

@@ -22,13 +22,6 @@
 
 // ----------------------------------------------------------------------------
 
-struct asdf
-{
-  asdf operator+(const asdf& o) const;
-};
-
-asdf test = asdf() + asdf();
-
 class Roguelike : public Game
 {
 public:
@@ -51,6 +44,7 @@ public:
 
     InitShaders();
     InitObjects();
+    InitWMHandlers();
 
     using namespace Events;
     static EventId updateEvent("update");
@@ -96,9 +90,29 @@ public:
     SetProcHandler(WM_GETMINMAXINFO, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
     {
       MINMAXINFO& info = *reinterpret_cast<LPMINMAXINFO>(lp);
-
-      // TODO: squarify
+      info.ptMinTrackSize.y = 480;
+      info.ptMinTrackSize.x = 480;
+    });
+    SetProcHandler(WM_SIZING, [this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT& res)
+    {
+      RECT& rect = *reinterpret_cast<LPRECT>(lp);
       
+      auto minwidth = LONG((rect.bottom - rect.top) * (4.0 / 3.0));
+      if (rect.right - rect.left < minwidth)
+      {
+        // Squarify while resizing from right
+        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT)
+        {
+          rect.right = rect.left + minwidth;
+          res = TRUE;
+        }
+        // Squarify while resizing from left
+        else if (wp == WMSZ_LEFT || wp == WMSZ_TOPLEFT || wp == WMSZ_BOTTOMLEFT)
+        {
+          rect.left = rect.right - minwidth;
+          res = TRUE;
+        }
+      }
     });
   }
 

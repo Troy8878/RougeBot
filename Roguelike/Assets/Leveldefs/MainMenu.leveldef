@@ -1,0 +1,14 @@
+{
+  "name": "MainMenu",
+  "entities": [
+    {
+      "name": "pancake one",
+      "archetype": "PancakeFace",
+      "components": {
+        "SpriteComponent": {
+          "render_target": "global_hud"
+        }
+      }
+    }
+  ]
+}

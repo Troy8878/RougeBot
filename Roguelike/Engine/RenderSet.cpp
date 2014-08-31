@@ -10,8 +10,8 @@
 
 // ----------------------------------------------------------------------------
 
-RenderSet::RenderSet(Camera *camera)
-  : _RenderCamera(camera)
+RenderSet::RenderSet(Camera *camera, std::type_index camtype)
+  : _RenderCamera(camera), _CameraType(camtype)
 {
 }
 
@@ -25,15 +25,16 @@ void RenderSet::AddDrawable(Drawable *drawable, Shader *shader)
 
 // ----------------------------------------------------------------------------
 
+static bool operator==(const RenderSet::DrawablePair& dp, Drawable *dr)
+{
+  return dp.drawable == dr;
+}
+
 void RenderSet::RemoveDrawable(Drawable *drawable)
 {
-  for (auto it = drawables.begin(); it != drawables.end(); ++it)
-  {
-    if (it->drawable != drawable)
-      continue;
-
+  auto it = std::find(drawables.begin(), drawables.end(), drawable);
+  if (it != drawables.end())
     drawables.erase(it);
-  }
 }
 
 // ----------------------------------------------------------------------------
@@ -67,9 +68,10 @@ RenderSet *RenderGroup::GetSet(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, bool perma)
+RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, 
+                                  std::type_index camtype, bool perma)
 {
-  std::pair<RenderSet *, bool> pair{new RenderSet(camera), perma};
+  std::pair<RenderSet *, bool> pair{new RenderSet(camera, camtype), perma};
   sets[name] = pair;
   return pair.first;
 }

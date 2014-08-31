@@ -2,7 +2,7 @@
   "TransformComponent": {
     "position": [0, 0, 0, 1],
     "rotation": [0, 0, 0, 0],
-    "scale": [10, 10, 10, 1]
+    "scale": [1, 1, 1, 1]
   },
   "SpriteComponent": {
     "texture": "1384108156458.jpg",

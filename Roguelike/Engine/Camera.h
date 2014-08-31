@@ -66,8 +66,26 @@ struct LookAtCamera : Camera
   void Update()
   {
     using namespace DirectX;
-
     viewMatrix = XMMatrixLookAtLH(position.get(), lookAt.get(), g_XMIdentityR1);
+  }
+};
+
+struct HUDCamera : Camera
+{
+  math::Vector position = {0, 0, 1, 1};
+  math::Vector2D size = {1280.f / 720.f, 1};
+  float nearField = 0.1f, farField = 10000;
+
+  void Init()
+  {
+    using namespace DirectX;
+    projectionMatrix = XMMatrixOrthographicLH(size.x, size.y, nearField, farField);
+  }
+
+  void Update()
+  {
+    using namespace DirectX;
+    viewMatrix = XMMatrixLookToLH(position.get(), g_XMIdentityR2, g_XMIdentityR1);
   }
 };
 

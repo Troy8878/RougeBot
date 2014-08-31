@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 RenderSet::RenderSet(Camera *camera)
-  : _SetCamera(camera)
+  : _RenderCamera(camera)
 {
 }
 
@@ -42,7 +42,7 @@ void RenderSet::Draw()
 {
   for (auto& pair : drawables)
   {
-    pair.shader->camera = SetCamera;
+    pair.shader->camera = RenderCamera;
     pair.drawable->Draw();
   }
 }

@@ -36,7 +36,7 @@ public:
 
   void Draw();
 
-  IR_PROPERTY(Camera *, SetCamera);
+  IR_PROPERTY(Camera *, RenderCamera);
 
 private:
   struct DrawablePair

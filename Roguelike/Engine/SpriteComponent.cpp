@@ -18,16 +18,18 @@ SpriteComponentFactory SpriteComponent::factory;
 // ----------------------------------------------------------------------------
 
 // Constructor if only one Texture/Sprite is needed (unanimated)
-SpriteComponent::SpriteComponent(Texture2D texture, Shader *shader)
-  : SpriteComponent(std::vector<Texture2D>{texture}, shader)
+SpriteComponent::SpriteComponent(Texture2D texture, 
+                                 Shader *shader, RenderSet *set)
+  : SpriteComponent(std::vector<Texture2D>{texture}, shader, set)
 {
 }
 
 // ----------------------------------------------------------------------------
 
 // Constructor if several Textures/Sprites are needed (animated)
-SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, Shader *shader)
-  : _textures(textures)
+SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, 
+                                 Shader *shader, RenderSet *set)
+  : _textures(textures), renderTarget(set)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;
@@ -38,6 +40,7 @@ SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, Shader 
 // Destructor for the SpriteComponent
 SpriteComponent::~SpriteComponent()
 {
+  renderTarget->RemoveDrawable(this);
 }
 
 // ----------------------------------------------------------------------------
@@ -47,17 +50,18 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
   Component::Initialize(owner, name);
 
   Transform = Owner->GetComponent<TransformComponent>("TransformComponent");
+  renderTarget->AddDrawable(this, ModelShader);
 }
 
 // ----------------------------------------------------------------------------
 
 void SpriteComponent::Draw()
 {
-  auto& trans = Transform->Matrix;
+  auto& transform = Transform->Matrix;
 
   UnitSquare->shader = ModelShader;
-  UnitSquare->texture = _textures[0];
-  UnitSquare->Draw(trans.get());
+  UnitSquare->texture = _textures[TextureIndex];
+  UnitSquare->Draw(transform.get());
 }
 
 // ----------------------------------------------------------------------------
@@ -91,8 +95,7 @@ Component *SpriteComponentFactory::CreateObject(
   auto shader = RegisteredShaders[data["shader"]];
   auto set = RenderGroup::Instance.GetSet(data["render_target"]);
 
-  SpriteComponent *component = new (memory) SpriteComponent(texture, shader);
-  set->AddDrawable(component, shader);
+  SpriteComponent *component = new (memory) SpriteComponent(texture, shader, set);
 
   return component;
 }

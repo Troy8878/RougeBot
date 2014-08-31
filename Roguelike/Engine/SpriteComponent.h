@@ -24,8 +24,10 @@ class SpriteComponent : public Component, public Drawable
 {
 public:
   // Constructors and Destructor
-  SpriteComponent(Texture2D texture, Shader *shader);
-  SpriteComponent(const std::vector<Texture2D>& textures, Shader *shader);
+  SpriteComponent(Texture2D texture, 
+                  Shader *shader, RenderSet *set);
+  SpriteComponent(const std::vector<Texture2D>& textures, 
+                  Shader *shader, RenderSet *set);
   ~SpriteComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
@@ -34,14 +36,20 @@ public:
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);
   IR_PROPERTY(TransformComponent *, Transform);
+  IR_PROPERTY(size_t, TextureIndex);
+  PROPERTY(get = _GetTextureCount) size_t TextureCount;
   
   // Component factory to make sprite component
   static SpriteComponentFactory factory;
 
 private:
   std::vector<Texture2D> _textures;
+  RenderSet *renderTarget = nullptr;
 
   static Model *GetSpriteModel();
+
+public:
+  size_t _GetTextureCount();
 };
 
 // ----------------------------------------------------------------------------

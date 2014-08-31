@@ -22,6 +22,13 @@
 
 // ----------------------------------------------------------------------------
 
+struct asdf
+{
+  asdf operator+(const asdf& o) const;
+};
+
+asdf test = asdf() + asdf();
+
 class Roguelike : public Game
 {
 public:
@@ -55,7 +62,7 @@ public:
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
 
-    RenderGroup::Instance.CreateSet("global_hud", &_camera, true);
+    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, true);
 
     _testEntity = EntityFactory::CreateEntity("PancakeFace.entitydef", 
     {
@@ -77,25 +84,31 @@ public:
 
   void InitObjects()
   {
-    _camera.position = math::Vector{0, 0, 1000, 1};
-    _camera.lookAt = math::Vector{0, 0, 0, 0};
-    _camera.Init();
+    _hudCamera.position = math::Vector{0, 0, 30, 1};
+    //_hudCamera.lookAt = math::Vector{0, 0, 0, 1};
+    _hudCamera.Init();
+    _hudCamera.Update();
+  }
+
+  void InitWMHandlers()
+  {
+    // Keep the window no less wide than a square
+    SetProcHandler(WM_GETMINMAXINFO, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
+    {
+      MINMAXINFO& info = *reinterpret_cast<LPMINMAXINFO>(lp);
+
+      // TODO: squarify
+      
+    });
   }
 
   void OnUpdate(Events::EventMessage& e)
   {
     using namespace Events;
     auto& time = e.GetData<UpdateEvent>()->gameTime;
-
-    using namespace DirectX;
     float dt = (float) time.Dt;
 
     UpdateTitleFPS(dt);
-
-    if (_camera.position.z > 20)
-      _camera.position.z -= dt * _camera.position.z;
-
-    _camera.Update();
   }
 
   void UpdateTitleFPS(float dt)
@@ -132,15 +145,16 @@ public:
 
   void OnResize(Events::EventMessage& e)
   {
-    using event_type = Events::RudimentaryEventWrapper < math::Vector2D > ;
+    using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
     auto& data = e.GetData<event_type>()->data;
 
-    _camera.aspectRatio = data.x / data.y;
-    _camera.Init();
+    _hudCamera.size.x = _hudCamera.size.y * data.x / data.y;
+    _hudCamera.Init();
+    _hudCamera.Update();
   }
 
 private:
-  LookAtCamera _camera;
+  HUDCamera _hudCamera;
 
   Shader *_basicShader;
   Shader *_textureShader;

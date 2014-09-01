@@ -202,8 +202,8 @@ void variadic_push_array(T array[], size_t index,
 #define strcmpi _strcmpi
 
 
-#define NO_COPY_CONSTRUCTOR(type) type(const type&) = delete
-#define NO_ASSIGNMENT_OPERATOR(type) type& operator=(const type&) = delete
+#define NO_COPY_CONSTRUCTOR(type) type(type const&) = delete
+#define NO_ASSIGNMENT_OPERATOR(type) type& operator=(type const&) = delete
 
 #define _PROPERTY_GET(pType, pName)                 \
   virtual pType& _PropGet ## pName() {              \
@@ -214,7 +214,7 @@ void variadic_push_array(T array[], size_t index,
   }
 
 #define _PROPERTY_SET(pType, pName)              \
-  virtual void _PropSet ## pName(pType value) {  \
+  virtual void _PropSet ## pName(pType const& value) {  \
     this->_##pName = value;                      \
   }
 
@@ -227,7 +227,7 @@ void variadic_push_array(T array[], size_t index,
   }
 
 #define _IPROPERTY_SET(pType, pName)            \
-  inline void _PropSet ## pName(pType value) {  \
+  inline void _PropSet ## pName(pType const& value) {  \
     this->_##pName = value;                     \
   }
 

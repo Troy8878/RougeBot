@@ -22,6 +22,8 @@
 #include <unordered_map>
 #include <random>
 #include <unordered_map>
+#include <limits>
+#include <regex>
 
 struct component_factory_data : public std::unordered_map<std::string, std::string>
 {

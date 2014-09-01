@@ -16,17 +16,28 @@ typedef unsigned __int64 entity_id;
 
 // ----------------------------------------------------------------------------
 
+const entity_id UNASSIGNED_ENTITY_ID = std::numeric_limits<entity_id>::max();
+
 class Entity : public Events::EventReciever
 {
+  #pragma region Typedefs
+
 public:
+
   typedef void(Component::*component_handler)(Events::EventMessage&);
   
   template <typename T>
   using derived_handler = void(T::*)(Events::EventMessage&);
+  
+  typedef std::unordered_map<Component *, component_handler> event_registrations;
+
+  #pragma endregion
 
   #pragma region Constructors and Properties
 
-  Entity();
+public:
+
+  Entity(entity_id id = UNASSIGNED_ENTITY_ID);
   ~Entity();
 
   // Entities are going to have way too many references to move
@@ -36,9 +47,13 @@ public:
   PROPERTY(get = _GetEntityId) entity_id Id;
   PROPERTY(get = GetRubyWrapper) ruby::ruby_value RubyWrapper;
 
+  IRW_PROPERTY(std::string, Name);
+
   #pragma endregion
 
   #pragma region Components
+
+public:
 
   /**
     Initialize a new component for this entity with the
@@ -66,6 +81,9 @@ public:
   #pragma endregion
 
   #pragma region Events
+
+public:
+
   /**
     Check if any of your components care about
     the eventId of this event message.
@@ -99,8 +117,62 @@ public:
 
   #pragma endregion
 
+  #pragma region Children and Parents
+
+public:
+  IR_PROPERTY(Entity *, Parent);
+
+  /**
+    Adds a child entity to this entity.
+    Will remove the entity from a former parent if one exists.
+  */
+  void AddChild(Entity *entity);
+  /**
+    Removes a child entity from this parent. Be aware
+    that if the entity is abondoned, it will have been
+    leaked. Ensure it is either added to another parent,
+    or properly destroyed via the EntityFactory.
+  */
+  void RemoveChild(Entity *entity);
+
+  /**
+    Finds the exact child (or self) entity with
+    this id, or nullptr if it is not this or a child entity
+  */
+  Entity *FindEntity(entity_id id);
+  /**
+    Find an entity by exact match of a name.
+    This search is case sensitive.
+  */
+  Entity *FindEntity(const std::string& name);
+
+  /**
+    Finds entities by a full or partial match on their name.
+  */
+  void SearchEntities(std::vector<Entity *> results,
+                      const std::string& namePattern,
+                      bool partialMatch);
+  /**
+    Finds entities by a partial match on their name.
+    This search uses the passed regex for matching.
+  */
+  void SearchEntities(std::vector<Entity *> results, 
+                      const std::regex& namePattern);
+
+  PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
+  const std::vector<Entity *>& _GetChildren() { return children; }
+
+private:
+  void DestroyChildren();
+
+  std::vector<Entity *> children;
+
+  #pragma endregion
+
   #pragma region Protected fields
+
 protected:
+
   /**
     Keep track of all your components :)
   */
@@ -110,13 +182,14 @@ protected:
     Store all of your registered events here, keyed
     on the event id for fast lookup ;)
   */
-  typedef std::unordered_map<Component *, component_handler> event_registrations;
   std::unordered_map<event_id, event_registrations> _events;
+
   #pragma endregion
 
   #pragma region Other fields and helpers
+
 public:
-  entity_id _GetEntityId();
+  entity_id _GetEntityId() { return _id; }
   ruby::ruby_value GetRubyWrapper();
 
 private:
@@ -125,6 +198,7 @@ private:
 
   static entity_id CreateEntityId();
   static ruby::ruby_class GetWrapperRClass();
+
   #pragma endregion
 
 };

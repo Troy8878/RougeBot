@@ -10,8 +10,9 @@
 
 // ----------------------------------------------------------------------------
 
-RenderSet::RenderSet(Camera *camera, std::type_index camtype)
-  : _RenderCamera(camera), _CameraType(camtype)
+RenderSet::RenderSet(Camera *camera, const std::string& name, 
+                     std::type_index camtype)
+  : _RenderCamera(camera), _Name(name), _CameraType(camtype)
 {
 }
 
@@ -71,7 +72,7 @@ RenderSet *RenderGroup::GetSet(const std::string& name)
 RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, 
                                   std::type_index camtype, bool perma)
 {
-  std::pair<RenderSet *, bool> pair{new RenderSet(camera, camtype), perma};
+  std::pair<RenderSet *, bool> pair{new RenderSet(camera, name, camtype), perma};
   sets[name] = pair;
   return pair.first;
 }

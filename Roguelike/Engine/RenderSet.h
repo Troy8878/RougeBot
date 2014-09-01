@@ -29,7 +29,7 @@ __interface Drawable
 class RenderSet
 {
 public:
-  RenderSet(Camera *camera, std::type_index camtype);
+  RenderSet(Camera *camera, const std::string& name, std::type_index camtype);
 
   void AddDrawable(Drawable *drawable, Shader *shader);
   void RemoveDrawable(Drawable *drawable);
@@ -37,6 +37,7 @@ public:
   void Draw();
 
   IR_PROPERTY(Camera *, RenderCamera);
+  IR_PROPERTY(std::string, Name);
   IR_PROPERTY(std::type_index, CameraType);
 
   struct DrawablePair

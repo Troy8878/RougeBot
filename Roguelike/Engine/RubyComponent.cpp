@@ -30,6 +30,13 @@ RubyComponent::RubyComponent(ruby::ruby_class rclass, component_factory_data& da
 
 // ----------------------------------------------------------------------------
 
+RubyComponent::~RubyComponent()
+{
+  mrb_funcall(*ruby::ruby_engine::global_engine, component_inst, "finalize", 0);
+}
+
+// ----------------------------------------------------------------------------
+
 void RubyComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
@@ -237,6 +244,8 @@ ruby::ruby_class Component::GetComponentRClass()
   comp_class.define_method("register_event",
                            rb_component_register_event,
                            ARGS_REQ(2));
+
+  comp_class.define_method("finalize", mrb_nop, ARGS_ANY());
 
   init = true;
   return comp_class;

@@ -9,13 +9,14 @@
 
 #include "mruby/variable.h"
 #include "mruby/string.h"
+#include "mruby/class.h"
 
 #include "json/json.h"
 
 // ----------------------------------------------------------------------------
 
-Entity::Entity()
-  : _id(CreateEntityId())
+Entity::Entity(entity_id id)
+  : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId())
 {
 }
 
@@ -23,6 +24,8 @@ Entity::Entity()
 
 Entity::~Entity()
 {
+  DestroyChildren();
+
   for (auto& pair : _components)
   {
     ComponentManager::Instance.ReleaseComponent(pair.second);
@@ -114,6 +117,114 @@ entity_id Entity::CreateEntityId()
 
 // ----------------------------------------------------------------------------
 
+void Entity::AddChild(Entity *entity)
+{
+  if (std::find(children.begin(), children.end(), entity) != children.end())
+    return;
+
+  
+
+  children.push_back(entity);
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::RemoveChild(Entity *entity)
+{
+  auto it = std::find(children.begin(), children.end(), entity);
+  if (it == children.end())
+    return;
+
+  children.erase(it);
+}
+
+// ----------------------------------------------------------------------------
+
+Entity *Entity::FindEntity(entity_id id)
+{
+  if (Id == id)
+    return this;
+
+  for (auto child : children)
+  {
+    auto potential = child->FindEntity(id);
+    if (potential)
+      return potential;
+  }
+
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+Entity *Entity::FindEntity(const std::string& name)
+{
+  if (Name == name)
+    return this;
+
+  for (auto child : children)
+  {
+    auto potential = child->FindEntity(name);
+    if (potential)
+      return potential;
+  }
+
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::SearchEntities(std::vector<Entity *> results,
+                            const std::string& namePattern,
+                            bool partialMatch)
+{
+  if (partialMatch)
+  {
+    if (Name.find(namePattern) != Name.npos)
+    {
+      results.push_back(this);
+    }
+  }
+  else
+  {
+    if (Name == namePattern)
+    {
+      results.push_back(this);
+    }
+  }
+
+  for (auto& child : children)
+  {
+    child->SearchEntities(results, namePattern, partialMatch);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::SearchEntities(std::vector<Entity *> results, 
+                            const std::regex& namePattern)
+{
+  if (std::regex_match(Name, namePattern))
+    results.push_back(this);
+
+  for (auto& child : children)
+  {
+    child->SearchEntities(results, namePattern);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::DestroyChildren()
+{
+  for (auto child : children)
+  {
+    EntityFactory::DestroyEntity(child);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_value Entity::GetRubyWrapper()
 {
   static auto rclass = GetWrapperRClass();
@@ -200,7 +311,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   // Read entdef
   entity_factory_data entdata;
   {
-    auto entdefs = GetGame()->Respack["Entitydefs"];
+    auto entdefs = GetGame()->Respack["Entities"];
     RELEASE_AFTER_SCOPE(entdefs);
 
     auto entdef_res = entdefs->GetResource(entdef);

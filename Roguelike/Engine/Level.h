@@ -20,22 +20,19 @@ class Level : public Events::BasicEventDispatcher
 public:
   Level();
 
-  virtual void Load() = 0;
-  virtual void Init() = 0;
-  virtual void Free() = 0;
-  virtual void Unload() = 0;
+  IR_PROPERTY(std::string, Name);
+  IR_PROPERTY(Entity *, RootEntity);
+
+  virtual void Load();
+  virtual void Init();
+  virtual void Free();
+  virtual void Unload();
 
 protected:
   Events::BasicClassEventReciever<Level> levelEvents;
+
   friend class Game;
-};
-
-// ----------------------------------------------------------------------------
-
-template <typename T>
-class LevelRegistration
-{
-  LevelRegistration(const std::string& name);
+  friend class LevelDef;
 };
 
 // ----------------------------------------------------------------------------

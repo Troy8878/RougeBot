@@ -4,6 +4,8 @@
  * Created 2014/05/30
  *********************************/
 
+#pragma once
+
 #include <string>
 #include <unordered_map>
 #include <vector>

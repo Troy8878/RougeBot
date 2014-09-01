@@ -117,6 +117,9 @@
     <ClInclude Include="RubyWrappers.h">
       <Filter>Header Files\Ruby</Filter>
     </ClInclude>
+    <ClInclude Include="LevelDef.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="rubylib.rc">
@@ -230,6 +233,12 @@
     </ClCompile>
     <ClCompile Include="EventTypes.cpp">
       <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelDef.cpp">
+      <Filter>Source Files\Arch</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files\Arch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

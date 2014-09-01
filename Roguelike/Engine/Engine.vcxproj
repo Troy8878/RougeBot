@@ -99,6 +99,7 @@
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelDef.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="RenderSet.h" />
     <ClInclude Include="resource.h" />
@@ -141,6 +142,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameStuffGem.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelDef.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="RenderSet.cpp" />
     <ClCompile Include="RubyClass.cpp" />

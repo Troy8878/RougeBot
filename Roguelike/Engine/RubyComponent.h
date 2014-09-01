@@ -19,6 +19,7 @@ class RubyComponent : public Component
 {
 public:
   RubyComponent(ruby::ruby_class rclass, component_factory_data& data);
+  ~RubyComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
   void OnEvent(Events::EventMessage& e);

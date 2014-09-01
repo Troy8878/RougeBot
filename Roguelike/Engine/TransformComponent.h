@@ -26,9 +26,9 @@ public:
 
   PROPERTY(get = _GetIsStatic, put = _SetIsStatic) bool Static;
 
-  IRW_PROPERTY(math::Vector, Position);
-  IRW_PROPERTY(math::Vector, Rotation);
-  IRW_PROPERTY(math::Vector, Scale);
+  math::Vector Position;
+  math::Vector Rotation;
+  math::Vector Scale;
 
   IR_PROPERTY(math::Matrix, Matrix);
 

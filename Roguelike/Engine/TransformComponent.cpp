@@ -21,8 +21,8 @@
 TransformComponent::TransformComponent(
   const math::Vector& position, const math::Vector& rotation, 
   const math::Vector& scale)
-  : _Position(position), _Rotation(rotation),
-    _Scale(scale)
+  : Position(position), Rotation(rotation),
+    Scale(scale)
 {
   UpdateMatrix();
 }

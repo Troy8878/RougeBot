@@ -1,0 +1,16 @@
+{
+  "name": "Basic",
+  "vertexShader": "BasicVertexShader.cso",
+  "pixelShader": "BasicPixelShader.cso",
+  "inputLayout": [
+    {
+      "semantic": "POSITION",
+      "format": "R32G32B32A32_FLOAT"
+    },
+    {
+      "semantic": "COLOR",
+      "format": "R32G32B32A32_FLOAT",
+      "alignment": "APPEND"
+    }
+  ]
+}

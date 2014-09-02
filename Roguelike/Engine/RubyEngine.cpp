@@ -233,6 +233,7 @@ void ruby_engine::log_and_clear_error()
 
 #ifdef _DEBUG
   std::ostringstream btb;
+  btb << "Backtrace:" << std::endl;
 #endif
 
   for (auto& line : btrace_lines)
@@ -250,8 +251,12 @@ void ruby_engine::log_and_clear_error()
 #ifdef _DEBUG
   std::string error_message = std::string(RSTRING_PTR(s), RSTRING_PTR(s) + RSTRING_LEN(s));
   std::string backtrace = btb.str();
+  std::string full_message = error_message + "\n" + backtrace + "\n\nContinue running?";
 
-  __debugbreak();
+  int result = MessageBox(NULL, full_message.c_str(), "Ruby Error", MB_ICONERROR | MB_YESNO);
+
+  if (result == IDNO)
+    exit(1);
 #endif
 
   mrb_gc_mark_value(mrb, s);

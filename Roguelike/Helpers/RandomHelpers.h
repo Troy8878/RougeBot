@@ -321,3 +321,67 @@ map_fetch(const Map& map,
   return def;
 }
 
+template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>>
+void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last)
+{
+  while (first != last)
+  {
+    out.put(*first);
+    ++first;
+  }
+}
+
+template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>, 
+          typename Arg, typename... Args>
+void svtprintf(std::ostream& out, FwIt first, FwIt last, const Arg& value, const Args&... rest)
+{
+  while (first != last)
+  {
+    CharT c = *first;
+    ++first;
+
+    if (c == '%')
+    {
+      CharT n = *first;
+      ++first;
+
+      if (n == 'v')
+      {
+        out << value;
+        svtprintf(out, first, last, rest...);
+        return;
+      }
+      else if (n != '%')
+      {
+        throw std::logic_error("An unknown format specifier was encountered (not % or v)");
+      }
+    }
+
+    out.put(c);
+  }
+}
+
+template <typename... Args>
+void vtprintf(const char *str, Args... args)
+{
+  svtprintf(std::cout, str, str + strlen(str), args...);
+}
+
+template <typename... Args>
+void vtprintf(const std::string& str, Args... args)
+{
+  svtprintf(std::cout, str.begin(), str.end(), args...);
+}
+
+template <typename... Args>
+void vtprintf(const wchar_t *str, Args... args)
+{
+  svtprintf(std::wcout, str, str + strlen(str), args...);
+}
+
+template <typename... Args>
+void vtprintf(const std::wstring& str, Args... args)
+{
+  svtprintf(std::wcout, str.begin(), str.end(), args...);
+}
+

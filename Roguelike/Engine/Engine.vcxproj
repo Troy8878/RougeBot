@@ -113,21 +113,7 @@
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="rubylib.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Common.h" />
-    <None Include="resource\mrblib\array.rb" />
-    <None Include="resource\mrblib\class.rb" />
-    <None Include="resource\mrblib\compar.rb" />
-    <None Include="resource\mrblib\enum.rb" />
-    <None Include="resource\mrblib\error.rb" />
-    <None Include="resource\mrblib\hash.rb" />
-    <None Include="resource\mrblib\kernel.rb" />
-    <None Include="resource\mrblib\numeric.rb" />
-    <None Include="resource\mrblib\print.rb" />
-    <None Include="resource\mrblib\range.rb" />
-    <None Include="resource\mrblib\string.rb" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">

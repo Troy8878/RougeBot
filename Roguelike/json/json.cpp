@@ -498,7 +498,7 @@ namespace json
 
   value value::parse(std::istream& input)
   {
-    input >> std::ws;
+    skip_ws_and_comments(input);
 
     switch (input.peek())
     {
@@ -518,7 +518,7 @@ namespace json
 
   value value::parse_object(std::istream& input)
   {
-    input >> std::ws;
+    skip_ws_and_comments(input);
     if (input.get() != '{')
       PARSE_ERROR("Expected object begin ('{')");
 
@@ -529,7 +529,7 @@ namespace json
     {
       auto key = parse_string(input);
       
-      input >> std::ws;
+      skip_ws_and_comments(input);
       if (input.get() != ':')
         PARSE_ERROR("Expected kvp separator (':')");
 
@@ -537,7 +537,7 @@ namespace json
 
       map[key.as_string()] = value;
 
-      input >> std::ws;
+      skip_ws_and_comments(input);
       auto next = input.get();
       if (next == '}')
         return object;
@@ -548,7 +548,7 @@ namespace json
 
   value value::parse_array(std::istream& input)
   {
-    input >> std::ws;
+    skip_ws_and_comments(input);
     if (input.get() != '[')
       PARSE_ERROR("Expected array begin ('[')");
 
@@ -560,7 +560,7 @@ namespace json
       auto value = value::parse(input);
       vector.push_back(value);
 
-      input >> std::ws;
+      skip_ws_and_comments(input);
       auto next = input.get();
       if (next == ']')
         return array;
@@ -621,7 +621,7 @@ namespace json
 
   value value::parse_string(std::istream& input)
   {
-    input >> std::ws;
+    skip_ws_and_comments(input);
     if (input.get() != '\"')
       PARSE_ERROR("Expected string begin ('\"')");
 
@@ -664,6 +664,36 @@ namespace json
         if (!(input >> num))
           PARSE_ERROR("Expected number");
         return value::number(num);
+    }
+  }
+
+  void value::skip_ws_and_comments(std::istream& input)
+  {
+    input >> std::ws;
+    
+    // It's not valid JSON if it's not a comment at this point, 
+    // so just make sure the comment is well-formed
+    if (input.peek() == '/')
+    {
+      input.get();
+      if (input.peek() == '/')
+      {
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      }
+      else if (input.peek() == '*')
+      {
+        while (input.peek() != '/')
+          input.ignore(std::numeric_limits<std::streamsize>::max(), '*');
+
+        input.get();
+      }
+      else
+      {
+        PARSE_ERROR("Expected a comment");
+      }
+
+      // Skip any extra whitespace after the comment
+      input >> std::ws;
     }
   }
 

@@ -93,6 +93,7 @@ void RubyComponent::OnEvent(Events::EventMessage& e)
   }
   
   mrb_funcall(mrb, component_inst, mrb_sym2name(mrb, events[e.EventId]), 1, edata);
+  mrb.log_and_clear_error();
 
   mrb_gc_mark_value(mrb, edata);
 }

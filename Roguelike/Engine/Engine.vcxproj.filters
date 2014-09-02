@@ -9,9 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\rb">
-      <UniqueIdentifier>{33ccff40-e868-4c55-87fb-fe1ec4a64b31}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{c9c66c84-ea59-46fa-9b23-ad880a0111f4}</UniqueIdentifier>
     </Filter>
@@ -122,44 +119,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="rubylib.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resource\mrblib\array.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\class.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\compar.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\enum.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\error.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\hash.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\kernel.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\numeric.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\print.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\range.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
-    <None Include="resource\mrblib\string.rb">
-      <Filter>Resource Files\rb</Filter>
-    </None>
     <None Include="Common.h">
       <Filter>Header Files</Filter>
     </None>

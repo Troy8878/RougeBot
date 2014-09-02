@@ -7,15 +7,15 @@ class SpinnyThingComponent < ComponentBase
   def initialize(data)
     super data
 
+    @speed = data.fetch("speed", 1).to_f
     @transform = self.owner.get_component "TransformComponent"
-    self.register_event :update, :on_update
 
-    @speed = data.fetch("speed"){ 1 }.to_f
+    self.register_event :update, :on_update
   end
 
   def on_update(e)
-    @transform.rotation.y += e.dt * @speed
+    @transform.rotation.z += e.dt * @speed
   end
 
-  register_component 'SpinnyThingComponent'
+  register_component "SpinnyThingComponent"
 end

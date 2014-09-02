@@ -15,9 +15,16 @@
 
 // ----------------------------------------------------------------------------
 
+static entity_id next_ent_id = 0;
+
+// ----------------------------------------------------------------------------
+
 Entity::Entity(entity_id id)
-  : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId())
+  : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId()),
+    _Parent(nullptr)
 {
+  if (_id >= next_ent_id)
+    next_ent_id = _id + 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -110,9 +117,7 @@ void Entity::RemoveEvent(Component *component, event_id id)
 entity_id Entity::CreateEntityId()
 {
   THREAD_EXCLUSIVE_SCOPE;
-
-  static entity_id id = 0;
-  return ++id;
+  return ++next_ent_id;
 }
 
 // ----------------------------------------------------------------------------
@@ -122,7 +127,11 @@ void Entity::AddChild(Entity *entity)
   if (std::find(children.begin(), children.end(), entity) != children.end())
     return;
 
-  
+  if (entity->Parent)
+  {
+    entity->Parent->RemoveChild(entity);
+    entity->Parent = this;
+  }
 
   children.push_back(entity);
 }
@@ -134,6 +143,8 @@ void Entity::RemoveChild(Entity *entity)
   auto it = std::find(children.begin(), children.end(), entity);
   if (it == children.end())
     return;
+
+  entity->Parent = nullptr;
 
   children.erase(it);
 }
@@ -193,7 +204,7 @@ void Entity::SearchEntities(std::vector<Entity *> results,
     }
   }
 
-  for (auto& child : children)
+  for (auto child : children)
   {
     child->SearchEntities(results, namePattern, partialMatch);
   }
@@ -207,7 +218,7 @@ void Entity::SearchEntities(std::vector<Entity *> results,
   if (std::regex_match(Name, namePattern))
     results.push_back(this);
 
-  for (auto& child : children)
+  for (auto child : children)
   {
     child->SearchEntities(results, namePattern);
   }
@@ -268,7 +279,7 @@ static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
   auto ent_ptr_v = mrb_iv_get(mrb, self, ent_ptr_sym);
   auto *entity = (Entity *) engine.unwrap_native_ptr(ent_ptr_v);
 
-  auto comp = entity->GetComponent(comp_name);
+  auto *comp = entity->GetComponent(comp_name);
 
   return comp->GetRubyWrapper().silent_reset();
 }
@@ -304,10 +315,9 @@ static BucketAllocator entityAllocator{sizeof(Entity)};
 // ----------------------------------------------------------------------------
 
 Entity *EntityFactory::CreateEntity(const std::string& entdef, 
-                                    const entity_factory_data& data)
+                                    const entity_factory_data& data,
+                                    entity_id entid)
 {
-  auto entity = entityAllocator.Create<Entity>();
-
   // Read entdef
   entity_factory_data entdata;
   {
@@ -350,6 +360,8 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
       datamap[prop.first] = prop.second;
     }
   }
+
+  auto entity = entityAllocator.Create<Entity>(entid);
 
   // Create all of the components
   for (auto& cpair : entdata)

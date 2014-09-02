@@ -18,9 +18,6 @@ __interface IComponentFactory;
 class Component abstract
 {
 public:
-  virtual ~Component()
-  {
-  }
 
   // Please call this in your implementations
   // just at the top do Component::initialize(parent)
@@ -40,6 +37,9 @@ protected:
   static ruby::ruby_class GetComponentRClass();
   
   friend void RegisterEngineComponents();
+
+  virtual ~Component() {}
+  friend class ComponentManager;
 };
 
 // ----------------------------------------------------------------------------

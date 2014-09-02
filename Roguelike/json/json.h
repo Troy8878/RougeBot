@@ -144,6 +144,8 @@ namespace json
       static value parse_string(std::istream& input);
       static value parse_basic(std::istream& input);
 
+      static void skip_ws_and_comments(std::istream& input);
+
       #pragma endregion
   
       #pragma region Serialize

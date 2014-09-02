@@ -5,10 +5,12 @@
     "scale": [1, 1, 1, 1]
   },
   "SpriteComponent": {
+    /* Nobody can guess where I got this pic, totally */
     "texture": "1384108156458.jpg",
     "shader": "Textured"
   },
   "SpinnyThingComponent": {
-    "speed": 5.0
+    // This is basically 'radians per second'
+    "speed": 0.1
   }
 }

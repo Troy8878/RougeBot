@@ -79,7 +79,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="mrbgems\mruby-array-ext\src\mrbgem-array-ext.c" />
-    <ClCompile Include="mrbgems\mruby-fiber\src\fiber.c" />
+    <ClCompile Include="mrbgems\mruby-eval\src\mrbgem-eval.c" />
+    <ClCompile Include="mrbgems\mruby-fiber\src\mrbgem-fiber.c" />
     <ClCompile Include="mrbgems\mruby-hash-ext\src\mrbgem-hash-ext.c" />
     <ClCompile Include="mrbgems\mruby-math\src\mrbgem-math.c" />
     <ClCompile Include="mrbgems\mruby-print\src\mrbgem-print.c" />

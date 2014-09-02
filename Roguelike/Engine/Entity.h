@@ -38,7 +38,6 @@ public:
 public:
 
   Entity(entity_id id = UNASSIGNED_ENTITY_ID);
-  ~Entity();
 
   // Entities are going to have way too many references to move
   NO_COPY_CONSTRUCTOR(Entity);
@@ -48,6 +47,11 @@ public:
   PROPERTY(get = GetRubyWrapper) ruby::ruby_value RubyWrapper;
 
   IRW_PROPERTY(std::string, Name);
+
+private:
+  ~Entity();
+  friend class EntityFactory;
+  friend class BucketAllocator;
 
   #pragma endregion
 
@@ -211,7 +215,8 @@ class EntityFactory
 {
 public:
   static Entity *CreateEntity(const std::string& entdef, 
-                              const entity_factory_data& data);
+                              const entity_factory_data& data,
+                              entity_id entid = UNASSIGNED_ENTITY_ID);
   static void DestroyEntity(Entity *entity);
 };
 

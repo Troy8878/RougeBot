@@ -108,7 +108,7 @@ create_proc_from_string(mrb_state *mrb, char *s, int len, mrb_value binding, cha
   }
 
   cxt = mrbc_context_new(mrb);
-  cxt->lineno = line;
+  cxt->lineno = (short) line;
   if (file) {
     mrbc_filename(mrb, cxt, file);
   }
@@ -161,7 +161,7 @@ f_eval(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "s|ozi", &s, &len, &binding, &file, &line);
 
-  proc = create_proc_from_string(mrb, s, len, binding, file, line);
+  proc = create_proc_from_string(mrb, s, (int) len, binding, file, line);
   ret = mrb_toplevel_run(mrb, proc);
   if (mrb->exc) {
     mrb_exc_raise(mrb, mrb_obj_value(mrb->exc));

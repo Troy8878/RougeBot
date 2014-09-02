@@ -18,7 +18,7 @@ class AnimatedComponent < ComponentBase
     @time += e.dt
 
     if @time > @frame_time
-      @time -= frame_time
+      @time -= @frame_time
       next_frame
     end
   end

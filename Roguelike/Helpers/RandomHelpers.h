@@ -402,7 +402,8 @@ void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>, 
           typename Arg, typename... Args>
-void svtprintf(std::ostream& out, FwIt first, FwIt last, const Arg& value, const Args&... rest)
+void svtprintf(std::basic_ostream<CharT, CharTraits>& out, 
+               FwIt first, FwIt last, const Arg& value, const Args&... rest)
 {
   while (first != last)
   {
@@ -451,7 +452,7 @@ void vtprintf(const std::string& str, Args... args)
 template <typename... Args>
 void vtprintf(const wchar_t *str, Args... args)
 {
-  svtprintf(std::wcout, str, str + strlen(str), args...);
+  svtprintf(std::wcout, str, str + lstrlenW(str), args...);
 }
 
 // ----------------------------------------------------------------------------

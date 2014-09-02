@@ -20,7 +20,15 @@ struct Camera
 
 // ----------------------------------------------------------------------------
 
-struct Basic3DCamera : Camera
+struct ICamera : Camera
+{
+  virtual void Init() = 0;
+  virtual void Update() = 0;
+};
+
+// ----------------------------------------------------------------------------
+
+struct Basic3DCamera : ICamera
 {
   math::Vector position;
   math::Vector rotation;
@@ -49,7 +57,7 @@ struct Basic3DCamera : Camera
 
 // ----------------------------------------------------------------------------
 
-struct LookAtCamera : Camera
+struct LookAtCamera : ICamera
 {
   math::Vector position;
   math::Vector lookAt;
@@ -70,7 +78,7 @@ struct LookAtCamera : Camera
   }
 };
 
-struct HUDCamera : Camera
+struct HUDCamera : ICamera
 {
   math::Vector position = {0, 0, 1, 1};
   math::Vector2D size = {1280.f / 720.f, 1};

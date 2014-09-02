@@ -51,7 +51,7 @@ namespace json
         union data_t
         {
           byte_t object_data[sizeof(object_t)];
-          byte_t array_data[sizeof(object_t)];
+          byte_t array_data[sizeof(array_t)];
           byte_t string_data[sizeof(string_t)];
           byte_t number_data[sizeof(number_t)];
           byte_t bool_data[sizeof(bool_t)];

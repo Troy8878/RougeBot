@@ -4,7 +4,7 @@
 ** See Copyright Notice in mruby.h
 */
 
-#pragma warning (disable: 4756)
+#pragma warning (disable: 4756) // http://msdn.microsoft.com/en-us/library/f4s2sw05.aspx
 
 #include <float.h>
 #include <limits.h>
@@ -16,7 +16,7 @@
 #include "mruby/numeric.h"
 #include "mruby/string.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 #ifdef MRB_USE_FLOAT
 #define floor(f) floorf(f)

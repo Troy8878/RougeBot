@@ -3,7 +3,7 @@
 #include "mruby/class.h"
 #include "mruby/proc.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 #define fiber_ptr(o) ((struct RFiber*)mrb_ptr(o))
 

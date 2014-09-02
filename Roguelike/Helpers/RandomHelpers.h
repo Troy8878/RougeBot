@@ -7,8 +7,13 @@
 #pragma once
 
 #include "FixedWindows.h"
+#include <unordered_map>
+
+// ----------------------------------------------------------------------------
 
 typedef _com_error COMError;
+
+// ----------------------------------------------------------------------------
 
 inline std::wstring widen(const std::string& narrow_string)
 {
@@ -16,14 +21,20 @@ inline std::wstring widen(const std::string& narrow_string)
   return converter.from_bytes(narrow_string.c_str());
 }
 
+// ----------------------------------------------------------------------------
+
 inline std::string narrow(const std::wstring& wide_string)
 {
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
   return converter.to_bytes(wide_string);
 }
 
+// ----------------------------------------------------------------------------
+
 #define CSTR_WIDEN(x) widen(x).c_str()
 #define CSTR_NARROW(x) narrow(x).c_str()
+
+// ----------------------------------------------------------------------------
 
 #ifdef _DEBUG
 #define IFDEBUG(x) x
@@ -32,6 +43,8 @@ inline std::string narrow(const std::wstring& wide_string)
 #define IFDEBUG(x) 
 #define IFNDEBUG(x) x
 #endif
+
+// ----------------------------------------------------------------------------
 
 // just a nice little helper to turn GetLastError() into a readable message
 inline std::string GetLastErrorString()
@@ -54,6 +67,7 @@ inline std::string GetLastErrorString()
   return result;
 }
 
+// ----------------------------------------------------------------------------
 
 class DXFatalError : public std::exception
 {
@@ -83,6 +97,8 @@ private:
   COMError _error;
 };
 
+// ----------------------------------------------------------------------------
+
 class string_exception : public std::exception
 {
   std::string message;
@@ -99,6 +115,8 @@ public:
   }
 };
 
+// ----------------------------------------------------------------------------
+
 class win32_exception : public string_exception
 {
 public:
@@ -107,6 +125,8 @@ public:
   {
   }
 };
+
+// ----------------------------------------------------------------------------
 
 template <class Interface>
 /** Safely releases DirectX interfaces */
@@ -118,6 +138,8 @@ inline void ReleaseDXInterface(Interface *& interfaceToRelease)
     interfaceToRelease = nullptr;
   }
 }
+
+// ----------------------------------------------------------------------------
 
 template <class Interface>
 class DXReleaser
@@ -139,11 +161,17 @@ private:
   Interface *& itr;
 };
 
+// ----------------------------------------------------------------------------
+
 #define RELEASE_AFTER_SCOPE(itr) \
   DXReleaser<std::remove_reference<decltype(*(itr))>::type> \
   __##itr##__releaser{(itr)}
 
+// ----------------------------------------------------------------------------
+
 #define CHECK_HRESULT(hr) CheckHRESULT(hr)
+
+// ----------------------------------------------------------------------------
 
 inline void CheckHRESULT(HRESULT hr)
 {
@@ -151,11 +179,15 @@ inline void CheckHRESULT(HRESULT hr)
     throw DXFatalError(hr);
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename Interface>
 void setDXDebugName(Interface *object, const std::wstring& name)
 {
   setDXDebugName(object, narrow(name));
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename Interface>
 void setDXDebugName(Interface *object, const std::string& name)
@@ -166,16 +198,22 @@ void setDXDebugName(Interface *object, const std::string& name)
   CHECK_HRESULT(result);
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename Container>
 void variadic_push_container(Container&)
 {
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename Container, typename Arg>
 void variadic_push_container(Container& container, const Arg& param)
 {
   container.push_back(param);
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename Container, typename Arg, typename... Args>
 void variadic_push_container(Container& containter, const Arg& param, 
@@ -185,10 +223,14 @@ void variadic_push_container(Container& containter, const Arg& param,
   variadic_push_container(container, params...);
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename T>
 void variadic_push_array(T [], size_t)
 {
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename T, typename First, typename... Rest>
 void variadic_push_array(T array[], size_t index, 
@@ -198,12 +240,16 @@ void variadic_push_array(T array[], size_t index,
   variadic_push_array(array, index + 1, params...);
 }
 
+// ----------------------------------------------------------------------------
 
 #define strcmpi _strcmpi
 
+// ----------------------------------------------------------------------------
 
 #define NO_COPY_CONSTRUCTOR(type) type(type const&) = delete
 #define NO_ASSIGNMENT_OPERATOR(type) type& operator=(type const&) = delete
+
+// ----------------------------------------------------------------------------
 
 #define _PROPERTY_GET(pType, pName)                 \
   virtual pType& _PropGet ## pName() {              \
@@ -296,7 +342,24 @@ void variadic_push_array(T array[], size_t index,
     put = _PropSet ## pName)       \
   ) pType pName
 
+// ----------------------------------------------------------------------------
+
 #define PROPERTY(...) __declspec(property(__VA_ARGS__))
+
+// ----------------------------------------------------------------------------
+
+struct component_factory_data : public std::unordered_map<std::string, std::string>
+{
+  typedef std::unordered_map<std::string, std::string> base;
+
+  component_factory_data() = default;
+  component_factory_data(const std::initializer_list<value_type>& list)
+    : base(list)
+  {
+  }
+};
+
+// ----------------------------------------------------------------------------
 
 template <typename CharT, typename TraitsT = std::char_traits<CharT>>
 class ibufferstream : public std::basic_streambuf<CharT, TraitsT>
@@ -307,6 +370,8 @@ public:
     setg(start, start, start + size);
   }
 };
+
+// ----------------------------------------------------------------------------
 
 template <typename Map>
 typename Map::mapped_type
@@ -321,6 +386,8 @@ map_fetch(const Map& map,
   return def;
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>>
 void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last)
 {
@@ -330,6 +397,8 @@ void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last
     ++first;
   }
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>, 
           typename Arg, typename... Args>
@@ -361,11 +430,15 @@ void svtprintf(std::ostream& out, FwIt first, FwIt last, const Arg& value, const
   }
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename... Args>
 void vtprintf(const char *str, Args... args)
 {
   svtprintf(std::cout, str, str + strlen(str), args...);
 }
+
+// ----------------------------------------------------------------------------
 
 template <typename... Args>
 void vtprintf(const std::string& str, Args... args)
@@ -373,15 +446,21 @@ void vtprintf(const std::string& str, Args... args)
   svtprintf(std::cout, str.begin(), str.end(), args...);
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename... Args>
 void vtprintf(const wchar_t *str, Args... args)
 {
   svtprintf(std::wcout, str, str + strlen(str), args...);
 }
 
+// ----------------------------------------------------------------------------
+
 template <typename... Args>
 void vtprintf(const std::wstring& str, Args... args)
 {
   svtprintf(std::wcout, str.begin(), str.end(), args...);
 }
+
+// ----------------------------------------------------------------------------
 

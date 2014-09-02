@@ -12,7 +12,7 @@
 #include "mruby/variable.h"
 #include "mruby/error.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 typedef enum {
   NOEX_PUBLIC    = 0x00,

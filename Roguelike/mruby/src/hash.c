@@ -12,7 +12,7 @@
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 /* a function to get hash value of a float number */
 mrb_int mrb_float_id(mrb_float f);

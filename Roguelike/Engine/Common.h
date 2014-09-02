@@ -9,7 +9,8 @@
 
 #pragma once
 
-#pragma warning (disable: 4505) // It's okay if a function hasn't been used yet :/
+// It's okay if a function hasn't been used yet :/
+#pragma warning (disable: 4505) // http://msdn.microsoft.com/en-us/library/z85eyax0.aspx
 
 #include <string>
 #include <unordered_map>
@@ -24,17 +25,6 @@
 #include <unordered_map>
 #include <limits>
 #include <regex>
-
-struct component_factory_data : public std::unordered_map<std::string, std::string>
-{
-  typedef std::unordered_map<std::string, std::string> base;
-
-  component_factory_data() = default;
-  component_factory_data(const std::initializer_list<value_type>& list)
-    : base(list)
-  {
-  }
-};
 
 #include "Helpers\UseDirectX.h"
 #include "Helpers\FlatMap.h"

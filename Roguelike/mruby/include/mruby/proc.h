@@ -14,7 +14,7 @@
 extern "C" {
 #endif
   
-#pragma warning ( disable : 4214 )
+#pragma warning ( disable : 4214 ) // http://msdn.microsoft.com/en-us/library/k7ea7ce7.aspx
 struct REnv {
   MRB_OBJECT_HEADER;
   mrb_value *stack;

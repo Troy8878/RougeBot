@@ -4,8 +4,8 @@
 ** See Copyright Notice in mruby.h
 */
 
-#pragma warning (disable: 4267)
-#pragma warning (disable: 4244)
+#pragma warning (disable: 4267) // http://msdn.microsoft.com/en-us/library/6kck0s93.aspx
+#pragma warning (disable: 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 #include <ctype.h>
 #include <string.h>

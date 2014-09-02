@@ -16,7 +16,7 @@
 
 #include "Helpers/CStackTrace.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 #ifdef ENABLE_STDIO
 

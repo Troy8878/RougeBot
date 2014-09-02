@@ -104,7 +104,7 @@ enum gc_state {
 
 struct mrb_jmpbuf;
 
-#pragma warning(disable:4214)
+#pragma warning(disable:4214) // http://msdn.microsoft.com/en-us/library/k7ea7ce7.aspx
 typedef struct mrb_state {
   struct mrb_jmpbuf *jmp;
 

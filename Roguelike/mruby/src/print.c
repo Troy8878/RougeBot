@@ -8,7 +8,7 @@
 #include "mruby/string.h"
 #include "mruby/variable.h"
 
-#pragma warning(disable : 4244)
+#pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
 static void
 printstr(mrb_state *mrb, mrb_value obj)

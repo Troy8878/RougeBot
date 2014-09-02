@@ -496,6 +496,8 @@ namespace json
     return parse(stream);
   }
 
+// ----------------------------------------------------------------------------
+
   value value::parse(std::istream& input)
   {
     skip_ws_and_comments(input);
@@ -515,6 +517,8 @@ namespace json
         return parse_basic(input);
     }
   }
+
+// ----------------------------------------------------------------------------
 
   value value::parse_object(std::istream& input)
   {
@@ -546,6 +550,8 @@ namespace json
     }
   }
 
+// ----------------------------------------------------------------------------
+
   value value::parse_array(std::istream& input)
   {
     skip_ws_and_comments(input);
@@ -569,11 +575,15 @@ namespace json
     }
   }
 
+// ----------------------------------------------------------------------------
+
   inline std::string narrow(const std::wstring& wide_string)
   {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.to_bytes(wide_string);
   }
+
+// ----------------------------------------------------------------------------
 
   static bool read_char(std::istream& input, wchar_t& c)
   {
@@ -619,6 +629,8 @@ namespace json
     }
   }
 
+// ----------------------------------------------------------------------------
+
   value value::parse_string(std::istream& input)
   {
     skip_ws_and_comments(input);
@@ -633,6 +645,8 @@ namespace json
 
     return value::string(narrow(buffer));
   }
+
+// ----------------------------------------------------------------------------
 
   value value::parse_basic(std::istream& input)
   {
@@ -667,14 +681,16 @@ namespace json
     }
   }
 
+// ----------------------------------------------------------------------------
+
   void value::skip_ws_and_comments(std::istream& input)
   {
     input >> std::ws;
     
-    // It's not valid JSON if it's not a comment at this point, 
-    // so just make sure the comment is well-formed
     if (input.peek() == '/')
     {
+      // It's not valid JSON if it's not a comment at this point, 
+      // so just make sure the comment is well-formed
       input.get();
       if (input.peek() == '/')
       {

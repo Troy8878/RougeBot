@@ -1,0 +1,2 @@
+Components/SpinnyThingComponent.rb
+Components/AnimatedComponent.rb

@@ -32,17 +32,6 @@ class AnimatedComponent < ComponentBase
     self.register_event :update, :animate
   end
 
-  # fetch out the frame_range field
-  def save_frame_range(data)
-    range = data.fetch("frame_range", [0, 0xffff])
-    if range.is_a?(String)
-      range = range.split(' ')
-      range = range[0..1].map{|s| s.to_i }
-    end
-
-    @frame_range = range
-  end
-
   def animate(e)
     return if @paused
 
@@ -61,6 +50,17 @@ class AnimatedComponent < ComponentBase
     end
 
     @sprite.texture_index = i
+  end
+
+  # fetch out the frame_range field
+  def save_frame_range(data)
+    range = data.fetch("frame_range", [0, 0xffff])
+    if range.is_a?(String)
+      range = range.split(' ')
+      range = range[0..1].map{|s| s.to_i }
+    end
+
+    @frame_range = range
   end
 
   register_component "AnimatedComponent"

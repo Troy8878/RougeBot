@@ -1,0 +1,4 @@
+[
+  "SpinnyThingComponent.rb",
+  "AnimatedComponent.rb"
+]

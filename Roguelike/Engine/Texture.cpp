@@ -26,8 +26,6 @@ Texture2D::Texture2D(const std::shared_ptr<TextureResource>& resource)
 Texture2D::Texture2D(ID3D11Device *device, const std::string& asset)
   : Texture2D{device, ImageResource::fromAsset("Textures", asset)}
 {
-  std::cerr << "A texture has been initialized '" << asset << "'" << std::endl;
-  stack_trace::print_trace();
 }
 
 // ----------------------------------------------------------------------------

@@ -39,6 +39,8 @@ public:
   IR_PROPERTY(size_t, TextureIndex);
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
   
+  ruby::ruby_value GetRubyWrapper() override;
+
   // Component factory to make sprite component
   static SpriteComponentFactory factory;
 

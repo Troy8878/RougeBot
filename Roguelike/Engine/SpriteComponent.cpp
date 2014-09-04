@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "Shader.h"
 #include "TransformComponent.h"
+#include "mruby/variable.h"
 
 // ----------------------------------------------------------------------------
 
@@ -101,3 +102,30 @@ Component *SpriteComponentFactory::CreateObject(
 }
 
 // ----------------------------------------------------------------------------
+mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
+{
+  mrb_value spriteWrapper;
+  mrb_get_args(mrb, "o", &spriteWrapper);
+
+  static mrb_sym wrapperSym = mrb_intern_cstr(mrb, "comp_ptr");
+  mrb_iv_set(mrb, self, wrapperSym, spriteWrapper);
+
+  return mrb_nil_value();
+}
+
+ruby::ruby_value SpriteComponent::GetRubyWrapper()
+{
+  THREAD_EXCLUSIVE_SCOPE;
+
+  static bool initialized = false;
+  static ruby::ruby_class component;
+
+  if (!initialized)
+  {
+    auto module = GetComponentRModule();
+    auto base_class = GetComponentRClass();
+    component = module.define_class("SpriteComponent", base_class);
+
+    component.define_method("initialize", rb_sprite_initialize, ARGS_REQ(1));
+  }
+}

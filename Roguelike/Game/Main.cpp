@@ -35,4 +35,6 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   vtprintf("I heard that you like %v %v\n", "peanut butter", "jelly time");
   
   game.Run();
+
+  return 0;
 }

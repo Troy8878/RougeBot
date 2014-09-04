@@ -42,6 +42,9 @@
     <Filter Include="Header Files\Ruby">
       <UniqueIdentifier>{34a94018-da06-4479-8819-80647850b752}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{73740dd0-30b2-44d9-9634-1110c9e695fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsDevice.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="LevelDef.h">
       <Filter>Header Files\Arch</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

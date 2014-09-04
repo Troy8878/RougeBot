@@ -113,7 +113,12 @@ ruby_value& ruby_value::operator=(const std::string& string)
 
 ruby_value::operator const char *()
 {
-  return mrb_string_value_cstr(*_engine, this);
+  if (mrb_string_p(*this))
+  {
+    return mrb_string_value_cstr(*_engine, this);
+  }
+
+  return functions["to_s"].call();
 }
 
 // ----------------------------------------------------------------------------

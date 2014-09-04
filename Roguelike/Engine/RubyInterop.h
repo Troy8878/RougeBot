@@ -318,6 +318,8 @@ namespace ruby
 
 mrb_value mrb_nop(mrb_state *, mrb_value);
 
+extern bool mrb_debug_mbox;
+
 // ----------------------------------------------------------------------------
 
 

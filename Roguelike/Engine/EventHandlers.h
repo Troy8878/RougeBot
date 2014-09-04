@@ -35,6 +35,8 @@ namespace Events
   class BasicClassEventReciever : public EventReciever
   {
   public:
+    typedef BasicClassEventReciever event_base;
+
     BasicClassEventReciever(T *handler);
 
     typedef void (T::*event_handler)(EventMessage& e);

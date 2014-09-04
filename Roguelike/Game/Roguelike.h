@@ -16,6 +16,8 @@
 #include "Engine\Colors.h"
 #include "Engine\RenderSet.h"
 
+#include "GameConsole.h"
+
 #include "mruby/data.h"
 #include "mruby/value.h"
 #include "mruby/class.h"
@@ -40,7 +42,7 @@ public:
 
     _graphicsDevice->backgroundColor = XMVectorSet(1, 0.5, 0, 1);
 
-    //_graphicsDevice->SwapChain->SetFullscreenState(true, nullptr);
+    _console = new GameConsole(true);
 
     InitShaders();
     InitObjects();
@@ -67,6 +69,8 @@ public:
         }
       }
     });
+
+    Event::GlobalDispatcher->AddListener(_console);
     Event::GlobalDispatcher->AddListener(_testEntity);
   }
 
@@ -153,8 +157,8 @@ public:
   void OnFree() override
   {
     EntityFactory::DestroyEntity(_testEntity);
-    delete _basicShader;
-    delete _textureShader;
+
+    delete _console;
   }
 
   void OnResize(Events::EventMessage& e)
@@ -170,10 +174,9 @@ public:
 private:
   HUDCamera _hudCamera;
 
-  Shader *_basicShader;
-  Shader *_textureShader;
-
   Entity *_testEntity;
+
+  GameConsole *_console = nullptr;
 };
 
 // ----------------------------------------------------------------------------

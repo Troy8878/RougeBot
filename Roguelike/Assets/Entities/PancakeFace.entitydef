@@ -8,14 +8,14 @@
     "textures": [
       "PancakeFace.jpg",
       "PancakeFace2.jpg"
-    ],
-    "shader": "Textured"
+    ]
   },
   "SpinnyThingComponent": {
     // This is basically 'radians per second'
     "speed": 0.1
   },
   "AnimatedComponent": {
+    // change the pic 20 times per second
     "frame_time": 0.05
   }
 }

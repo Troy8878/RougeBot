@@ -93,7 +93,7 @@ SpriteComponentFactory::SpriteComponentFactory()
 Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
-  auto shader = RegisteredShaders[data["shader"]];
+  auto shader = RegisteredShaders[map_fetch(data, "shader", "Textured")];
   auto set = RenderGroup::Instance.GetSet(data["render_target"]);
 
   SpriteComponent *component;

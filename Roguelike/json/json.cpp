@@ -528,6 +528,10 @@ namespace json
 
     auto object = value::object();
     auto& map = object.as_object();
+    
+    skip_ws_and_comments(input);
+    if (input.peek() == '}')
+      return object;
 
     for (;;)
     {

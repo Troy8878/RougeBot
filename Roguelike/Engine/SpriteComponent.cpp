@@ -30,7 +30,7 @@ SpriteComponent::SpriteComponent(Texture2D texture,
 // Constructor if several Textures/Sprites are needed (animated)
 SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, 
                                  Shader *shader, RenderSet *set)
-  : _textures(textures), renderTarget(set), _TextureIndex(0)
+  : _textures(textures), renderTarget(set), TextureIndex(0)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;
@@ -102,6 +102,8 @@ Component *SpriteComponentFactory::CreateObject(
 }
 
 // ----------------------------------------------------------------------------
+
+// Constrctor for ruby Components::SpriteComponent
 mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value spriteWrapper;
@@ -112,6 +114,51 @@ mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 
   return mrb_nil_value();
 }
+
+// ----------------------------------------------------------------------------
+
+SpriteComponent *rb_help_getSpriteComponent(mrb_state *mrb, mrb_value self)
+{
+  static mrb_sym wrapperSym = mrb_intern_cstr(mrb, "comp_ptr");
+  mrb_value spriteWrapper = mrb_iv_get(mrb, self, wrapperSym);
+
+  ruby::ruby_engine engine{mrb};
+
+  return static_cast<SpriteComponent *>(engine.unwrap_native_ptr(spriteWrapper));
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  
+  return mrb_fixnum_value(sprite->TextureIndex);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  
+  mrb_int newIndex;
+  mrb_get_args(mrb, "i", &newIndex);
+
+  sprite->TextureIndex = newIndex;
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  
+  return mrb_fixnum_value(sprite->TextureCount);
+}
+
+// ----------------------------------------------------------------------------
 
 ruby::ruby_value SpriteComponent::GetRubyWrapper()
 {
@@ -127,5 +174,13 @@ ruby::ruby_value SpriteComponent::GetRubyWrapper()
     component = module.define_class("SpriteComponent", base_class);
 
     component.define_method("initialize", rb_sprite_initialize, ARGS_REQ(1));
+    component.define_method("texture_index", rb_sprite_get_textureindex, ARGS_NONE());
+    component.define_method("texture_index=", rb_sprite_set_textureindex, ARGS_REQ(1));
+    component.define_method("texture_count", rb_sprite_get_texturecount, ARGS_NONE());
+
+    initialized = true;
   }
+
+  auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);
+  return component.new_inst(compwrap).silent_reset();
 }

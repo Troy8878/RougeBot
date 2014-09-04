@@ -102,7 +102,6 @@
     <ClInclude Include="LevelDef.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="RenderSet.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="RubyComponent.h" />
     <ClInclude Include="RubyInterop.h" />
     <ClInclude Include="RubyWrappers.h" />

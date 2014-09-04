@@ -8,14 +8,14 @@
 
 // ----------------------------------------------------------------------------
 
-typedef unsigned char virtual_key;
+typedef wchar_t virtual_key;
 
 // ----------------------------------------------------------------------------
 
 struct InputSignal
 {
-  wchar_t char_code;
   virtual_key virtual_key;
+  wchar_t char_code;
   bool down;
 };
 
@@ -59,7 +59,11 @@ private:
   void OnUpdate(Events::EventMessage& e);
 
   KeyState keyStates[0x100];
+  std::unordered_map<virtual_key, KeyState> unicode_states;
   // add in the other variables you need to keep track of the input state
+  // feel free to modify KeyState if you feel like that's the best way
+  // Remember to check for unicode values on VK_PACKET
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 };
 
 // ----------------------------------------------------------------------------

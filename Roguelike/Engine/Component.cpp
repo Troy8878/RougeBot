@@ -89,6 +89,7 @@ void RegisterEngineComponents()
   RegisterStaticComponent<TransformComponent>("TransformComponent");
 
   rbengine.evaluate_asset("Components/SpinnyThingComponent.rb");
+  rbengine.evaluate_asset("Components/AnimatedComponent.rb");
 }
 
 // ----------------------------------------------------------------------------

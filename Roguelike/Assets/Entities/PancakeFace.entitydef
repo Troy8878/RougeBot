@@ -12,5 +12,8 @@
   "SpinnyThingComponent": {
     // This is basically 'radians per second'
     "speed": 0.1
+  },
+  "AnimatedComponent": {
+    
   }
 }

@@ -36,9 +36,11 @@ public:
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);
   IR_PROPERTY(TransformComponent *, Transform);
-  IR_PROPERTY(size_t, TextureIndex);
+  size_t TextureIndex;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
   
+  ruby::ruby_value GetRubyWrapper() override;
+
   // Component factory to make sprite component
   static SpriteComponentFactory factory;
 
@@ -49,7 +51,7 @@ private:
   static Model *GetSpriteModel();
 
 public:
-  size_t _GetTextureCount();
+  size_t _GetTextureCount() { return _textures.size(); }
 };
 
 // ----------------------------------------------------------------------------

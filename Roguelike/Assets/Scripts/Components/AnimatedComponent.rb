@@ -23,7 +23,7 @@ class AnimatedComponent < ComponentBase
     super data
 
     @sprite = self.owner.get_component "SpriteComponent"
-    @paused = data.fetch("paused", "false") =~ /true/i
+    @paused = data.fetch("paused", "false") == "true"
     @frame_time = data.fetch("frame_time", 1 / 24).to_f
     @time = 0
 

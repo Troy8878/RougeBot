@@ -150,9 +150,11 @@ math::Vector TransformComponentFactory::ParseVector(const std::string& str)
 
 static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 {
-  mrb_value tc_wrapper;
+  mrb_value tc_wrapper; // TransformComponent *
   mrb_get_args(mrb, "o", &tc_wrapper);
 
+  // ruby equiv:
+  //  @comp_ptr = tc_wrapper
   static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
   mrb_iv_set(mrb, self, tc_wrapper_sym, tc_wrapper);
 
@@ -230,6 +232,8 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
 
     comp_class.define_method("static", rb_transform_get_static, ARGS_NONE());
     comp_class.define_method("static=", rb_transform_set_static, ARGS_NONE());
+
+    init = true;
   }
 
   auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);

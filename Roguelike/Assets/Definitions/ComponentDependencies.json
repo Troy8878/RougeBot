@@ -1,4 +1,6 @@
 {
   "TransformComponent": [],
-  "SpriteComponent": ["TransformComponent"]
+  "SpriteComponent": ["TransformComponent"],
+  "SpinnyThingComponent": ["TransformComponent"],
+  "AnimatedComponent": ["SpriteComponent"]
 }

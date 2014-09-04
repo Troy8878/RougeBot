@@ -321,13 +321,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   // Read entdef
   entity_factory_data entdata;
   {
-    auto entdefs = GetGame()->Respack["Entities"];
-    RELEASE_AFTER_SCOPE(entdefs);
-
-    auto entdef_res = entdefs->GetResource(entdef);
-    RELEASE_AFTER_SCOPE(entdef_res);
-
-    auto tree = json::value::parse(entdef_res->Stream);
+    auto tree = ParseJsonAsset("Entities", entdef);
     if (!tree.is_object_of<json::value::object_t>())
       throw std::exception("Incorrect entity definition file");
 

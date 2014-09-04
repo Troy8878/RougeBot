@@ -88,8 +88,12 @@ void RegisterEngineComponents()
   RegisterStaticComponent<SpriteComponent>("SpriteComponent");
   RegisterStaticComponent<TransformComponent>("TransformComponent");
 
-  rbengine.evaluate_asset("Components/SpinnyThingComponent.rb");
-  rbengine.evaluate_asset("Components/AnimatedComponent.rb");
+  auto components = ParseJsonAsset("Definitions", "RubyComponents.json");
+
+  for (auto& comp : components.as_array_of<json::value::string_t>())
+  {
+    rbengine.evaluate_asset("Components/" + comp);
+  }
 }
 
 // ----------------------------------------------------------------------------

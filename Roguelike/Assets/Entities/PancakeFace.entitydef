@@ -5,8 +5,10 @@
     "scale": [1, 1, 1, 1]
   },
   "SpriteComponent": {
-    /* Nobody can guess where I got this pic, totally */
-    "texture": "1384108156458.jpg",
+    "textures": [
+      "PancakeFace.jpg",
+      "PancakeFace2.jpg"
+    ],
     "shader": "Textured"
   },
   "SpinnyThingComponent": {
@@ -14,6 +16,6 @@
     "speed": 0.1
   },
   "AnimatedComponent": {
-    
+    "frame_time": 0.05
   }
 }

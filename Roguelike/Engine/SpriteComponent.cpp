@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "TransformComponent.h"
 #include "mruby/variable.h"
+#include "json/json.h"
 
 // ----------------------------------------------------------------------------
 
@@ -92,11 +93,31 @@ SpriteComponentFactory::SpriteComponentFactory()
 Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
-  auto texture = TextureManager::Instance.LoadTexture(data["texture"]);
   auto shader = RegisteredShaders[data["shader"]];
   auto set = RenderGroup::Instance.GetSet(data["render_target"]);
 
-  SpriteComponent *component = new (memory) SpriteComponent(texture, shader, set);
+  SpriteComponent *component;
+
+  auto textures_it = data.find("textures");
+  if (textures_it != data.end())
+  {
+    auto jtextures = json::value::parse(textures_it->second);
+    auto texture_names = jtextures.as_array_of<json::value::string_t>();
+
+    std::vector<Texture2D> textures;
+    textures.reserve(texture_names.size());
+    for (auto& name : texture_names)
+    {
+      textures.push_back(TextureManager::Instance.LoadTexture(name));
+    }
+
+    component = new (memory) SpriteComponent(textures, shader, set);
+  }
+  else
+  {
+    auto texture = TextureManager::Instance.LoadTexture(data["texture"]);
+    component = new (memory) SpriteComponent(texture, shader, set);
+  }
 
   return component;
 }

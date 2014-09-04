@@ -1,13 +1,14 @@
 /*********************************
- * FixedWindows.h
+ * RandomHelpers.h
  * Connor Hilarides
- * Created 2014/05/28
+ * Created 2014/08/20
  *********************************/
 
 #pragma once
 
 #include "FixedWindows.h"
 #include <unordered_map>
+#include "json/json.h"
 
 // ----------------------------------------------------------------------------
 
@@ -462,6 +463,10 @@ void vtprintf(const std::wstring& str, Args... args)
 {
   svtprintf(std::wcout, str.begin(), str.end(), args...);
 }
+
+// ----------------------------------------------------------------------------
+
+json::value ParseJsonAsset(const std::string& containerName, const std::string& asset);
 
 // ----------------------------------------------------------------------------
 

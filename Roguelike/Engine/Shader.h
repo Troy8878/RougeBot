@@ -13,7 +13,6 @@
 // ----------------------------------------------------------------------------
 
 struct Camera;
-struct Texture;
 
 // ----------------------------------------------------------------------------
 
@@ -25,7 +24,6 @@ struct Shader
   ID3D11PixelShader *pixelShader;
   ID3D11Buffer *cameraBuffer;
   Camera *camera;
-  Texture *texture = nullptr;
 
   shared_array<byte> vertexShaderData;
   shared_array<byte> pixelShaderData;

@@ -236,7 +236,7 @@ ruby::ruby_value TransformComponent::GetRubyWrapper()
     init = true;
   }
 
-  auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);
+  auto compwrap = mrb_inst->wrap_native_ptr(this);
   return comp_class.new_inst(compwrap).silent_reset();
 }
 

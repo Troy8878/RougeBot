@@ -12,6 +12,7 @@
 #include "EngineInit.h"
 #include "EventHandlers.h"
 #include "ResourceReader\ResourcePack.h"
+#include "RubyInterop.h"
 
 
 // ----------------------------------------------------------------------------
@@ -27,6 +28,10 @@ GameType *GetGame()
 {
   return static_cast<GameType *>(getGame());
 }
+
+// ----------------------------------------------------------------------------
+
+static ruby::ruby_engine *const& mrb_inst = ruby::ruby_engine::global_engine;
 
 // ----------------------------------------------------------------------------
 

@@ -32,7 +32,12 @@ RubyComponent::RubyComponent(ruby::ruby_class rclass, component_factory_data& da
 
 RubyComponent::~RubyComponent()
 {
-  mrb_funcall(*ruby::ruby_engine::global_engine, component_inst, "finalize", 0);
+  mrb_state *mrb = *ruby::ruby_engine::global_engine;
+
+  mrb_funcall(mrb, component_inst, "finalize", 0);
+
+  mrb_gc_mark_iv(mrb, mrb_obj_ptr(component_inst));
+  mrb_gc_mark_value(mrb, component_inst);
 }
 
 // ----------------------------------------------------------------------------

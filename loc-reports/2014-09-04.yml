@@ -14,14 +14,15 @@
 
 ---
 connor hilarides:
-  code: 2898
-  comments: 428
-  blank_lines: 1010
+  code: 2918
+  comments: 435
+  blank_lines: 1022
+  files_owned: 33
   files:
   - name: json/json.cpp
-    code: 608
+    code: 611
     comments: 61
-    blank_lines: 203
+    blank_lines: 204
   - name: Engine/GraphicsDevice.cpp
     code: 380
     comments: 29
@@ -31,9 +32,9 @@ connor hilarides:
     comments: 13
     blank_lines: 51
   - name: Engine/RubyComponent.cpp
-    code: 175
+    code: 178
     comments: 23
-    blank_lines: 77
+    blank_lines: 79
   - name: Engine/RubyEngine.cpp
     code: 166
     comments: 31
@@ -74,14 +75,14 @@ connor hilarides:
     code: 70
     comments: 17
     blank_lines: 27
+  - name: Engine/Component.cpp
+    code: 56
+    comments: 15
+    blank_lines: 28
   - name: Engine/Model.cpp
     code: 54
     comments: 5
     blank_lines: 16
-  - name: Engine/Component.cpp
-    code: 52
-    comments: 15
-    blank_lines: 27
   - name: Engine/RubyInit.cpp
     code: 47
     comments: 13
@@ -107,7 +108,7 @@ connor hilarides:
     comments: 5
     blank_lines: 8
   - name: Game/Main.cpp
-    code: 23
+    code: 24
     comments: 5
     blank_lines: 9
   - name: Helpers/FileSystem.cpp
@@ -122,6 +123,10 @@ connor hilarides:
     code: 10
     comments: 5
     blank_lines: 3
+  - name: Helpers/RandomHelpers.cpp
+    code: 9
+    comments: 7
+    blank_lines: 8
   - name: Game/RubyInit.cpp
     code: 7
     comments: 15
@@ -147,25 +152,26 @@ connor hilarides:
     comments: 5
     blank_lines: 1
 jake robsahm:
-  code: 478
-  comments: 77
-  blank_lines: 181
+  code: 545
+  comments: 83
+  blank_lines: 206
+  files_owned: 3
   files:
   - name: Engine/Entity.cpp
-    code: 259
+    code: 255
     comments: 37
-    blank_lines: 94
+    blank_lines: 92
   - name: Engine/TransformComponent.cpp
     code: 161
     comments: 22
     blank_lines: 60
   - name: Engine/SpriteComponent.cpp
-    code: 58
-    comments: 18
-    blank_lines: 27
+    code: 129
+    comments: 24
+    blank_lines: 54
 sum:
-  code: 3376
-  comments: 505
-  blank_lines: 1191
-  files: 35
+  code: 3463
+  comments: 518
+  blank_lines: 1228
+  files: 36
 

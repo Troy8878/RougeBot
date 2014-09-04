@@ -115,8 +115,11 @@ file_data.each do |file, data|
       code: 0, 
       comments: 0, 
       blank_lines: 0,
+      files_owned: 0,
       files: []
     } # Default values
+
+    author_loc[author][:files_owned] += 1
 
     # Share it between the authors
     author_loc[author][:code] += file_loc / authors.count
@@ -174,6 +177,7 @@ if ARGV.first.is_a? String and ARGV.first =~ /^diff$/i
     diff_values(diff_yaml, author, "code")
     diff_values(diff_yaml, author, "comments")
     diff_values(diff_yaml, author, "blank_lines")
+    diff_values(diff_yaml, author, "files_owned")
 
     remove_files = []
     info["files"].select!.with_index do |file, i|

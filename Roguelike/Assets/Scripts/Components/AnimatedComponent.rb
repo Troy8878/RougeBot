@@ -32,27 +32,44 @@ class AnimatedComponent < ComponentBase
     self.register_event :update, :animate
   end
 
+  ##
+  # :update event handler
+  # handles animating the frames and keeping
+  # track of the time (i.e. when to change)
   def animate(e)
+    # don't even try when paused
     return if @paused
 
+    # add the time to keep track of when to change
     @time += e.dt
 
+    # increment frames. `while` in case FPS is lower than frame_time
     while @time >= @frame_time
       @time -= @frame_time
       next_frame
     end
   end
 
+  ##
+  # Sets the owner's sprite to the next frame
   def next_frame
     i = @sprite.texture_index + 1
+    @sprite.texture_index = wrap_index i
+  end
+
+  ##
+  # Wraps i to be within frame_range 
+  # and texture_count bounds
+  def wrap_index(i)
     if i >= @sprite.texture_count || i > @frame_range[1]
       i = @frame_range[0]
     end
-
-    @sprite.texture_index = i
+    return i
   end
 
+  ##
   # fetch out the frame_range field
+  # from the init data
   def save_frame_range(data)
     range = data.fetch("frame_range", [0, 0xffff])
     if range.is_a?(String)

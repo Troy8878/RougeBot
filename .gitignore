@@ -176,3 +176,6 @@ FakesAssemblies/
 # Game stuff
 Roguelike/Assets/Shaders/
 *.respack
+
+cloc_diff.yml
+last_cloc_report.yml

@@ -1,0 +1,171 @@
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.rb
+
+# > cloc --by-file --quiet --yaml "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.rb"
+
+
+---
+connor hilarides:
+  code: 2898
+  comments: 428
+  blank_lines: 1010
+  files:
+  - name: json/json.cpp
+    code: 608
+    comments: 61
+    blank_lines: 203
+  - name: Engine/GraphicsDevice.cpp
+    code: 380
+    comments: 29
+    blank_lines: 110
+  - name: Engine/Shader.cpp
+    code: 261
+    comments: 13
+    blank_lines: 51
+  - name: Engine/RubyComponent.cpp
+    code: 175
+    comments: 23
+    blank_lines: 77
+  - name: Engine/RubyEngine.cpp
+    code: 166
+    comments: 31
+    blank_lines: 79
+  - name: Helpers/BucketAllocator.cpp
+    code: 125
+    comments: 27
+    blank_lines: 46
+  - name: Helpers/StackTrace.cpp
+    code: 109
+    comments: 6
+    blank_lines: 30
+  - name: Engine/RubyValue.cpp
+    code: 105
+    comments: 22
+    blank_lines: 45
+  - name: Engine/Game.cpp
+    code: 101
+    comments: 18
+    blank_lines: 42
+  - name: Engine/GameStuffGem.cpp
+    code: 99
+    comments: 7
+    blank_lines: 29
+  - name: Engine/Texture.cpp
+    code: 97
+    comments: 15
+    blank_lines: 36
+  - name: Engine/StandardShapes.cpp
+    code: 96
+    comments: 5
+    blank_lines: 25
+  - name: Engine/RubyWrappers.cpp
+    code: 75
+    comments: 7
+    blank_lines: 26
+  - name: Engine/RenderSet.cpp
+    code: 70
+    comments: 17
+    blank_lines: 27
+  - name: Engine/Model.cpp
+    code: 54
+    comments: 5
+    blank_lines: 16
+  - name: Engine/Component.cpp
+    code: 52
+    comments: 15
+    blank_lines: 27
+  - name: Engine/RubyInit.cpp
+    code: 47
+    comments: 13
+    blank_lines: 17
+  - name: Engine/EventHandlers.cpp
+    code: 45
+    comments: 10
+    blank_lines: 18
+  - name: Engine/RubyClass.cpp
+    code: 45
+    comments: 15
+    blank_lines: 24
+  - name: Engine/LevelDef.cpp
+    code: 43
+    comments: 9
+    blank_lines: 17
+  - name: Engine/EventTypes.cpp
+    code: 39
+    comments: 7
+    blank_lines: 15
+  - name: Helpers/CriticalSections.cpp
+    code: 26
+    comments: 5
+    blank_lines: 8
+  - name: Game/Main.cpp
+    code: 23
+    comments: 5
+    blank_lines: 9
+  - name: Helpers/FileSystem.cpp
+    code: 17
+    comments: 5
+    blank_lines: 6
+  - name: Engine/Event.cpp
+    code: 14
+    comments: 9
+    blank_lines: 11
+  - name: Engine/RubyModule.cpp
+    code: 10
+    comments: 5
+    blank_lines: 3
+  - name: Game/RubyInit.cpp
+    code: 7
+    comments: 15
+    blank_lines: 5
+  - name: Helpers/Console.cpp
+    code: 4
+    comments: 5
+    blank_lines: 2
+  - name: Game/MainMenu.cpp
+    code: 2
+    comments: 5
+    blank_lines: 1
+  - name: Engine/Level.cpp
+    code: 1
+    comments: 7
+    blank_lines: 3
+  - name: Engine/Common.cpp
+    code: 1
+    comments: 7
+    blank_lines: 1
+  - name: Game/Common.cpp
+    code: 1
+    comments: 5
+    blank_lines: 1
+jake robsahm:
+  code: 478
+  comments: 77
+  blank_lines: 181
+  files:
+  - name: Engine/Entity.cpp
+    code: 259
+    comments: 37
+    blank_lines: 94
+  - name: Engine/TransformComponent.cpp
+    code: 161
+    comments: 22
+    blank_lines: 60
+  - name: Engine/SpriteComponent.cpp
+    code: 58
+    comments: 18
+    blank_lines: 27
+sum:
+  code: 3376
+  comments: 505
+  blank_lines: 1191
+  files: 35
+

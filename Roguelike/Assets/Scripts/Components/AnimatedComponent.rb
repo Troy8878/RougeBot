@@ -4,19 +4,15 @@
 # Created 2014/09/01
 #######################
 
-##
-# data properties
-#   paused      (Bool)  : Starts the animation component in a paused state
-#   frame_time  (Float) : Number of seconds each frame is viewed for
-#   frame_range (Int x2): Begin and End frame index
-#
-# data example
-# {
-#   "paused": "false", 
-#   "frame_time": "0.3",
-#   "frame_range": "0 5"
-# }
-#
+#########################Class Details############################
+# This class is the component that animates an object with a
+# sprite component.
+#######################Property Details###########################
+# paused - starts the animation component in a paused state (bool)
+# frame_time - number of seconds each frame is viewed for
+# frame_range - begin and end frame index.
+##################################################################
+
 class AnimatedComponent < ComponentBase
   attr_accessor :paused, :frame_time, :frame_range, :time
 

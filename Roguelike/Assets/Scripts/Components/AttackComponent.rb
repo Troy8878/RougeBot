@@ -4,6 +4,12 @@
 # Created 2014/09/05
 #######################
 
+#########################Class Details##########################
+# Component that allows an object to attack another object.
+#######################Property Details#########################
+# attack - the chance of the object hitting (?)
+# damage - the range of damage an object can do
+################################################################
 class AttackComponent < ComponentBase
   attr_reader :attack, :damage
 

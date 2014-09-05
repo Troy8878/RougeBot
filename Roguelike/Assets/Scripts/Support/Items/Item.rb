@@ -5,10 +5,10 @@
 #######################
 
 #########################Class Details##########################
-#Item is the base class of all items in the game.
+# Item is the base class of all items in the game.
 #######################Property Details#########################
-#name - the name of the item
-#rarity - chances of the random map generator creating this item
+# name - the name of the item
+# rarity - chances of the random map generator creating this item
 ################################################################
 
 class Item

@@ -4,6 +4,16 @@
 # Created 2014/09/05
 ##############################
 
+#########################Class Details##########################
+# Component makes the object the player.
+#######################Property Details#########################
+# health - the health of the player. May be changed if we use
+#the same health system for enemies.
+# speed - how fast the player moves or attacks. TBD.
+# inventory - an inventory object containing all of the player's
+#items.
+################################################################
+
 class PlayerControllerComponent < ComponentBase
   # Initialize the properties of the PlayerController
   def initialize(data)
@@ -24,7 +34,4 @@ class PlayerControllerComponent < ComponentBase
   end
 
 
-end
-
-class Inventory
 end

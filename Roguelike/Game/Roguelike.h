@@ -83,7 +83,6 @@ public:
   void InitObjects()
   {
     _hudCamera.position = math::Vector{0, 0, 30, 1};
-    //_hudCamera.lookAt = math::Vector{0, 0, 0, 1};
     _hudCamera.Init();
     _hudCamera.Update();
   }

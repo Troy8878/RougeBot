@@ -10,6 +10,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <algorithm>
 
 #include "ResourcePackBinaryHeaders.h"
 
@@ -70,6 +71,7 @@ struct ResMemoryContainer : public ResourceContainer
   UINT GetResourceCount() override;
   const char *GetContainerName() override;
   Resource *GetResource(const std::string& name) override;
+  std::vector<std::string> GetResources() override;
 
   bool memoryResourceExists(const std::string& name);
   bool fileResourceExists(const std::wstring& name);
@@ -123,6 +125,7 @@ struct ResFallbackContainer : public ResourceContainer
   UINT GetResourceCount() override;
   const char *GetContainerName() override;
   Resource *GetResource(const std::string& name) override;
+  std::vector<std::string> GetResources() override;
 
   std::string name;
   fs::wpath folder;
@@ -156,6 +159,11 @@ struct FileResource : public Resource
   NO_COPY_CONSTRUCTOR(FileResource);
   NO_ASSIGNMENT_OPERATOR(FileResource);
 };
+
+// ----------------------------------------------------------------------------
+
+static void GetFolderSubResources(std::vector<std::string>& list, 
+                                  const fs::wpath& path, const std::wstring& prefix);
 
 // ----------------------------------------------------------------------------
 
@@ -372,6 +380,29 @@ Resource *ResMemoryContainer::GetResource(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
+std::vector<std::string> ResMemoryContainer::GetResources()
+{
+  std::vector<std::string> resources;
+  GetFolderSubResources(resources, fallback, L"");
+
+  for (auto& mapping : memoryResources)
+  {
+    if (std::find_if(
+          resources.begin(), resources.end(), 
+          [&mapping](const std::string& res)
+          {
+            return _strcmpi(mapping.header.resource_name, res.c_str()) == 0;
+          }) == resources.end())
+    {
+      resources.push_back(mapping.header.resource_name);
+    }
+  }
+
+  return resources;
+}
+
+// ----------------------------------------------------------------------------
+
 bool ResMemoryContainer::memoryResourceExists(const std::string& name)
 {
   for (auto& resmap : memoryResources)
@@ -450,6 +481,15 @@ const char *ResFallbackContainer::GetContainerName()
 Resource *ResFallbackContainer::GetResource(const std::string& name)
 {
   return new FileResource(folder / widen(name));
+}
+
+// ----------------------------------------------------------------------------
+
+std::vector<std::string> ResFallbackContainer::GetResources()
+{
+  std::vector<std::string> resources;
+  GetFolderSubResources(resources, folder, L"");
+  return resources;
 }
 
 // ----------------------------------------------------------------------------
@@ -585,6 +625,24 @@ void FileResource::ResetStream()
     filestream.close();
 
   filestream.open(path);
+}
+
+// ----------------------------------------------------------------------------
+
+static void GetFolderSubResources(std::vector<std::string>& list, 
+                                  const fs::wpath& path, const std::wstring& prefix)
+{
+  for (auto item : fs::directory_contents{path})
+  {
+    if (fs::is_directory(item))
+    {
+      GetFolderSubResources(list, item, prefix + item.filename() + L"/");
+    }
+    else
+    {
+      list.push_back(narrow(prefix + item.filename()));
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------

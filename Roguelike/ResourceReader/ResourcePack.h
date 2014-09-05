@@ -45,9 +45,11 @@ namespace Respack
     UINT GetResourceCount();
     const char *GetContainerName();
     Resource *GetResource(const std::string& name);
+    std::vector<std::string> GetResources();
 
     PROPERTY(get = GetResourceCount) UINT ResourceCount;
     PROPERTY(get = GetContainerName) const char *ContainerName;
+    PROPERTY(get = GetResources) std::vector<std::string> Resources;
   };
 
 // ----------------------------------------------------------------------------

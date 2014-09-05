@@ -40,9 +40,11 @@ public:
   {
     using namespace DirectX;
 
-    _graphicsDevice->backgroundColor = XMVectorSet(1, 0.5, 0, 1);
-
+    _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
     _console = new GameConsole(true);
+
+    RenderGroup::Instance.Initialize();
+    Events::Event::GlobalDispatcher->AddListener(&RenderGroup::Instance);
 
     InitShaders();
     InitObjects();
@@ -51,9 +53,6 @@ public:
     using namespace Events;
     static EventId updateEvent("update");
     SetHandler(updateEvent, &Roguelike::OnUpdate);
-
-    static EventId drawEvent("draw");
-    SetHandler(drawEvent, &Roguelike::OnDraw);
 
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
@@ -146,11 +145,6 @@ public:
         SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }
-  }
-
-  void OnDraw(Events::EventMessage& e)
-  {
-    RenderGroup::Instance.Draw(e);
   }
 
   void OnFree() override

@@ -62,6 +62,14 @@ RenderGroup::RenderGroup()
 
 // ----------------------------------------------------------------------------
 
+void RenderGroup::Initialize()
+{
+  static Events::EventId drawId("draw");
+  SetHandler(drawId, &RenderGroup::Draw);
+}
+
+// ----------------------------------------------------------------------------
+
 RenderSet *RenderGroup::GetSet(const std::string& name)
 {
   return sets.find(name)->second.first;

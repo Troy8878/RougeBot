@@ -63,7 +63,7 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class RenderGroup : Events::BasicClassEventReciever<RenderGroup>
+class RenderGroup : public Events::BasicClassEventReciever<RenderGroup>
 {
 public:
   template <typename CameraType>
@@ -71,6 +71,8 @@ public:
   RenderSet *GetSet(const std::string& name);
   void RemoveSet(const std::string& name);
   void ClearSets();
+
+  void Initialize();
 
   void Draw(Events::EventMessage&);
 

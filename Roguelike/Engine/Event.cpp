@@ -19,7 +19,7 @@ event_id Event::CreateEventId(const std::string& name)
 {
   THREAD_EXCLUSIVE_SCOPE;
 
-  return mrb_intern_cstr(*ruby::ruby_engine::global_engine, name.c_str());
+  return mrb_intern_cstr(*mrb_inst, name.c_str());
 }
 
 // ----------------------------------------------------------------------------

@@ -85,14 +85,33 @@ void RegisterEngineComponents()
   auto& rbengine = *ruby::ruby_engine::global_engine;
   Component::GetComponentRClass();
 
+  // Static componnts
   RegisterStaticComponent<SpriteComponent>("SpriteComponent");
   RegisterStaticComponent<TransformComponent>("TransformComponent");
 
-  auto components = ParseJsonAsset("Definitions", "RubyComponents.json");
+  auto scriptResCont = GetGame()->Respack["Scripts"];
+  RELEASE_AFTER_SCOPE(scriptResCont);
 
-  for (auto& comp : components.as_array_of<json::value::string_t>())
+  auto scriptResources = scriptResCont->Resources;
+
+  // Ruby Support Classes
+  std::regex supportPattern{"Support/(.*)\\.rb", std::regex::icase};
+  for (auto& resource : scriptResources)
   {
-    rbengine.evaluate_asset("Components/" + comp);
+    if (std::regex_match(resource, supportPattern))
+    {
+      rbengine.evaluate_asset(resource);
+    }
+  }
+
+  // Ruby Components
+  std::regex componentPattern{"Components/(.*)\\.rb", std::regex::icase};
+  for (auto& resource : scriptResources)
+  {
+    if (std::regex_match(resource, componentPattern))
+    {
+      rbengine.evaluate_asset(resource);
+    }
   }
 }
 

@@ -1,7 +1,8 @@
-######################
+#######################
 # DefenseComponent.rb
 # Jake Robsahm
 # Created 2014/09/05
+#######################
 
 class DefenseComponent < ComponentBase
   def initialize(data)

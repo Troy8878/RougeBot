@@ -185,10 +185,11 @@ ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
   catch (std::exception& e)
 
   {
+    auto prevfg = console::fg_color();
     std::cerr << console::fg::yellow << "[WARN] "
               << "Resource pack could not be loaded. "
               << "Reading files in fallback mode" << std::endl;
-    std::cerr << "  " << e.what() << std::endl;
+    std::cerr << "  " << e.what() << std::endl << prevfg;
 
     // run in fallback mode, only reading from
     // the fallback folder

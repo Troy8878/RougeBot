@@ -26,6 +26,7 @@ GameConsole::GameConsole(bool listenCmd)
 GameConsole::~GameConsole()
 {
   cin_listen_thread.detach();
+  stop_getline_async = true;
 }
 
 // ----------------------------------------------------------------------------
@@ -76,10 +77,11 @@ void GameConsole::ExecuteSyncCommand(const std::string& cmd)
 
 void GameConsole::CinListen()
 {
-  std::string cmd;
-  while (std::getline(std::cin, cmd))
+  while (!stop_getline_async)
   {
-    ExecuteCommand(cmd);
+    std::string cmd;
+    if (getline_async(cmd, std::chrono::seconds{10}))
+      ExecuteCommand(cmd);
   }
 }
 

@@ -8,6 +8,7 @@
 
 #include "FixedWindows.h"
 #include <unordered_map>
+#include <chrono>
 #include "json/json.h"
 
 // ----------------------------------------------------------------------------
@@ -467,6 +468,18 @@ void vtprintf(const std::wstring& str, Args... args)
 // ----------------------------------------------------------------------------
 
 json::value ParseJsonAsset(const std::string& containerName, const std::string& asset);
+
+// ----------------------------------------------------------------------------
+
+/**
+  Despite this function's name, it does not perform the operation
+  asyncronously, but is safe to call from not-the-main-thread
+  (as long as it's the only one trying), if you think the main
+  thread may end before the function returns.
+*/
+bool getline_async(std::string& str,
+                   std::chrono::system_clock::duration timeout);
+extern bool stop_getline_async;
 
 // ----------------------------------------------------------------------------
 

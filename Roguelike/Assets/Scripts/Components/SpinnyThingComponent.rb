@@ -2,6 +2,7 @@
 # SpinnyThingComponent.rb
 # Connor Hilarides
 # Created 2014/08/25
+#######################
 
 class SpinnyThingComponent < ComponentBase
   def initialize(data)

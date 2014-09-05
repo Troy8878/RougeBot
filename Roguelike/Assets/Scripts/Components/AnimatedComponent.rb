@@ -2,6 +2,7 @@
 # AnimatedComponent.rb
 # Connor Hilarides
 # Created 2014/09/01
+#######################
 
 ##
 # data properties

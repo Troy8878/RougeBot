@@ -4,12 +4,12 @@
 # Created 2014/09/05
 #######################
 
-#########################Class Details##########################
+#########################Class Details###########################
 # Item is the base class of all items in the game.
-#######################Property Details#########################
+#######################Property Details##########################
 # name - the name of the item
 # rarity - chances of the random map generator creating this item
-################################################################
+#################################################################
 
 class Item
   attr_reader :name, :rarity

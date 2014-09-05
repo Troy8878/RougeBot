@@ -88,6 +88,27 @@ extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
   return mrb_symbol_value(result_sym);
 }
 
+extern "C" mrb_value ruby_clearscreen(mrb_state *, mrb_value)
+{
+  HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (!console)
+    return mrb_false_value();
+
+  DWORD cw;
+  CONSOLE_SCREEN_BUFFER_INFO info;
+  GetConsoleScreenBufferInfo(console, &info);
+
+  auto conSize = info.dwSize.X * info.dwSize.Y;
+  FillConsoleOutputCharacter(console, ' ', conSize, COORD{0,0}, &cw);
+
+  GetConsoleScreenBufferInfo(console, &info);
+  FillConsoleOutputAttribute(console, info.wAttributes, conSize, COORD{0,0}, &cw);
+
+  SetConsoleCursorPosition(console, COORD{0,0});
+
+  return mrb_nil_value();
+}
+
 extern "C" void load_gamestuff_files(mrb_state *mrb)
 {
   ruby::ruby_engine engine{mrb};
@@ -98,8 +119,13 @@ extern "C" void load_gamestuff_files(mrb_state *mrb)
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
+  auto kernel = mrb->kernel_module;
 
-  mrb_define_class_method(mrb, gameClass, "rand", ruby_rand, MRB_ARGS_OPT(3));
+  mrb_define_class_method(mrb, gameClass, "rand", ruby_rand, ARGS_OPT(3));
+  mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
+
+  #pragma region MessageBox stuff
+  
   mrb_define_class_method(mrb, gameClass, "message_box", ruby_message_box, MRB_ARGS_ARG(2, 1));
 
   auto mbModule = mrb_define_module(mrb, "MessageBox");
@@ -129,6 +155,8 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_const(mrb, modalModule, "APPLICATION", mrb_fixnum_value(0x0L));
   mrb_define_const(mrb, modalModule, "SYSTEM", mrb_fixnum_value(0x1000L));
   mrb_define_const(mrb, modalModule, "TASK", mrb_fixnum_value(0x2000L));
+
+  #pragma endregion
 
   load_gamestuff_files(mrb);
 }

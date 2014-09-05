@@ -36,6 +36,7 @@ bool getline_async(std::string& str,
   size_t prev_len;
   HWND hwnd = GetGame()->GameDevice->GetContextWindow();
   const char *notif_msg = nullptr;
+  char unknown_modifier[] = "Unknown modifier key: X";
 
   str.clear();
 
@@ -124,9 +125,8 @@ bool getline_async(std::string& str,
               break;
 
             default: // for detecting keys I've missed
-              _cputs("\nUnknown modifier code: ");
-              _putch(m);
-              _putch('\n');
+              unknown_modifier[ARRAYSIZE(unknown_modifier) - 2] = m;
+              notif_msg = unknown_modifier;
           }
         }
         else if (c == 0x1b) // [ESC]
@@ -188,14 +188,19 @@ bool getline_async(std::string& str,
       GetConsoleScreenBufferInfo(console, &info);
       COORD cpos = info.dwCursorPosition;
 
-      cpos.X = 0; // Set the cursor back to the far left
-      SetConsoleCursorPosition(console, cpos);
+      cpos.Y -= static_cast<short>((prev_len + 2) / info.dwSize.X);
 
-      for (size_t i = 0; i < prev_len + 2; ++i)
-        _putch(' '); // Empty out the line
+      if (prev_len > str.size())
+      {
+        cpos.X = 0; // Set the cursor back to the far left
+        SetConsoleCursorPosition(console, cpos);
 
-      cpos.X = 0; // Set the cursor back to the far left
-      SetConsoleCursorPosition(console, cpos);
+        for (size_t i = 0; i < prev_len + 2; ++i)
+          _putch(' '); // Empty out the line
+
+        cpos.X = 0; // Set the cursor back to the far left
+        SetConsoleCursorPosition(console, cpos);
+      }
 
       if (notif_msg)
       {
@@ -204,8 +209,13 @@ bool getline_async(std::string& str,
         notif_msg = nullptr;
       }
 
-      if (pos)
+      if (str.size())
+      {
+        cpos.X = 0; // Set the cursor back to the far left
+        SetConsoleCursorPosition(console, cpos);
         _cputs("> ");
+      }
+
       _cputs(str.c_str()); // Print out the contents
 
       cpos.X = (short) pos + (pos ? 2 : 0); // Put the cursor at the current text position

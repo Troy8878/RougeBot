@@ -31,6 +31,8 @@ GameConsole::~GameConsole()
 
 // ----------------------------------------------------------------------------
 
+static critical_section command_section;
+
 void GameConsole::ExecuteCommand(const std::string& cmd)
 {
   if (std::this_thread::get_id() == main_thread)
@@ -39,7 +41,7 @@ void GameConsole::ExecuteCommand(const std::string& cmd)
   }
   else
   {
-    THREAD_EXCLUSIVE_SCOPE;
+    critical_section::guard cg{command_section};
     async_commands.push_back(cmd);
   }
 }
@@ -48,6 +50,8 @@ void GameConsole::ExecuteCommand(const std::string& cmd)
 
 void GameConsole::OnUpdate(Events::EventMessage&)
 {
+  critical_section::guard cg{command_section};
+
   for (auto& cmd : async_commands)
   {
     ExecuteSyncCommand(cmd);

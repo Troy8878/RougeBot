@@ -77,10 +77,10 @@ void GameConsole::ExecuteSyncCommand(const std::string& cmd)
 
 void GameConsole::CinListen()
 {
+  std::string cmd;
   while (!stop_getline_async)
   {
-    std::string cmd;
-    if (getline_async(cmd, std::chrono::seconds{10}))
+    if (getline_async(cmd, std::chrono::milliseconds{100}))
       ExecuteCommand(cmd);
   }
 }

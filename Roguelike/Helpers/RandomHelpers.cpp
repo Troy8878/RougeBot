@@ -28,8 +28,16 @@ bool stop_getline_async = false;
 bool getline_async(std::string& str,
                    std::chrono::system_clock::duration timeout)
 {
+  static std::vector<std::string> message_list;
+  size_t message_index = message_list.size();
   auto start = std::chrono::system_clock::now();
   bool has_any = false;
+  size_t pos = 0;
+  size_t prev_len;
+  HWND hwnd = GetGame()->GameDevice->GetContextWindow();
+  const char *notif_msg = nullptr;
+
+  str.clear();
 
   for (;;)
   {
@@ -39,32 +47,173 @@ bool getline_async(std::string& str,
     if (!has_any && std::chrono::system_clock::now() - start > timeout)
       return false;
 
+    bool hit = false;
+
     if (_kbhit())
     {
-      char c = (char)_getche();
-
+      prev_len = str.size();
       has_any = true;
+      hit = true;
 
-      if (c == '\r')
+      char c = (char)_getch();
+
+      if (c == '\r') // [ENTER]
       {
-        str += '\n';
         _putch('\n');
+
+        message_list.push_back(str);
         return true;
       }
-      else if (c == '\b')
+      else if (c == '\b') // [BACKSPACE]
       {
-        str.pop_back();
-        _putch(' ');
-        _putch('\b');
+        if (pos)
+        {
+          str.erase(--pos, 1);
+        }
+      }
+      else if (c >= 0x20 && c <= 0x7F) // Normal letters and symbols I can just print
+      {
+        str.insert(pos++, 1, c);
       }
       else
       {
-        str += c;
+        if (c == -32 || c == 0) // special movement keys
+        {
+          char m = (char)_getch();
+
+          switch (m)
+          {
+            case 'K': // [LEFT]
+              if (pos)
+                pos--;
+              break;
+
+            case 'M': // [RIGHT]
+              if (pos < str.size())
+                pos++;
+              break;
+
+            case 'H': // [UP]
+              if (message_index)
+                str = message_list[--message_index];
+              pos = str.size();
+              break;
+
+            case 'P': // [DOWN]
+              if (message_index < message_list.size() - 1)
+                str = message_list[++message_index];
+              pos = str.size();
+              break;
+
+            case 'G': // [HOME]
+              pos = 0;
+              break;
+
+            case 'O': // [END]
+              pos = str.size();
+              break;
+
+            case 'S': // [DEL]
+              if (pos < str.size())
+                str.erase(pos, 1);
+              break;
+
+            case 'R': // [INS]
+            case 'I': // [PGUP]
+            case 'Q': // [PGDOWN]
+              break;
+
+            default: // for detecting keys I've missed
+              _cputs("\nUnknown modifier code: ");
+              _putch(m);
+              _putch('\n');
+          }
+        }
+        else if (c == 0x1b) // [ESC]
+        {
+          has_any = false;
+          str = "";
+          pos = 0;
+        }
+        else if (c == 0x18) // Ctrl-X
+        {
+          if (OpenClipboard(hwnd))
+          {
+            EmptyClipboard();
+
+            const size_t mem_size = str.size() + 1;
+            auto cbcopy = GlobalAlloc(GMEM_MOVEABLE, mem_size);
+
+            if (cbcopy)
+            {
+              auto copymem = GlobalLock(cbcopy);
+              memcpy_s(copymem, mem_size, str.c_str(), mem_size);
+              GlobalUnlock(cbcopy);
+            
+              SetClipboardData(CF_TEXT, cbcopy);
+
+              notif_msg = "[Copied to Clipboard]";
+            }
+
+            CloseClipboard();
+          }
+        }
+        else if (c == 0x16) // Ctrl-V
+        {
+          if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(hwnd))
+          {
+            auto htext = GetClipboardData(CF_TEXT);
+            if (htext)
+            {
+              auto ctext = (const char *) GlobalLock(htext);
+              if (ctext)
+              {
+                str = ctext;
+                pos = str.size();
+                has_any = true;
+              }
+            }
+
+            CloseClipboard();
+          }
+        }
+
+        if (_kbhit())
+          _getch();
       }
+
+      // Fix the line, cbb to write the logic for printing chars above
+      HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+      CONSOLE_SCREEN_BUFFER_INFO info;
+      GetConsoleScreenBufferInfo(console, &info);
+      COORD cpos = info.dwCursorPosition;
+
+      cpos.X = 0; // Set the cursor back to the far left
+      SetConsoleCursorPosition(console, cpos);
+
+      for (size_t i = 0; i < prev_len + 2; ++i)
+        _putch(' '); // Empty out the line
+
+      cpos.X = 0; // Set the cursor back to the far left
+      SetConsoleCursorPosition(console, cpos);
+
+      if (notif_msg)
+      {
+        puts(notif_msg);
+        cpos.Y++;
+        notif_msg = nullptr;
+      }
+
+      if (pos)
+        _cputs("> ");
+      _cputs(str.c_str()); // Print out the contents
+
+      cpos.X = (short) pos + (pos ? 2 : 0); // Put the cursor at the current text position
+      SetConsoleCursorPosition(console, cpos);
     }
     else
     {
-      Sleep(0);
+      Sleep(1); // Give up my time slice so I'm not just wasting cycles
     }
   }
 }

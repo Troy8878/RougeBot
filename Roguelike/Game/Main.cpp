@@ -30,9 +30,6 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-
-  vtprintf("I heard that you like %v %v\n", 500, "Toast slices");
-  vtprintf("I heard that you like %v %v\n", "peanut butter", "jelly time");
   
   game.Run();
 

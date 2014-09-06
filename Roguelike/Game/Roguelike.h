@@ -57,7 +57,8 @@ public:
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
 
-    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, true);
+    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 
+                                    std::numeric_limits<int>::max(), true);
 
     _testEntity = EntityFactory::CreateEntity("PancakeFace.entitydef", 
     {

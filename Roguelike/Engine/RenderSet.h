@@ -96,7 +96,7 @@ template <typename CameraType>
 RenderSet *RenderGroup::CreateSet(const std::string& name, 
                                   CameraType *cam, int priority, bool perma)
 {
-  return CreateSet(name, camera, typeid(CameraType), priority, perma);
+  return CreateSet(name, cam, typeid(CameraType), priority, perma);
 }
 
 // ----------------------------------------------------------------------------

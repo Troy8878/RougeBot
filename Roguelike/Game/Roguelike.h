@@ -57,15 +57,15 @@ public:
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
 
-    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 
-                                    std::numeric_limits<int>::max(), true);
+    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 100, true);
+    RenderGroup::Instance.CreateSet("background_hud", &_hudCamera, -100, true);
 
-    _testEntity = EntityFactory::CreateEntity("PancakeFace.entitydef", 
+    _testEntity = EntityFactory::CreateEntity("LoadingCircle.entitydef", 
     {
       {
         "SpriteComponent",
         {
-          {"render_target", "global_hud"}
+          {"render_target", "background_hud"}
         }
       }
     });

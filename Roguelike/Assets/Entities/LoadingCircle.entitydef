@@ -1,0 +1,14 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, 0, 1],
+    "rotation": [0, 0, 0, 0],
+    "scale": [1, 1, 1, 1]
+  },
+  "SpriteComponent": {
+    "texture": "Spinner.png"
+  },
+  "SpinnyThingComponent": {
+    // This is basically 'radians per second'
+    "speed": 7
+  }
+}

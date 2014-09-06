@@ -130,8 +130,7 @@ void RenderGroup::UpdatePriorities()
   priorityList.clear();
   for (auto& set : sets)
   {
-    // Negate the priority so higher priorities come first
-    priorityList.push_back({-set.second.first->Priority, set.second.first});
+    priorityList.push_back({set.second.first->Priority, set.second.first});
   }
 
   std::sort(priorityList.begin(), priorityList.end());

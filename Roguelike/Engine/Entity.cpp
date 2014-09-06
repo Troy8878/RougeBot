@@ -78,6 +78,9 @@ Component *Entity::GetComponent(const std::string& name)
 
 bool Entity::CanHandle(const Events::EventMessage& e)
 {
+  if (childDispatcher.CanHandle(e))
+    return true;
+
   auto iterator = _events.find(e.EventId);
   return iterator != _events.end() && !iterator->second.empty();
 }
@@ -92,6 +95,8 @@ void Entity::Handle(Events::EventMessage& e)
   for (auto& componentPair : handlers)
     // Member function pointer application is sooo weeiird D:
     (componentPair.first ->* componentPair.second)(e);
+
+  childDispatcher.Handle(e);
 }
 
 // ----------------------------------------------------------------------------
@@ -134,6 +139,7 @@ void Entity::AddChild(Entity *entity)
   }
 
   children.push_back(entity);
+  childDispatcher.AddListener(entity);
 }
 
 // ----------------------------------------------------------------------------
@@ -147,6 +153,7 @@ void Entity::RemoveChild(Entity *entity)
   entity->Parent = nullptr;
 
   children.erase(it);
+  childDispatcher.RemoveListener(entity);
 }
 
 // ----------------------------------------------------------------------------
@@ -321,7 +328,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   // Read entdef
   entity_factory_data entdata;
   {
-    auto tree = ParseJsonAsset("Entities", entdef);
+    auto tree = ParseJsonAsset("Entities", entdef + ".entitydef");
     if (!tree.is_object_of<json::value::object_t>())
       throw std::exception("Incorrect entity definition file");
 

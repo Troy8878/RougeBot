@@ -65,6 +65,9 @@
     <ClInclude Include="RandomHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AsyncTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">

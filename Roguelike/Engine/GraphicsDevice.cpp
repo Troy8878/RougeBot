@@ -316,10 +316,10 @@ void GraphicsDevice::InitializeD3DContext()
 
   D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
   ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-  depthStencilDesc.DepthEnable = true;
+  depthStencilDesc.DepthEnable = TRUE;
   depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-  depthStencilDesc.StencilEnable = true;
+  depthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+  depthStencilDesc.StencilEnable = TRUE;
   depthStencilDesc.StencilReadMask = 0xFF;
   depthStencilDesc.StencilWriteMask = 0xFF;
   depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Common.h"
+#include "EventHandlers.h"
 
 // ----------------------------------------------------------------------------
 
@@ -170,6 +171,7 @@ private:
   void DestroyChildren();
 
   std::vector<Entity *> children;
+  Events::BasicEventDispatcher childDispatcher;
 
   #pragma endregion
 

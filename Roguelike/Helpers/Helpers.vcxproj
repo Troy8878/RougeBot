@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Allocator.h" />
+    <ClInclude Include="AsyncTask.h" />
     <ClInclude Include="BucketAllocator.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CriticalSections.h" />

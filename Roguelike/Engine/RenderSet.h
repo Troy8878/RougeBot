@@ -93,7 +93,7 @@ private:
 // ----------------------------------------------------------------------------
 
 template <typename CameraType>
-RenderSet *RenderGroup::CreateSet(const std::string& name, 
+RenderSet *RenderGroup::CreateSet(const std::string& name,
                                   CameraType *cam, int priority, bool perma)
 {
   return CreateSet(name, cam, typeid(CameraType), priority, perma);

@@ -24,14 +24,11 @@ public:
   IR_PROPERTY(std::string, Name);
   IR_PROPERTY(Entity *, RootEntity);
 
-  void Init();
-  void Free();
-
 protected:
   Level();
   ~Level();
 
-  Events::BasicClassEventReciever<Level> levelEvents;
+  Events::BasicEventDispatcher levelEvents;
 
   friend class Game;
   friend class LevelDef;

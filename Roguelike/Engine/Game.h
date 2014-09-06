@@ -11,9 +11,9 @@
 #include "GraphicsDevice.h"
 #include "EngineInit.h"
 #include "EventHandlers.h"
-#include "ResourceReader\ResourcePack.h"
 #include "RubyInterop.h"
-
+#include "ResourceReader\ResourcePack.h"
+#include "Helpers\AsyncTask.h"
 
 // ----------------------------------------------------------------------------
 
@@ -51,6 +51,9 @@ public:
   virtual void OnInit() {}
   virtual void OnFree() {}
 
+  void RestartLevel();
+  void ChangeLevel(const std::string& name);
+
   void SetProcHandler(UINT message, wndproc_callback callback);
 
   PROPERTY(get = __getGameTime) const GameTime& Time;
@@ -81,6 +84,13 @@ public:
     void Handle(Events::EventMessage& e) override;
 
   } levelEventProxy;
+
+  struct LevelChangeContext
+  {
+    std::string name;
+    bool loaded = false;
+
+  } levelChangeContext;
   
   inline const GameTime& __getGameTime() { return _gameTime; }
   inline GraphicsDevice *__getGraphicsDevice() { return _graphicsDevice.get(); }

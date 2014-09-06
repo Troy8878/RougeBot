@@ -531,7 +531,7 @@ namespace json
     
     skip_ws_and_comments(input);
     if (input.peek() == '}')
-      return object;
+      return input.get(), object;
 
     for (;;)
     {

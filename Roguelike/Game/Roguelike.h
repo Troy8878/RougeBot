@@ -40,6 +40,9 @@ public:
   {
     using namespace DirectX;
 
+    // Starting level
+    levelChangeContext.name = "MainMenu";
+
     _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
     _console = new GameConsole(true);
 
@@ -58,20 +61,8 @@ public:
     SetHandler(resizeEvent, &Roguelike::OnResize);
 
     RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 100, true);
-    RenderGroup::Instance.CreateSet("background_hud", &_hudCamera, -100, true);
-
-    _testEntity = EntityFactory::CreateEntity("LoadingCircle.entitydef", 
-    {
-      {
-        "SpriteComponent",
-        {
-          {"render_target", "background_hud"}
-        }
-      }
-    });
 
     Event::GlobalDispatcher->AddListener(_console);
-    Event::GlobalDispatcher->AddListener(_testEntity);
   }
 
   void InitShaders()
@@ -104,7 +95,8 @@ public:
       if (rect.right - rect.left < minwidth)
       {
         // Squarify while resizing from right
-        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT)
+        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
+            wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
         {
           rect.right = rect.left + minwidth;
           res = TRUE;
@@ -150,8 +142,6 @@ public:
 
   void OnFree() override
   {
-    EntityFactory::DestroyEntity(_testEntity);
-
     delete _console;
   }
 
@@ -167,9 +157,6 @@ public:
 
 private:
   HUDCamera _hudCamera;
-
-  Entity *_testEntity;
-
   GameConsole *_console = nullptr;
 };
 

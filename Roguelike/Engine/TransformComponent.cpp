@@ -126,24 +126,15 @@ Component *TransformComponentFactory::CreateObject(
 
 math::Vector TransformComponentFactory::ParseVector(const std::string& str)
 {
-  std::regex reg_num{"([-+])?([\\d]+)(\\.([\\d]+))?(e([+-])?([\\d]+))?"};
-  std::smatch results;
-  std::regex_search(str, results, reg_num);
+  auto jnums = json::value::parse(str);
+  if (!jnums.is_array_of<json::value::number_t>())
+    throw std::exception("Vector is in incorrect format");
 
-  float nums[4] = {0,0,0,0};
-  int i = 0;
-  for (auto& match : results)
-  {
-    if (match.matched)
-    {
-      nums[i++] = std::stof(match.str());
+  auto nums = jnums.as_array_of<json::value::number_t>();
+  while (nums.size() < 4)
+    nums.push_back(0);
 
-      if (i == 4)
-        break;
-    }
-  }
-
-  return math::Vector{nums[0], nums[1], nums[2], nums[3]};
+  return math::Vector{(float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3]};
 }
 
 // ----------------------------------------------------------------------------

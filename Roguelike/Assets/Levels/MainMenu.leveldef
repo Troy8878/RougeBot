@@ -10,9 +10,9 @@
           "render_target": "global_hud"
         },
         "TransformComponent": {
-          "position": [0.3, 0, 0, 1],
+          "position": [0.5, 0, 0, 1],
           "rotation": [0, 0, 0, 0],
-          "scale": [0.25, 0.25, 0.25, 1]
+          "scale": [0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {
           "speed": 1
@@ -29,10 +29,10 @@
             "TransformComponent": {
               "position": [0, 0, 0, 1],
               "rotation": [0, 0, 0, 0],
-              "scale": [0.25, 0.25, 0.25, 1]
+              "scale": [0.4, 0.4, 0.4, 1]
             },
             "SpinnyThingComponent": {
-              "speed": 1
+              "speed": 10
             }
           }
         }
@@ -46,9 +46,9 @@
           "render_target": "global_hud"
         },
         "TransformComponent": {
-          "position": [-0.3, 0, 0, 1],
+          "position": [-0.5, 0, 0, 1],
           "rotation": [0, 0, 0, 0],
-          "scale": [0.25, 0.25, 0.25, 1]
+          "scale": [0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {
           "speed": 1

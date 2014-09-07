@@ -28,7 +28,7 @@ class Inventory
 
     # Make sure slot is a valid index
     if @inventory[slot].nil?
-      raise "Invalid inventory index."
+      raise "No item in slot #{slot}"
     end
 
     # Store the item in a variable for now
@@ -36,7 +36,7 @@ class Inventory
 
     # Check to make sure that the slot is valid. If not, raise an exception.
     if !EQUIPMENT_SLOTS.include? item.equip_slot
-      raise "Invalid equipment slot."
+      raise "Invalid equipment slot : #{item.equip_slot}"
     end
 
     # Remove the item from the inventory array

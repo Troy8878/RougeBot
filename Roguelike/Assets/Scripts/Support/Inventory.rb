@@ -13,6 +13,9 @@
 class Inventory
   attr_reader  :inventory
 
+  # Constant array containing all valid equipment slots.
+  EQUIPMENT_SLOTS = [:weapon, :chest, :shield]
+
   def initialize
 
     @inventory = []
@@ -22,13 +25,20 @@ class Inventory
 
   # Function to equip an item/add it to the equipment hash map
   def equip(slot)
-    # Check to make sure that the slot is valid. If not, raise an exception.
-    if slot != :weapon || slot != :chest || slot != :shield
-      raise "Invalid equipment slot."
+
+    # Make sure slot is a valid index
+    if @inventory[slot].nil?
+      raise "Invalid inventory index."
     end
 
     # Store the item in a variable for now
     item = @inventory[slot]
+
+    # Check to make sure that the slot is valid. If not, raise an exception.
+    if !EQUIPMENT_SLOTS.include? item.equip_slot
+      raise "Invalid equipment slot."
+    end
+
     # Remove the item from the inventory array
     @inventory[slot] = nil
 
@@ -43,6 +53,4 @@ class Inventory
     @equipment[item.equip_slot] = item
 
   end
-
-
 end

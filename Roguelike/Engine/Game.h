@@ -59,6 +59,7 @@ public:
   PROPERTY(get = __getGameTime) const GameTime& Time;
   PROPERTY(get = __getGraphicsDevice) GraphicsDevice *GameDevice;
   PROPERTY(get = __getRespack) Respack::ResourcePack& Respack;
+  PROPERTY(get = __getCurrLevel) Level *CurrentLevel;
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
@@ -95,6 +96,7 @@ public:
   inline const GameTime& __getGameTime() { return _gameTime; }
   inline GraphicsDevice *__getGraphicsDevice() { return _graphicsDevice.get(); }
   inline Respack::ResourcePack& __getRespack() { return *_respack; }
+  inline Level *__getCurrLevel() { return _currentLevel; }
 
   friend class WindowDevice;
 };

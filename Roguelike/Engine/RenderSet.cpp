@@ -7,10 +7,11 @@
 #include "Common.h"
 #include "RenderSet.h"
 #include "Shader.h"
+#include "Camera.h"
 
 // ----------------------------------------------------------------------------
 
-RenderSet::RenderSet(Camera *camera, const std::string& name, 
+RenderSet::RenderSet(ICamera *camera, const std::string& name, 
                      int priority, std::type_index camtype)
   : _RenderCamera(camera), _Name(name), _CameraType(camtype), _Priority(priority)
 {
@@ -77,7 +78,7 @@ RenderSet *RenderGroup::GetSet(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, 
+RenderSet *RenderGroup::CreateSet(const std::string& name, ICamera *camera, 
                                   std::type_index camtype, int pri, bool perma)
 {
   std::pair<RenderSet *, bool> pair{new RenderSet(camera, name, pri, camtype), perma};

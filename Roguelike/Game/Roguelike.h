@@ -76,6 +76,7 @@ public:
     _hudCamera.position = math::Vector{0, 0, 30, 1};
     _hudCamera.Init();
     _hudCamera.Update();
+    _hudCamera.GetRubyWrapper();
   }
 
   void InitWMHandlers()

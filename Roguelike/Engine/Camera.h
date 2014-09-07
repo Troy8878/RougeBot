@@ -26,6 +26,7 @@ struct ICamera : Camera
   virtual void Update() = 0;
 
   virtual void LoadFromData(const component_factory_data& data) = 0;
+  virtual mrb_value GetRubyWrapper() = 0;
 };
 
 // ----------------------------------------------------------------------------
@@ -57,6 +58,7 @@ struct Basic3DCamera : ICamera
   }
 
   void LoadFromData(const component_factory_data& data) override;
+  mrb_value GetRubyWrapper() override;
 };
 
 // ----------------------------------------------------------------------------
@@ -82,6 +84,7 @@ struct LookAtCamera : ICamera
   }
 
   void LoadFromData(const component_factory_data& data) override;
+  mrb_value GetRubyWrapper() override;
 };
 
 // ----------------------------------------------------------------------------
@@ -105,6 +108,7 @@ struct HUDCamera : ICamera
   }
 
   void LoadFromData(const component_factory_data& data) override;
+  mrb_value GetRubyWrapper() override;
 };
 
 // ----------------------------------------------------------------------------
@@ -113,13 +117,13 @@ struct MultiCam
 {
   union
   {
-    byte buffer[sizeof(Camera)];
+    byte buffer[sizeof(ICamera)];
     byte _b3buffer[sizeof(Basic3DCamera)];
     byte _labuffer[sizeof(LookAtCamera)];
     byte _hdbuffer[sizeof(HUDCamera)];
   };
 
-  std::type_index type = typeid(Camera);
+  std::type_index type = typeid(ICamera);
 
   template <typename CamType>
   void SetType()
@@ -128,7 +132,11 @@ struct MultiCam
   }
   
   template <typename CamType>
-  CamType *GetCamera() { return reinterpret_cast<CamType *>(buffer); }
+  CamType *GetCamera() 
+  {
+    auto icam = reinterpret_cast<ICamera *>(buffer);
+    return static_cast<CamType *>(icam); 
+  }
 };
 
 // ----------------------------------------------------------------------------

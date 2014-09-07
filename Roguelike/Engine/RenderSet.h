@@ -16,6 +16,7 @@
 
 struct Shader;
 struct Camera;
+struct ICamera;
 
 // ----------------------------------------------------------------------------
 
@@ -29,14 +30,14 @@ __interface Drawable
 class RenderSet
 {
 public:
-  RenderSet(Camera *camera, const std::string& name, int priority, std::type_index camtype);
+  RenderSet(ICamera *camera, const std::string& name, int priority, std::type_index camtype);
 
   void AddDrawable(Drawable *drawable, Shader *shader);
   void RemoveDrawable(Drawable *drawable);
 
   void Draw();
 
-  IR_PROPERTY(Camera *, RenderCamera);
+  IR_PROPERTY(ICamera *, RenderCamera);
   IR_PROPERTY(std::string, Name);
   IR_PROPERTY(std::type_index, CameraType);
   IR_PROPERTY(int, Priority);
@@ -80,7 +81,7 @@ public:
   static RenderGroup Instance;
 
 private:
-  RenderSet *CreateSet(const std::string& name, Camera *camera, 
+  RenderSet *CreateSet(const std::string& name, ICamera *camera, 
                        std::type_index camtype, int pri, bool perma);
   RenderGroup();
 

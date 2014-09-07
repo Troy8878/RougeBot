@@ -39,6 +39,7 @@ extern "C"
   void mrb_mruby_array_ext_gem_init(mrb_state* mrb);
   void mrb_mruby_hash_ext_gem_init(mrb_state *mrb);
   void mrb_mruby_eval_gem_init(mrb_state* mrb);
+  void mrb_mruby_regexp_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -65,6 +66,9 @@ extern "C"
 
     // Eval can be nice, especially if you wanna make a console :3
     mrb_mruby_eval_gem_init(mrb);
+
+    // Regexp is nice as well :P
+    mrb_mruby_regexp_init(mrb);
 
     // Load the gamestuff that I've defined to help out
     mrb_mruby_gamestuff_gem_init(mrb);

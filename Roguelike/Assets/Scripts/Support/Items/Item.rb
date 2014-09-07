@@ -12,7 +12,7 @@
 #################################################################
 
 class Item
-  attr_reader :name, :rarity
+  attr_reader :name, :rarity, :equip_slot
 
   def initialize(data)
     #Either copy an existing item or create one from JSON
@@ -23,10 +23,18 @@ class Item
       @name = data.fetch("name", "Default")
       @rarity = data.fetch("rarity", 0).to_f
     end
+    # Makes sure you aren't equipping a base item you naughty girl
+    @equip_slot = :invalid
   end
 
   def clone
     self.class.new self
   end
+
+  # Function to check if an item is equippable.
+  def equippable?
+    return Inventory::EQUIPMENT_SLOTS.include? self.equip_slot
+  end
+
 
 end

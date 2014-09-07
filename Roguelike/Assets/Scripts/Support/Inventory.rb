@@ -44,6 +44,7 @@ class Inventory
 
     # Check if something is already equipped
     if !@equipment[item.equip_slot].nil?
+      # Transfer the equipped item to the inventory.
       equipped = @equipment[item.equip_slot]
       @equipment[item.equip_slot] = nil
       @inventory[slot] = equipped

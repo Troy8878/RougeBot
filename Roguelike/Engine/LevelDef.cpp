@@ -18,7 +18,8 @@ LevelDef::LevelDef(const std::string& asset)
 
 void LevelDef::PopulateEntityChildren(Entity *parent, json::value::object_t entitydef)
 {
-  auto& archetype = entitydef["archetype"].as_string();
+  static json::value noarch = json::value::string("NoArchetype");
+  auto& archetype = map_fetch(entitydef, "archetype", noarch).as_string();
   auto data = EntityFactoryDataFromJson(entitydef["components"]);
 
   auto entity = EntityFactory::CreateEntity(archetype, data);

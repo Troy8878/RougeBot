@@ -3,6 +3,27 @@
   "components": {},
   "entities": [
     {
+      "name": "MainMenuBG",
+      "components": {
+        /*"CameraComponent": {
+          "type": "HUDCamera",
+          "layer": 10,
+          "position": [0,0,10,1],
+          "lookAt": [0,0,0,1]
+        }*/
+      }
+    },
+    {
+      "name": "MainMenuGUI",
+      "components": {
+        /*"CameraComponent": {
+          "type": "HUDCamera",
+          "layer": 20,
+          "position": [0,0,1,1]
+        }*/
+      }
+    },
+    {
       "name": "pancake one",
       "archetype": "PancakeFace",
       "components": {

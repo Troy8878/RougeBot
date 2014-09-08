@@ -19,7 +19,7 @@ namespace Events
     for (auto& hpair : recievers)
     {
       hpair.second = hpair.first->CanHandle(e);
-      if (hpair.first)
+      if (hpair.second)
         any = true;
     }
     

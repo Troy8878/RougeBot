@@ -83,11 +83,7 @@ Component *Entity::GetComponent(const std::string& name)
 
 bool Entity::CanHandle(const Events::EventMessage& e)
 {
-  if (childDispatcher.CanHandle(e))
-    return true;
-
-  auto iterator = _events.find(e.EventId);
-  return iterator != _events.end() && !iterator->second.empty();
+  return _eventCounts[e.EventId] > 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -101,7 +97,11 @@ void Entity::Handle(Events::EventMessage& e)
     // Member function pointer application is sooo weeiird D:
     (componentPair.first ->* componentPair.second)(e);
 
-  childDispatcher.Handle(e);
+  for (auto child : children)
+  {
+    if (child->CanHandle(e))
+      child->Handle(e);
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -111,6 +111,8 @@ void Entity::AddEvent(Component *component, event_id id,
 {
   auto& handlers = _events[id];
   handlers[component] = handler;
+
+  RecalculateEventCounts();
 }
 
 // ----------------------------------------------------------------------------
@@ -120,6 +122,31 @@ void Entity::RemoveEvent(Component *component, event_id id)
   auto& handlers = _events[id];
   if (handlers.find(component) != handlers.end())
     handlers.erase(component);
+
+  RecalculateEventCounts();
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::RecalculateEventCounts()
+{
+  _eventCounts.clear();
+
+  for (auto& event : _events)
+  {
+    _eventCounts[event.first] += event.second.size();
+  }
+
+  for (auto child : children)
+  {
+    for (auto& event : child->_events)
+    {
+      _eventCounts[event.first] += event.second.size();
+    }
+  }
+
+  if (Parent)
+    Parent->RecalculateEventCounts();
 }
 
 // ----------------------------------------------------------------------------
@@ -145,7 +172,8 @@ void Entity::AddChild(Entity *entity)
   entity->Parent = this;
 
   children.push_back(entity);
-  childDispatcher.AddListener(entity);
+
+  entity->RecalculateEventCounts();
 }
 
 // ----------------------------------------------------------------------------
@@ -159,7 +187,8 @@ void Entity::RemoveChild(Entity *entity)
   entity->Parent = nullptr;
 
   children.erase(it);
-  childDispatcher.RemoveListener(entity);
+
+  RecalculateEventCounts();
 }
 
 // ----------------------------------------------------------------------------

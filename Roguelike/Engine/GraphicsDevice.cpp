@@ -11,6 +11,15 @@
 
 // ----------------------------------------------------------------------------
 
+GraphicsDevice::GraphicsDevice()
+  : _DepthStencilBuffer(nullptr),
+    _DepthStencilState(nullptr),
+    _DepthStencilView(nullptr)
+{
+}
+
+// ----------------------------------------------------------------------------
+
 GraphicsDevice::~GraphicsDevice()
 {
   FreeD3DContext();
@@ -153,6 +162,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
       return;
   }
 
+  _size = size;
+
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
   ReleaseDXInterface(RenderTargetView);
@@ -169,7 +180,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   hr = Device->CreateRenderTargetView(pBuffer, nullptr, &RenderTargetView);
   ReleaseDXInterface(pBuffer);
 
-  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
+  InitializeDepthBuffer();
 
   D3D11_VIEWPORT vp;
   vp.Width = size.x;
@@ -179,8 +190,6 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
-
-  _size = size;
 }
 
 // ----------------------------------------------------------------------------
@@ -232,7 +241,7 @@ void GraphicsDevice::InitializeD3DContext()
   auto _window = GetContextWindow();
   CHECK_HRESULT(GetLastError());
 
-#pragma region Initialize Swap Chain
+  #pragma region Initialize Swap Chain
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
@@ -248,9 +257,9 @@ void GraphicsDevice::InitializeD3DContext()
   sd.SampleDesc.Quality = 0;
   sd.Windowed = TRUE;
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Create Device and Swap Chain
+  #pragma region Create Device and Swap Chain
 
   D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
   {
@@ -289,71 +298,11 @@ void GraphicsDevice::InitializeD3DContext()
 
   ReleaseDXInterface(backBuffer);
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Depth Stencil Buffer
+  InitializeDepthBuffer();
 
-  D3D11_TEXTURE2D_DESC depthBufferDesc;
-  ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-  depthBufferDesc.Width = static_cast<UINT>(contextSize.x);
-  depthBufferDesc.Height = static_cast<UINT>(contextSize.y);
-  depthBufferDesc.MipLevels = 1;
-  depthBufferDesc.ArraySize = 1;
-  depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-  depthBufferDesc.SampleDesc.Count = 1;
-  depthBufferDesc.SampleDesc.Quality = 0;
-  depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-  depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-  depthBufferDesc.CPUAccessFlags = 0;
-  depthBufferDesc.MiscFlags = 0;
-
-  hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
-  CHECK_HRESULT(hr);
-
-#pragma endregion
-
-#pragma region Depth Stencil State
-
-  D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-  ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-  depthStencilDesc.DepthEnable = true;
-  depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-  depthStencilDesc.StencilEnable = true;
-  depthStencilDesc.StencilReadMask = 0xFF;
-  depthStencilDesc.StencilWriteMask = 0xFF;
-  depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-  depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-  depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-  depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-  depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-  depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-  depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-  depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-  hr = Device->CreateDepthStencilState(&depthStencilDesc, &DepthStencilState);
-  CHECK_HRESULT(hr);
-
-  DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
-
-#pragma endregion
-
-#pragma region Depth Stencil View Desc
-
-  D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-  ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
-  depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-  depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-  depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-  hr = Device->CreateDepthStencilView(DepthStencilBuffer, &depthStencilViewDesc, &DepthStencilView);
-  CHECK_HRESULT(hr);
-
-  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
-
-#pragma endregion
-
-#pragma region Rasterizer
+  #pragma region Rasterizer
 
   D3D11_RASTERIZER_DESC rasterDesc;
   rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
@@ -372,9 +321,9 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetState(RasterState);
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Viewport
+  #pragma region Viewport
 
   D3D11_VIEWPORT viewport;
   viewport.Width = contextSize.x;
@@ -386,9 +335,9 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetViewports(1, &viewport);
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Blend State
+  #pragma region Blend State
 
   D3D11_BLEND_DESC blendStateDesc;
   ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
@@ -408,7 +357,86 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
 
+  #pragma endregion
+
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::InitializeDepthBuffer()
+{
+  HRESULT hr;
+
+  ReleaseDXInterface(DepthStencilBuffer);
+  ReleaseDXInterface(DepthStencilState);
+  ReleaseDXInterface(DepthStencilView);
+
+#pragma region Depth Stencil Buffer
+
+  D3D11_TEXTURE2D_DESC depthBufferDesc;
+  ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+  depthBufferDesc.Width = static_cast<UINT>(GetSize().x);
+  depthBufferDesc.Height = static_cast<UINT>(GetSize().y);
+  depthBufferDesc.MipLevels = 1;
+  depthBufferDesc.ArraySize = 1;
+  depthBufferDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+  depthBufferDesc.SampleDesc.Count = 1;
+  depthBufferDesc.SampleDesc.Quality = 0;
+  depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+  depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+  depthBufferDesc.CPUAccessFlags = 0;
+  depthBufferDesc.MiscFlags = 0;
+
+  hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
+  CHECK_HRESULT(hr);
+
 #pragma endregion
+
+#pragma region Depth Stencil State
+
+  D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+  ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+  depthStencilDesc.DepthEnable = TRUE;
+  depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+  depthStencilDesc.StencilEnable = TRUE;
+  depthStencilDesc.StencilReadMask = 0xFF;
+  depthStencilDesc.StencilWriteMask = 0xFF;
+
+  depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+  depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+  depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+  depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+  depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+  depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+  depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+  depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+  hr = Device->CreateDepthStencilState(&depthStencilDesc, &DepthStencilState);
+  CHECK_HRESULT(hr);
+
+  DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
+
+#pragma endregion
+
+#pragma region Depth Stencil View Desc
+
+  D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+  ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+  depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+  depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+  depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+  hr = Device->CreateDepthStencilView(DepthStencilBuffer, &depthStencilViewDesc, &DepthStencilView);
+  CHECK_HRESULT(hr);
+
+  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
+
+#pragma endregion
+
 }
 
 // ----------------------------------------------------------------------------

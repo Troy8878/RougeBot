@@ -12,6 +12,9 @@
     <Filter Include="Gem Code">
       <UniqueIdentifier>{e638112a-a179-417a-83ab-d52cca7c79bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Gem Code\headers">
+      <UniqueIdentifier>{e6fe405d-8c58-4aa8-aa05-f8a0ff985169}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array.c">
@@ -119,6 +122,9 @@
     <ClCompile Include="mrbgems\mruby-eval\src\mrbgem-eval.c">
       <Filter>Gem Code</Filter>
     </ClCompile>
+    <ClCompile Include="mrbgems\mruby-regexp\src\mrbgem-regexp.cpp">
+      <Filter>Gem Code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mrbconf.h">
@@ -189,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="include\mruby\y.tab.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mruby\gems\regexp.h">
+      <Filter>Gem Code\headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

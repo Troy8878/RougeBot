@@ -18,9 +18,12 @@ public:
   LevelDef(const std::string& asset);
   void Load(Level& level);
 
+  static async_task<Level *> LoadLevelAsync(const std::string& name);
+
 private:
   json::value deftree;
 
+  void LevelDef::PopulateEntityChildren(Entity *parent, json::value::object_t entitydef);
   static entity_factory_data EntityFactoryDataFromJson(json::value jdata);
 };
 

@@ -122,6 +122,9 @@
     <ClInclude Include="Input.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -203,6 +206,12 @@
     </ClCompile>
     <ClCompile Include="Level.cpp">
       <Filter>Source Files\Arch</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

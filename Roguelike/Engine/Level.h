@@ -18,18 +18,17 @@ class Game;
 class Level : public Events::BasicEventDispatcher
 {
 public:
-  Level();
+  static Level *CreateLevel(const std::string& def);
+  static void DestroyLevel(Level *level);
 
   IR_PROPERTY(std::string, Name);
   IR_PROPERTY(Entity *, RootEntity);
 
-  virtual void Load();
-  virtual void Init();
-  virtual void Free();
-  virtual void Unload();
-
 protected:
-  Events::BasicClassEventReciever<Level> levelEvents;
+  Level();
+  ~Level();
+
+  Events::BasicEventDispatcher levelEvents;
 
   friend class Game;
   friend class LevelDef;

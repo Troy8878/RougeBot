@@ -10,6 +10,8 @@
 #include "mruby/data.h"
 #include "mruby/hash.h"
 #include "mruby/value.h"
+#include "mruby/variable.h"
+#include "mruby/string.h"
 
 #include <string>
 
@@ -308,6 +310,26 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+# define MRB_NATIVE_PTR_SAVED_SYM_NAME "___native_pointer___"
+
+  template <typename T>
+  void save_native_ptr(mrb_state *mrb, mrb_value self, T *ptr)
+  {
+    static mrb_sym ptr_sym = mrb_intern_cstr(mrb, MRB_NATIVE_PTR_SAVED_SYM_NAME);
+    mrb_iv_set(mrb, self, ptr_sym, mrb_cptr_value(mrb, (void *) ptr));
+  }
+
+// ----------------------------------------------------------------------------
+  
+  template <typename T>
+  T *read_native_ptr(mrb_state *mrb, mrb_value self)
+  {
+    static mrb_sym ptr_sym = mrb_intern_cstr(mrb, MRB_NATIVE_PTR_SAVED_SYM_NAME);
+    return reinterpret_cast<T *>(mrb_cptr(mrb_iv_get(mrb, self, ptr_sym)));
+  }
+
+// ----------------------------------------------------------------------------
+
   extern mrb_data_type mrb_dt_native_ptr;
 
 // ----------------------------------------------------------------------------
@@ -317,6 +339,15 @@ namespace ruby
 // ----------------------------------------------------------------------------
 
 mrb_value mrb_nop(mrb_state *, mrb_value);
+
+// ----------------------------------------------------------------------------
+
+inline std::string mrb_str_to_stdstring(mrb_value str)
+{
+  return std::string{RSTRING_PTR(str), RSTRING_PTR(str) + RSTRING_LEN(str)};
+}
+
+// ----------------------------------------------------------------------------
 
 extern bool mrb_debug_mbox;
 

@@ -47,6 +47,15 @@ namespace math
         z == other.z &&
         w == other.w;
     }
+
+    static math::Vector VectorFromJson(json::value value)
+    {
+      auto nums = value.as_array_of<json::value::number_t>();
+      while (nums.size() < 4)
+        nums.push_back(0);
+
+      return math::Vector{(float)nums[0],(float)nums[1],(float)nums[2],(float)nums[3]};
+    }
   };
 
   class Vector2D : public XMFLOAT2A

@@ -5,6 +5,7 @@
  *********************************/
 
 #include "Common.h"
+#include "Level.h"
 
 #include "mruby.h"
 
@@ -116,6 +117,11 @@ extern "C" void load_gamestuff_files(mrb_state *mrb)
   engine.evaluate_asset("Core/vector.rb");
 }
 
+static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
+{
+  return GetGame()->CurrentLevel->RootEntity->RubyWrapper;
+}
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -155,6 +161,13 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_const(mrb, modalModule, "APPLICATION", mrb_fixnum_value(0x0L));
   mrb_define_const(mrb, modalModule, "SYSTEM", mrb_fixnum_value(0x1000L));
   mrb_define_const(mrb, modalModule, "TASK", mrb_fixnum_value(0x2000L));
+
+  #pragma endregion
+
+  #pragma region Level Wrapper
+
+  auto levelWrapper = mrb_define_class(mrb, "GameLevelWrapper", mrb->object_class);
+  mrb_define_method(mrb, levelWrapper, "root_entity", mrb_level_root_entity, ARGS_NONE());
 
   #pragma endregion
 

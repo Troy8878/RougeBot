@@ -7,12 +7,13 @@
 #include "Common.h"
 #include "RenderSet.h"
 #include "Shader.h"
+#include "Camera.h"
 
 // ----------------------------------------------------------------------------
 
-RenderSet::RenderSet(Camera *camera, const std::string& name, 
-                     std::type_index camtype)
-  : _RenderCamera(camera), _Name(name), _CameraType(camtype)
+RenderSet::RenderSet(ICamera *camera, const std::string& name, 
+                     int priority, std::type_index camtype)
+  : _RenderCamera(camera), _Name(name), _CameraType(camtype), _Priority(priority)
 {
 }
 
@@ -62,6 +63,14 @@ RenderGroup::RenderGroup()
 
 // ----------------------------------------------------------------------------
 
+void RenderGroup::Initialize()
+{
+  static Events::EventId drawId("draw");
+  SetHandler(drawId, &RenderGroup::Draw);
+}
+
+// ----------------------------------------------------------------------------
+
 RenderSet *RenderGroup::GetSet(const std::string& name)
 {
   return sets.find(name)->second.first;
@@ -69,11 +78,14 @@ RenderSet *RenderGroup::GetSet(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::CreateSet(const std::string& name, Camera *camera, 
-                                  std::type_index camtype, bool perma)
+RenderSet *RenderGroup::CreateSet(const std::string& name, ICamera *camera, 
+                                  std::type_index camtype, int pri, bool perma)
 {
-  std::pair<RenderSet *, bool> pair{new RenderSet(camera, name, camtype), perma};
+  std::pair<RenderSet *, bool> pair{new RenderSet(camera, name, pri, camtype), perma};
   sets[name] = pair;
+
+  UpdatePriorities();
+
   return pair.first;
 }
 
@@ -83,6 +95,8 @@ void RenderGroup::RemoveSet(const std::string& name)
 {
   delete sets[name].first;
   sets.erase(name);
+
+  UpdatePriorities();
 }
 
 // ----------------------------------------------------------------------------
@@ -104,10 +118,23 @@ void RenderGroup::ClearSets()
 
 void RenderGroup::Draw(Events::EventMessage&)
 {
+  for (auto& set : priorityList)
+  {
+    set.second->Draw();
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void RenderGroup::UpdatePriorities()
+{
+  priorityList.clear();
   for (auto& set : sets)
   {
-    set.second.first->Draw();
+    priorityList.push_back({set.second.first->Priority, set.second.first});
   }
+
+  std::sort(priorityList.begin(), priorityList.end());
 }
 
 // ----------------------------------------------------------------------------

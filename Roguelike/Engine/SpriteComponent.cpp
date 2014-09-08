@@ -181,7 +181,7 @@ mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-ruby::ruby_value SpriteComponent::GetRubyWrapper()
+mrb_value SpriteComponent::GetRubyWrapper()
 {
   THREAD_EXCLUSIVE_SCOPE;
 

@@ -21,6 +21,7 @@ class GraphicsDevice abstract
 public:
   typedef std::chrono::high_resolution_clock::time_point resource_token_t;
 
+  GraphicsDevice();
   virtual ~GraphicsDevice();
 
   virtual HWND GetContextWindow() = 0;
@@ -50,6 +51,7 @@ public:
 
 protected:
   void InitializeD3DContext();
+  void InitializeDepthBuffer();
   void FreeD3DContext();
 
 public:

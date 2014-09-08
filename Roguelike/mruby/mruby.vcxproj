@@ -84,6 +84,10 @@
     <ClCompile Include="mrbgems\mruby-hash-ext\src\mrbgem-hash-ext.c" />
     <ClCompile Include="mrbgems\mruby-math\src\mrbgem-math.c" />
     <ClCompile Include="mrbgems\mruby-print\src\mrbgem-print.c" />
+    <ClCompile Include="mrbgems\mruby-regexp\src\mrbgem-regexp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="src\array.c" />
     <ClCompile Include="src\backtrace.c" />
     <ClCompile Include="src\class.c" />
@@ -125,6 +129,7 @@
     <ClInclude Include="include\mruby\dump.h" />
     <ClInclude Include="include\mruby\error.h" />
     <ClInclude Include="include\mruby\gc.h" />
+    <ClInclude Include="include\mruby\gems\regexp.h" />
     <ClInclude Include="include\mruby\hash.h" />
     <ClInclude Include="include\mruby\irep.h" />
     <ClInclude Include="include\mruby\khash.h" />

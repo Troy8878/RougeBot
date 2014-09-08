@@ -58,6 +58,32 @@ void TransformComponent::UpdateMatrix()
   Matrix = XMMatrixScalingFromVector(Scale.get()) *
            XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
            XMMatrixTranslationFromVector(Position.get());
+
+  ApplyParentTransforms();
+}
+
+// ----------------------------------------------------------------------------
+
+void TransformComponent::ApplyParentTransforms()
+{
+  if (!Owner)
+    return;
+
+  auto entity = Owner->Parent;
+  auto mat = Matrix.get();
+
+  while (entity)
+  {
+    auto transform = (TransformComponent *) entity->GetComponent("TransformComponent");
+    if (transform)
+    {
+      mat = mat * transform->Matrix.get();
+    }
+
+    entity = entity->Parent;
+  }
+
+  Matrix = mat;
 }
 
 // ----------------------------------------------------------------------------
@@ -126,24 +152,15 @@ Component *TransformComponentFactory::CreateObject(
 
 math::Vector TransformComponentFactory::ParseVector(const std::string& str)
 {
-  std::regex reg_num{"([-+])?([\\d]+)(\\.([\\d]+))?(e([+-])?([\\d]+))?"};
-  std::smatch results;
-  std::regex_search(str, results, reg_num);
+  auto jnums = json::value::parse(str);
+  if (!jnums.is_array_of<json::value::number_t>())
+    throw std::exception("Vector is in incorrect format");
 
-  float nums[4] = {0,0,0,0};
-  int i = 0;
-  for (auto& match : results)
-  {
-    if (match.matched)
-    {
-      nums[i++] = std::stof(match.str());
+  auto nums = jnums.as_array_of<json::value::number_t>();
+  while (nums.size() < 4)
+    nums.push_back(0);
 
-      if (i == 4)
-        break;
-    }
-  }
-
-  return math::Vector{nums[0], nums[1], nums[2], nums[3]};
+  return math::Vector{(float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3]};
 }
 
 // ----------------------------------------------------------------------------
@@ -212,7 +229,7 @@ static mrb_value rb_transform_set_static(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-ruby::ruby_value TransformComponent::GetRubyWrapper()
+mrb_value TransformComponent::GetRubyWrapper()
 {
   THREAD_EXCLUSIVE_SCOPE;
 

@@ -197,7 +197,7 @@ static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
   
   Component *component = (Component *) mrb.unwrap_native_ptr(comp_ptr_v);
 
-  return component->Owner->RubyWrapper.silent_reset();
+  return component->Owner->RubyWrapper;
 }
 
 // ----------------------------------------------------------------------------

@@ -704,9 +704,9 @@ noregexp(mrb_state *mrb, mrb_value self)
 static void
 regexp_check(mrb_state *mrb, mrb_value obj)
 {
-  if (mrb_regexp_p(mrb, obj)) {
+  /*if (mrb_regexp_p(mrb, obj)) {
     noregexp(mrb, obj);
-  }
+  }*/
 }
 
 static inline mrb_int
@@ -1795,6 +1795,8 @@ static const char isspacetable[256] = {
  *     "1,2,,3,4,,".split(',', -4)     #=> ["1", "2", "", "3", "4", "", ""]
  */
 
+mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str, mrb_value regexp);
+
 static mrb_value
 mrb_str_split_m(mrb_state *mrb, mrb_value str)
 {
@@ -1829,7 +1831,7 @@ mrb_str_split_m(mrb_state *mrb, mrb_value str)
       }
     }
     else {
-      noregexp(mrb, str);
+      split_type = regexp;
     }
   }
 
@@ -1898,7 +1900,7 @@ mrb_str_split_m(mrb_state *mrb, mrb_value str)
     beg = ptr - temp;
   }
   else {
-    noregexp(mrb, str);
+    return mrb_regexp_split(mrb, str, spat);
   }
   if (RSTRING_LEN(str) > 0 && (lim_p || RSTRING_LEN(str) > beg || lim < 0)) {
     if (RSTRING_LEN(str) == beg) {

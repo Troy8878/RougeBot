@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Common.h"
+#include "EventHandlers.h"
 
 // ----------------------------------------------------------------------------
 
@@ -44,7 +45,7 @@ public:
   NO_ASSIGNMENT_OPERATOR(Entity);
 
   PROPERTY(get = _GetEntityId) entity_id Id;
-  PROPERTY(get = GetRubyWrapper) ruby::ruby_value RubyWrapper;
+  PROPERTY(get = GetRubyWrapper) mrb_value RubyWrapper;
 
   IRW_PROPERTY(std::string, Name);
 
@@ -119,6 +120,8 @@ public:
     AddEvent(component, id, static_cast<component_handler>(handler));
   }
 
+  void RecalculateEventCounts();
+
   #pragma endregion
 
   #pragma region Children and Parents
@@ -153,14 +156,14 @@ public:
   /**
     Finds entities by a full or partial match on their name.
   */
-  void SearchEntities(std::vector<Entity *> results,
+  void SearchEntities(std::vector<Entity *>& results,
                       const std::string& namePattern,
-                      bool partialMatch);
+                      bool partialMatch = true);
   /**
     Finds entities by a partial match on their name.
     This search uses the passed regex for matching.
   */
-  void SearchEntities(std::vector<Entity *> results, 
+  void SearchEntities(std::vector<Entity *>& results, 
                       const std::regex& namePattern);
 
   PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
@@ -188,20 +191,24 @@ protected:
   */
   std::unordered_map<event_id, event_registrations> _events;
 
+  std::unordered_map<event_id, size_t> _eventCounts;
+
   #pragma endregion
 
   #pragma region Other fields and helpers
 
 public:
   entity_id _GetEntityId() { return _id; }
-  ruby::ruby_value GetRubyWrapper();
+  mrb_value GetRubyWrapper();
 
 private:
   entity_id _id;
-  ruby::ruby_value rwrapper;
 
   static entity_id CreateEntityId();
   static ruby::ruby_class GetWrapperRClass();
+
+  friend static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self);
+  friend static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self);
 
   #pragma endregion
 

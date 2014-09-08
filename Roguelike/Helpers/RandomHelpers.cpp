@@ -218,7 +218,8 @@ bool getline_async(std::string& str,
 
       _cputs(str.c_str()); // Print out the contents
 
-      cpos.X = (short) pos + (pos ? 2 : 0); // Put the cursor at the current text position
+      // Put the cursor at the current text position
+      cpos.X = (short) pos + (str.size() ? 2 : 0);
       SetConsoleCursorPosition(console, cpos);
     }
     else

@@ -40,9 +40,14 @@ public:
   {
     using namespace DirectX;
 
-    _graphicsDevice->backgroundColor = XMVectorSet(1, 0.5, 0, 1);
+    // Starting level
+    levelChangeContext.name = "MainMenu";
 
+    _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
     _console = new GameConsole(true);
+
+    RenderGroup::Instance.Initialize();
+    Events::Event::GlobalDispatcher->AddListener(&RenderGroup::Instance);
 
     InitShaders();
     InitObjects();
@@ -52,26 +57,12 @@ public:
     static EventId updateEvent("update");
     SetHandler(updateEvent, &Roguelike::OnUpdate);
 
-    static EventId drawEvent("draw");
-    SetHandler(drawEvent, &Roguelike::OnDraw);
-
     static EventId resizeEvent("window_resize");
     SetHandler(resizeEvent, &Roguelike::OnResize);
 
-    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, true);
-
-    _testEntity = EntityFactory::CreateEntity("PancakeFace.entitydef", 
-    {
-      {
-        "SpriteComponent",
-        {
-          {"render_target", "global_hud"}
-        }
-      }
-    });
+    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 100, true);
 
     Event::GlobalDispatcher->AddListener(_console);
-    Event::GlobalDispatcher->AddListener(_testEntity);
   }
 
   void InitShaders()
@@ -83,9 +74,9 @@ public:
   void InitObjects()
   {
     _hudCamera.position = math::Vector{0, 0, 30, 1};
-    //_hudCamera.lookAt = math::Vector{0, 0, 0, 1};
     _hudCamera.Init();
     _hudCamera.Update();
+    _hudCamera.GetRubyWrapper();
   }
 
   void InitWMHandlers()
@@ -105,7 +96,8 @@ public:
       if (rect.right - rect.left < minwidth)
       {
         // Squarify while resizing from right
-        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT)
+        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
+            wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
         {
           rect.right = rect.left + minwidth;
           res = TRUE;
@@ -149,15 +141,8 @@ public:
     }
   }
 
-  void OnDraw(Events::EventMessage& e)
-  {
-    RenderGroup::Instance.Draw(e);
-  }
-
   void OnFree() override
   {
-    EntityFactory::DestroyEntity(_testEntity);
-
     delete _console;
   }
 
@@ -173,9 +158,6 @@ public:
 
 private:
   HUDCamera _hudCamera;
-
-  Entity *_testEntity;
-
   GameConsole *_console = nullptr;
 };
 

@@ -7,6 +7,7 @@
 #include "Common.h"
 #include "Game.h"
 #include "Level.h"
+#include "LevelDef.h"
 
 #include "mruby/debug.h"
 #include "mruby/variable.h"
@@ -64,6 +65,15 @@ void Game::Run()
 
       // Update
       _gameTime.Update();
+
+      if (!levelChangeContext.loaded)
+      {
+        if (_currentLevel)
+          Level::DestroyLevel(_currentLevel);
+
+        _currentLevel = Level::CreateLevel(levelChangeContext.name);
+        levelChangeContext.loaded = true;
+      }
 
       // Raise update event
       {

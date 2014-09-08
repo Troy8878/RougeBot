@@ -2,8 +2,11 @@
 # SpinnyThingComponent.rb
 # Connor Hilarides
 # Created 2014/08/25
+#######################
 
 class SpinnyThingComponent < ComponentBase
+  attr_accessor :speed
+
   def initialize(data)
     super data
 

@@ -154,7 +154,7 @@ void Entity::RecalculateEventCounts()
 entity_id Entity::CreateEntityId()
 {
   THREAD_EXCLUSIVE_SCOPE;
-  return ++next_ent_id;
+  return next_ent_id++;
 }
 
 // ----------------------------------------------------------------------------
@@ -339,7 +339,7 @@ static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 
   auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
   auto *comp = entity->GetComponent(comp_name);
-  return comp->GetRubyWrapper();
+  return comp ? comp->GetRubyWrapper() : mrb_nil_value();
 }
 
 // ----------------------------------------------------------------------------
@@ -365,7 +365,7 @@ static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
   else
   {
     auto typeerror = mrb_class_get(mrb, "TypeError");
-    mrb_raisef(mrb, typeerror, "identifier parameter (%S) must be String or Fixnum");
+    mrb_raisef(mrb, typeerror, "identifier parameter (%S) must be String or Fixnum", identifier);
   }
 
   return mrb_nil_value();

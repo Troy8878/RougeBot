@@ -9,6 +9,12 @@
 #include "mruby.h"
 
 #ifdef __cplusplus
+#include <regex>
+
+std::regex& mrb_regexp_cppregex(mrb_state *mrb, mrb_value regexp);
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 

@@ -266,3 +266,13 @@ static mrb_value mrb_regexp_casefold(mrb_state *mrb, mrb_value self)
 }
 
 // ----------------------------------------------------------------------------
+
+std::regex& mrb_regexp_cppregex(mrb_state *mrb, mrb_value regexp)
+{
+  static mrb_sym regex_sym = mrb_intern_lit(mrb, STDREGEX_IV_NAME);
+
+  auto regexp_v = mrb_iv_get(mrb, regexp, regex_sym);
+  return *(std::regex *) mrb_data_get_ptr(mrb, regexp_v, &mrb_regex_data);
+}
+
+// ----------------------------------------------------------------------------

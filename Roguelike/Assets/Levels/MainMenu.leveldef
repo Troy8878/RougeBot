@@ -31,7 +31,7 @@
           "render_target": "global_hud"
         },
         "TransformComponent": {
-          "position": [0.5, 0, 0, 1],
+          "position": [0.3, 0, 0, 1],
           "rotation": [0, 0, 0, 0],
           "scale": [0.4, 0.4, 0.4, 1]
         },
@@ -41,19 +41,36 @@
       },
       "children": [
         {
-          "name": "pancake child",
+          "name": "pancake one child one",
           "archetype": "PancakeFace",
           "components": {
             "SpriteComponent": {
               "render_target": "global_hud"
             },
             "TransformComponent": {
-              "position": [0, 0, 0.5, 1],
+              "position": [0, 1, 0.5, 1],
               "rotation": [0, 0, 0, 0],
               "scale": [0.4, 0.4, 0.4, 1]
             },
             "SpinnyThingComponent": {
-              "speed": 10
+              "speed": -2
+            }
+          }
+        },
+        {
+          "name": "pancake one child two",
+          "archetype": "PancakeFace",
+          "components": {
+            "SpriteComponent": {
+              "render_target": "global_hud"
+            },
+            "TransformComponent": {
+              "position": [0, -1, 0.5, 1],
+              "rotation": [0, 0, 0, 0],
+              "scale": [0.4, 0.4, 0.4, 1]
+            },
+            "SpinnyThingComponent": {
+              "speed": -2
             }
           }
         }
@@ -67,14 +84,50 @@
           "render_target": "global_hud"
         },
         "TransformComponent": {
-          "position": [-0.5, 0, 0, 1],
+          "position": [-0.3, 0, 0, 1],
           "rotation": [0, 0, 0, 0],
           "scale": [0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {
-          "speed": 1
+          "speed": -1
         }
-      }
+      },
+      "children": [
+        {
+          "name": "pancake two child one",
+          "archetype": "PancakeFace",
+          "components": {
+            "SpriteComponent": {
+              "render_target": "global_hud"
+            },
+            "TransformComponent": {
+              "position": [0, 1, 0.5, 1],
+              "rotation": [0, 0, 0, 0],
+              "scale": [0.4, 0.4, 0.4, 1]
+            },
+            "SpinnyThingComponent": {
+              "speed": 2
+            }
+          }
+        },
+        {
+          "name": "pancake two child two",
+          "archetype": "PancakeFace",
+          "components": {
+            "SpriteComponent": {
+              "render_target": "global_hud"
+            },
+            "TransformComponent": {
+              "position": [0, -1, 0.5, 1],
+              "rotation": [0, 0, 0, 0],
+              "scale": [0.4, 0.4, 0.4, 1]
+            },
+            "SpinnyThingComponent": {
+              "speed": 2
+            }
+          }
+        }
+      ]
     }
   ]
 }

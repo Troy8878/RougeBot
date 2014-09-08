@@ -39,7 +39,7 @@ public:
   size_t TextureIndex;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
   
-  ruby::ruby_value GetRubyWrapper() override;
+  mrb_value GetRubyWrapper() override;
 
   // Component factory to make sprite component
   static SpriteComponentFactory factory;
@@ -62,7 +62,6 @@ public:
   SpriteComponentFactory();
 
   Component *CreateObject(void *memory, component_factory_data& data) override;
-
   IAllocator *_GetAllocator() override { return &allocator; }
 
 private:

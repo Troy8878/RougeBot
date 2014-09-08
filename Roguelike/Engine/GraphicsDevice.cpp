@@ -299,7 +299,7 @@ void GraphicsDevice::InitializeD3DContext()
   depthBufferDesc.Height = static_cast<UINT>(contextSize.y);
   depthBufferDesc.MipLevels = 1;
   depthBufferDesc.ArraySize = 1;
-  depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  depthBufferDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
   depthBufferDesc.SampleDesc.Count = 1;
   depthBufferDesc.SampleDesc.Quality = 0;
   depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -316,16 +316,20 @@ void GraphicsDevice::InitializeD3DContext()
 
   D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
   ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
   depthStencilDesc.DepthEnable = TRUE;
   depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  depthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
   depthStencilDesc.StencilEnable = TRUE;
   depthStencilDesc.StencilReadMask = 0xFF;
   depthStencilDesc.StencilWriteMask = 0xFF;
+
   depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
   depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
   depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
   depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
   depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
   depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
   depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
@@ -342,7 +346,7 @@ void GraphicsDevice::InitializeD3DContext()
 
   D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
   ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
-  depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+  depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
   depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
   depthStencilViewDesc.Texture2D.MipSlice = 0;
 

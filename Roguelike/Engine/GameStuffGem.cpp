@@ -119,7 +119,7 @@ extern "C" void load_gamestuff_files(mrb_state *mrb)
 
 static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
 {
-  return GetGame()->CurrentLevel->RootEntity->GetRubyWrapper().silent_reset();
+  return GetGame()->CurrentLevel->RootEntity->RubyWrapper;
 }
 
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)

@@ -1,6 +1,6 @@
 /*********************************
  * Entity.cpp
- * Jake Robsahm
+ * Jake Robsahm, Connor Hilarides
  * Created 2014/08/11
  *********************************/
 
@@ -10,8 +10,12 @@
 #include "mruby/variable.h"
 #include "mruby/string.h"
 #include "mruby/class.h"
+#include "mruby/array.h"
+#include "mruby/gems/regexp.h"
 
 #include "json/json.h"
+
+#include <sstream>
 
 // ----------------------------------------------------------------------------
 
@@ -71,7 +75,8 @@ void Entity::RemoveComponent(const std::string& name)
 
 Component *Entity::GetComponent(const std::string& name)
 {
-  return _components.find(name)->second;
+  auto it = _components.find(name);
+  return it != _components.end() ? it->second : nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -135,8 +140,9 @@ void Entity::AddChild(Entity *entity)
   if (entity->Parent)
   {
     entity->Parent->RemoveChild(entity);
-    entity->Parent = this;
   }
+
+  entity->Parent = this;
 
   children.push_back(entity);
   childDispatcher.AddListener(entity);
@@ -192,7 +198,7 @@ Entity *Entity::FindEntity(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void Entity::SearchEntities(std::vector<Entity *> results,
+void Entity::SearchEntities(std::vector<Entity *>& results,
                             const std::string& namePattern,
                             bool partialMatch)
 {
@@ -219,10 +225,10 @@ void Entity::SearchEntities(std::vector<Entity *> results,
 
 // ----------------------------------------------------------------------------
 
-void Entity::SearchEntities(std::vector<Entity *> results, 
+void Entity::SearchEntities(std::vector<Entity *>& results, 
                             const std::regex& namePattern)
 {
-  if (std::regex_match(Name, namePattern))
+  if (std::regex_search(Name, namePattern))
     results.push_back(this);
 
   for (auto child : children)
@@ -243,19 +249,24 @@ void Entity::DestroyChildren()
 
 // ----------------------------------------------------------------------------
 
-ruby::ruby_value Entity::GetRubyWrapper()
+mrb_value Entity::GetRubyWrapper()
 {
-  static auto rclass = GetWrapperRClass();
-
-  if (rwrapper.is_nil())
-  {
-    auto mrb = ruby::ruby_engine::global_engine;
-    auto rclass = GetWrapperRClass();
-    rwrapper = rclass.new_inst(mrb->wrap_native_ptr(this));
-    mrb->log_and_clear_error();
-  }
+  auto mrb = ruby::ruby_engine::global_engine;
+  auto rclass = GetWrapperRClass();
+  auto wrapper = rclass.new_inst(mrb->wrap_native_ptr(this)).silent_reset();
+  mrb->log_and_clear_error();
   
-  return rwrapper;
+  return wrapper;
+}
+
+// ----------------------------------------------------------------------------
+
+static Entity *rb_ent_get_internal(mrb_state *mrb, mrb_value self)
+{
+  ruby::ruby_engine engine{mrb};
+  static auto ent_ptr_sym = mrb_intern_cstr(mrb, "ent_ptr_v");
+  auto ent_ptr_v = mrb_iv_get(mrb, self, ent_ptr_sym);
+  return (Entity *) engine.unwrap_native_ptr(ent_ptr_v);
 }
 
 // ----------------------------------------------------------------------------
@@ -265,10 +276,25 @@ static mrb_value rb_ent_initialize(mrb_state *mrb, mrb_value self)
   mrb_value ent_ptr_v;
   mrb_get_args(mrb, "o", &ent_ptr_v);
 
-  static auto ent_ptr_sym = mrb_intern_cstr(mrb, "ent_ptr_v");
-  mrb_iv_set(mrb, self, ent_ptr_sym, ent_ptr_v);
+  ruby::save_native_ptr(mrb, self, mrb_cptr(ent_ptr_v));
 
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_id(mrb_state *mrb, mrb_value self)
+{
+  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  return mrb_fixnum_value((mrb_int) entity->Id);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_name(mrb_state *mrb, mrb_value self)
+{
+  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  return mrb_str_new_cstr(mrb, entity->Name.c_str());
 }
 
 // ----------------------------------------------------------------------------
@@ -282,13 +308,137 @@ static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 
   std::string comp_name = mrb_string_value_cstr(mrb, &comp_name_v);
 
-  static auto ent_ptr_sym = mrb_intern_cstr(mrb, "ent_ptr_v");
-  auto ent_ptr_v = mrb_iv_get(mrb, self, ent_ptr_sym);
-  auto *entity = (Entity *) engine.unwrap_native_ptr(ent_ptr_v);
-
+  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
   auto *comp = entity->GetComponent(comp_name);
+  return comp->GetRubyWrapper();
+}
 
-  return comp->GetRubyWrapper().silent_reset();
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
+{
+  mrb_value identifier;
+  mrb_get_args(mrb, "o", &identifier);
+  
+  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  if (mrb_string_p(identifier))
+  {
+    auto entity = parent->FindEntity(mrb_str_to_stdstring(identifier));
+    if (entity)
+      return entity->RubyWrapper;
+  }
+  else if (mrb_fixnum_p(identifier))
+  {
+    auto entity = parent->FindEntity((entity_id) mrb_fixnum(identifier));
+    if (entity)
+      return entity->RubyWrapper;
+  }
+  else
+  {
+    auto typeerror = mrb_class_get(mrb, "TypeError");
+    mrb_raisef(mrb, typeerror, "identifier parameter (%S) must be String or Fixnum");
+  }
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_search_entities(mrb_state *mrb, mrb_value self)
+{
+  mrb_value pattern;
+  mrb_bool partial = true;
+  mrb_get_args(mrb, "o|b", &pattern, &partial);
+
+  std::vector<Entity *> resvect;
+
+  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  
+  if (mrb_string_p(pattern))
+  {
+    parent->SearchEntities(resvect, mrb_str_to_stdstring(pattern), !!partial);
+  }
+  else
+  {
+    auto& regexp = mrb_regexp_cppregex(mrb, pattern);
+    parent->SearchEntities(resvect, regexp);
+  }
+
+  auto results = mrb_ary_new(mrb);
+  for (auto entity : resvect)
+  {
+    mrb_ary_push(mrb, results, entity->RubyWrapper);
+  }
+  return results;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_children(mrb_state *mrb, mrb_value self)
+{
+  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto results = mrb_ary_new(mrb);
+  for (auto child : parent->Children)
+  {
+    mrb_ary_push(mrb, results, child->RubyWrapper);
+  }
+  return results;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self)
+{
+  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto results = mrb_hash_new(mrb);
+  for (auto& component : entity->_components)
+  {
+    auto key = mrb_str_new_cstr(mrb, component.first.c_str());
+    auto value = component.second->GetRubyWrapper();
+
+    mrb_hash_set(mrb, results, key, value);
+  }
+
+  return results;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self)
+{
+  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  std::ostringstream inspection;
+
+  // Begin
+  inspection << "#<Entity:";
+
+  // Entity address
+  inspection << "0x" << std::hex << reinterpret_cast<LONG_PTR>(entity) << std::dec;
+
+  // ID
+  inspection << ", id=" << entity->Id;
+
+  // Name
+  inspection << ", name=" << entity->Name;
+
+  // Components
+  inspection << ", components=[";
+  bool first = true;
+  for (auto& component : entity->_components)
+  {
+    if (!first)
+      inspection << ",";
+    else
+      first = false;
+
+    inspection << component.first;
+  }
+  inspection << "]";
+
+  // End
+  inspection << ">";
+
+  return mrb_str_new_cstr(mrb, inspection.str().c_str());
 }
 
 // ----------------------------------------------------------------------------
@@ -305,12 +455,19 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass = ruby_engine::global_engine->define_class("GameEntity");
 
   // TODO: Create class
-  rclass.define_method("initialize",
-                       rb_ent_initialize,
-                       ARGS_REQ(1));
-  rclass.define_method("get_component",
-                       rb_ent_get_component,
-                       ARGS_REQ(1));
+  rclass.define_method("initialize", rb_ent_initialize, ARGS_REQ(1));
+
+  rclass.define_method("id", rb_ent_id, ARGS_NONE());
+  rclass.define_method("name", rb_ent_name, ARGS_NONE());
+
+  rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
+  rclass.define_method("find_entity", rb_ent_find_entity, ARGS_REQ(1));
+  rclass.define_method("search_entities", rb_ent_search_entities, MRB_ARGS_ARG(1, 1));
+
+  rclass.define_method("children", rb_ent_children, ARGS_NONE());
+  rclass.define_method("components", rb_ent_components, ARGS_NONE());
+
+  rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
   
   return rclass;
 }

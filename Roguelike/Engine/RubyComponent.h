@@ -27,6 +27,8 @@ public:
   void AddEventHandler(event_id event, mrb_sym handler);
   void RemoveEventHandler(event_id event);
 
+  mrb_value GetRubyWrapper() override { return component_inst; }
+
   static RubyComponentFactory factory;
 
 private:

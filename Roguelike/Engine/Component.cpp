@@ -14,6 +14,13 @@ ComponentManager ComponentManager::Instance;
 
 // ----------------------------------------------------------------------------
 
+Component::Component()
+  : _Owner(nullptr)
+{
+}
+
+// ----------------------------------------------------------------------------
+
 void Component::Initialize(Entity *owner, const std::string& name)
 {
   Owner = owner;

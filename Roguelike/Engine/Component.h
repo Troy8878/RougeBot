@@ -18,6 +18,7 @@ __interface IComponentFactory;
 class Component abstract
 {
 public:
+  Component();
 
   // Please call this in your implementations
   // just at the top do Component::initialize(parent)
@@ -27,7 +28,7 @@ public:
   IR_PROPERTY(Entity *, Owner);
   IR_PROPERTY(std::string, Name);
 
-  virtual ruby::ruby_value GetRubyWrapper()
+  virtual mrb_value GetRubyWrapper()
   {
     return ruby::ruby_value{};
   }

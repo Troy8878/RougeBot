@@ -34,8 +34,9 @@ public:
 
   void OnUpdate(Events::EventMessage&);
   void UpdateMatrix();
+  void ApplyParentTransforms();
 
-  ruby::ruby_value GetRubyWrapper() override;
+  mrb_value GetRubyWrapper() override;
 
   static TransformComponentFactory factory;
 

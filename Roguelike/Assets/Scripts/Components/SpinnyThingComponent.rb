@@ -5,6 +5,8 @@
 #######################
 
 class SpinnyThingComponent < ComponentBase
+  attr_accessor :speed
+
   def initialize(data)
     super data
 

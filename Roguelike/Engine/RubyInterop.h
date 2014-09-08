@@ -11,6 +11,7 @@
 #include "mruby/hash.h"
 #include "mruby/value.h"
 #include "mruby/variable.h"
+#include "mruby/string.h"
 
 #include <string>
 
@@ -338,6 +339,13 @@ namespace ruby
 // ----------------------------------------------------------------------------
 
 mrb_value mrb_nop(mrb_state *, mrb_value);
+
+// ----------------------------------------------------------------------------
+
+inline std::string mrb_str_to_stdstring(mrb_value str)
+{
+  return std::string{RSTRING_PTR(str), RSTRING_PTR(str) + RSTRING_LEN(str)};
+}
 
 // ----------------------------------------------------------------------------
 

@@ -58,6 +58,32 @@ void TransformComponent::UpdateMatrix()
   Matrix = XMMatrixScalingFromVector(Scale.get()) *
            XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
            XMMatrixTranslationFromVector(Position.get());
+
+  ApplyParentTransforms();
+}
+
+// ----------------------------------------------------------------------------
+
+void TransformComponent::ApplyParentTransforms()
+{
+  if (!Owner)
+    return;
+
+  auto entity = Owner->Parent;
+  auto mat = Matrix.get();
+
+  while (entity)
+  {
+    auto transform = (TransformComponent *) entity->GetComponent("TransformComponent");
+    if (transform)
+    {
+      mat = mat * transform->Matrix.get();
+    }
+
+    entity = entity->Parent;
+  }
+
+  Matrix = mat;
 }
 
 // ----------------------------------------------------------------------------
@@ -203,7 +229,7 @@ static mrb_value rb_transform_set_static(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-ruby::ruby_value TransformComponent::GetRubyWrapper()
+mrb_value TransformComponent::GetRubyWrapper()
 {
   THREAD_EXCLUSIVE_SCOPE;
 

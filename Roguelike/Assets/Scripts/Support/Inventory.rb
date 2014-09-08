@@ -48,7 +48,7 @@ class Inventory
     # If there was no open slot, check if we have room left
     if insert_index == -1 && @inventory.count < INVENTORY_CAPACITY
       insert_index = @inventory.count
-      insert_index << nil
+      @inventory << nil
     end
 
     # No room in the inventory

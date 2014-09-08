@@ -20,7 +20,7 @@ class AttackComponent < ComponentBase
     @damage = [0,0]
   end
 
-  def equip_item(item)
+  def equip_weapon(item)
     @item = item
     @attack = item.attack
     @damage = item.damage

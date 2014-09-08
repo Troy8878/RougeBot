@@ -32,7 +32,7 @@
         },
         "TransformComponent": {
           "position": [0.3, 0, 0, 1],
-          "rotation": [0, 1, 0, 0],
+          "rotation": [0, 0, 0, 0],
           "scale": [0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {
@@ -85,7 +85,7 @@
         },
         "TransformComponent": {
           "position": [-0.3, 0, 0, 1],
-          "rotation": [0, -1, 0, 0],
+          "rotation": [0, 0, 0, 0],
           "scale": [-0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {

@@ -19,11 +19,12 @@ class PlayerControllerComponent < ComponentBase
   def initialize(data)
     super data
 
-    #Base player stats. These might be moved to other
-    #components later.
+    # Base player stats. These might be moved to other
+    # components later.
     @health = data.fetch("health", 10).to_i
     @speed = data.fetch("speed", 1).to_f
-    @inventory = Inventory.new
+
+    @@inventory ||= Inventory.new
 
   end
 

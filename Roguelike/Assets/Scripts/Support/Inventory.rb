@@ -16,11 +16,48 @@ class Inventory
   # Constant array containing all valid equipment slots.
   EQUIPMENT_SLOTS = [:weapon, :chest, :shield]
 
+  INVENTORY_CAPACITY = 30
+
   def initialize
 
     @inventory = []
     @equipment = {}
 
+  end
+
+  # Function to check if there is room in the inventory
+  def room_in_inventory
+    (1..INVENTORY_CAPACITY).each do |i|
+      return true if @inventory[i - 1].nil?
+    end
+
+    return false
+  end
+
+  # Function to add items to the inventory.
+  def pickup(item)
+    # Scan over the array for the first open slot
+    insert_index = -1
+    @inventory.each_with_index do |item, index|
+      if item.nil?
+        insert_index = index
+        break
+      end
+    end
+
+    # If there was no open slot, check if we have room left
+    if insert_index == -1 && @inventory.count < INVENTORY_CAPACITY
+      insert_index = @inventory.count
+      insert_index << nil
+    end
+
+    # No room in the inventory
+    if insert_index == -1
+      raise "Inventory full"
+    end
+
+    # Insert the item into the inventory.
+    @inventory[insert_index] = item
   end
 
   # Function to equip an item/add it to the equipment hash map
@@ -52,6 +89,5 @@ class Inventory
 
     # Insert the item into the equipment at the appropriate slot
     @equipment[item.equip_slot] = item
-
   end
 end

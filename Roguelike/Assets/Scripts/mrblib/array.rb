@@ -208,3 +208,11 @@ class Array
     self.replace(self.sort(&block))
   end
 end
+
+##
+# Other Array helpers
+class Array
+  def count
+    self.size
+  end
+end

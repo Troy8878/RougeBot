@@ -11,6 +11,15 @@
 
 // ----------------------------------------------------------------------------
 
+GraphicsDevice::GraphicsDevice()
+  : _DepthStencilBuffer(nullptr),
+    _DepthStencilState(nullptr),
+    _DepthStencilView(nullptr)
+{
+}
+
+// ----------------------------------------------------------------------------
+
 GraphicsDevice::~GraphicsDevice()
 {
   FreeD3DContext();
@@ -153,6 +162,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
       return;
   }
 
+  _size = size;
+
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
   ReleaseDXInterface(RenderTargetView);
@@ -169,7 +180,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   hr = Device->CreateRenderTargetView(pBuffer, nullptr, &RenderTargetView);
   ReleaseDXInterface(pBuffer);
 
-  DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
+  InitializeDepthBuffer();
 
   D3D11_VIEWPORT vp;
   vp.Width = size.x;
@@ -179,8 +190,6 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
-
-  _size = size;
 }
 
 // ----------------------------------------------------------------------------
@@ -232,7 +241,7 @@ void GraphicsDevice::InitializeD3DContext()
   auto _window = GetContextWindow();
   CHECK_HRESULT(GetLastError());
 
-#pragma region Initialize Swap Chain
+  #pragma region Initialize Swap Chain
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
@@ -248,9 +257,9 @@ void GraphicsDevice::InitializeD3DContext()
   sd.SampleDesc.Quality = 0;
   sd.Windowed = TRUE;
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Create Device and Swap Chain
+  #pragma region Create Device and Swap Chain
 
   D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
   {
@@ -289,14 +298,85 @@ void GraphicsDevice::InitializeD3DContext()
 
   ReleaseDXInterface(backBuffer);
 
-#pragma endregion
+  #pragma endregion
+
+  InitializeDepthBuffer();
+
+  #pragma region Rasterizer
+
+  D3D11_RASTERIZER_DESC rasterDesc;
+  rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
+  rasterDesc.DepthBias = 0;
+  rasterDesc.DepthBiasClamp = 0.0f;
+  rasterDesc.DepthClipEnable = false;
+  rasterDesc.FillMode = D3D11_FILL_SOLID;
+  rasterDesc.FrontCounterClockwise = false;
+  rasterDesc.MultisampleEnable = false;
+  rasterDesc.ScissorEnable = false;
+  rasterDesc.SlopeScaledDepthBias = 0.0f;
+  rasterDesc.AntialiasedLineEnable = true;
+
+  hr = Device->CreateRasterizerState(&rasterDesc, &RasterState);
+  CHECK_HRESULT(hr);
+
+  DeviceContext->RSSetState(RasterState);
+
+  #pragma endregion
+
+  #pragma region Viewport
+
+  D3D11_VIEWPORT viewport;
+  viewport.Width = contextSize.x;
+  viewport.Height = contextSize.y;
+  viewport.MinDepth = 0.0f;
+  viewport.MaxDepth = 1.0f;
+  viewport.TopLeftX = 0.0f;
+  viewport.TopLeftY = 0.0f;
+
+  DeviceContext->RSSetViewports(1, &viewport);
+
+  #pragma endregion
+
+  #pragma region Blend State
+
+  D3D11_BLEND_DESC blendStateDesc;
+  ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
+  blendStateDesc.AlphaToCoverageEnable = TRUE;
+  blendStateDesc.IndependentBlendEnable = FALSE;
+  blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+  blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+  blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+  blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+  blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+  blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+  blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+  blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+  HRESULT result = Device->CreateBlendState(&blendStateDesc, &BlendState);
+  CHECK_HRESULT(result);
+
+  DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
+
+  #pragma endregion
+
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::InitializeDepthBuffer()
+{
+  HRESULT hr;
+
+  ReleaseDXInterface(DepthStencilBuffer);
+  ReleaseDXInterface(DepthStencilState);
+  ReleaseDXInterface(DepthStencilView);
 
 #pragma region Depth Stencil Buffer
 
   D3D11_TEXTURE2D_DESC depthBufferDesc;
   ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-  depthBufferDesc.Width = static_cast<UINT>(contextSize.x);
-  depthBufferDesc.Height = static_cast<UINT>(contextSize.y);
+  depthBufferDesc.Width = static_cast<UINT>(GetSize().x);
+  depthBufferDesc.Height = static_cast<UINT>(GetSize().y);
   depthBufferDesc.MipLevels = 1;
   depthBufferDesc.ArraySize = 1;
   depthBufferDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
@@ -357,62 +437,6 @@ void GraphicsDevice::InitializeD3DContext()
 
 #pragma endregion
 
-#pragma region Rasterizer
-
-  D3D11_RASTERIZER_DESC rasterDesc;
-  rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
-  rasterDesc.DepthBias = 0;
-  rasterDesc.DepthBiasClamp = 0.0f;
-  rasterDesc.DepthClipEnable = false;
-  rasterDesc.FillMode = D3D11_FILL_SOLID;
-  rasterDesc.FrontCounterClockwise = false;
-  rasterDesc.MultisampleEnable = false;
-  rasterDesc.ScissorEnable = false;
-  rasterDesc.SlopeScaledDepthBias = 0.0f;
-  rasterDesc.AntialiasedLineEnable = true;
-
-  hr = Device->CreateRasterizerState(&rasterDesc, &RasterState);
-  CHECK_HRESULT(hr);
-
-  DeviceContext->RSSetState(RasterState);
-
-#pragma endregion
-
-#pragma region Viewport
-
-  D3D11_VIEWPORT viewport;
-  viewport.Width = contextSize.x;
-  viewport.Height = contextSize.y;
-  viewport.MinDepth = 0.0f;
-  viewport.MaxDepth = 1.0f;
-  viewport.TopLeftX = 0.0f;
-  viewport.TopLeftY = 0.0f;
-
-  DeviceContext->RSSetViewports(1, &viewport);
-
-#pragma endregion
-
-#pragma region Blend State
-
-  D3D11_BLEND_DESC blendStateDesc;
-  ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
-  blendStateDesc.AlphaToCoverageEnable = TRUE;
-  blendStateDesc.IndependentBlendEnable = FALSE;
-  blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
-  blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-  blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-  blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-  blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-  blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-  blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-  blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-  HRESULT result = Device->CreateBlendState(&blendStateDesc, &BlendState);
-  CHECK_HRESULT(result);
-
-  DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
-
-#pragma endregion
 }
 
 // ----------------------------------------------------------------------------

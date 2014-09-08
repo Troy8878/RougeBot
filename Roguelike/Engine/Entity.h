@@ -120,6 +120,8 @@ public:
     AddEvent(component, id, static_cast<component_handler>(handler));
   }
 
+  void RecalculateEventCounts();
+
   #pragma endregion
 
   #pragma region Children and Parents
@@ -171,7 +173,6 @@ private:
   void DestroyChildren();
 
   std::vector<Entity *> children;
-  Events::BasicEventDispatcher childDispatcher;
 
   #pragma endregion
 
@@ -189,6 +190,8 @@ protected:
     on the event id for fast lookup ;)
   */
   std::unordered_map<event_id, event_registrations> _events;
+
+  std::unordered_map<event_id, size_t> _eventCounts;
 
   #pragma endregion
 

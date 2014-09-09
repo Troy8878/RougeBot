@@ -48,7 +48,10 @@ end
 #################################################################
 repo_dir = "#{Dir.pwd}/Roguelike/"
 code_dirs = [
-  "Assets/Scripts/Components",
+  "Assets/Scripts/Components/",
+  "Assets/Scripts/Support/",
+  "Assets/Scripts/Support/Helpers/",
+  "Assets/Scripts/Support/Items/",
   "Engine/", 
   "Game/", 
   "Helpers/",
@@ -97,7 +100,13 @@ def find_authors(filename)
 
   # It's on line 3
   authors = file.lines[2].match(pattern)[:authors]
-  return authors.split(',').map{|author| author.strip.downcase }
+  authors = authors.split(',').map{|author| author.strip.downcase }
+
+  if authors.empty?
+    puts "No authors found for #{filename}"
+  end
+
+  return authors
 end
 
 # initialize the LOC to no authors

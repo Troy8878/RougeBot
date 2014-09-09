@@ -563,6 +563,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
 
 void EntityFactory::DestroyEntity(Entity *entity)
 {
+  // Let it be known that this thing is gone
   {
     static Events::EventId recieverDestroyedId("event_reciever_destroyed");
     Events::EventRecieverDestroyedEvent data{entity};
@@ -574,4 +575,5 @@ void EntityFactory::DestroyEntity(Entity *entity)
 }
 
 // ----------------------------------------------------------------------------
+
 

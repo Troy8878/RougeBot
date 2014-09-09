@@ -32,6 +32,7 @@ public:
 
   void Initialize(Entity *owner, const std::string& name) override;
   void Draw() override;
+  void OnSetDestroyed() override { renderTarget = nullptr; }
 
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);

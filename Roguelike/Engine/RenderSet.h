@@ -23,6 +23,7 @@ struct ICamera;
 __interface Drawable
 {
   void Draw();
+  void OnSetDestroyed();
 };
 
 // ----------------------------------------------------------------------------
@@ -61,6 +62,8 @@ public:
   
 private:
   std::vector<DrawablePair> drawables;
+
+  friend class RenderGroup;
 };
 
 // ----------------------------------------------------------------------------

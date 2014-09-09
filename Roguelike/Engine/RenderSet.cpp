@@ -93,7 +93,13 @@ RenderSet *RenderGroup::CreateSet(const std::string& name, ICamera *camera,
 
 void RenderGroup::RemoveSet(const std::string& name)
 {
-  delete sets[name].first;
+  auto set = sets[name].first;
+  for (auto& drawable : set->drawables)
+  {
+    drawable.drawable->OnSetDestroyed();
+  }
+
+  delete set;
   sets.erase(name);
 
   UpdatePriorities();

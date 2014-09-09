@@ -113,7 +113,9 @@ struct HUDCamera : ICamera
 
 // ----------------------------------------------------------------------------
 
-struct MultiCam
+#pragma warning (disable : 4324) // I know it added that padding :U
+
+__declspec(align(16)) struct MultiCam
 {
   union
   {
@@ -122,13 +124,13 @@ struct MultiCam
     byte _labuffer[sizeof(LookAtCamera)];
     byte _hdbuffer[sizeof(HUDCamera)];
   };
-
   std::type_index type = typeid(ICamera);
 
   template <typename CamType>
   void SetType()
   {
-    GetCamera<CamType>()->CamType::CamType();
+    type = typeid(CamType);
+    new (GetCamera<CamType>()) CamType;
   }
   
   template <typename CamType>
@@ -138,6 +140,8 @@ struct MultiCam
     return static_cast<CamType *>(icam); 
   }
 };
+
+#pragma warning (default : 4324) // restore
 
 // ----------------------------------------------------------------------------
 

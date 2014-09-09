@@ -29,10 +29,10 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
-  MultiCam cam;
-  cam.GetCamera<HUDCamera>();
-
   IFDEBUG(createConsole());
+
+  std::cout << DirectX::XMMatrixIdentity();
+
   game.Run();
   return 0;
 }

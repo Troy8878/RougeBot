@@ -86,6 +86,7 @@ auto ComponentManager::_GetComponentRegistrations() -> component_map&
 
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
+#include "CameraComponent.h"
 
 void RegisterEngineComponents()
 {
@@ -95,6 +96,7 @@ void RegisterEngineComponents()
   // Static componnts
   RegisterStaticComponent<SpriteComponent>("SpriteComponent");
   RegisterStaticComponent<TransformComponent>("TransformComponent");
+  RegisterStaticComponent<CameraComponent>("CameraComponent");
 
   auto scriptResCont = GetGame()->Respack["Scripts"];
   RELEASE_AFTER_SCOPE(scriptResCont);

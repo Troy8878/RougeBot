@@ -101,7 +101,7 @@ bool getline_async(std::string& str,
               break;
 
             case 'P': // [DOWN]
-              if (message_index < message_list.size() - 1)
+              if (message_list.size() && message_index < message_list.size() - 1)
                 str = message_list[++message_index];
               pos = str.size();
               break;

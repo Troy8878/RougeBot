@@ -11,7 +11,7 @@ class SpinnyThingComponent < ComponentBase
     super data
 
     @speed = data.fetch("speed", 1).to_f
-    @transform = self.owner.get_component "TransformComponent"
+    @transform = self.owner.transform_component
 
     self.register_event :update, :on_update
   end

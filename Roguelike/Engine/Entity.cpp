@@ -25,7 +25,7 @@ static entity_id next_ent_id = 0;
 
 Entity::Entity(entity_id id)
   : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId()),
-    _Parent(nullptr)
+    _Parent(nullptr), _Transform(DirectX::XMMatrixIdentity())
 {
   if (_id >= next_ent_id)
     next_ent_id = _id + 1;

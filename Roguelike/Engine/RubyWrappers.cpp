@@ -75,22 +75,27 @@ namespace memvect
   }
 }
 
+static ruby::ruby_class memvect2dclass;
+
 static ruby::ruby_class create_memory_vector_class()
 {
-  auto rclass = ruby::ruby_engine::global_engine->define_class("MemoryVector");
-
+  auto rclass2D = mrb_inst->define_class("MemoryVector2D");
+  auto rclass = mrb_inst->define_class("MemoryVector", rclass2D);
+  
+  rclass2D.define_method("initialize", memvect::init, ARGS_REQ(1));
   rclass.define_method("initialize", memvect::init, ARGS_REQ(1));
 
-  rclass.define_method("x", memvect::get_x, ARGS_NONE());
-  rclass.define_method("y", memvect::get_y, ARGS_NONE());
+  rclass2D.define_method("x", memvect::get_x, ARGS_NONE());
+  rclass2D.define_method("y", memvect::get_y, ARGS_NONE());
   rclass.define_method("z", memvect::get_z, ARGS_NONE());
   rclass.define_method("w", memvect::get_w, ARGS_NONE());
-  
-  rclass.define_method("x=", memvect::set_x, ARGS_REQ(1));
-  rclass.define_method("y=", memvect::set_y, ARGS_REQ(1));
+
+  rclass2D.define_method("x=", memvect::set_x, ARGS_REQ(1));
+  rclass2D.define_method("y=", memvect::set_y, ARGS_REQ(1));
   rclass.define_method("z=", memvect::set_z, ARGS_REQ(1));
   rclass.define_method("w=", memvect::set_w, ARGS_REQ(1));
 
+  memvect2dclass = rclass2D;
   return rclass;
 }
 
@@ -98,8 +103,14 @@ mrb_value ruby::wrap_memory_vector(math::Vector *vect)
 {
   static auto rclass = create_memory_vector_class();
 
-  auto ptr = ruby::ruby_engine::global_engine->wrap_native_ptr(vect);
+  auto ptr = mrb_inst->wrap_native_ptr(vect);
   return rclass.new_inst(ptr);
+}
+
+mrb_value ruby::wrap_memory_vector(math::Vector2D *vect)
+{
+  auto ptr = mrb_inst->wrap_native_ptr(vect);
+  return memvect2dclass.new_inst(ptr);
 }
 
 // ----------------------------------------------------------------------------

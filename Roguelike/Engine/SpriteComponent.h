@@ -36,9 +36,8 @@ public:
 
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);
-  IR_PROPERTY(TransformComponent *, Transform);
-  size_t TextureIndex;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
+  size_t TextureIndex;
   
   mrb_value GetRubyWrapper() override;
 

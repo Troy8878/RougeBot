@@ -17,6 +17,7 @@ namespace ruby
 // ----------------------------------------------------------------------------
 
   mrb_value wrap_memory_vector(math::Vector *vect);
+  mrb_value wrap_memory_vector(math::Vector2D *vect);
 
 // ----------------------------------------------------------------------------
 

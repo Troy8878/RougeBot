@@ -81,28 +81,22 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
   if (type == "HUDCamera")
   {
     camera.SetType<HUDCamera>();
-    auto& hudCam = *camera.GetCamera<HUDCamera>();
-
-    static auto default_pos = "[0,0,0,1]";
-    auto jpos = json::value::parse(map_fetch(data, "position", default_pos));
-    hudCam.position = math::Vector::VectorFromJson(jpos);
-
-    static auto default_size = "[1,1]";
-    auto jsize = json::value::parse(map_fetch(data, "size", default_size));
-    hudCam.size = math::Vector::VectorFromJson(jsize).get();
   }
   else if (type == "LookAtCamera")
   {
-    //camera.SetType<LookAtCamera>();
-    //auto& laCam = *camera.GetCamera<LookAtCamera>();
-    //(laCam);
+    camera.SetType<LookAtCamera>();
+  }
+  else if (type == "Basic3DCamera")
+  {
+    //camera.SetType<Basic3DCamera>();
   }
   else
   {
     throw string_exception{"Unknown Camera(Component) Type: " + type};
   }
 
-  camera.GetCamera<ICamera>()->Init();
+  camera.Base->LoadFromData(data);
+  camera.Base->Init();
   return new (memory) CameraComponent(target_name, layer, camera);
 }
 

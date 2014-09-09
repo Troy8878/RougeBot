@@ -80,7 +80,12 @@ struct LookAtCamera : ICamera
   void Update()
   {
     using namespace DirectX;
-    viewMatrix = XMMatrixLookAtLH(position.get(), lookAt.get(), g_XMIdentityR1);
+    auto pos = position.get();
+    auto look = lookAt.get();
+    if (XMVector3Equal(look, pos))
+      look = pos + g_XMIdentityR2;
+
+    viewMatrix = XMMatrixLookAtLH(pos, look, g_XMIdentityR1);
   }
 
   void LoadFromData(const component_factory_data& data) override;
@@ -126,6 +131,8 @@ __declspec(align(16)) struct MultiCam
   };
   std::type_index type = typeid(ICamera);
 
+  __declspec(property(get = GetBase)) ICamera *Base;
+
   template <typename CamType>
   void SetType()
   {
@@ -138,6 +145,11 @@ __declspec(align(16)) struct MultiCam
   {
     auto icam = reinterpret_cast<ICamera *>(buffer);
     return static_cast<CamType *>(icam); 
+  }
+
+  ICamera *GetBase()
+  {
+    return GetCamera<ICamera>();
   }
 };
 

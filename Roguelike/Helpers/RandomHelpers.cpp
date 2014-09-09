@@ -224,7 +224,7 @@ bool getline_async(std::string& str,
     }
     else
     {
-      Sleep(1); // Give up my time slice so I'm not just wasting cycles
+      Sleep(5); // Give up my time slice so I'm not just wasting cycles
     }
   }
 }

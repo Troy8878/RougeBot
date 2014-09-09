@@ -24,7 +24,6 @@ TransformComponent::TransformComponent(
   : Position(position), Rotation(rotation),
     Scale(scale)
 {
-  UpdateMatrix();
 }
 
 // ----------------------------------------------------------------------------
@@ -55,35 +54,16 @@ void TransformComponent::UpdateMatrix()
   Rotation.y = fmod(Rotation.y, math::pi * 2);
   Rotation.z = fmod(Rotation.z, math::pi * 2);
 
-  Matrix = XMMatrixScalingFromVector(Scale.get()) *
-           XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
-           XMMatrixTranslationFromVector(Position.get());
+  // Scale, Rotate, and Translate
+  // This brings it into V^[parent space]
+  auto mat = XMMatrixScalingFromVector(Scale.get()) *
+             XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
+             XMMatrixTranslationFromVector(Position.get());
 
-  ApplyParentTransforms();
-}
+  if (Owner->Parent)
+    mat = mat * Owner->Parent->Transform.get();
 
-// ----------------------------------------------------------------------------
-
-void TransformComponent::ApplyParentTransforms()
-{
-  if (!Owner)
-    return;
-
-  auto entity = Owner->Parent;
-  auto mat = Matrix.get();
-
-  while (entity)
-  {
-    auto transform = (TransformComponent *) entity->GetComponent("TransformComponent");
-    if (transform)
-    {
-      mat = mat * transform->Matrix.get();
-    }
-
-    entity = entity->Parent;
-  }
-
-  Matrix = mat;
+  Owner->Transform = mat;
 }
 
 // ----------------------------------------------------------------------------

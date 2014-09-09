@@ -1,39 +1,24 @@
 {
   "name": "MainMenu",
-  "components": {},
+  "components": {
+    "TransformComponent": {
+      "scale": [-1,1,1,1]
+    }
+  },
   "entities": [
-    {
-      "name": "TheFaces",
-      "components": {
-        "CameraComponent": {
-          "type": "HUDCamera",
-          "target_name": "TheFaces",
-          "layer": 1,
-          "position": [0,0,1,1]
-        }
-      }
-    },
-    {
-      "name": "TheFaceChildren",
-      "components": {
-        "CameraComponent": {
-          "type": "HUDCamera",
-          "target_name": "TheFaceChildren",
-          "layer": 2,
-          "position": [0,0,1,1]
-        }
-      }
-    },
     {
       "name": "Le3DCam",
       "components": {
         "CameraComponent": {
-          "type": "HUDCamera",
+          "type": "LookAtCamera",
           "target_name": "Le3DCam",
-          "layer": 2,
-          "position": [0,0,1,1],
+          "layer": 3,
+          "position": [0,0,1.2,1],
           "look_at": [0,0,0,1],
           "fov": 45
+        },
+        "SpinnyCameraComponent": {
+          "distance": 1.2
         }
       }
     },
@@ -42,11 +27,11 @@
       "archetype": "PancakeFace",
       "components": {
         "SpriteComponent": {
-          "render_target": "TheFaces"
+          "render_target": "Le3DCam"
         },
         "TransformComponent": {
-          "position": [0.3, 0, 0, 1],
-          "rotation": [0, 0, 0, 0],
+          "position": [0.3, 0, -0.2, 1],
+          "rotation": [0, -1, 0, 0],
           "scale": [0.4, 0.4, 0.4, 1]
         },
         "SpinnyThingComponent": {
@@ -59,7 +44,7 @@
           "archetype": "PancakeFace",
           "components": {
             "SpriteComponent": {
-              "render_target": "TheFaceChildren"
+              "render_target": "Le3DCam"
             },
             "TransformComponent": {
               "position": [0, 1, 0, 1],
@@ -76,7 +61,7 @@
           "archetype": "PancakeFace",
           "components": {
             "SpriteComponent": {
-              "render_target": "TheFaceChildren"
+              "render_target": "Le3DCam"
             },
             "TransformComponent": {
               "position": [0, -1, 0, 1],
@@ -95,10 +80,10 @@
       "archetype": "PancakeFace",
       "components": {
         "SpriteComponent": {
-          "render_target": "TheFaces"
+          "render_target": "Le3DCam"
         },
         "TransformComponent": {
-          "position": [-0.3, 0, -1, 1],
+          "position": [-0.3, 0, 0, 1],
           "rotation": [0, 0, 0, 0],
           "scale": [-0.4, 0.4, 0.4, 1]
         },
@@ -112,7 +97,7 @@
           "archetype": "PancakeFace",
           "components": {
             "SpriteComponent": {
-              "render_target": "TheFaceChildren"
+              "render_target": "Le3DCam"
             },
             "TransformComponent": {
               "position": [0, 1, 0, 1],
@@ -129,7 +114,7 @@
           "archetype": "PancakeFace",
           "components": {
             "SpriteComponent": {
-              "render_target": "TheFaceChildren"
+              "render_target": "Le3DCam"
             },
             "TransformComponent": {
               "position": [0, -1, 0, 1],

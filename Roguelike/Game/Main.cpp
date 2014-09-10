@@ -30,9 +30,6 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-
-  std::cout << DirectX::XMMatrixIdentity();
-
   game.Run();
   return 0;
 }

@@ -12,7 +12,7 @@ class TestRoomComponent < ComponentBase
     [1, 1, 0, 1, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0],
     [1, 1, 0, 1, 0, 1, 1],
     [1, 1, 0, 0, 0, 1, 1],
   ]
@@ -116,6 +116,8 @@ class TestRoomComponent < ComponentBase
 
   private
   def room_get(x, y)
+    y = 6 - y # because muh upside down
+
     return 1 if x < 0 or y < 0 or y >= @@room.count
     row = @@room[y]
     return 1 if x >= row.count

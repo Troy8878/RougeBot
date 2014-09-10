@@ -2,7 +2,7 @@
   "name": "MainMenu",
   "components": {
     "TransformComponent": {
-      "scale": [-1,1,1]
+      "scale": [1,1,1]
     }
   },
   "entities": [
@@ -13,13 +13,14 @@
           "type": "LookAtCamera",
           "target_name": "Le3DCam",
           "layer": 1,
-          "position": [0, 5, 3],
+          "position": [0, 5, -5],
           "look_at": [0, 0, 0],
           "fov": 45
         },
-        "SpinnyCameraComponent": {
+        /*"SpinnyCameraComponent": {
           "distance": 3,
-        }
+          "speed": 0
+        }*/
       }
     },
     {

@@ -15,6 +15,8 @@
 ################################################################
 
 class PlayerControllerComponent < ComponentBase
+  @@inventory = Inventory.new
+
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -23,8 +25,6 @@ class PlayerControllerComponent < ComponentBase
     # components later.
     @health = data.fetch("health", 10).to_i
     @speed = data.fetch("speed", 1).to_f
-
-    @@inventory ||= Inventory.new
 
   end
 

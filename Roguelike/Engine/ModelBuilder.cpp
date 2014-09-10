@@ -50,7 +50,7 @@ void ModelBuilder::AddQuad(const TexturedVertex vertices[4])
 
   indices.push_back(vindices[0]);
   indices.push_back(vindices[1]);
-  indices.push_back(vindices[2]);
+  indices.push_back(vindices[3]);
   indices.push_back(vindices[1]);
   indices.push_back(vindices[3]);
   indices.push_back(vindices[2]);
@@ -110,6 +110,7 @@ void ModelBuilder::InitializeRubyModule(mrb_state *mrb)
 
   auto bclass = module.define_class("Builder");
   bclass.define_method("add_tri", mrb_builder_add_tri, ARGS_REQ(3));
+  bclass.define_method("add_quad", mrb_builder_add_quad, ARGS_REQ(4));
 }
 
 // ----------------------------------------------------------------------------
@@ -185,7 +186,7 @@ static mrb_value mrb_builder_add_quad(mrb_state *mrb, mrb_value self)
 
   ruby::ruby_value r_vertices[4] =
   {
-    a_vertices[0], a_vertices[1], a_vertices[2], a_vertices[4]
+    a_vertices[0], a_vertices[1], a_vertices[2], a_vertices[3]
   };
 
   TexturedVertex vertices[4];

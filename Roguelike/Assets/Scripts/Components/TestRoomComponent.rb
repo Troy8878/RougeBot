@@ -24,10 +24,6 @@ class TestRoomComponent < ComponentBase
   def initialize(data)
     super data
 
-    register_event :update, :on_update
-  end
-
-  def on_update(e)
     generate_room
   end
 
@@ -73,24 +69,18 @@ class TestRoomComponent < ComponentBase
 
   private
   def add_floor(builder, x, y)
-    builder.add_tri(
-      Vertex.new(Vector.new(x - 3.5, 0.5, y - 3.5, 1), @@white),
-      Vertex.new(Vector.new(x - 2.5, 0.5, y - 3.5, 1), @@white),
-      Vertex.new(Vector.new(x - 3.5, 0.5, y - 2.5, 1), @@white)
-    ).add_tri(
-      Vertex.new(Vector.new(x - 2.5, 0.5, y - 3.5, 1), @@white),
-      Vertex.new(Vector.new(x - 2.5, 0.5, y - 2.5, 1), @@white),
-      Vertex.new(Vector.new(x - 3.5, 0.5, y - 2.5, 1), @@white)
+    builder.add_quad(
+      Vertex.new(Vector.new(x - 3.5, 0.75, y - 3.5, 1), @@white),
+      Vertex.new(Vector.new(x - 2.5, 0.75, y - 3.5, 1), @@white),
+      Vertex.new(Vector.new(x - 2.5, 0.75, y - 2.5, 1), @@white),
+      Vertex.new(Vector.new(x - 3.5, 0.75, y - 2.5, 1), @@white)
     )
   end
 
   private
   def add_west_wall(builder, x, y)
-    builder.add_tri(
+    builder.add_quad(
       Vertex.new(Vector.new(x - 3.5, 1, y - 2.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 3.5, 1, y - 3.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 3.5, 0, y - 2.5, 1), @@blue)
-    ).add_tri(
       Vertex.new(Vector.new(x - 3.5, 1, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 3.5, 0, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 3.5, 0, y - 2.5, 1), @@blue)
@@ -99,11 +89,8 @@ class TestRoomComponent < ComponentBase
 
   private
   def add_east_wall(builder, x, y)
-    builder.add_tri(
+    builder.add_quad(
       Vertex.new(Vector.new(x - 2.5, 1, y - 2.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 2.5, 1, y - 3.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 2.5, 0, y - 2.5, 1), @@blue)
-    ).add_tri(
       Vertex.new(Vector.new(x - 2.5, 1, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 2.5, 0, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 2.5, 0, y - 2.5, 1), @@blue)
@@ -112,11 +99,8 @@ class TestRoomComponent < ComponentBase
 
   private
   def add_north_wall(builder, x, y)
-    builder.add_tri(
+    builder.add_quad(
       Vertex.new(Vector.new(x - 2.5, 1, y - 3.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 3.5, 1, y - 3.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 2.5, 0, y - 3.5, 1), @@blue)
-    ).add_tri(
       Vertex.new(Vector.new(x - 3.5, 1, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 3.5, 0, y - 3.5, 1), @@blue),
       Vertex.new(Vector.new(x - 2.5, 0, y - 3.5, 1), @@blue)
@@ -125,11 +109,8 @@ class TestRoomComponent < ComponentBase
 
   private
   def add_south_wall(builder, x, y)
-    builder.add_tri(
+    builder.add_quad(
       Vertex.new(Vector.new(x - 2.5, 1, y - 2.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 3.5, 1, y - 2.5, 1), @@blue),
-      Vertex.new(Vector.new(x - 2.5, 0, y - 2.5, 1), @@blue)
-    ).add_tri(
       Vertex.new(Vector.new(x - 3.5, 1, y - 2.5, 1), @@blue),
       Vertex.new(Vector.new(x - 3.5, 0, y - 2.5, 1), @@blue),
       Vertex.new(Vector.new(x - 2.5, 0, y - 2.5, 1), @@blue)

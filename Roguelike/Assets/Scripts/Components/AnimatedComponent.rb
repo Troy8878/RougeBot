@@ -19,7 +19,7 @@ class AnimatedComponent < ComponentBase
   def initialize(data)
     super data
 
-    @sprite = self.owner.get_component "SpriteComponent"
+    @sprite = self.owner.sprite_component
     @paused = data.fetch("paused", "false") == "true"
     @frame_time = data.fetch("frame_time", 1 / 24).to_f
     @time = 0

@@ -12,13 +12,13 @@
         "CameraComponent": {
           "type": "LookAtCamera",
           "target_name": "Le3DCam",
-          "layer": 3,
-          "position": [0, 4, 4],
+          "layer": 1,
+          "position": [0, 5, 3],
           "look_at": [0, 0, 0],
           "fov": 45
         },
         "SpinnyCameraComponent": {
-          "distance": 4,
+          "distance": 3,
         }
       }
     },
@@ -26,8 +26,7 @@
       "name": "The Room",
       "components": {
         "TransformComponent": {
-          "scale": [1, 1, 1],
-          "position": [0, 0, 0]
+          "position": [0, -0.01, 0]
         },
         "CustomModelComponent": {
           "render_target": "Le3DCam"
@@ -35,5 +34,21 @@
         "TestRoomComponent": {}
       }
     },
+    {
+      "name": "Pancake",
+      "archetype": "PancakeFace",
+      "components": {
+        "TransformComponent": {
+          "rotation": [1.57079633, 0, 0],
+          "position": [1, 0, 0]
+        },
+        "SpriteComponent": {
+          "render_target": "Le3DCam"
+        },
+        "SpinnyThingComponent": {
+          "speed": 0
+        }
+      }
+    }
   ]
 }

@@ -123,6 +123,10 @@ Component *TransformComponentFactory::CreateObject(
   else
     scale = math::Vector{1, 1, 1, 1};
 
+  position.w = 1;
+  rotation.w = 0;
+  scale.w = 1;
+
   auto comp = new (memory) TransformComponent(position, rotation, scale);
 
   return comp;

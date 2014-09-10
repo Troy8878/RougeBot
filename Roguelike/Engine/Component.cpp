@@ -87,16 +87,12 @@ auto ComponentManager::_GetComponentRegistrations() -> component_map&
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 #include "CameraComponent.h"
+#include "CustomModelComponent.h"
 
 void RegisterEngineComponents()
 {
   auto& rbengine = *ruby::ruby_engine::global_engine;
   Component::GetComponentRClass();
-
-  // Static componnts
-  RegisterStaticComponent<SpriteComponent>("SpriteComponent");
-  RegisterStaticComponent<TransformComponent>("TransformComponent");
-  RegisterStaticComponent<CameraComponent>("CameraComponent");
 
   auto scriptResCont = GetGame()->Respack["Scripts"];
   RELEASE_AFTER_SCOPE(scriptResCont);
@@ -122,6 +118,12 @@ void RegisterEngineComponents()
       rbengine.evaluate_asset(resource);
     }
   }
+
+  // Static components
+  RegisterStaticComponent<SpriteComponent>("SpriteComponent");
+  RegisterStaticComponent<TransformComponent>("TransformComponent");
+  RegisterStaticComponent<CameraComponent>("CameraComponent");
+  RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
 }
 
 // ----------------------------------------------------------------------------

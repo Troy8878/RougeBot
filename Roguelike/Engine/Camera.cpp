@@ -43,6 +43,8 @@ void HUDCamera::LoadFromData(const component_factory_data& data)
 
   position = math::Vector::VectorFromJson(jpos);
   size = math::Vector::VectorFromJson(jsize).get();
+
+  position.w = 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -64,6 +66,9 @@ void LookAtCamera::LoadFromData(const component_factory_data& data)
   position = math::Vector::VectorFromJson(jpos);
   lookAt = math::Vector::VectorFromJson(jlook);
   fieldOfView = float(jfov.as_number() * math::pi / 180.0);
+
+  position.w = 1;
+  lookAt.w = 1;
 }
 
 // ----------------------------------------------------------------------------

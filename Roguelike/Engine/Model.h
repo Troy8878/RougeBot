@@ -88,3 +88,8 @@ Model::Model(ID3D11Device *device,
 
 // ----------------------------------------------------------------------------
 
+bool operator==(const BasicVertex& v1, const BasicVertex& v2);
+bool operator==(const TexturedVertex& v1, const TexturedVertex& v2);
+
+// ----------------------------------------------------------------------------
+

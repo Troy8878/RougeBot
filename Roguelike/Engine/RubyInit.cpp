@@ -7,6 +7,7 @@
 #include "Common.h"
 
 #include "Helpers\ModuleResource.h"
+#include "ModelBuilder.h"
 
 #include "mruby.h"
 #include "mruby\compile.h"
@@ -72,6 +73,8 @@ extern "C"
 
     // Load the gamestuff that I've defined to help out
     mrb_mruby_gamestuff_gem_init(mrb);
+
+    ModelBuilder::InitializeRubyModule(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

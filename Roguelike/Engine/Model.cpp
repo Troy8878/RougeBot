@@ -8,7 +8,11 @@
 #include "Model.h"
 #include "Shader.h"
 
+// ----------------------------------------------------------------------------
+
 static BasicVertex *BasicVertexPtr;
+
+// ----------------------------------------------------------------------------
 
 Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount, 
              ID3D11Buffer *indexBuffer, UINT indexCount, UINT stride)
@@ -16,6 +20,8 @@ Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount,
                _indexBuffer(indexBuffer), _indexCount(indexCount), _stride(stride)
 {
 }
+
+// ----------------------------------------------------------------------------
 
 Model::Model(ID3D11Device *device,
              void *vertices, UINT vertexCount,
@@ -56,6 +62,8 @@ Model::Model(ID3D11Device *device,
   CHECK_HRESULT(result);
 }
 
+// ----------------------------------------------------------------------------
+
 void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
   shader->camera->worldMatrix = worldTransform;
@@ -72,4 +80,23 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
   shader->Draw(_indexCount);
 }
+
+// ----------------------------------------------------------------------------
+
+bool operator==(const BasicVertex& v1, const BasicVertex& v2);
+
+// ----------------------------------------------------------------------------
+
+bool operator==(const TexturedVertex& v1, const TexturedVertex& v2)
+{
+  using namespace DirectX;
+
+  static const XMVECTOR epsilon = XMVectorSet(0.0001f, 0.0001f, 0.0001f, 0.0001f);
+
+  return XMVector3NearEqual(v1.position, v2.position, epsilon) &&
+         XMVector3NearEqual(v1.color, v2.color, epsilon) &&
+         XMVector2NearEqual(v1.texture, v2.texture, epsilon);
+}
+
+// ----------------------------------------------------------------------------
 

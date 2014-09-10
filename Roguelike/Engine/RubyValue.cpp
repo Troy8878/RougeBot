@@ -163,6 +163,16 @@ ruby_value& ruby_value::operator=(const math::Vector& vector)
 
 // ----------------------------------------------------------------------------
 
+ruby_value& ruby_value::operator=(const math::Vector2D& vector)
+{
+  auto vclass = _engine->get_class("Vector");
+  auto vinst = vclass.new_inst(vector.x, vector.y);
+
+  return set_mrbv(vinst);
+}
+
+// ----------------------------------------------------------------------------
+
 ruby_value::operator math::Vector()
 {
   float x = (float) functions["x"].call().functions["to_f"].call();
@@ -171,6 +181,16 @@ ruby_value::operator math::Vector()
   float w = (float) functions["w"].call().functions["to_f"].call();
   
   return math::Vector{x, y, z, w};
+}
+
+// ----------------------------------------------------------------------------
+
+ruby_value::operator math::Vector2D()
+{
+  float x = (float) functions["x"].call().functions["to_f"].call();
+  float y = (float) functions["y"].call().functions["to_f"].call();
+  
+  return math::Vector2D{x, y};
 }
 
 // ----------------------------------------------------------------------------

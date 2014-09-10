@@ -162,7 +162,7 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
 
   mrb_value comp_class_v = mrb_obj_value(mrb_class(mrb, self));
@@ -173,13 +173,10 @@ static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
   mrb_value data_hash;
   mrb_get_args(mrb, "H", &data_hash);
 
-  static mrb_value 
-    comp_ptr_key = mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
+  static mrb_value comp_ptr_key = mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
+  mrb_value comp_ptr_v = mrb_hash_get(mrb, data_hash, comp_ptr_key);
 
-  mrb_value 
-    comp_ptr_v = mrb_hash_get(mrb, data_hash, comp_ptr_key);
-
-  mrb_iv_set(mrb, self, mrb_symbol(comp_ptr_key), comp_ptr_v);
+  ruby::save_native_ptr(mrb, self, mrb_cptr(comp_ptr_v));
 
   return mrb_nil_value();
 }
@@ -188,14 +185,10 @@ static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
   
-  static mrb_value comp_ptr_key = 
-    mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
-  mrb_value comp_ptr_v = mrb_iv_get(mrb, self, mrb_symbol(comp_ptr_key));
-  
-  Component *component = (Component *) mrb.unwrap_native_ptr(comp_ptr_v);
+  Component *component = ruby::read_native_ptr<Component>(mrb, self);
 
   return component->Owner->RubyWrapper;
 }
@@ -207,12 +200,7 @@ static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
   auto& mrb = *ruby::ruby_engine::global_engine;
   assert(mrb == _mrb);
   
-  static mrb_value comp_ptr_key = 
-    mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
-  mrb_value comp_ptr_v = mrb_iv_get(mrb, self, mrb_symbol(comp_ptr_key));
-  
-  RubyComponent *component = static_cast<RubyComponent *>(
-    (Component *) mrb.unwrap_native_ptr(comp_ptr_v));
+  RubyComponent *component = (RubyComponent *) ruby::read_native_ptr<Component>(mrb, self);
 
   mrb_sym event_sym, handler_sym;
   mrb_get_args(mrb, "nn", &event_sym, &handler_sym);

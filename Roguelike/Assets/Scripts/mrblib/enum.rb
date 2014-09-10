@@ -407,4 +407,14 @@ module Enumerable
     end
     h
   end
+
+  def combinations
+    raise "Block missing" unless block_given?
+
+    self.each do |y|
+      self.each do |x|
+        yield(y, x)
+      end
+    end
+  end
 end

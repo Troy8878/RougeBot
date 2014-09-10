@@ -528,13 +528,13 @@ namespace json
 
     auto object = value::object();
     auto& map = object.as_object();
-    
-    skip_ws_and_comments(input);
-    if (input.peek() == '}')
-      return input.get(), object;
 
     for (;;)
     {
+      skip_ws_and_comments(input);
+      if (input.peek() == '}')
+        return input.get(), object;
+
       auto key = parse_string(input);
       
       skip_ws_and_comments(input);
@@ -567,6 +567,10 @@ namespace json
 
     for (;;)
     {
+      skip_ws_and_comments(input);
+      if (input.peek() == ']')
+        return input.get(), array;
+
       auto value = value::parse(input);
       vector.push_back(value);
 

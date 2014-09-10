@@ -125,6 +125,8 @@ namespace ruby
     inline RClass *mrb_handle() { return _class; }
     inline operator RClass *() { return _class; }
 
+    ruby_class get_class(const char *name);
+
     void define_alias(const char *name1, const char *name2);
     void define_const(const char *name, mrb_value value);
     void define_method(const char *name, mrb_func_t func, mrb_aspec aspec);
@@ -154,6 +156,8 @@ namespace ruby
   {
   public:
     ruby_module(ruby_engine *engine, RClass *module);
+
+    ruby_module get_module(const char *name);
 
     void define_module_method(const char *name, mrb_func_t func, mrb_aspec aspec);
     
@@ -194,7 +198,9 @@ namespace ruby
 
     // Custom class conversions
     ruby_value& operator=(const math::Vector& vector);
+    ruby_value& operator=(const math::Vector2D& vector);
     operator math::Vector();
+    operator math::Vector2D();
 
     mrb_value silent_reset() 
     { 

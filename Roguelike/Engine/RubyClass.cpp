@@ -22,6 +22,13 @@ ruby_class::ruby_class(ruby_engine *engine, RClass *_class)
 
 // ----------------------------------------------------------------------------
 
+ruby_class ruby_class::get_class(const char *name)
+{
+  return ruby_class{_engine, mrb_class_get_under(*_engine, _class, name)};
+}
+
+// ----------------------------------------------------------------------------
+
 void ruby_class::define_alias(const char *name1, const char *name2)
 {
   mrb_define_alias(*_engine, _class, name1, name2);

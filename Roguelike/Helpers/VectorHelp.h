@@ -39,7 +39,7 @@ namespace math
 
     inline float *buffer() { return &x; }
 
-    inline bool operator==(const Vector& other)
+    inline bool operator==(const Vector& other) const
     {
       return 
         x == other.x &&
@@ -56,6 +56,8 @@ namespace math
 
       return math::Vector{(float)nums[0],(float)nums[1],(float)nums[2],(float)nums[3]};
     }
+
+    inline operator XMVECTOR() const { return get(); }
   };
 
   __declspec(align(16)) class Vector2D : public XMFLOAT2A
@@ -79,17 +81,19 @@ namespace math
       return *this;
     }
 
-    inline bool operator==(const Vector2D& other)
+    inline bool operator==(const Vector2D& other) const
     {
       return
         x == other.x &&
         y == other.y;
     }
 
-    inline bool operator!=(const Vector2D& other)
+    inline bool operator!=(const Vector2D& other) const
     {
       return !(*this == other);
     }
+
+    inline operator XMVECTOR() const { return get(); }
   };
 
   __declspec(align(16)) class Matrix
@@ -103,12 +107,14 @@ namespace math
       XMStoreFloat4x4A(&_value, m1);
     }
 
-    inline XMMATRIX XM_CALLCONV get() { return XMLoadFloat4x4A(&_value); }
+    inline XMMATRIX XM_CALLCONV get() const { return XMLoadFloat4x4A(&_value); }
     inline Matrix& XM_CALLCONV operator=(FXMMATRIX m1)
     {
       XMStoreFloat4x4A(&_value, m1);
       return *this;
     }
+
+    inline operator XMMATRIX() const { return get(); }
   };
 
   inline XMVECTOR XM_CALLCONV createVector(float x, float y, float z)

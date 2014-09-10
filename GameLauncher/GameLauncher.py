@@ -1,6 +1,7 @@
 import sublime, sublime_plugin
-import io
+import io, os
 import subprocess
+from threading import Thread
 
 def file_dir(file):
   parts = file.split('/')
@@ -24,6 +25,19 @@ def get_script_dir(file):
     if dir_has_run_script(file):
       return file
 
+class GameLauncher:
+  def __init__(self, dir, mode):
+    self.dir = dir
+    self.mode = mode
+
+  def run(self):
+    subprocess.call(
+      [
+        '/'.join([self.dir, 'x64', self.mode, 'Game.exe'])
+      ], 
+      cwd = self.dir
+    )
+
 class LaunchGameCommand(sublime_plugin.WindowCommand):
   def run(self, mode):
     current_file = self.window.active_view()
@@ -35,12 +49,6 @@ class LaunchGameCommand(sublime_plugin.WindowCommand):
       sublime.status_message("Run this command from a game file")
       return
 
-    subprocess.call(
-      [
-        'powershell', 
-        '-File', 
-        '/'.join([script_dir, 'launch_game.ps1']), 
-        mode
-      ], 
-      cwd = script_dir
-    )
+    launcher = GameLauncher(script_dir, mode)
+    thread = Thread(target = launcher.run)
+    thread.start()

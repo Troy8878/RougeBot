@@ -34,5 +34,5 @@ class PlayerControllerComponent < ComponentBase
   def on_update(e)
   end
 
-
+  register_component "PlayerControllerComponent"
 end

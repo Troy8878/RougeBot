@@ -8,6 +8,7 @@
 
 #include "Common.h"
 #include "RubyInterop.h"
+#include "RubyWrappers.h"
 
 #include "mruby/value.h"
 #include "mruby/string.h"
@@ -155,42 +156,32 @@ ruby_value& ruby_value::set_mrbv(const mrb_value& val)
 
 ruby_value& ruby_value::operator=(const math::Vector& vector)
 {
-  auto vclass = _engine->get_class("Vector");
-  auto vinst = vclass.new_inst(vector.x, vector.y, vector.z, vector.w);
-
-  return set_mrbv(vinst);
+  create_new_vector(vector);
+  return *this;
 }
 
 // ----------------------------------------------------------------------------
 
 ruby_value& ruby_value::operator=(const math::Vector2D& vector)
 {
-  auto vclass = _engine->get_class("Vector");
-  auto vinst = vclass.new_inst(vector.x, vector.y);
-
-  return set_mrbv(vinst);
+  create_new_vector(vector.get());
+  return *this;
 }
 
 // ----------------------------------------------------------------------------
 
 ruby_value::operator math::Vector()
 {
-  float x = (float) functions["x"].call().functions["to_f"].call();
-  float y = (float) functions["y"].call().functions["to_f"].call();
-  float z = (float) functions["z"].call().functions["to_f"].call();
-  float w = (float) functions["w"].call().functions["to_f"].call();
-  
-  return math::Vector{x, y, z, w};
+  auto vect = (math::Vector *) mrb_data_get_ptr(*_engine, *this, &mrb_vector_type);
+  return *vect;
 }
 
 // ----------------------------------------------------------------------------
 
 ruby_value::operator math::Vector2D()
 {
-  float x = (float) functions["x"].call().functions["to_f"].call();
-  float y = (float) functions["y"].call().functions["to_f"].call();
-  
-  return math::Vector2D{x, y};
+  auto vect = (math::Vector *) mrb_data_get_ptr(*_engine, *this, &mrb_vector_type);
+  return *vect;
 }
 
 // ----------------------------------------------------------------------------

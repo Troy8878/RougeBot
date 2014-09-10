@@ -24,6 +24,10 @@ class TestRoomComponent < ComponentBase
   def initialize(data)
     super data
 
+    register_event :update, :on_update
+  end
+
+  def on_update(e)
     generate_room
   end
 

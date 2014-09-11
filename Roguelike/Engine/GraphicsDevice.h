@@ -56,10 +56,16 @@ public:
   // 2D stuff
   struct D2DData
   {
-    IR_PROPERTY(ID2D1Factory2 *, Factory);
-    IR_PROPERTY(ID2D1Device1 *, Device);
-    IR_PROPERTY(ID2D1DeviceContext1 *, DeviceContext);
+    typedef std::chrono::high_resolution_clock clock;
 
+    IR_PROPERTY(ID2D1Factory1 *, Factory);
+    IR_PROPERTY(ID2D1Device *, Device);
+    IR_PROPERTY(ID2D1DeviceContext *, DeviceContext);
+    IR_PROPERTY(IDXGISurface *, BackBuffer);
+    IR_PROPERTY(ID2D1Bitmap1 *, TargetBitmap);
+    IR_PROPERTY(IDWriteFactory *, WriteFactory);
+
+    IR_PROPERTY(clock::time_point, ResourceTimestamp);
   };
   IR_PROPERTY(D2DData, D2D);
 
@@ -68,6 +74,7 @@ protected:
   void InitializeDepthBuffer();
   void InitializeD2DContext();
   void FreeDXContext();
+  void FreeD2DResources();
 
 public:
   math::Vector backgroundColor;

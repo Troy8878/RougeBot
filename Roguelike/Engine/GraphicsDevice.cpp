@@ -29,7 +29,7 @@ GraphicsDevice::~GraphicsDevice()
 
 void GraphicsDevice::FreeDXContext()
 {
-  ReleaseDXInterface(D2D.Factory);
+  FreeD2DResources();
 
   ReleaseDXInterface(BlendState);
   ReleaseDXInterface(RasterState);
@@ -40,6 +40,15 @@ void GraphicsDevice::FreeDXContext()
   ReleaseDXInterface(DeviceContext);
   ReleaseDXInterface(Device);
   ReleaseDXInterface(SwapChain);
+}
+
+void GraphicsDevice::FreeD2DResources()
+{
+  ReleaseDXInterface(D2D.TargetBitmap);
+  ReleaseDXInterface(D2D.BackBuffer);
+  ReleaseDXInterface(D2D.DeviceContext);
+  ReleaseDXInterface(D2D.Device);
+  ReleaseDXInterface(D2D.Factory);
 }
 
 // ----------------------------------------------------------------------------
@@ -171,12 +180,15 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
 
   _size = size;
 
+  // Release D2D stuff
+  FreeD2DResources();
+
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
   ReleaseDXInterface(RenderTargetView);
 
   HRESULT hr;
-  hr = SwapChain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
+  hr = SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
@@ -197,6 +209,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
+
+  InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -216,13 +230,73 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
+  D2D.DeviceContext->BeginDraw();
+
   return true;
+}
+
+// ----------------------------------------------------------------------------
+
+void TestDrawText(const GraphicsDevice::D2DData& D2D)
+{
+  HRESULT hr;
+  
+  static ID2D1SolidColorBrush *boxBrush = nullptr;
+  static ID2D1SolidColorBrush *textBrush = nullptr;
+  static IDWriteTextFormat *textFormat = nullptr;
+
+  static GraphicsDevice::D2DData::clock::time_point created;
+  if (created < D2D.ResourceTimestamp)
+  {
+    ReleaseDXInterface(textFormat);
+    ReleaseDXInterface(textBrush);
+    ReleaseDXInterface(boxBrush);
+
+    created = GraphicsDevice::D2DData::clock::now();
+
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.9f), &boxBrush);
+    CHECK_HRESULT(hr);
+
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::ForestGreen), &textBrush);
+    CHECK_HRESULT(hr);
+
+    hr = D2D.WriteFactory->
+      CreateTextFormat(L"Comic Sans MS", nullptr,
+                       DWRITE_FONT_WEIGHT_NORMAL,
+                       DWRITE_FONT_STYLE_NORMAL,
+                       DWRITE_FONT_STRETCH_NORMAL,
+                       48, L"", &textFormat);
+    CHECK_HRESULT(hr);
+
+    hr = textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    CHECK_HRESULT(hr);
+
+    hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    CHECK_HRESULT(hr);
+  }
+
+  static const WCHAR helloWorld[] = L"Hello, World!";
+
+  D2D.DeviceContext->FillRectangle(
+    D2D1::RectF(100, 100, 300, 300),
+    boxBrush);
+
+  D2D.DeviceContext->DrawText(
+    helloWorld, 
+    ARRAYSIZE(helloWorld),
+    textFormat,
+    D2D1::RectF(100, 100, 300, 300),
+    textBrush);
 }
 
 // ----------------------------------------------------------------------------
 
 void WindowDevice::EndFrame()
 {
+  TestDrawText(D2D);
+
+  D2D.DeviceContext->EndDraw();
+
   static bool vsync = GetGame()->initSettings.vsync;
   if (vsync)
   {
@@ -474,6 +548,30 @@ void GraphicsDevice::InitializeD2DContext()
 
   hr = D2D.Factory->CreateDevice(FactoryDevice, &D2D.Device);
   CHECK_HRESULT(hr);
+
+  hr = D2D.Device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2D.DeviceContext);
+  CHECK_HRESULT(hr);
+
+  D2D1_BITMAP_PROPERTIES1 bitmapProperties =
+    D2D1::BitmapProperties1(
+      D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+      D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+
+  hr = SwapChain->GetBuffer(0, IID_PPV_ARGS(&D2D.BackBuffer));
+  CHECK_HRESULT(hr);
+
+  hr = D2D.DeviceContext->CreateBitmapFromDxgiSurface(
+    D2D.BackBuffer, &bitmapProperties, &D2D.TargetBitmap);
+  CHECK_HRESULT(hr);
+
+  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
+                           __uuidof(*D2D.WriteFactory),
+                           reinterpret_cast<IUnknown **>(&D2D.WriteFactory));
+  CHECK_HRESULT(hr);
+
+  D2D.DeviceContext->SetTarget(D2D.TargetBitmap);
+
+  *&D2D.ResourceTimestamp = D2DData::clock::now();
 }
 
 // ----------------------------------------------------------------------------

@@ -41,14 +41,21 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 
 void CameraComponent::FixCameras()
 {
-  if (CameraType == typeid(HUDCamera))
+  auto newSize = GetGame()->GameDevice->GetSize();
+  if (prevSize != newSize)
   {
-    auto newSize = GetGame()->GameDevice->GetSize();
-    if (prevSize != newSize)
+    prevSize = newSize;
+      
+    if (CameraType == typeid(HUDCamera))
     {
-      prevSize = newSize;
-      auto& hcam = *MCamera.GetCamera<HUDCamera>();
-      hcam.size.x = hcam.size.y * newSize.x / newSize.y;
+        auto& hcam = *MCamera.GetCamera<HUDCamera>();
+        hcam.size.x = hcam.size.y * newSize.x / newSize.y;
+        Camera->Init();
+    }
+    else if (CameraType == typeid(LookAtCamera))
+    {
+      auto& lcam = *MCamera.GetCamera<LookAtCamera>();
+      lcam.aspectRatio = newSize.x / newSize.y;
       Camera->Init();
     }
   }

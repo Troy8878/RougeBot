@@ -17,10 +17,11 @@
           "look_at": [0, 0, 0],
           "fov": 45
         },
-        /*"SpinnyCameraComponent": {
-          "distance": 3,
-          "speed": 0
-        }*/
+        "CameraFollowComponent": {
+          "offset": [0, 2, -2],
+          "follows": "Pancake",
+          "lag": 1
+        }
       }
     },
     {
@@ -40,8 +41,9 @@
       "archetype": "PancakeFace",
       "components": {
         "TransformComponent": {
-          "rotation": [1.57079633, 0, 0],
-          "position": [1, 0, 0]
+          "rotation": [0.78539816339744, 0, 0],
+          "position": [1, 0.25, 1],
+          "scale": [0.5, 0.5]
         },
         "SpriteComponent": {
           "render_target": "Le3DCam"

@@ -28,7 +28,9 @@ static mrb_value mrb_hudcamera_set_size(mrb_state *mrb, mrb_value self);
 static ruby_class mrb_lookatcamera_class();
 static mrb_value mrb_lookatcamera_init(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_position(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_lookatcamera_position_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_look_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_lookatcamera_look_at_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_get_fov(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self);
 
@@ -194,7 +196,9 @@ static ruby::ruby_class mrb_lookatcamera_class()
   {
     lookcamera.define_method("initialize", mrb_lookatcamera_init, ARGS_REQ(1));
     lookcamera.define_method("position", mrb_lookatcamera_position, ARGS_NONE());
+    lookcamera.define_method("position=", mrb_lookatcamera_position_set, ARGS_REQ(1));
     lookcamera.define_method("look_at", mrb_lookatcamera_look_at, ARGS_NONE());
+    lookcamera.define_method("look_at=", mrb_lookatcamera_look_at_set, ARGS_REQ(1));
     lookcamera.define_method("fov", mrb_lookatcamera_get_fov, ARGS_NONE());
     lookcamera.define_method("fov=", mrb_lookatcamera_set_fov, ARGS_REQ(1));
 
@@ -221,12 +225,44 @@ static mrb_value mrb_lookatcamera_position(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_lookatcamera_position_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value vv;
+  mrb_get_args(mrb, "o", &vv);
+
+  auto v = *(math::Vector *)mrb_data_get_ptr(mrb, vv, &mrb_vector_type);
+  auto icam = read_native_ptr<ICamera>(mrb, self);
+  auto& lcam = *static_cast<LookAtCamera *>(icam);
+
+  lcam.position = v;
+
+  return vv;
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_lookatcamera_look_at(mrb_state *mrb, mrb_value self)
 {
   auto icam = read_native_ptr<ICamera>(mrb, self);
   auto& lcam = *static_cast<LookAtCamera *>(icam);
 
   return wrap_memory_vector(&lcam.lookAt);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_lookatcamera_look_at_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value vv;
+  mrb_get_args(mrb, "o", &vv);
+
+  auto v = *(math::Vector *)mrb_data_get_ptr(mrb, vv, &mrb_vector_type);
+  auto icam = read_native_ptr<ICamera>(mrb, self);
+  auto& lcam = *static_cast<LookAtCamera *>(icam);
+
+  lcam.lookAt = v;
+
+  return vv;
 }
 
 // ----------------------------------------------------------------------------

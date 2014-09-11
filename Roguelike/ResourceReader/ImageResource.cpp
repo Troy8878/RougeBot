@@ -17,7 +17,7 @@ void ImageResource::to32BitColor(byte *destination, size_t dest_size)
   switch (format)
   {
 
-    case Format::RGB:
+    case Format::BGR:
       for (size_t i = 0; i < data.size() / 3 && i < dest_size / 4; ++i)
       {
         destination[i * 4 + 0] = data[i * 3 + 0]; // R component
@@ -27,11 +27,11 @@ void ImageResource::to32BitColor(byte *destination, size_t dest_size)
       }
       break;
 
-    case Format::RGBA:
+    case Format::BGRA:
       memcpy_s(destination, dest_size, data, data.size());
       break;
 
-    case Format::BGR:
+    case Format::RGB:
       for (size_t i = 0; i < data.size() / 3 && i < dest_size / 4; ++i)
       {
         destination[i * 4 + 0] = data[i * 3 + 2]; // R component
@@ -41,7 +41,7 @@ void ImageResource::to32BitColor(byte *destination, size_t dest_size)
       }
       break;
 
-    case Format::BGRA:
+    case Format::RGBA:
       for (size_t i = 0; i < data.size() / 4 && i < dest_size / 4; ++i)
       {
         destination[i * 4 + 0] = data[i * 3 + 2]; // R component
@@ -105,14 +105,14 @@ ImageResource ImageResource::fromFile(const std::wstring& file)
 
   hr = converter->Initialize(
     source,
-    GUID_WICPixelFormat32bppRGBA,
+    GUID_WICPixelFormat32bppBGRA,
     WICBitmapDitherTypeNone,
     nullptr,
     0.f,
     WICBitmapPaletteTypeMedianCut);
   CHECK_HRESULT(hr);
   
-  image.format = Format::RGBA;
+  image.format = Format::BGRA;
 
   hr = converter->GetSize(&image.width, &image.height);
   CHECK_HRESULT(hr);

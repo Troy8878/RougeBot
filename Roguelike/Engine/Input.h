@@ -10,26 +10,49 @@
 
 // ----------------------------------------------------------------------------
 
+//  Events
+//    key_triggered
+//      Happens once when a key is pushed down
+//      type: KeyStateEvent
+//
+//    key_released
+//      Happens once when a key is released
+//      type: KeyStateEvent
+//
+//    key_held
+//      Is triggered every 0.5 seconds while a key is held down
+//      type: KeyStateEvent
+
+// ----------------------------------------------------------------------------
+
 typedef wchar_t virtual_key;
 
 // ----------------------------------------------------------------------------
 
 struct InputSignal
 {
-  virtual_key virtual_key;
-  wchar_t char_code;
-  bool down;
+  virtual_key virtual_key = 0;
+  wchar_t char_code = 0;
+  bool down = false;
 };
 
 struct KeyState : InputSignal
 {
-  double hold_time;
+  double hold_time = 0;
+  bool triggered = false;
+  bool released = false;
 
-  KeyState& operator=(const InputSignal& in) 
+  KeyState& operator=(const InputSignal& in)
   { 
     InputSignal::operator=(in); 
     return *this; 
   }
+
+private:
+  double hold_time_buffer = 0;
+  bool initialized = false;
+
+  friend class Input;
 };
 
 // ----------------------------------------------------------------------------

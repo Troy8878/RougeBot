@@ -9,6 +9,10 @@
 #include "Helpers\Exceptions.h"
 #include "Engine\Game.h"
 
+// Testing stuff, remove later
+#include "Level.h"
+#include "SpriteComponent.h"
+
 // ----------------------------------------------------------------------------
 
 GraphicsDevice::GraphicsDevice()
@@ -22,13 +26,16 @@ GraphicsDevice::GraphicsDevice()
 
 GraphicsDevice::~GraphicsDevice()
 {
-  FreeD3DContext();
+  FreeDXContext();
 }
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::FreeD3DContext()
+void GraphicsDevice::FreeDXContext()
 {
+  FreeD2DResources();
+
+  ReleaseDXInterface(BlendState);
   ReleaseDXInterface(RasterState);
   ReleaseDXInterface(DepthStencilView);
   ReleaseDXInterface(DepthStencilState);
@@ -37,6 +44,15 @@ void GraphicsDevice::FreeD3DContext()
   ReleaseDXInterface(DeviceContext);
   ReleaseDXInterface(Device);
   ReleaseDXInterface(SwapChain);
+}
+
+void GraphicsDevice::FreeD2DResources()
+{
+  ReleaseDXInterface(D2D.TargetBitmap);
+  ReleaseDXInterface(D2D.BackBuffer);
+  ReleaseDXInterface(D2D.DeviceContext);
+  ReleaseDXInterface(D2D.Device);
+  ReleaseDXInterface(D2D.Factory);
 }
 
 // ----------------------------------------------------------------------------
@@ -84,6 +100,7 @@ WindowDevice::WindowDevice(const WindowCreationOptions& options)
   Window = InitializeWindow(options);
 
   InitializeD3DContext();
+  InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -151,6 +168,9 @@ void WindowDevice::ProcessMessages()
 
 void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
 {
+  if (size.x < 400 || size.y < 400)
+    return;
+
   if (!SwapChain)
     return;
 
@@ -164,12 +184,15 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
 
   _size = size;
 
+  // Release D2D stuff
+  FreeD2DResources();
+
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
   ReleaseDXInterface(RenderTargetView);
 
   HRESULT hr;
-  hr = SwapChain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+  hr = SwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
@@ -190,6 +213,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
+
+  InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -201,6 +226,8 @@ math::Vector2D WindowDevice::GetSize() const
 
 // ----------------------------------------------------------------------------
 
+void TestDrawText(GraphicsDevice::D2DData& D2D);
+
 bool WindowDevice::BeginFrame()
 {
   if (DeviceContext == nullptr)
@@ -209,7 +236,80 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
+  TestDrawText(D2D);
+
   return true;
+}
+
+// ----------------------------------------------------------------------------
+
+void TestDrawText(GraphicsDevice::D2DData& D2D)
+{
+  HRESULT hr;
+  
+  static ID2D1SolidColorBrush *boxBrush = nullptr;
+  static ID2D1SolidColorBrush *textBrush = nullptr;
+  static IDWriteTextFormat *textFormat = nullptr;
+
+  static const WCHAR helloWorld[] = L"Hello, World!";
+
+  static GraphicsDevice::D2DData::clock::time_point created;
+  if (created < D2D.ResourceTimestamp)
+  {
+    ReleaseDXInterface(textFormat);
+    ReleaseDXInterface(textBrush);
+    ReleaseDXInterface(boxBrush);
+
+    created = GraphicsDevice::D2DData::clock::now();
+
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(1, 0, 0, 0.7f), &boxBrush);
+    CHECK_HRESULT(hr);
+
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &textBrush);
+    CHECK_HRESULT(hr);
+
+    hr = D2D.WriteFactory->
+      CreateTextFormat(L"Segoe Script", nullptr,
+                       DWRITE_FONT_WEIGHT_EXTRA_BOLD,
+                       DWRITE_FONT_STYLE_NORMAL,
+                       DWRITE_FONT_STRETCH_NORMAL,
+                       48, L"", &textFormat);
+    CHECK_HRESULT(hr);
+
+    hr = textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    CHECK_HRESULT(hr);
+
+    hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    CHECK_HRESULT(hr);
+
+    // Let's try out the drawing
+    if (GetGame()->CurrentLevel)
+    {
+      auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
+      if (testent)
+      {
+        auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
+        auto texture = sprite->GetTexture(0);
+
+        D2D.DrawTo(texture);
+        auto targetSize = D2D.DeviceContext->GetSize();
+
+        D2D.DeviceContext->FillRectangle(
+          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+          boxBrush);
+
+        D2D.DeviceContext->DrawTextA(
+          helloWorld, 
+          ARRAYSIZE(helloWorld),
+          textFormat,
+          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+          textBrush);
+
+        hr = D2D.EndDraw();
+        CHECK_HRESULT(hr);
+      }
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -245,10 +345,10 @@ void GraphicsDevice::InitializeD3DContext()
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
-  sd.BufferCount = 1;
+  sd.BufferCount = 2;
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
-  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   sd.BufferDesc.RefreshRate.Numerator = 120;
   sd.BufferDesc.RefreshRate.Denominator = 1;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -264,8 +364,6 @@ void GraphicsDevice::InitializeD3DContext()
   D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
   {
     D3D_FEATURE_LEVEL_11_0,
-    D3D_FEATURE_LEVEL_10_1,
-    D3D_FEATURE_LEVEL_10_0,
   };
   UINT               numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
   D3D_FEATURE_LEVEL  FeatureLevelSupported;
@@ -277,7 +375,7 @@ void GraphicsDevice::InitializeD3DContext()
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
     nullptr,
-    0,
+    D3D11_CREATE_DEVICE_BGRA_SUPPORT,
     FeatureLevelsRequested,
     numLevelsRequested,
     D3D11_SDK_VERSION,
@@ -286,6 +384,9 @@ void GraphicsDevice::InitializeD3DContext()
     &Device,
     &FeatureLevelSupported,
     &DeviceContext);
+  CHECK_HRESULT(hr);
+
+  hr = ConvertInterface<IDXGIDevice>(Device, &FactoryDevice);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
@@ -441,11 +542,11 @@ void GraphicsDevice::InitializeDepthBuffer()
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::CreateInputLayout(byte* bytecode,
+void GraphicsDevice::CreateInputLayout(byte *bytecode,
                                        UINT bytecodeSize,
-                                       D3D11_INPUT_ELEMENT_DESC* layoutDesc,
+                                       D3D11_INPUT_ELEMENT_DESC *layoutDesc,
                                        UINT layoutDescNumElements,
-                                       ID3D11InputLayout** layout)
+                                       ID3D11InputLayout **layout)
 {
   Device->CreateInputLayout(
     layoutDesc,
@@ -453,6 +554,31 @@ void GraphicsDevice::CreateInputLayout(byte* bytecode,
     bytecode,
     bytecodeSize,
     layout);
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::InitializeD2DContext()
+{
+  HRESULT hr;
+
+  hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &D2D.Factory);
+  CHECK_HRESULT(hr);
+
+  hr = D2D.Factory->CreateDevice(FactoryDevice, &D2D.Device);
+  CHECK_HRESULT(hr);
+
+  hr = D2D.Device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2D.DeviceContext);
+  CHECK_HRESULT(hr);
+
+  D2D.DeviceContext->SetDpi(96, 96);
+
+  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
+                           __uuidof(*D2D.WriteFactory),
+                           reinterpret_cast<IUnknown **>(&D2D.WriteFactory));
+  CHECK_HRESULT(hr);
+
+  *&D2D.ResourceTimestamp = D2DData::clock::now();
 }
 
 // ----------------------------------------------------------------------------
@@ -541,6 +667,24 @@ void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
 DisplayMode::DisplayMode(const DXGI_MODE_DESC& desc)
   : DXGI_MODE_DESC(desc)
 {
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
+{
+  assert(texture.RenderTarget);
+
+  DeviceContext->SetTarget(texture.RenderTarget);
+  DeviceContext->BeginDraw();
+  DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
+}
+
+// ----------------------------------------------------------------------------
+
+HRESULT GraphicsDevice::D2DData::EndDraw()
+{
+  return DeviceContext->EndDraw();
 }
 
 // ----------------------------------------------------------------------------

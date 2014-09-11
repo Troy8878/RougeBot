@@ -113,6 +113,7 @@
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TexturedComponent.h" />
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +135,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameStuffGem.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />
     <ClCompile Include="Model.cpp" />

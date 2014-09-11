@@ -16,5 +16,29 @@ class Vector
 
   def self.backward; Vector.new 0, 0, -1, 1; end
   def self.forward; Vector.new 0, 0, 1, 1; end
+
+  def +(v)
+    c = Vector.new self
+    c.add(v)
+  end
+
+  def -(v)
+    c = Vector.new self
+    c.sub(v)
+  end
+
+  def *(v)
+    c = Vector.new self
+    c.mul(v)
+  end
+
+  def /(v)
+    c = Vector.new self
+    c.div(v)
+  end
+
+  def inspect
+    "<#{x}, #{y}, #{z}, #{w}>"
+  end
 end
 

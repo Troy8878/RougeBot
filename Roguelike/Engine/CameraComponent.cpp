@@ -15,7 +15,15 @@ CameraComponentFactory CameraComponent::factory;
 // ----------------------------------------------------------------------------
 
 CameraComponent::CameraComponent(const std::string& name, int layer, const MultiCam& camera)
-  : _Name(name), _camera(camera)
+  : _Name(name), _camera(camera), _cameraPtr(&_camera)
+{
+  RenderGroup::Instance.CreateSet(name, Camera, layer, false);
+}
+
+// ----------------------------------------------------------------------------
+
+CameraComponent::CameraComponent(const std::string& name, int layer, MultiCam *copy)
+  : _Name(name), _cameraPtr(copy)
 {
   RenderGroup::Instance.CreateSet(name, Camera, layer, false);
 }
@@ -41,14 +49,21 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 
 void CameraComponent::FixCameras()
 {
-  if (CameraType == typeid(HUDCamera))
+  auto newSize = GetGame()->GameDevice->GetSize();
+  if (prevSize != newSize)
   {
-    auto newSize = GetGame()->GameDevice->GetSize();
-    if (prevSize != newSize)
+    prevSize = newSize;
+      
+    if (CameraType == typeid(HUDCamera))
     {
-      prevSize = newSize;
-      auto& hcam = *MCamera.GetCamera<HUDCamera>();
-      hcam.size.x = hcam.size.y * newSize.x / newSize.y;
+        auto& hcam = *MCamera.GetCamera<HUDCamera>();
+        hcam.size.x = hcam.size.y * newSize.x / newSize.y;
+        Camera->Init();
+    }
+    else if (CameraType == typeid(LookAtCamera))
+    {
+      auto& lcam = *MCamera.GetCamera<LookAtCamera>();
+      lcam.aspectRatio = newSize.x / newSize.y;
       Camera->Init();
     }
   }
@@ -73,9 +88,21 @@ CameraComponentFactory::CameraComponentFactory()
 
 Component *CameraComponentFactory::CreateObject(void *memory, component_factory_data& data)
 {
+  MultiCam camera;
   auto target_name = data["target_name"];
   auto layer = std::stoi(map_fetch(data, "layer", "0"));
-  MultiCam camera;
+
+  auto copyit = data.find("copy");
+  if (copyit != data.end())
+  {
+    auto copyset = RenderGroup::Instance.GetSet(copyit->second);
+
+    auto icam = copyset->RenderCamera;
+    (icam);
+    //auto multicam = reinterpret_cast<MultiCam *>()
+
+    return new (memory) CameraComponent(target_name, layer, nullptr);
+  }
   
   auto type = data["type"];
   if (type == "HUDCamera")

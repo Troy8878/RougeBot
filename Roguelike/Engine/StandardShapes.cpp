@@ -16,7 +16,7 @@ namespace Shapes
 
   Model *MakeRectangle(ID3D11Device *device, math::Vector2D size, math::Vector color)
   {
-    const float sx = size.x / 2;
+    const float sx = -size.x / 2;
     const float sy = size.y / 2;
 
     TexturedVertex vertices[] =

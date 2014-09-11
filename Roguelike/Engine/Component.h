@@ -126,7 +126,7 @@ void RegisterStaticComponent(const std::string& name,
   ComponentManager::Instance.RegisterComponent(registration);
 
   auto prevfg = console::fg_color();
-  std::cout << console::fg::yellow
+  std::cout << console::fg::green
             << "Registered static component '" 
             << registration.componentName << "'" << std::endl
             << prevfg;

@@ -13,6 +13,7 @@
 struct WindowCreationOptions;
 class GraphicsDevice;
 class WindowDevice;
+class Texture2D;
 
 // ----------------------------------------------------------------------------
 
@@ -39,7 +40,11 @@ public:
                          UINT layoutDescNumElements,
                          ID3D11InputLayout** layout);
 
+  // 3D stuff
   IR_PROPERTY(IDXGISwapChain *, SwapChain);
+  IR_PROPERTY(IDXGIAdapter *, FactoryAdapter);
+  IR_PROPERTY(IDXGIDevice *, FactoryDevice);
+  IR_PROPERTY(IDXGIFactory2 *, DeviceFactory);
   IR_PROPERTY(ID3D11Device *, Device);
   IR_PROPERTY(ID3D11DeviceContext *, DeviceContext);
   IR_PROPERTY(ID3D11RenderTargetView *, RenderTargetView);
@@ -49,10 +54,31 @@ public:
   IR_PROPERTY(ID3D11RasterizerState *, RasterState);
   IR_PROPERTY(ID3D11BlendState *, BlendState);
 
+  // 2D stuff
+  struct D2DData
+  {
+    typedef std::chrono::high_resolution_clock clock;
+
+    IR_PROPERTY(clock::time_point, ResourceTimestamp);
+
+    IR_PROPERTY(ID2D1Factory1 *, Factory);
+    IR_PROPERTY(ID2D1Device *, Device);
+    IR_PROPERTY(ID2D1DeviceContext *, DeviceContext);
+    IR_PROPERTY(IDXGISurface *, BackBuffer);
+    IR_PROPERTY(ID2D1Bitmap1 *, TargetBitmap);
+    IR_PROPERTY(IDWriteFactory *, WriteFactory);
+
+    void DrawTo(Texture2D texture);
+    HRESULT EndDraw();
+  };
+  IR_PROPERTY(D2DData, D2D);
+
 protected:
   void InitializeD3DContext();
   void InitializeDepthBuffer();
-  void FreeD3DContext();
+  void InitializeD2DContext();
+  void FreeDXContext();
+  void FreeD2DResources();
 
 public:
   math::Vector backgroundColor;

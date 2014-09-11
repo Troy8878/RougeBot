@@ -75,17 +75,27 @@ namespace memvect
 
     return mrb_nil_value();
   }
+
+  static mrb_value dup(mrb_state *mrb, mrb_value self)
+  {
+    auto vclass = mrb_class_get(mrb, "Vector");
+    static mrb_sym vnew = mrb_intern_cstr(mrb, "new");
+    return mrb_funcall_argv(mrb, mrb_obj_value(vclass), vnew, 1, &self);
+  }
 }
 
 static ruby::ruby_class memvect2dclass;
 
-static ruby::ruby_class create_memory_vector_class()
+static ruby::ruby_class create_memory_vector_class(mrb_state *mrb)
 {
-  auto rclass2D = mrb_inst->define_class("MemoryVector2D");
-  auto rclass = mrb_inst->define_class("MemoryVector", rclass2D);
+  ruby::ruby_engine mrb_inst{mrb};
+
+  auto rclass2D = mrb_inst.define_class("MemoryVector2D");
+  auto rclass = mrb_inst.define_class("MemoryVector", rclass2D);
   
   rclass2D.define_method("initialize", memvect::init, ARGS_REQ(1));
   rclass.define_method("initialize", memvect::init, ARGS_REQ(1));
+  rclass.define_method("dup", memvect::dup, ARGS_NONE());
 
   rclass2D.define_method("x", memvect::get_x, ARGS_NONE());
   rclass2D.define_method("y", memvect::get_y, ARGS_NONE());
@@ -103,7 +113,7 @@ static ruby::ruby_class create_memory_vector_class()
 
 mrb_value ruby::wrap_memory_vector(math::Vector *vect)
 {
-  static auto rclass = create_memory_vector_class();
+  static auto rclass = mrb_inst->get_class("MemoryVector");
 
   auto ptr = mrb_inst->wrap_native_ptr(vect);
   return rclass.new_inst(ptr);
@@ -134,9 +144,36 @@ namespace vect
   static mrb_value vnew(mrb_state *mrb, mrb_value)
   {
     static auto vclass = mrb_class_get(mrb, "Vector");
+
+    mrb_value first = mrb_nil_value(), *rest;
+    mrb_int crest;
+    mrb_get_args(mrb, "|o*", &first, &rest, &crest);
     
     mrb_float x = 0, y = 0, z = 0, w = 0;
-    mrb_get_args(mrb, "|ffff", &x, &y, &z, &w);
+    if (mrb_obj_class(mrb, first) == vclass)
+    {
+      auto oldv = (math::Vector *) 
+        mrb_data_get_ptr(mrb, first, &mrb_vector_type);
+
+      x = oldv->x;
+      y = oldv->y;
+      z = oldv->z;
+      w = oldv->w;
+    }
+    else if (mrb_obj_class(mrb, first) == mrb_class_get(mrb, "MemoryVector"))
+    {
+      static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");
+      auto oldv = (math::Vector *) mrb_cptr(mrb_iv_get(mrb, first, ptr_sym));
+
+      x = oldv->x;
+      y = oldv->y;
+      z = oldv->z;
+      w = oldv->w;
+    }
+    else
+    {
+      mrb_get_args(mrb, "|ffff", &x, &y, &z, &w);
+    }
 
     auto vect = new math::Vector{(float)x, (float)y, (float)z, (float)w};
     auto obj = mrb_data_object_alloc(mrb, vclass, vect, &mrb_vector_type);
@@ -213,6 +250,77 @@ namespace vect
 
   #pragma endregion
 
+  static mrb_value op_add(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+
+    sv = sv + ov;
+
+    return self;
+  }
+  
+  static mrb_value op_sub(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+
+    sv = sv - ov;
+
+    return self;
+  }
+
+  static mrb_value op_mul(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    if (mrb_fixnum_p(oval))
+      oval = mrb_float_value(mrb, (mrb_float) mrb_fixnum(oval));
+    
+    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    if (mrb_float_p(oval))
+    {
+      sv = sv * (float)mrb_float(oval);
+    }
+    else
+    {
+      auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+
+      sv = sv * ov;
+    }
+
+    return self;
+  }
+  
+  static mrb_value op_div(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    if (mrb_fixnum_p(oval))
+      oval = mrb_float_value(mrb, (mrb_float) mrb_fixnum(oval));
+    
+    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    if (mrb_float_p(oval))
+    {
+      sv = sv / (float)mrb_float(oval);
+    }
+    else
+    {
+      auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+
+      sv = sv / ov;
+    }
+
+    return self;
+  }
 
 }
 
@@ -236,6 +344,15 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "y=", vect::set_y, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "z=", vect::set_z, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "w=", vect::set_w, ARGS_REQ(1));
+
+  mrb_define_method(mrb, vclass, "add", vect::op_add, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "sub", vect::op_sub, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "mul", vect::op_mul, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "div", vect::op_div, ARGS_REQ(1));
+
+  mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
+
+  create_memory_vector_class(mrb);
 }
 
 #pragma endregion

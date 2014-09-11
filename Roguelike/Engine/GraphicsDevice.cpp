@@ -22,13 +22,16 @@ GraphicsDevice::GraphicsDevice()
 
 GraphicsDevice::~GraphicsDevice()
 {
-  FreeD3DContext();
+  FreeDXContext();
 }
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::FreeD3DContext()
+void GraphicsDevice::FreeDXContext()
 {
+  ReleaseDXInterface(D2D.Factory);
+
+  ReleaseDXInterface(BlendState);
   ReleaseDXInterface(RasterState);
   ReleaseDXInterface(DepthStencilView);
   ReleaseDXInterface(DepthStencilState);
@@ -84,6 +87,7 @@ WindowDevice::WindowDevice(const WindowCreationOptions& options)
   Window = InitializeWindow(options);
 
   InitializeD3DContext();
+  InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -151,6 +155,9 @@ void WindowDevice::ProcessMessages()
 
 void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
 {
+  if (size.x < 400 || size.y < 400)
+    return;
+
   if (!SwapChain)
     return;
 
@@ -169,7 +176,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   ReleaseDXInterface(RenderTargetView);
 
   HRESULT hr;
-  hr = SwapChain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+  hr = SwapChain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_B8G8R8A8_UNORM, 0);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *pBuffer;
@@ -245,10 +252,10 @@ void GraphicsDevice::InitializeD3DContext()
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
-  sd.BufferCount = 1;
+  sd.BufferCount = 2;
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
-  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   sd.BufferDesc.RefreshRate.Numerator = 120;
   sd.BufferDesc.RefreshRate.Denominator = 1;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -264,8 +271,6 @@ void GraphicsDevice::InitializeD3DContext()
   D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
   {
     D3D_FEATURE_LEVEL_11_0,
-    D3D_FEATURE_LEVEL_10_1,
-    D3D_FEATURE_LEVEL_10_0,
   };
   UINT               numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
   D3D_FEATURE_LEVEL  FeatureLevelSupported;
@@ -277,7 +282,7 @@ void GraphicsDevice::InitializeD3DContext()
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
     nullptr,
-    0,
+    D3D11_CREATE_DEVICE_BGRA_SUPPORT,
     FeatureLevelsRequested,
     numLevelsRequested,
     D3D11_SDK_VERSION,
@@ -286,6 +291,9 @@ void GraphicsDevice::InitializeD3DContext()
     &Device,
     &FeatureLevelSupported,
     &DeviceContext);
+  CHECK_HRESULT(hr);
+
+  hr = ConvertInterface<IDXGIDevice>(Device, &FactoryDevice);
   CHECK_HRESULT(hr);
 
   ID3D11Texture2D *backBuffer;
@@ -441,11 +449,11 @@ void GraphicsDevice::InitializeDepthBuffer()
 
 // ----------------------------------------------------------------------------
 
-void GraphicsDevice::CreateInputLayout(byte* bytecode,
+void GraphicsDevice::CreateInputLayout(byte *bytecode,
                                        UINT bytecodeSize,
-                                       D3D11_INPUT_ELEMENT_DESC* layoutDesc,
+                                       D3D11_INPUT_ELEMENT_DESC *layoutDesc,
                                        UINT layoutDescNumElements,
-                                       ID3D11InputLayout** layout)
+                                       ID3D11InputLayout **layout)
 {
   Device->CreateInputLayout(
     layoutDesc,
@@ -453,6 +461,19 @@ void GraphicsDevice::CreateInputLayout(byte* bytecode,
     bytecode,
     bytecodeSize,
     layout);
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::InitializeD2DContext()
+{
+  HRESULT hr;
+
+  hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &D2D.Factory);
+  CHECK_HRESULT(hr);
+
+  hr = D2D.Factory->CreateDevice(FactoryDevice, &D2D.Device);
+  CHECK_HRESULT(hr);
 }
 
 // ----------------------------------------------------------------------------

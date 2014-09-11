@@ -57,7 +57,7 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
   tdesc.SampleDesc.Count = 1;
   tdesc.SampleDesc.Quality = 0;
   tdesc.Usage = D3D11_USAGE_DEFAULT;
-  tdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+  tdesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
   tdesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
   tdesc.CPUAccessFlags = 0;

@@ -73,6 +73,14 @@ void Game::Run()
 
         _currentLevel = Level::CreateLevel(levelChangeContext.name);
         levelChangeContext.loaded = true;
+
+        // Raise level_load event
+        {
+          using namespace Events;
+          static EventId levelLoadId("level_load");
+
+          
+        }
       }
 
       // Raise update event

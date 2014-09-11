@@ -113,6 +113,7 @@
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TexturedComponent.h" />
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>

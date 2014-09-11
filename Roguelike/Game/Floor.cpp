@@ -1,13 +1,14 @@
 /*********************************
-* Level.cpp
+* Floor.cpp
 * Avi Whitten-Vile
 * Created 2014/09/08
 *********************************/
 
+#include "common.h"
 #include <stdio.h>      /* printf, scanf, puts, NULL */
 #include <stdlib.h>     /* srand, rand */
 #include <random>
-#include "Level.h"
+#include "Floor.h"
 
 static std::random_device RNG;
 
@@ -24,9 +25,9 @@ Chunk::~Chunk(void)
 
 void Chunk::ResetChunk(void)
 {
-  for (int i = 0; i < LEVEL_SIZE; ++i)
+  for (int i = 0; i < FLOOR_SIZE; ++i)
   {
-    for (int j = 0; j < LEVEL_SIZE; ++j)
+    for (int j = 0; j < FLOOR_SIZE; ++j)
     {
       ChunkTiles[i][j] = 0;
     }
@@ -35,7 +36,7 @@ void Chunk::ResetChunk(void)
 
 void Chunk::CreateChunk(void)
 {
-  int x, xstart, y, ystart, mid;
+  int x, y, mid;
 
 
   std::uniform_int_distribution<int> random(0, CHUNK_SIZE);
@@ -59,38 +60,38 @@ void Chunk::CreateChunk(void)
 }
 
 
-Level::Level(void)
+Floor::Floor(void)
 {
-  LevelID = LevelNum++;
+  FloorID = FloorNum++;
 
-  for (int i = 0; i < LEVEL_SIZE; ++i)
+  for (int i = 0; i < FLOOR_SIZE; ++i)
   {
-    for (int j = 0; j < LEVEL_SIZE; ++j)
+    for (int j = 0; j < FLOOR_SIZE; ++j)
     {
       Tiles[i][j] = 0;
     }
   }
 }
 
-Level::~Level(void)
+Floor::~Floor(void)
 {
 }
 
-void Level::GenerateLevel(void)
+void Floor::GenerateFloor(void)
 {
   Chunk ch;
   ch.ResetChunk();
 
-  for (int levelx = 0; levelx < LEVEL_SIZE / CHUNK_SIZE; ++levelx)
+  for (int Floorx = 0; Floorx < FLOOR_SIZE / CHUNK_SIZE; ++Floorx)
   {
-    for (int levely = 0; levely < LEVEL_SIZE / CHUNK_SIZE; ++levely)
+    for (int Floory = 0; Floory < FLOOR_SIZE / CHUNK_SIZE; ++Floory)
     {
       ch.CreateChunk();
       for (int chunkx = 0; chunkx < CHUNK_SIZE; chunkx++)
       {
         for (int chunky = 0; chunky < CHUNK_SIZE; chunky++)
         {
-          Tiles[(CHUNK_SIZE * levelx) + chunkx][(CHUNK_SIZE * levely) + chunky] = ch.ChunkTiles[chunkx][chunky];
+          Tiles[(CHUNK_SIZE * Floorx) + chunkx][(CHUNK_SIZE * Floory) + chunky] = ch.ChunkTiles[chunkx][chunky];
         }
       }
 
@@ -98,11 +99,11 @@ void Level::GenerateLevel(void)
   }
 }
 
-void Level::PrintLevel(void)
+void Floor::PrintFloor(void)
 {
-  for (int i = 0; i < LEVEL_SIZE; ++i)
+  for (int i = 0; i < FLOOR_SIZE; ++i)
   {
-    for (int j = 0; j < LEVEL_SIZE; ++j)
+    for (int j = 0; j < FLOOR_SIZE; ++j)
     {
       std::cout << Tiles[i][j];
     }

@@ -6,10 +6,10 @@
 
 #include "common.h"
 
-#define LEVEL_SIZE 75
+#define FLOOR_SIZE 75
 #define CHUNK_SIZE 25
 
-int LevelNum = 0;
+int FloorNum = 0;
 
 class Chunk
 {
@@ -23,20 +23,20 @@ public:
 };
 
 
-class Level
+class Floor
 {
 public:
 
-  Level();
-  ~Level();
+  Floor();
+  ~Floor();
 
-  void GenerateLevel();
-  void PrintLevel();
+  void GenerateFloor();
+  void PrintFloor();
 
 private:
 
-  short Tiles[LEVEL_SIZE][LEVEL_SIZE];
-  int LevelID;
+  short Tiles[FLOOR_SIZE][FLOOR_SIZE];
+  int FloorID;
 
 };
 

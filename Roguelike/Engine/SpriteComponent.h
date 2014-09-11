@@ -38,7 +38,9 @@ public:
   IR_PROPERTY(Shader *, ModelShader);
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
   size_t TextureIndex;
-  
+
+  Texture2D GetTexture(size_t index) { return _textures[index]; }
+
   mrb_value GetRubyWrapper() override;
 
   // Component factory to make sprite component

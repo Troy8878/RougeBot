@@ -23,9 +23,15 @@ public:
   PROPERTY(get = _GetShaderRes) ID3D11ShaderResourceView * const & ShaderRes;
   PROPERTY(get = _GetTexture) ID3D11Texture2D * const & Texture;
 
+  /**
+    The render target for SPECIAL/SURFACE textures
+  */
+  PROPERTY(get = _GetRenderTarget) ID2D1RenderTarget * const & RenderTarget;
+
   operator bool() const { return !!_res; }
 
   static Texture2D GetNullTexture(ID3D11Device *device);
+  static Texture2D CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height);
 
 private:
   struct TextureResource;
@@ -36,14 +42,25 @@ private:
 
   struct TextureResource
   {
-    ID3D11Texture2D *texture;
-    ID3D11ShaderResourceView *resource;
+    ID3D11Texture2D *texture = nullptr;
+    ID3D11ShaderResourceView *resource = nullptr;
+    IDXGISurface *surface = nullptr;
+    ID2D1RenderTarget *target = nullptr;
 
     TextureResource() = default;
     ~TextureResource();
 
     NO_COPY_CONSTRUCTOR(TextureResource);
     NO_ASSIGNMENT_OPERATOR(TextureResource);
+
+    // Move constructor
+    TextureResource(TextureResource&& moving)
+    {
+      std::swap(texture, moving.texture);
+      std::swap(resource, moving.resource);
+      std::swap(surface, moving.surface);
+      std::swap(target, moving.target);
+    }
   };
 
   std::shared_ptr<TextureResource> _res;
@@ -51,6 +68,7 @@ private:
 public:
   ID3D11ShaderResourceView * const & _GetShaderRes() const { return _res->resource; };
   ID3D11Texture2D * const & _GetTexture() const { return _res->texture; };
+  ID2D1RenderTarget * const & _GetRenderTarget() const { return _res->target; }
 
   friend class TextureManager;
 };

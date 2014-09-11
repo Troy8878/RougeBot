@@ -90,15 +90,89 @@ Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
   if (initialized)
     return nullTexture;
 
-  nullTexture = Texture2D{device, ImageResource{1, 1, ImageResource::Format::RGBA, {255, 255, 255, 255}}};
+  nullTexture = Texture2D
+  {
+    device, 
+    ImageResource
+    {
+      1, 1,
+      ImageResource::Format::RGBA,
+      {255, 255, 255, 255}
+    }
+  };
+
   initialized = true;
   return nullTexture;
 }
 
 // ----------------------------------------------------------------------------
 
+Texture2D Texture2D::CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height)
+{
+  HRESULT hr;
+  TextureResource resource;
+
+  #pragma region Texture
+
+  D3D11_TEXTURE2D_DESC td;
+  td.ArraySize = 1;
+  td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+  td.CPUAccessFlags = 0;
+  td.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+  td.Height = height;
+  td.Width = width;
+  td.MipLevels = 1;
+  td.MiscFlags = 0;
+  td.SampleDesc.Count = 1;
+  td.SampleDesc.Quality = 0;
+  td.Usage = D3D11_USAGE_DEFAULT;
+
+  hr = device->Device->CreateTexture2D(&td, nullptr, &resource.texture);
+  CHECK_HRESULT(hr);
+
+  #pragma endregion
+
+  #pragma region Shader Resource
+
+  D3D11_SHADER_RESOURCE_VIEW_DESC sdesc;
+  sdesc.Format = td.Format;
+  sdesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+  sdesc.Texture2D.MipLevels = td.MipLevels;
+  sdesc.Texture2D.MostDetailedMip = td.MipLevels - 1;
+
+  hr = device->Device->CreateShaderResourceView(resource.texture, &sdesc, &resource.resource);
+  CHECK_HRESULT(hr);
+
+  #pragma endregion
+
+  #pragma region D2D Resource
+
+  hr = resource.texture->QueryInterface(&resource.surface);
+  CHECK_HRESULT(hr);
+
+  D2D1_RENDER_TARGET_PROPERTIES props =
+    D2D1::RenderTargetProperties(
+      D2D1_RENDER_TARGET_TYPE_HARDWARE,
+      D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
+      96, 96);
+
+  hr = device->D2D.Factory->CreateDxgiSurfaceRenderTarget(
+    resource.surface,
+    &props,
+    &resource.target);
+  CHECK_HRESULT(hr);
+
+  #pragma endregion
+
+  return Texture2D{std::make_shared<TextureResource>(std::move(resource))};
+}
+
+// ----------------------------------------------------------------------------
+
 Texture2D::TextureResource::~TextureResource()
 {
+  ReleaseDXInterface(target);
+  ReleaseDXInterface(surface);
   ReleaseDXInterface(resource);
   ReleaseDXInterface(texture);
 }
@@ -128,10 +202,26 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     }
   }
 
-  auto device = GetGame()->GameDevice->Device;
-  Texture2D texture{device, asset};
+  auto device = GetGame()->GameDevice;
 
-  _resources[asset] = texture._res;
+  Texture2D texture;
+  if (asset.find("SPECIAL/SURFACE/") == 0)
+  {
+    std::string data{asset.begin() + asset.find_first_not_of("SPECIAL/SURFACE/"), asset.end()};
+    auto cpos = data.find(':'); (cpos);
+    assert(cpos + 1 < data.size());
+
+    UINT width = std::stoul(std::string{data.begin(), data.begin() + cpos});
+    UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.end()});
+
+    texture = Texture2D::CreateD2DSurface(device, width, height);
+    // These are to be unique, don't cache them
+  }
+  else
+  {
+    texture = Texture2D{device->Device, asset};
+    _resources[asset] = texture._res;
+  }
 
   return texture;
 }

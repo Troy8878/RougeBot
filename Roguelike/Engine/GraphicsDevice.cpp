@@ -9,6 +9,10 @@
 #include "Helpers\Exceptions.h"
 #include "Engine\Game.h"
 
+// Testing stuff, remove later
+#include "Level.h"
+#include "SpriteComponent.h"
+
 // ----------------------------------------------------------------------------
 
 GraphicsDevice::GraphicsDevice()
@@ -243,7 +247,10 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
   
   static ID2D1SolidColorBrush *boxBrush = nullptr;
   static ID2D1SolidColorBrush *textBrush = nullptr;
+  static ID2D1SolidColorBrush *brush3d = nullptr;
   static IDWriteTextFormat *textFormat = nullptr;
+
+  static const WCHAR helloWorld[] = L"Hello, World!";
 
   static GraphicsDevice::D2DData::clock::time_point created;
   if (created < D2D.ResourceTimestamp)
@@ -273,9 +280,34 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
 
     hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     CHECK_HRESULT(hr);
-  }
 
-  static const WCHAR helloWorld[] = L"Hello, World!";
+    // Let's try out the drawing
+    if (GetGame()->CurrentLevel)
+    {
+      auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
+      if (testent)
+      {
+        auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
+        auto texture = sprite->GetTexture(0);
+
+        ReleaseDXInterface(brush3d);
+        texture.RenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black),
+                                                    &brush3d);
+
+        texture.RenderTarget->BeginDraw();
+        auto targetSize = texture.RenderTarget->GetSize();
+
+        texture.RenderTarget->DrawText(
+          helloWorld, 
+          ARRAYSIZE(helloWorld),
+          textFormat,
+          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+          brush3d);
+
+        hr = texture.RenderTarget->EndDraw();
+      }
+    }
+  }
 
   D2D.DeviceContext->FillRectangle(
     D2D1::RectF(100, 100, 300, 300),

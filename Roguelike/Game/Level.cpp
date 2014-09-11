@@ -6,8 +6,10 @@
 
 #include <stdio.h>      /* printf, scanf, puts, NULL */
 #include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* time */
+#include <random>
 #include "Level.h"
+
+static std::random_device RNG;
 
 
 #define CHUNKS 9
@@ -34,11 +36,16 @@ void Chunk::ResetChunk(void)
 void Chunk::CreateChunk(void)
 {
   int x, xstart, y, ystart, mid;
-  srand(time(NULL));
+
+
+  std::uniform_int_distribution<int> random(0, CHUNK_SIZE);
+
+  //random(RNG);
+
 
   mid = (CHUNK_SIZE - 1) / 2;
-  x = (rand() % (CHUNK_SIZE) + 1);
-  y = (rand() % (CHUNK_SIZE) + 1);
+  x = (random(RNG));
+  y = (random(RNG));
 
   for (int i = 0; i < y; ++i)
   {
@@ -97,7 +104,7 @@ void Level::PrintLevel(void)
   {
     for (int j = 0; j < LEVEL_SIZE; ++j)
     {
-      printf("%i", Tiles[i][j]);
+      std::cout << Tiles[i][j];
     }
   }
 }

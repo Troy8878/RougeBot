@@ -13,7 +13,7 @@ class SpinnyThingComponent < ComponentBase
 
     @speed = data.fetch("speed", 1).to_f
     @transform = self.owner.transform_component
-    self.axis = data.fetch("change_method", "z")
+    self.axis = data.fetch("axis", "z")
 
     self.register_event :update, :on_update
   end

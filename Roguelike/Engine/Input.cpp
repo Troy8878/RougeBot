@@ -12,6 +12,8 @@
 Input::Input()
   : event_base(this)
 {
+  static Events::EventId updateId("update");
+  SetHandler(updateId, &Input::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------

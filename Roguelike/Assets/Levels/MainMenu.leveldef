@@ -24,6 +24,16 @@
         }
       }
     },
+    /*{
+      "name": "TranslucentLayer",
+      "components": {
+        "CameraComponent": {
+          "copy": "Le3DCam",
+          "target_name": "TranslucentLayer",
+          "layer": 2
+        }
+      }
+    },*/
     {
       "name": "The Room",
       "components": {
@@ -57,9 +67,9 @@
       "name": "2DSurfaceTest",
       "components": {
         "TransformComponent": {
-          "rotation": [0.78539816339744, 0, 0],
-          "position": [1, 0.25, 1],
-          "scale": [0.5, 0.5]
+          "rotation": [1.57, 0, 0],
+          "position": [1, 0.01, 2],
+          "scale": [0.75, 0.75]
         },
         "SpriteComponent": {
           "render_target": "Le3DCam",

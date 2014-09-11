@@ -68,6 +68,9 @@
     <ClInclude Include="AsyncTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Lq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">

@@ -21,6 +21,7 @@ class CameraComponent : public Component
 {
 public:
   CameraComponent(const std::string& name, int layer, const MultiCam& camera);
+  CameraComponent(const std::string& name, int layer, MultiCam *copy);
   ~CameraComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
@@ -38,12 +39,13 @@ public:
 
 private:
   MultiCam _camera;
+  MultiCam *_cameraPtr;
   math::Vector2D prevSize = {0, 0};
 
 public:
-  inline ICamera *_GetICamera() { return _camera.GetCamera<ICamera>(); }
-  inline MultiCam& _GetMCamera() { return _camera; }
-  inline const std::type_index& _GetCameraType() { return _camera.type; }
+  inline ICamera *_GetICamera() { return _cameraPtr->GetCamera<ICamera>(); }
+  inline MultiCam& _GetMCamera() { return *_cameraPtr; }
+  inline const std::type_index& _GetCameraType() { return _cameraPtr->type; }
 };
 
 // ----------------------------------------------------------------------------

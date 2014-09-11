@@ -262,15 +262,15 @@ void TestDrawText(GraphicsDevice::D2DData& D2D)
 
     created = GraphicsDevice::D2DData::clock::now();
 
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.9f), &boxBrush);
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(1, 0, 0, 0.7f), &boxBrush);
     CHECK_HRESULT(hr);
 
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::ForestGreen), &textBrush);
+    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &textBrush);
     CHECK_HRESULT(hr);
 
     hr = D2D.WriteFactory->
-      CreateTextFormat(L"Comic Sans MS", nullptr,
-                       DWRITE_FONT_WEIGHT_NORMAL,
+      CreateTextFormat(L"Segoe Script", nullptr,
+                       DWRITE_FONT_WEIGHT_EXTRA_BOLD,
                        DWRITE_FONT_STYLE_NORMAL,
                        DWRITE_FONT_STRETCH_NORMAL,
                        48, L"", &textFormat);
@@ -281,29 +281,33 @@ void TestDrawText(GraphicsDevice::D2DData& D2D)
 
     hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     CHECK_HRESULT(hr);
-  }
 
-  // Let's try out the drawing
-  if (GetGame()->CurrentLevel)
-  {
-    auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
-    if (testent)
+    // Let's try out the drawing
+    if (GetGame()->CurrentLevel)
     {
-      auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
-      auto texture = sprite->GetTexture(0);
+      auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
+      if (testent)
+      {
+        auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
+        auto texture = sprite->GetTexture(0);
 
-      D2D.DrawTo(texture);
-      auto targetSize = D2D.DeviceContext->GetSize();
+        D2D.DrawTo(texture);
+        auto targetSize = D2D.DeviceContext->GetSize();
 
-      D2D.DeviceContext->DrawTextA(
-        helloWorld, 
-        ARRAYSIZE(helloWorld),
-        textFormat,
-        D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-        textBrush);
+        D2D.DeviceContext->FillRectangle(
+          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+          boxBrush);
 
-      hr = D2D.EndDraw();
-      CHECK_HRESULT(hr);
+        D2D.DeviceContext->DrawTextA(
+          helloWorld, 
+          ARRAYSIZE(helloWorld),
+          textFormat,
+          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+          textBrush);
+
+        hr = D2D.EndDraw();
+        CHECK_HRESULT(hr);
+      }
     }
   }
 }
@@ -673,7 +677,7 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
-  DeviceContext->Clear();
+  DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
 }
 
 // ----------------------------------------------------------------------------

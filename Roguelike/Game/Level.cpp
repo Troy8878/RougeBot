@@ -16,7 +16,7 @@ Chunk::Chunk(void)
 {
 }
 
-Chunk::Chunk(void)
+Chunk::~Chunk(void)
 {
 }
 

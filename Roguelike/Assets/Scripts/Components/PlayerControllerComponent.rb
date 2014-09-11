@@ -14,8 +14,9 @@
 #items.
 ################################################################
 
+PLAYER_INVENTORY = Inventory.new
+
 class PlayerControllerComponent < ComponentBase
-  @@inventory = Inventory.new
 
   # Initialize the properties of the PlayerController
   def initialize(data)

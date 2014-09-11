@@ -63,7 +63,8 @@
         },
         "SpriteComponent": {
           "render_target": "Le3DCam",
-          "textures": ["SPECIAL/SURFACE/200:200"]
+          "textures": ["SPECIAL/SURFACE/200:200"],
+          "shader": "Textured"
         }
       }
     }

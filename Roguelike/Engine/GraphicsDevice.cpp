@@ -226,6 +226,8 @@ math::Vector2D WindowDevice::GetSize() const
 
 // ----------------------------------------------------------------------------
 
+void TestDrawText(const GraphicsDevice::D2DData& D2D);
+
 bool WindowDevice::BeginFrame()
 {
   if (DeviceContext == nullptr)
@@ -235,6 +237,7 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   D2D.DeviceContext->BeginDraw();
+  TestDrawText(D2D);
 
   return true;
 }
@@ -280,33 +283,6 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
 
     hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     CHECK_HRESULT(hr);
-
-    // Let's try out the drawing
-    if (GetGame()->CurrentLevel)
-    {
-      auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
-      if (testent)
-      {
-        auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
-        auto texture = sprite->GetTexture(0);
-
-        ReleaseDXInterface(brush3d);
-        texture.RenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black),
-                                                    &brush3d);
-
-        texture.RenderTarget->BeginDraw();
-        auto targetSize = texture.RenderTarget->GetSize();
-
-        texture.RenderTarget->DrawText(
-          helloWorld, 
-          ARRAYSIZE(helloWorld),
-          textFormat,
-          D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-          brush3d);
-
-        hr = texture.RenderTarget->EndDraw();
-      }
-    }
   }
 
   D2D.DeviceContext->FillRectangle(
@@ -319,14 +295,39 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
     textFormat,
     D2D1::RectF(100, 100, 300, 300),
     textBrush);
+
+  // Let's try out the drawing
+  if (GetGame()->CurrentLevel)
+  {
+    auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
+    if (testent)
+    {
+      auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
+      auto texture = sprite->GetTexture(0);
+
+      if (!brush3d)
+        texture.RenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red),
+                                                    &brush3d);
+
+      texture.RenderTarget->BeginDraw();
+      auto targetSize = texture.RenderTarget->GetSize();
+
+      texture.RenderTarget->DrawText(
+        helloWorld, 
+        ARRAYSIZE(helloWorld),
+        textFormat,
+        D2D1::RectF(0, 0, targetSize.width, targetSize.height),
+        brush3d);
+
+      hr = texture.RenderTarget->EndDraw();
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
 
 void WindowDevice::EndFrame()
 {
-  TestDrawText(D2D);
-
   D2D.DeviceContext->EndDraw();
 
   static bool vsync = GetGame()->initSettings.vsync;

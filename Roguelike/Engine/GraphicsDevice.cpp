@@ -226,7 +226,7 @@ math::Vector2D WindowDevice::GetSize() const
 
 // ----------------------------------------------------------------------------
 
-void TestDrawText(const GraphicsDevice::D2DData& D2D);
+void TestDrawText(GraphicsDevice::D2DData& D2D);
 
 bool WindowDevice::BeginFrame()
 {
@@ -236,7 +236,6 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-  D2D.DeviceContext->BeginDraw();
   TestDrawText(D2D);
 
   return true;
@@ -244,13 +243,12 @@ bool WindowDevice::BeginFrame()
 
 // ----------------------------------------------------------------------------
 
-void TestDrawText(const GraphicsDevice::D2DData& D2D)
+void TestDrawText(GraphicsDevice::D2DData& D2D)
 {
   HRESULT hr;
   
   static ID2D1SolidColorBrush *boxBrush = nullptr;
   static ID2D1SolidColorBrush *textBrush = nullptr;
-  static ID2D1SolidColorBrush *brush3d = nullptr;
   static IDWriteTextFormat *textFormat = nullptr;
 
   static const WCHAR helloWorld[] = L"Hello, World!";
@@ -285,17 +283,6 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
     CHECK_HRESULT(hr);
   }
 
-  D2D.DeviceContext->FillRectangle(
-    D2D1::RectF(100, 100, 300, 300),
-    boxBrush);
-
-  D2D.DeviceContext->DrawText(
-    helloWorld, 
-    ARRAYSIZE(helloWorld),
-    textFormat,
-    D2D1::RectF(100, 100, 300, 300),
-    textBrush);
-
   // Let's try out the drawing
   if (GetGame()->CurrentLevel)
   {
@@ -305,21 +292,18 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
       auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
       auto texture = sprite->GetTexture(0);
 
-      if (!brush3d)
-        texture.RenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red),
-                                                    &brush3d);
+      D2D.DrawTo(texture);
+      auto targetSize = D2D.DeviceContext->GetSize();
 
-      texture.RenderTarget->BeginDraw();
-      auto targetSize = texture.RenderTarget->GetSize();
-
-      texture.RenderTarget->DrawText(
+      D2D.DeviceContext->DrawTextA(
         helloWorld, 
         ARRAYSIZE(helloWorld),
         textFormat,
         D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-        brush3d);
+        textBrush);
 
-      hr = texture.RenderTarget->EndDraw();
+      hr = D2D.EndDraw();
+      CHECK_HRESULT(hr);
     }
   }
 }
@@ -328,8 +312,6 @@ void TestDrawText(const GraphicsDevice::D2DData& D2D)
 
 void WindowDevice::EndFrame()
 {
-  D2D.DeviceContext->EndDraw();
-
   static bool vsync = GetGame()->initSettings.vsync;
   if (vsync)
   {
@@ -585,24 +567,12 @@ void GraphicsDevice::InitializeD2DContext()
   hr = D2D.Device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2D.DeviceContext);
   CHECK_HRESULT(hr);
 
-  D2D1_BITMAP_PROPERTIES1 bitmapProperties =
-    D2D1::BitmapProperties1(
-      D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-      D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
-
-  hr = SwapChain->GetBuffer(0, IID_PPV_ARGS(&D2D.BackBuffer));
-  CHECK_HRESULT(hr);
-
-  hr = D2D.DeviceContext->CreateBitmapFromDxgiSurface(
-    D2D.BackBuffer, &bitmapProperties, &D2D.TargetBitmap);
-  CHECK_HRESULT(hr);
+  D2D.DeviceContext->SetDpi(96, 96);
 
   hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
                            __uuidof(*D2D.WriteFactory),
                            reinterpret_cast<IUnknown **>(&D2D.WriteFactory));
   CHECK_HRESULT(hr);
-
-  D2D.DeviceContext->SetTarget(D2D.TargetBitmap);
 
   *&D2D.ResourceTimestamp = D2DData::clock::now();
 }
@@ -693,6 +663,24 @@ void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
 DisplayMode::DisplayMode(const DXGI_MODE_DESC& desc)
   : DXGI_MODE_DESC(desc)
 {
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
+{
+  assert(texture.RenderTarget);
+
+  DeviceContext->SetTarget(texture.RenderTarget);
+  DeviceContext->BeginDraw();
+  DeviceContext->Clear();
+}
+
+// ----------------------------------------------------------------------------
+
+HRESULT GraphicsDevice::D2DData::EndDraw()
+{
+  return DeviceContext->EndDraw();
 }
 
 // ----------------------------------------------------------------------------

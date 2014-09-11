@@ -26,7 +26,7 @@ public:
   /**
     The render target for SPECIAL/SURFACE textures
   */
-  PROPERTY(get = _GetRenderTarget) ID2D1RenderTarget * const & RenderTarget;
+  PROPERTY(get = _GetRenderTarget) ID2D1Bitmap1 * const & RenderTarget;
 
   operator bool() const { return !!_res; }
 
@@ -42,10 +42,17 @@ private:
 
   struct TextureResource
   {
+    typedef GraphicsDevice::D2DData::clock clock;
+
     ID3D11Texture2D *texture = nullptr;
     ID3D11ShaderResourceView *resource = nullptr;
+
+    // SPECIAL/SURFACE data
     IDXGISurface *surface = nullptr;
-    ID2D1RenderTarget *target = nullptr;
+    ID2D1Bitmap1 *target = nullptr;
+    GraphicsDevice *device = nullptr;
+    UINT width, height;
+    clock::time_point timestamp;
 
     TextureResource() = default;
     ~TextureResource();
@@ -60,7 +67,13 @@ private:
       std::swap(resource, moving.resource);
       std::swap(surface, moving.surface);
       std::swap(target, moving.target);
+      std::swap(device, moving.device);
+      std::swap(width, moving.width);
+      std::swap(height, moving.height);
+      std::swap(timestamp, moving.timestamp);
     }
+
+    void ValidateSpecialSurface();
   };
 
   std::shared_ptr<TextureResource> _res;
@@ -68,7 +81,11 @@ private:
 public:
   ID3D11ShaderResourceView * const & _GetShaderRes() const { return _res->resource; };
   ID3D11Texture2D * const & _GetTexture() const { return _res->texture; };
-  ID2D1RenderTarget * const & _GetRenderTarget() const { return _res->target; }
+  ID2D1Bitmap1 * const & _GetRenderTarget() const 
+  { 
+    _res->ValidateSpecialSurface(); 
+    return _res->target; 
+  }
 
   friend class TextureManager;
 };

@@ -13,6 +13,7 @@
 struct WindowCreationOptions;
 class GraphicsDevice;
 class WindowDevice;
+class Texture2D;
 
 // ----------------------------------------------------------------------------
 
@@ -58,6 +59,8 @@ public:
   {
     typedef std::chrono::high_resolution_clock clock;
 
+    IR_PROPERTY(clock::time_point, ResourceTimestamp);
+
     IR_PROPERTY(ID2D1Factory1 *, Factory);
     IR_PROPERTY(ID2D1Device *, Device);
     IR_PROPERTY(ID2D1DeviceContext *, DeviceContext);
@@ -65,7 +68,8 @@ public:
     IR_PROPERTY(ID2D1Bitmap1 *, TargetBitmap);
     IR_PROPERTY(IDWriteFactory *, WriteFactory);
 
-    IR_PROPERTY(clock::time_point, ResourceTimestamp);
+    void DrawTo(Texture2D texture);
+    HRESULT EndDraw();
   };
   IR_PROPERTY(D2DData, D2D);
 

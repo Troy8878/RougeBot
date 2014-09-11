@@ -101,7 +101,7 @@ bool getline_async(std::string& str,
               break;
 
             case 'P': // [DOWN]
-              if (message_index < message_list.size() - 1)
+              if (message_list.size() && message_index < message_list.size() - 1)
                 str = message_list[++message_index];
               pos = str.size();
               break;
@@ -224,7 +224,7 @@ bool getline_async(std::string& str,
     }
     else
     {
-      Sleep(1); // Give up my time slice so I'm not just wasting cycles
+      Sleep(5); // Give up my time slice so I'm not just wasting cycles
     }
   }
 }

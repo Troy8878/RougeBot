@@ -7,6 +7,7 @@
 #include "Common.h"
 
 #include "Helpers\ModuleResource.h"
+#include "ModelBuilder.h"
 
 #include "mruby.h"
 #include "mruby\compile.h"
@@ -32,6 +33,7 @@ extern "C"
   }
 
   // mrbgem protos
+  void mrb_mruby_vector_init(mrb_state *mrb);
   void mrb_mruby_fiber_gem_init(mrb_state* mrb);
   void mrb_mruby_gamestuff_gem_init(mrb_state *mrb);
   void mrb_mruby_print_gem_init(mrb_state* mrb);
@@ -44,6 +46,10 @@ extern "C"
   void mrb_init_mrbgems(mrb_state *mrb)
   {
     ruby::ruby_engine engine{mrb};
+
+    // Much faster than the vanilla vector class I made :P
+    mrb_mruby_vector_init(mrb);
+    engine.evaluate_asset("Core/vector.rb");
 
     // Fiber gem
     mrb_mruby_fiber_gem_init(mrb);
@@ -72,6 +78,8 @@ extern "C"
 
     // Load the gamestuff that I've defined to help out
     mrb_mruby_gamestuff_gem_init(mrb);
+
+    ModelBuilder::InitializeRubyModule(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

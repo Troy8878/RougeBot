@@ -29,10 +29,11 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
-  MultiCam cam;
-  cam.GetCamera<HUDCamera>();
-
   IFDEBUG(createConsole());
+  
+  std::cout << "sizeof(math::Vector): " << sizeof(math::Vector) << std::endl;
+  std::cout << "sizeof(RData):        " << sizeof(RData) << std::endl;
+
   game.Run();
   return 0;
 }

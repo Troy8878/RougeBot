@@ -1,0 +1,12 @@
+[
+  {
+    "caption": "Launch Game: Release",
+    "command": "launch_game",
+    "args": { "mode": "Release" }
+  },
+  {
+    "caption": "Launch Game: Debug",
+    "command": "launch_game",
+    "args": { "mode": "Debug" }
+  }
+]

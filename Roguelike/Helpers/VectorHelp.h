@@ -1,4 +1,4 @@
-/*********************************
+﻿/*********************************
  * VectorHelp.h
  * Connor Hilarides
  * Created 2014/06/24
@@ -8,7 +8,7 @@
 
 #include "Helpers\UseDirectX.h"
 #include <iostream>
-
+#include <algorithm>
 
 namespace math
 {
@@ -16,7 +16,7 @@ namespace math
 
   const float pi = 3.14159265358979f;
 
-  class Vector : public XMFLOAT4A
+  __declspec(align(16)) class Vector : public XMFLOAT4A
   {
   public:
     inline Vector() = default;
@@ -39,7 +39,7 @@ namespace math
 
     inline float *buffer() { return &x; }
 
-    inline bool operator==(const Vector& other)
+    inline bool operator==(const Vector& other) const
     {
       return 
         x == other.x &&
@@ -56,9 +56,11 @@ namespace math
 
       return math::Vector{(float)nums[0],(float)nums[1],(float)nums[2],(float)nums[3]};
     }
+
+    inline operator XMVECTOR() const { return get(); }
   };
 
-  class Vector2D : public XMFLOAT2A
+  __declspec(align(16)) class Vector2D : public XMFLOAT2A
   {
   public:
     inline Vector2D() = default;
@@ -79,20 +81,22 @@ namespace math
       return *this;
     }
 
-    inline bool operator==(const Vector2D& other)
+    inline bool operator==(const Vector2D& other) const
     {
       return
         x == other.x &&
         y == other.y;
     }
 
-    inline bool operator!=(const Vector2D& other)
+    inline bool operator!=(const Vector2D& other) const
     {
       return !(*this == other);
     }
+
+    inline operator XMVECTOR() const { return get(); }
   };
 
-  class Matrix
+  __declspec(align(16)) class Matrix
   {
     XMFLOAT4X4A _value;
 
@@ -103,12 +107,14 @@ namespace math
       XMStoreFloat4x4A(&_value, m1);
     }
 
-    inline XMMATRIX XM_CALLCONV get() { return XMLoadFloat4x4A(&_value); }
+    inline XMMATRIX XM_CALLCONV get() const { return XMLoadFloat4x4A(&_value); }
     inline Matrix& XM_CALLCONV operator=(FXMMATRIX m1)
     {
       XMStoreFloat4x4A(&_value, m1);
       return *this;
     }
+
+    inline operator XMMATRIX() const { return get(); }
   };
 
   inline XMVECTOR XM_CALLCONV createVector(float x, float y, float z)
@@ -183,5 +189,40 @@ inline std::ostream& XM_CALLCONV operator<<(std::ostream& os, DirectX::CXMVECTOR
   return os;
 }
 
+inline std::ostream& XM_CALLCONV operator<<(std::ostream& os, DirectX::CXMMATRIX m1)
+{
+  size_t longest_num = 1;
+  for (unsigned i = 0; i < 16; ++i)
+  {
+    longest_num = std::max(longest_num, std::to_string(m1.r[i/4].m128_f32[i%4]).size());
+  }
+
+  os << '\xDA'; // ┌
+  for (unsigned i = 0; i < (longest_num * 4) + 3; ++i)
+    os << ' ';
+  os << '\xBF' << std::endl; // ┐
+
+  for (unsigned i = 0; i < 4; ++i)
+  {
+    os << '\xB3'; // │
+    for (unsigned j = 0; j < 4; ++j)
+    {
+      auto numstr = std::to_string(m1.r[i].m128_f32[j]);
+      for (unsigned i = 0; i < longest_num - numstr.size(); ++i)
+        os << ' ';
+      os << numstr;
+      if (j < 3)
+        os << ' ';
+    }
+    os << '\xB3' << std::endl; // │
+  }
+
+  os << '\xC0'; // └
+  for (unsigned i = 0; i < (longest_num * 4) + 3; ++i)
+    os << ' ';
+  os << '\xD9' << std::endl; // ┘
+
+  return os;
+}
 
 

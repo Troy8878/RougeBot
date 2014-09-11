@@ -30,8 +30,6 @@ public:
   math::Vector Rotation;
   math::Vector Scale;
 
-  IR_PROPERTY(math::Matrix, Matrix);
-
   void OnUpdate(Events::EventMessage&);
   void UpdateMatrix();
   void ApplyParentTransforms();

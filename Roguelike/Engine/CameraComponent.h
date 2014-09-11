@@ -23,21 +23,32 @@ public:
   CameraComponent(const std::string& name, int layer, const MultiCam& camera);
   ~CameraComponent();
 
-  PROPERTY(get = _GetICamera) ICamera *Camera;
+  void Initialize(Entity *owner, const std::string& name) override;
+  
   IR_PROPERTY(std::string, Name);
+  PROPERTY(get = _GetICamera) ICamera *Camera;
+  PROPERTY(get = _GetMCamera) MultiCam& MCamera;
+  PROPERTY(get = _GetCameraType) std::type_index CameraType;
+
+  void FixCameras();
+  void OnUpdate(Events::EventMessage&);
+  mrb_value GetRubyWrapper() override { return Camera->GetRubyWrapper(); }
 
   static CameraComponentFactory factory;
 
 private:
   MultiCam _camera;
+  math::Vector2D prevSize = {0, 0};
 
 public:
-  ICamera *_GetICamera() { return _camera.GetCamera<ICamera>(); }
+  inline ICamera *_GetICamera() { return _camera.GetCamera<ICamera>(); }
+  inline MultiCam& _GetMCamera() { return _camera; }
+  inline const std::type_index& _GetCameraType() { return _camera.type; }
 };
 
 // ----------------------------------------------------------------------------
 
-class CameraComponentFactory : IComponentFactory
+class CameraComponentFactory : public IComponentFactory
 {
 public:
   CameraComponentFactory();

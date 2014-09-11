@@ -42,7 +42,8 @@ SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures,
 // Destructor for the SpriteComponent
 SpriteComponent::~SpriteComponent()
 {
-  renderTarget->RemoveDrawable(this);
+  if (renderTarget)
+    renderTarget->RemoveDrawable(this);
 }
 
 // ----------------------------------------------------------------------------
@@ -51,7 +52,6 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
-  Transform = Owner->GetComponent<TransformComponent>("TransformComponent");
   renderTarget->AddDrawable(this, ModelShader);
 }
 
@@ -59,11 +59,11 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 
 void SpriteComponent::Draw()
 {
-  auto& transform = Transform->Matrix;
+  auto transform = Owner->Transform.get();
 
   UnitSquare->shader = ModelShader;
   UnitSquare->texture = _textures[TextureIndex];
-  UnitSquare->Draw(transform.get());
+  UnitSquare->Draw(transform);
 }
 
 // ----------------------------------------------------------------------------

@@ -80,7 +80,12 @@ struct LookAtCamera : ICamera
   void Update()
   {
     using namespace DirectX;
-    viewMatrix = XMMatrixLookAtLH(position.get(), lookAt.get(), g_XMIdentityR1);
+    auto pos = position.get();
+    auto look = lookAt.get();
+    if (XMVector3Equal(look, pos))
+      look = pos + g_XMIdentityR2;
+
+    viewMatrix = XMMatrixLookAtLH(pos, look, g_XMIdentityR1);
   }
 
   void LoadFromData(const component_factory_data& data) override;
@@ -113,7 +118,9 @@ struct HUDCamera : ICamera
 
 // ----------------------------------------------------------------------------
 
-struct MultiCam
+#pragma warning (disable : 4324) // I know it added that padding :U
+
+__declspec(align(16)) struct MultiCam
 {
   union
   {
@@ -122,13 +129,15 @@ struct MultiCam
     byte _labuffer[sizeof(LookAtCamera)];
     byte _hdbuffer[sizeof(HUDCamera)];
   };
-
   std::type_index type = typeid(ICamera);
+
+  __declspec(property(get = GetBase)) ICamera *Base;
 
   template <typename CamType>
   void SetType()
   {
-    GetCamera<CamType>()->CamType::CamType();
+    type = typeid(CamType);
+    new (GetCamera<CamType>()) CamType;
   }
   
   template <typename CamType>
@@ -137,7 +146,14 @@ struct MultiCam
     auto icam = reinterpret_cast<ICamera *>(buffer);
     return static_cast<CamType *>(icam); 
   }
+
+  ICamera *GetBase()
+  {
+    return GetCamera<ICamera>();
+  }
 };
+
+#pragma warning (default : 4324) // restore
 
 // ----------------------------------------------------------------------------
 

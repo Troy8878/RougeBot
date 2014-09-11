@@ -315,9 +315,9 @@ void mrb_gc_mark(mrb_state*,struct RBasic*);
   if (MRB_TT_HAS_BASIC_P(mrb_type(val))) mrb_gc_mark((mrb), mrb_basic_ptr(val)); \
 }
 void mrb_field_write_barrier(mrb_state *, struct RBasic*, struct RBasic*);
-#define mrb_field_write_barrier_value(mrb, obj, val) do{\
+#define mrb_field_write_barrier_value(mrb, obj, val) {\
   if (MRB_TT_HAS_BASIC_P(mrb_type(val))) mrb_field_write_barrier((mrb), (obj), mrb_basic_ptr(val)); \
-} while (0)
+}
 void mrb_write_barrier(mrb_state *, struct RBasic*);
 
 mrb_value mrb_check_convert_type(mrb_state *mrb, mrb_value val, enum mrb_vtype type, const char *tname, const char *method);

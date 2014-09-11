@@ -1,133 +1,55 @@
 {
   "name": "MainMenu",
-  "components": {},
+  "components": {
+    "TransformComponent": {
+      "scale": [1,1,1]
+    }
+  },
   "entities": [
     {
-      "name": "MainMenuBG",
+      "name": "Le3DCam",
       "components": {
-        /*"CameraComponent": {
-          "type": "HUDCamera",
-          "layer": 10,
-          "position": [0,0,10,1],
-          "lookAt": [0,0,0,1]
+        "CameraComponent": {
+          "type": "LookAtCamera",
+          "target_name": "Le3DCam",
+          "layer": 1,
+          "position": [0, 5, -5],
+          "look_at": [0, 0, 0],
+          "fov": 45
+        },
+        /*"SpinnyCameraComponent": {
+          "distance": 3,
+          "speed": 0
         }*/
       }
     },
     {
-      "name": "MainMenuGUI",
+      "name": "The Room",
       "components": {
-        /*"CameraComponent": {
-          "type": "HUDCamera",
-          "layer": 20,
-          "position": [0,0,1,1]
-        }*/
+        "TransformComponent": {
+          "position": [0, -0.01, 0]
+        },
+        "CustomModelComponent": {
+          "render_target": "Le3DCam"
+        },
+        "TestRoomComponent": {}
       }
     },
     {
-      "name": "pancake one",
+      "name": "Pancake",
       "archetype": "PancakeFace",
       "components": {
-        "SpriteComponent": {
-          "render_target": "global_hud"
-        },
         "TransformComponent": {
-          "position": [0.3, 0, 0, 1],
-          "rotation": [0, 0, 0, 0],
-          "scale": [0.4, 0.4, 0.4, 1]
+          "rotation": [1.57079633, 0, 0],
+          "position": [1, 0, 0]
+        },
+        "SpriteComponent": {
+          "render_target": "Le3DCam"
         },
         "SpinnyThingComponent": {
-          "speed": 1
+          "speed": 0
         }
-      },
-      "children": [
-        {
-          "name": "pancake one child one",
-          "archetype": "PancakeFace",
-          "components": {
-            "SpriteComponent": {
-              "render_target": "global_hud"
-            },
-            "TransformComponent": {
-              "position": [0, 1, 0.5, 1],
-              "rotation": [0, 0, 0, 0],
-              "scale": [0.4, 0.4, 0.4, 1]
-            },
-            "SpinnyThingComponent": {
-              "speed": -2
-            }
-          }
-        },
-        {
-          "name": "pancake one child two",
-          "archetype": "PancakeFace",
-          "components": {
-            "SpriteComponent": {
-              "render_target": "global_hud"
-            },
-            "TransformComponent": {
-              "position": [0, -1, 0.5, 1],
-              "rotation": [0, 0, 0, 0],
-              "scale": [0.4, 0.4, 0.4, 1]
-            },
-            "SpinnyThingComponent": {
-              "speed": -2
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "pancake two",
-      "archetype": "PancakeFace",
-      "components": {
-        "SpriteComponent": {
-          "render_target": "global_hud"
-        },
-        "TransformComponent": {
-          "position": [-0.3, 0, 0, 1],
-          "rotation": [0, 0, 0, 0],
-          "scale": [-0.4, 0.4, 0.4, 1]
-        },
-        "SpinnyThingComponent": {
-          "speed": -1
-        }
-      },
-      "children": [
-        {
-          "name": "pancake two child one",
-          "archetype": "PancakeFace",
-          "components": {
-            "SpriteComponent": {
-              "render_target": "global_hud"
-            },
-            "TransformComponent": {
-              "position": [0, 1, 0.5, 1],
-              "rotation": [0, 0, 0, 0],
-              "scale": [0.4, 0.4, 0.4, 1]
-            },
-            "SpinnyThingComponent": {
-              "speed": -2
-            }
-          }
-        },
-        {
-          "name": "pancake two child two",
-          "archetype": "PancakeFace",
-          "components": {
-            "SpriteComponent": {
-              "render_target": "global_hud"
-            },
-            "TransformComponent": {
-              "position": [0, -1, 0.5, 1],
-              "rotation": [0, 0, 0, 0],
-              "scale": [0.4, 0.4, 0.4, 1]
-            },
-            "SpinnyThingComponent": {
-              "speed": -2
-            }
-          }
-        }
-      ]
+      }
     }
   ]
 }

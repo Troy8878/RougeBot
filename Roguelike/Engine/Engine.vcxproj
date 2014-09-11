@@ -90,6 +90,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="CustomModelComponent.h" />
     <ClInclude Include="EngineInit.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntitySection.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelDef.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelBuilder.h" />
     <ClInclude Include="RenderSet.h" />
     <ClInclude Include="RubyComponent.h" />
     <ClInclude Include="RubyInterop.h" />
@@ -124,6 +126,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CustomModelComponent.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventHandlers.cpp" />
@@ -134,6 +137,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelBuilder.cpp" />
     <ClCompile Include="RenderSet.cpp" />
     <ClCompile Include="RubyClass.cpp" />
     <ClCompile Include="RubyComponent.cpp" />

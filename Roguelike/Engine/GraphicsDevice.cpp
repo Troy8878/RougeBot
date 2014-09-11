@@ -248,7 +248,7 @@ void GraphicsDevice::InitializeD3DContext()
   sd.BufferCount = 1;
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
-  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // I don't even, it's what MSDN told me to use >.>
+  sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
   sd.BufferDesc.RefreshRate.Numerator = 120;
   sd.BufferDesc.RefreshRate.Denominator = 1;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -311,7 +311,7 @@ void GraphicsDevice::InitializeD3DContext()
   rasterDesc.DepthClipEnable = false;
   rasterDesc.FillMode = D3D11_FILL_SOLID;
   rasterDesc.FrontCounterClockwise = false;
-  rasterDesc.MultisampleEnable = false;
+  rasterDesc.MultisampleEnable = true;
   rasterDesc.ScissorEnable = false;
   rasterDesc.SlopeScaledDepthBias = 0.0f;
   rasterDesc.AntialiasedLineEnable = true;
@@ -371,7 +371,7 @@ void GraphicsDevice::InitializeDepthBuffer()
   ReleaseDXInterface(DepthStencilState);
   ReleaseDXInterface(DepthStencilView);
 
-#pragma region Depth Stencil Buffer
+  #pragma region Depth Stencil Buffer
 
   D3D11_TEXTURE2D_DESC depthBufferDesc;
   ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -390,16 +390,16 @@ void GraphicsDevice::InitializeDepthBuffer()
   hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
   CHECK_HRESULT(hr);
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Depth Stencil State
+  #pragma region Depth Stencil State
 
   D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
   ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
 
   depthStencilDesc.DepthEnable = TRUE;
   depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+  depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
   depthStencilDesc.StencilEnable = TRUE;
   depthStencilDesc.StencilReadMask = 0xFF;
@@ -420,9 +420,9 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
 
-#pragma endregion
+  #pragma endregion
 
-#pragma region Depth Stencil View Desc
+  #pragma region Depth Stencil View Desc
 
   D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
   ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -435,7 +435,7 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 
-#pragma endregion
+  #pragma endregion
 
 }
 

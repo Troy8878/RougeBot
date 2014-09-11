@@ -9,6 +9,10 @@
 
 #include "mruby.h"
 
+// ----------------------------------------------------------------------------
+
+#pragma region Random stuff
+
 extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
 {
   static mrb_value *extra_absorbtion;
@@ -59,6 +63,8 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
   //return mrb_nil_value();
 }
 
+// ----------------------------------------------------------------------------
+
 extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
 {
   (self);
@@ -89,6 +95,8 @@ extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
   return mrb_symbol_value(result_sym);
 }
 
+// ----------------------------------------------------------------------------
+
 extern "C" mrb_value ruby_clearscreen(mrb_state *, mrb_value)
 {
   HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -110,24 +118,23 @@ extern "C" mrb_value ruby_clearscreen(mrb_state *, mrb_value)
   return mrb_nil_value();
 }
 
-extern "C" void load_gamestuff_files(mrb_state *mrb)
-{
-  ruby::ruby_engine engine{mrb};
+#pragma endregion
 
-  engine.evaluate_asset("Core/vector.rb");
-}
+// ----------------------------------------------------------------------------
 
 static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
 {
   return GetGame()->CurrentLevel->RootEntity->RubyWrapper;
 }
 
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
   auto kernel = mrb->kernel_module;
 
-  mrb_define_class_method(mrb, gameClass, "rand", ruby_rand, ARGS_OPT(3));
+  mrb_define_class_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
 
   #pragma region MessageBox stuff
@@ -171,6 +178,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 
   #pragma endregion
 
-  load_gamestuff_files(mrb);
 }
+
+// ----------------------------------------------------------------------------
 

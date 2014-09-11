@@ -25,7 +25,7 @@ static entity_id next_ent_id = 0;
 
 Entity::Entity(entity_id id)
   : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId()),
-    _Parent(nullptr)
+    _Parent(nullptr), _Transform(DirectX::XMMatrixIdentity())
 {
   if (_id >= next_ent_id)
     next_ent_id = _id + 1;
@@ -563,6 +563,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
 
 void EntityFactory::DestroyEntity(Entity *entity)
 {
+  // Let it be known that this thing is gone
   {
     static Events::EventId recieverDestroyedId("event_reciever_destroyed");
     Events::EventRecieverDestroyedEvent data{entity};
@@ -574,4 +575,5 @@ void EntityFactory::DestroyEntity(Entity *entity)
 }
 
 // ----------------------------------------------------------------------------
+
 

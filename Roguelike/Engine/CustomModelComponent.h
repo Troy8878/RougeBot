@@ -1,13 +1,12 @@
 /*********************************
- * SpriteComponent.h
- * Jake Robsahm
- * Created 2014/08/19
+ * CustomModelComponent.h
+ * Connor Hilarides
+ * Created 2014/09/09
  *********************************/
 
 #pragma once
 
 #include "Common.h"
-#include "Texture.h"
 #include "Model.h"
 #include "RenderSet.h"
 
@@ -15,51 +14,40 @@
 
 // ----------------------------------------------------------------------------
 
-class SpriteComponentFactory;
-class TransformComponent;
+class CustomModelComponentFactory;
 
 // ----------------------------------------------------------------------------
 
-class SpriteComponent : public Component, public Drawable
+class CustomModelComponent : public Component, public Drawable
 {
 public:
-  // Constructors and Destructor
-  SpriteComponent(Texture2D texture, 
-                  Shader *shader, RenderSet *set);
-  SpriteComponent(const std::vector<Texture2D>& textures, 
-                  Shader *shader, RenderSet *set);
-  ~SpriteComponent();
+  CustomModelComponent(Shader *shader, RenderSet *set);
+  ~CustomModelComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
   void Draw() override;
   void OnSetDestroyed() override { renderTarget = nullptr; }
 
-  IR_PROPERTY(Model *, UnitSquare);
+  PROPERTY(get = _GetCustomModel, put = _SetCustomModel) Model *CustomModel;
   IR_PROPERTY(Shader *, ModelShader);
-  PROPERTY(get = _GetTextureCount) size_t TextureCount;
-  size_t TextureIndex;
-  
-  mrb_value GetRubyWrapper() override;
 
-  // Component factory to make sprite component
-  static SpriteComponentFactory factory;
+  static CustomModelComponentFactory factory;
 
 private:
-  std::vector<Texture2D> _textures;
+  Model *customModel = nullptr;
   RenderSet *renderTarget = nullptr;
 
-  static Model *GetSpriteModel();
-
 public:
-  size_t _GetTextureCount() { return _textures.size(); }
+  inline Model *_GetCustomModel() const { return customModel; }
+  void _SetCustomModel(Model *model);
 };
 
 // ----------------------------------------------------------------------------
 
-class SpriteComponentFactory : public IComponentFactory
+class CustomModelComponentFactory : public IComponentFactory
 {
 public:
-  SpriteComponentFactory();
+  CustomModelComponentFactory();
 
   Component *CreateObject(void *memory, component_factory_data& data) override;
   IAllocator *_GetAllocator() override { return &allocator; }

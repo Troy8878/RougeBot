@@ -20,10 +20,12 @@ class AttackComponent < ComponentBase
     @damage = [0,0]
   end
 
-  def equip_weapon(item)
-    @item = item
-    @attack = item.attack
-    @damage = item.damage
+  def equip_weapon()
+    # Pull the weapon from the inventory.
+    item = self.owner.inventory_component.inventory.equipment[:weapon]
+    # Set the attack and damage values to the newly equipped weapon's values.
+    attack = item.attack
+    damage = item.damage
   end
 
   def attack()

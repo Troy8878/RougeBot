@@ -136,11 +136,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GameConsole.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="GameConsole.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="Roguelike.h" />
   </ItemGroup>
   <ItemGroup>

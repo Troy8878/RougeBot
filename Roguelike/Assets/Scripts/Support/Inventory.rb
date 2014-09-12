@@ -11,7 +11,7 @@
 ################################################################
 
 class Inventory
-  attr_reader  :inventory
+  attr_reader  :inventory, :equipment
 
   # Constant array containing all valid equipment slots.
   EQUIPMENT_SLOTS = [:weapon, :chest, :shield]
@@ -89,5 +89,12 @@ class Inventory
 
     # Insert the item into the equipment at the appropriate slot
     @equipment[item.equip_slot] = item
+
+    if item.equip_slot == :weapon
+      self.owner.attack_component.equip_weapon
+    elsif item.equip_slot == :chest || item.equip_slot == :shield
+      self.owner.defense_component.equip_armor
+    end
+
   end
 end

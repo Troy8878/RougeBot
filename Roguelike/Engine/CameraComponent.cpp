@@ -25,6 +25,9 @@ CameraComponent::CameraComponent(const std::string& name, int layer, const Multi
 CameraComponent::CameraComponent(const std::string& name, int layer, MultiCam *copy)
   : _Name(name), _cameraPtr(copy)
 {
+  if (!_cameraPtr)
+    throw std::exception("Camera copy pointer was null D:");
+
   RenderGroup::Instance.CreateSet(name, Camera, layer, false);
 }
 
@@ -98,10 +101,13 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
     auto copyset = RenderGroup::Instance.GetSet(copyit->second);
 
     auto icam = copyset->RenderCamera;
-    (icam);
-    //auto multicam = reinterpret_cast<MultiCam *>()
+    auto multicam = reinterpret_cast<MultiCam *>(
+        reinterpret_cast<byte *>(icam) +
+        (reinterpret_cast<byte *>(&camera) -
+         reinterpret_cast<byte *>(camera.Base))
+      );
 
-    return new (memory) CameraComponent(target_name, layer, nullptr);
+    return new (memory) CameraComponent(target_name, layer, multicam);
   }
   
   auto type = data["type"];

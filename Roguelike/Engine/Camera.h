@@ -51,10 +51,10 @@ struct Basic3DCamera : ICamera
     using namespace DirectX;
     auto rotate = XMMatrixRotationRollPitchYawFromVector(rotation.get());
 
-    auto up = g_XMIdentityR1; // <0, 1, 0, 0>
-    auto lookAt = position.get() + rotate * g_XMIdentityR2; // <position> + [rotate] * <0, 0, 1, 0>
+    auto up = rotate * g_XMIdentityR1; // [rotate] * <0, 1, 0, 0>
+    auto lookAt = position + rotate * g_XMIdentityR2; // <position> + [rotate] * <0, 0, 1, 0>
 
-    viewMatrix = XMMatrixLookAtLH(position.get(), lookAt, up);
+    viewMatrix = XMMatrixLookAtLH(position, lookAt, up);
   }
 
   void LoadFromData(const component_factory_data& data) override;
@@ -85,7 +85,7 @@ struct LookAtCamera : ICamera
     if (XMVector3Equal(look, pos))
       look = pos + g_XMIdentityR2;
 
-    viewMatrix = XMMatrixLookAtLH(pos, look, g_XMIdentityR1);
+    viewMatrix = XMMatrixLookAtLH(pos, look, g_XMIdentityR2);
   }
 
   void LoadFromData(const component_factory_data& data) override;

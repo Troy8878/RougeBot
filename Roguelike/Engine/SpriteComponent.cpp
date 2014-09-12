@@ -93,8 +93,19 @@ SpriteComponentFactory::SpriteComponentFactory()
 Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
-  auto shader = RegisteredShaders[map_fetch(data, "shader", "Textured")];
-  auto set = RenderGroup::Instance.GetSet(data["render_target"]);
+  auto shader_name = map_fetch(data, "shader", "Textured");
+  auto shader = RegisteredShaders[shader_name];
+
+  if (shader == nullptr)
+    throw string_exception("Shader '" + shader_name + 
+                           "' could not be found while initializing SpriteComponent!");
+
+  auto set_name = data["render_target"];
+  auto set = RenderGroup::Instance.GetSet(set_name);
+
+  if (set == nullptr)
+    throw string_exception("Render Target '" + set_name + 
+                           "' could not be found while initializing SpriteComponent!");
 
   SpriteComponent *component;
 

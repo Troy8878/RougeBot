@@ -73,7 +73,8 @@ void RenderGroup::Initialize()
 
 RenderSet *RenderGroup::GetSet(const std::string& name)
 {
-  return sets.find(name)->second.first;
+  auto it = sets.find(name);
+  return it != sets.end() ? it->second.first : nullptr;
 }
 
 // ----------------------------------------------------------------------------

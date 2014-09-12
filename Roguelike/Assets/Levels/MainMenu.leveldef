@@ -15,16 +15,16 @@
           "layer": 1,
           "position": [0, 5, -5],
           "look_at": [0, 0, 0],
-          "fov": 45
+          "fov": 90
         },
         "CameraFollowComponent": {
-          "offset": [0, 2, -2],
+          "offset": [0, 3, 0],
           "follows": "Pancake",
-          "lag": 1
+          "lag": 5
         }
       }
     },
-    /*{
+    {
       "name": "TranslucentLayer",
       "components": {
         "CameraComponent": {
@@ -33,7 +33,7 @@
           "layer": 2
         }
       }
-    },*/
+    },
     {
       "name": "The Room",
       "components": {
@@ -51,8 +51,8 @@
       "archetype": "PancakeFace",
       "components": {
         "TransformComponent": {
-          "rotation": [0.78539816339744, 0, 0],
-          "position": [1, 0.25, 1],
+          "rotation": [1.57079632679489, 0, 0],
+          "position": [1, 0.005, 1],
           "scale": [0.5, 0.5]
         },
         "SpriteComponent": {
@@ -67,13 +67,13 @@
       "name": "2DSurfaceTest",
       "components": {
         "TransformComponent": {
-          "rotation": [1.57, 0, 0],
+          "rotation": [1.57079632679489, 0, 0],
           "position": [1, 0.01, 2],
           "scale": [0.75, 0.75]
         },
         "SpriteComponent": {
-          "render_target": "Le3DCam",
-          "textures": ["SPECIAL/SURFACE/200:200"],
+          "render_target": "TranslucentLayer",
+          "textures": ["SPECIAL/SURFACE/500:500"],
           "shader": "Textured"
         }
       }

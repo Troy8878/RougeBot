@@ -39,8 +39,11 @@ struct InputSignal
 struct KeyState : InputSignal
 {
   double hold_time = 0;
-  bool triggered = false;
-  bool released = false;
+  uint64_t trigger_frame = 0;
+  uint64_t release_frame = 0;
+
+  PROPERTY(get = _GetTriggered) bool triggered;
+  PROPERTY(get = _GetReleased) bool released;
 
   KeyState& operator=(const InputSignal& in)
   { 
@@ -53,6 +56,22 @@ private:
   bool initialized = false;
 
   friend class Input;
+
+public:
+  bool _GetTriggered() { return trigger_frame == GetGame()->Time.Frame; };
+  bool _GetReleased() { return release_frame == GetGame()->Time.Frame; };
+};
+
+// ----------------------------------------------------------------------------
+
+struct KeyStateEvent : public Events::EventData
+{
+  KeyState& state;
+
+  KeyStateEvent(KeyState& state) : state(state) {}
+  mrb_value GetRubyWrapper() override;
+
+  NO_ASSIGNMENT_OPERATOR(KeyStateEvent);
 };
 
 // ----------------------------------------------------------------------------
@@ -84,7 +103,7 @@ private:
   void OnUpdate(Events::EventMessage& e);
 
   KeyState keyStates[0x100];
-  std::unordered_map<virtual_key, KeyState> unicode_states;
+  std::unordered_map<virtual_key, KeyState> unicodeStates;
   // add in the other variables you need to keep track of the input state
   // feel free to modify KeyState if you feel like that's the best way
   // Remember to check for unicode values on VK_PACKET

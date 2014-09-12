@@ -24,6 +24,22 @@ Input::~Input()
 
 // ----------------------------------------------------------------------------
 
+void Input::OnKeyDown(const InputSignal& signal)
+{
+  KeyState *state = nullptr;
+  if (signal.virtual_key < 0x100)
+    state = &keyStates[signal.virtual_key];
+  else
+    state = &unicodeStates[signal.virtual_key];
+  *state = signal;
+
+  state->trigger_frame = GetGame()->Time.Frame;
+
+  
+  KeyStateEvent eventData{*state};
+  
+}
+
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------

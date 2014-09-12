@@ -269,7 +269,7 @@ void TestDrawText(GraphicsDevice::D2DData& D2D)
     CHECK_HRESULT(hr);
 
     hr = D2D.WriteFactory->
-      CreateTextFormat(L"Segoe Script", nullptr,
+      CreateTextFormat(L"Comic Sans MS", nullptr,
                        DWRITE_FONT_WEIGHT_EXTRA_BOLD,
                        DWRITE_FONT_STYLE_NORMAL,
                        DWRITE_FONT_STRETCH_NORMAL,

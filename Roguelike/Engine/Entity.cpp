@@ -48,6 +48,9 @@ Entity::~Entity()
 Component *Entity::AddComponent(const std::string& name, 
                                 component_factory_data& data)
 {
+  if (_components[name])
+    RemoveComponent(name);
+
   auto *component = ComponentManager::Instance.InstantiateComponent(name, data);
 
   component->Initialize(this, name);
@@ -344,6 +347,37 @@ static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
+{
+  component_factory_data data;
+
+  const char *name;
+  mrb_value hash;
+  mrb_get_args(mrb, "zH", &name, &hash);
+
+  auto jdata = mrb_inst->hash_to_json(hash);
+  for (auto& item : jdata.as_object())
+  {
+    if (item.second.is(json::json_type::jstring))
+    {
+      data[item.first] = item.second.as_string();
+    }
+    else
+    {
+      data[item.first] = item.second.serialize();
+    }
+  }
+
+  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *comp = entity->AddComponent(name, data);
+
+  return comp->GetRubyWrapper();
+}
+
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+
 static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
 {
   mrb_value identifier;
@@ -490,6 +524,8 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("name", rb_ent_name, ARGS_NONE());
 
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
+  rclass.define_method("add_component", rb_ent_add_component, ARGS_REQ(2));
+
   rclass.define_method("find_entity", rb_ent_find_entity, ARGS_REQ(1));
   rclass.define_method("search_entities", rb_ent_search_entities, MRB_ARGS_ARG(1, 1));
 

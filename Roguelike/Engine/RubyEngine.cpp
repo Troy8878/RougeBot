@@ -273,6 +273,86 @@ void ruby_engine::log_and_clear_error()
 
 // ----------------------------------------------------------------------------
 
+json::value ruby_engine::value_to_json(mrb_value value)
+{
+  if (mrb_hash_p(value))
+  {
+    return hash_to_json(value);
+  }
+  else if (mrb_array_p(value))
+  {
+    return array_to_json(value);
+  }
+  else if (mrb_string_p(value))
+  {
+    mrb_value value_s = mrb_funcall(mrb, value, "to_s", 0);
+    return json::value::string(mrb_str_to_stdstring(value_s));
+  }
+  else if (mrb_fixnum_p(value))
+  {
+    return json::value::number((json::value::number_t) mrb_fixnum(value));
+  }
+  else if (mrb_float_p(value))
+  {
+    return json::value::number(mrb_float(value));
+  }
+  else if (mrb_nil_p(value))
+  {
+    return json::value::null();
+  }
+  else if (mrb_type(value) == MRB_TT_FALSE || mrb_type(value) == MRB_TT_TRUE)
+  {
+    return json::value::boolean(!!mrb_bool(value));
+  }
+
+  throw std::exception("Unknown type in hash. "
+                       "Please only use basics "
+                       "(hash, array, string, num, bool).");
+}
+
+// ----------------------------------------------------------------------------
+
+json::value ruby_engine::hash_to_json(mrb_value hash)
+{
+  json::value jobj = json::value::object();
+  auto& object = jobj.as_object();
+
+  auto keys = mrb_hash_keys(mrb, hash);
+
+  auto key_ct = mrb_ary_len(mrb, keys);
+  for (mrb_int i = 0; i < key_ct; ++i)
+  {
+    mrb_value key = mrb_ary_entry(keys, i);
+    mrb_value value = mrb_hash_get(mrb, hash, key);
+    
+    mrb_value key_to_s = mrb_funcall(mrb, key, "to_s", 0);
+    std::string key_s = mrb_str_to_stdstring(key_to_s);
+
+    object[key_s] = value_to_json(value);
+  }
+
+  return jobj;
+}
+
+// ----------------------------------------------------------------------------
+
+json::value ruby_engine::array_to_json(mrb_value ary)
+{
+  json::value jary = json::value::array();
+  auto& array = jary.as_array();
+
+  auto value_ct = mrb_ary_len(mrb, ary);
+  for (mrb_int i = 0; i < value_ct; ++i)
+  {
+    mrb_value value = mrb_ary_entry(ary, i);
+    array.push_back(value_to_json(value));
+  }
+
+  return jary;
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value mrb_nop(mrb_state *, mrb_value)
 {
   return mrb_nil_value();

@@ -103,6 +103,10 @@ namespace ruby
     template <typename MapType>
     ruby_value hash_from_map(const MapType& map);
 
+    json::value value_to_json(mrb_value value);
+    json::value hash_to_json(mrb_value hash);
+    json::value array_to_json(mrb_value ary);
+
     void log_and_clear_error();
 
   private:

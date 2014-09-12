@@ -26,7 +26,7 @@ class TestRoomComponent < ComponentBase
   ROOM_SIZE = @@room.count
   C_L = -0.5
   C_R = 0.5
-  W_T = 1
+  W_T = 0.75
   W_B = 0
 
   @@grey = Vector.new(0.5, 0.5, 0.5, 1)

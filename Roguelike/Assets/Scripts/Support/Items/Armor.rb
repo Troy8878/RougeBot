@@ -12,6 +12,10 @@
 # armor - the amount of damage reduction this item provides.
 ################################################################
 
+# Because this file might get loaded first
+class Item
+end
+
 #An array containing every armor ever.
 ARMOR = []
 

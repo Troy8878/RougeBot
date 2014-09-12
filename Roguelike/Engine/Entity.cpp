@@ -355,7 +355,16 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
   mrb_value hash;
   mrb_get_args(mrb, "zH", &name, &hash);
 
-  auto jdata = mrb_inst->hash_to_json(hash);
+  json::value jdata;
+  try
+  {
+    jdata = mrb_inst->hash_to_json(hash);
+  }
+  catch (std::exception& e)
+  {
+    mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), e.what());
+  }
+
   for (auto& item : jdata.as_object())
   {
     if (item.second.is(json::json_type::jstring))
@@ -375,6 +384,17 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
 }
 
 // ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_remove_component(mrb_state *mrb, mrb_value self)
+{
+  const char *name;
+  mrb_get_args(mrb, "z", &name);
+
+  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  entity->RemoveComponent(name);
+
+  return mrb_nil_value();
+}
 
 // ----------------------------------------------------------------------------
 

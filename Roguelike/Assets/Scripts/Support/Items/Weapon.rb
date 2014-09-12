@@ -12,6 +12,10 @@
 # damage - the range of damage this weapon can do
 ################################################################
 
+# Because this file might get loaded first
+class Item
+end
+
 #An array containing every weapon ever.
 WEAPONS = []
 

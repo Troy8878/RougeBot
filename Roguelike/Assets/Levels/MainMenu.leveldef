@@ -60,6 +60,9 @@
         },
         "SpinnyThingComponent": {
           "speed": 0
+        },
+        "PlayerControllerComponent": {
+          
         }
       }
     },

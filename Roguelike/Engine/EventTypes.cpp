@@ -54,7 +54,7 @@ static mrb_value rb_update_event_class(GameTime *gt)
 
 mrb_value Events::UpdateEvent::GetRubyWrapper()
 {
-  static auto wrapper = rb_update_event_class(&gameTime);
+  auto wrapper = rb_update_event_class(&gameTime);
   return wrapper;
 }
 

@@ -26,6 +26,8 @@ event_id Event::CreateEventId(const std::string& name)
 
 void Event::Raise(EventMessage& e, EventReciever& reciever)
 {
+  ruby::ruby_gc_guard gc_guard(*mrb_inst);
+
   if (reciever.CanHandle(e))
     reciever.Handle(e);
 }

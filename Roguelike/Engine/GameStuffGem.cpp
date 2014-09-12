@@ -124,7 +124,11 @@ extern "C" mrb_value ruby_clearscreen(mrb_state *, mrb_value)
 
 static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
 {
-  return GetGame()->CurrentLevel->RootEntity->RubyWrapper;
+  auto level = GetGame()->CurrentLevel;
+  if (!level)
+    return mrb_nil_value();
+
+  return level->RootEntity->RubyWrapper;
 }
 
 // ----------------------------------------------------------------------------

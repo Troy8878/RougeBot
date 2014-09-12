@@ -8,6 +8,7 @@
 #include "GraphicsDevice.h"
 #include "Helpers\Exceptions.h"
 #include "Engine\Game.h"
+#include "Input.h"
 
 // Testing stuff, remove later
 #include "Level.h"
@@ -145,6 +146,23 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
     case WM_CLOSE:
     {
       GetGame()->Stop();
+      return 0;
+    }
+
+    case WM_KEYDOWN:
+    {
+      if ((wparam & 0x40000000) == 0)
+      {
+        auto signal = Input::TranslateSignal(msg, wparam, lparam);
+        Input::Instance.OnKeyDown(signal);
+        return 0;
+      }
+    }
+
+    case WM_KEYUP:
+    {
+      auto signal = Input::TranslateSignal(msg, wparam, lparam);
+      Input::Instance.OnKeyUp(signal);
       return 0;
     }
   }

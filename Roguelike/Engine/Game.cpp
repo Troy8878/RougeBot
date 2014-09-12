@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Level.h"
 #include "LevelDef.h"
+#include "Input.h"
 
 #include "mruby/debug.h"
 #include "mruby/variable.h"
@@ -30,6 +31,7 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
 
   globalEventDispatcher.AddListener(this);
   globalEventDispatcher.AddListener(&levelEventProxy);
+  globalEventDispatcher.AddListener(&Input::Instance);
 }
 
 // ----------------------------------------------------------------------------
@@ -49,6 +51,8 @@ void Game::Run()
 
   ruby::ruby_engine mrb;
   ruby::ruby_engine::global_engine = &mrb;
+
+  Input::Instance.Initialize();
 
   try
   {

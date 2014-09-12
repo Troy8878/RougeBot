@@ -18,21 +18,45 @@ PLAYER_INVENTORY = Inventory.new
 
 class PlayerControllerComponent < ComponentBase
 
+  MIN_MOVE_TIME = 0.2
+
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
+
+    @transform = self.owner.transform_component
+    @pos = @transform.position
 
     # Base player stats. These might be moved to other
     # components later.
     @health = data.fetch("health", 10).to_i
     @speed = data.fetch("speed", 1).to_f
 
+    self.register_event :key_held, :on_key
   end
 
   def on_key(e)
+    case e.plain_char || e.vkey
+    when 'W', KeyState::UP
+      @pos.z += 1 if can_move? 0, 1
+    when 'S', KeyState::DOWN
+      @pos.z -= 1 if can_move? 0, -1
+    when 'D', KeyState::RIGHT
+      @pos.x += 1 if can_move? 1, 0
+    when 'A', KeyState::LEFT
+      @pos.x -= 1 if can_move? -1, 0
+    end
   end
 
   def on_update(e)
+  end
+
+  def can_move?(xo, yo)
+    room = TestRoomComponent.class_variable_get("@@room")
+
+    x = (@pos.x + 0.5).to_i + xo
+    y = (@pos.z + 0.5).to_i + yo
+    room[room.count - 1 - y][x] != 1
   end
 
   register_component "PlayerControllerComponent"

@@ -20,14 +20,17 @@
 //      type: KeyStateEvent
 //
 //    key_held
-//      Is triggered every 0.5 seconds while a key is held down
+//      Is triggered every [key_hold_event_rate] seconds
+//      while a key is held down 
 //      type: KeyStateEvent
 
 // ----------------------------------------------------------------------------
 
-typedef wchar_t virtual_key;
+typedef UINT virtual_key;
 
 // ----------------------------------------------------------------------------
+
+const double key_hold_event_rate = 0.25;
 
 struct InputSignal
 {
@@ -66,9 +69,9 @@ public:
 
 struct KeyStateEvent : public Events::EventData
 {
-  KeyState& state;
+  const KeyState *state;
 
-  KeyStateEvent(KeyState& state) : state(state) {}
+  KeyStateEvent(const KeyState& state) : state(&state) {}
   mrb_value GetRubyWrapper() override;
 
   NO_ASSIGNMENT_OPERATOR(KeyStateEvent);
@@ -82,6 +85,10 @@ public:
   Input();
   ~Input();
 
+  static Input Instance;
+
+  void Initialize();
+
   // Called when the game detects a keydown signal
   void OnKeyDown(const InputSignal& signal);
   // Called when the game detects a keyup signal
@@ -90,10 +97,6 @@ public:
   // Gets the current state of the given virtual key
   const KeyState& GetKeyState(virtual_key key);
 
-  // Returns the character for a given virtual key,
-  // taking into account CAPSLOCK and SHIFT modifiers.
-  static wchar_t TranslateVKey(virtual_key key);
-
   // Given the Win32 message parameters, create a new
   // InputSignal with the proper fields set.
   static InputSignal TranslateSignal(UINT msg, WPARAM wParam, LPARAM lParam);
@@ -101,6 +104,10 @@ public:
 private:
   // Handler for the update event
   void OnUpdate(Events::EventMessage& e);
+  void UpdateState(KeyState& state, double dt);
+  void RaiseKeyEvent(event_id id, KeyState& state);
+
+  static wchar_t VKeyToChar(virtual_key key);
 
   KeyState keyStates[0x100];
   std::unordered_map<virtual_key, KeyState> unicodeStates;

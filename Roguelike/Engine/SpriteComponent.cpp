@@ -93,14 +93,14 @@ SpriteComponentFactory::SpriteComponentFactory()
 Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
-  auto shader_name = map_fetch(data, "shader", "Textured");
+  auto shader_name = map_fetch(data, "shader", "Textured").as_string();
   auto shader = RegisteredShaders[shader_name];
 
   if (shader == nullptr)
     throw string_exception("Shader '" + shader_name + 
                            "' could not be found while initializing SpriteComponent!");
 
-  auto set_name = data["render_target"];
+  auto set_name = data["render_target"].as_string();
   auto set = RenderGroup::Instance.GetSet(set_name);
 
   if (set == nullptr)
@@ -112,7 +112,7 @@ Component *SpriteComponentFactory::CreateObject(
   auto textures_it = data.find("textures");
   if (textures_it != data.end())
   {
-    auto jtextures = json::value::parse(textures_it->second);
+    auto jtextures = textures_it->second;
     auto texture_names = jtextures.as_array_of<json::value::string_t>();
 
     std::vector<Texture2D> textures;
@@ -126,7 +126,7 @@ Component *SpriteComponentFactory::CreateObject(
   }
   else
   {
-    auto texture = TextureManager::Instance.LoadTexture(data["texture"]);
+    auto texture = TextureManager::Instance.LoadTexture(data["texture"].as_string());
     component = new (memory) SpriteComponent(texture, shader, set);
   }
 

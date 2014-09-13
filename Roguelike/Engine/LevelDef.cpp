@@ -77,14 +77,7 @@ entity_factory_data LevelDef::EntityFactoryDataFromJson(json::value jdata)
 
     for (auto& compdata : pair.second.as_object())
     {
-      if (compdata.second.is(json::json_type::jstring))
-      {
-        datamap[compdata.first] = compdata.second.as_string();
-      }
-      else
-      {
-        datamap[compdata.first] = compdata.second.serialize();
-      }
+      datamap[compdata.first] = compdata.second;
     }
   }
 

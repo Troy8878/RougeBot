@@ -107,6 +107,10 @@ namespace ruby
     json::value hash_to_json(mrb_value hash);
     json::value array_to_json(mrb_value ary);
 
+    mrb_value json_to_value(json::value jv);
+    mrb_value json_to_hash(json::value jobj);
+    mrb_value json_to_array(json::value jary);
+
     void log_and_clear_error();
 
   private:
@@ -199,6 +203,9 @@ namespace ruby
     operator const char *();
 
     operator std::vector<ruby_value>();
+
+    // Json conversion
+    ruby_value& operator=(json::value jv) { return set_mrbv(_engine->json_to_value(jv)); }
 
     // Custom class conversions
     ruby_value& operator=(const math::Vector& vector);

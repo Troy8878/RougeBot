@@ -350,9 +350,9 @@ void variadic_push_array(T array[], size_t index,
 
 // ----------------------------------------------------------------------------
 
-struct component_factory_data : public std::unordered_map<std::string, std::string>
+struct component_factory_data : public std::unordered_map<std::string, json::value>
 {
-  typedef std::unordered_map<std::string, std::string> base;
+  typedef std::unordered_map<std::string, json::value> base;
 
   component_factory_data() = default;
   component_factory_data(const std::initializer_list<value_type>& list)
@@ -375,17 +375,17 @@ public:
 
 // ----------------------------------------------------------------------------
 
-template <typename Map>
+template <typename Map, typename DefType>
 typename Map::mapped_type
 map_fetch(const Map& map,
           const typename Map::key_type& key,
-          const typename Map::mapped_type& def)
+          const DefType& def)
 {
   auto it = map.find(key);
   if (it != map.end())
     return it->second;
 
-  return def;
+  return static_cast<typename Map::mapped_type>(def);
 }
 
 // ----------------------------------------------------------------------------

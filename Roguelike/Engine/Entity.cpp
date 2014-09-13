@@ -367,14 +367,7 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
 
   for (auto& item : jdata.as_object())
   {
-    if (item.second.is(json::json_type::jstring))
-    {
-      data[item.first] = item.second.as_string();
-    }
-    else
-    {
-      data[item.first] = item.second.serialize();
-    }
+    data[item.first] = item.second;
   }
 
   auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
@@ -581,14 +574,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
 
       for (auto& prop : part.second)
       {
-        if (prop.second.is(json::json_type::jstring))
-        {
-          datamap[prop.first] = prop.second.as_string();
-        }
-        else
-        {
-          datamap[prop.first] = prop.second.serialize();
-        }
+        datamap[prop.first] = prop.second;
       }
     }
   }

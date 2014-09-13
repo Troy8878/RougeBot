@@ -40,8 +40,8 @@ static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self);
 
 void HUDCamera::LoadFromData(const component_factory_data& data)
 {
-  auto jpos = json::value::parse(map_fetch(data, "position", "[0,0,0,1]"));
-  auto jsize = json::value::parse(map_fetch(data, "size", "[1,1]"));
+  auto jpos = map_fetch(data, "position", json::value::parse("[0,0,0,1]"));
+  auto jsize = map_fetch(data, "size", json::value::parse("[1,1]"));
 
   position = math::Vector::VectorFromJson(jpos);
   size = math::Vector::VectorFromJson(jsize).get();
@@ -61,9 +61,9 @@ mrb_value HUDCamera::GetRubyWrapper()
 
 void LookAtCamera::LoadFromData(const component_factory_data& data)
 {
-  auto jpos = json::value::parse(map_fetch(data, "position", "[0,0,1,1]"));
-  auto jlook = json::value::parse(map_fetch(data, "look_at", "[0,0,0,1]"));
-  auto jfov = json::value::parse(map_fetch(data, "fov", "45"));
+  auto jpos = map_fetch(data, "position", json::value::parse("[0,0,1,1]"));
+  auto jlook = map_fetch(data, "look_at", json::value::parse("[0,0,0,1]"));
+  auto jfov = map_fetch(data, "fov", 45);
 
   position = math::Vector::VectorFromJson(jpos);
   lookAt = math::Vector::VectorFromJson(jlook);

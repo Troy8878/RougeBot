@@ -65,8 +65,8 @@ CustomModelComponentFactory::CustomModelComponentFactory()
 auto CustomModelComponentFactory::CreateObject(void *memory, component_factory_data& data) 
   -> Component *
 {
-  auto shader = RegisteredShaders[map_fetch(data, "shader", "Basic")];
-  auto set = RenderGroup::Instance.GetSet(data["render_target"]);
+  auto shader = RegisteredShaders[map_fetch(data, "shader", "Basic").as_string()];
+  auto set = RenderGroup::Instance.GetSet(data["render_target"].as_string());
 
   return new (memory) CustomModelComponent(shader, set);
 }

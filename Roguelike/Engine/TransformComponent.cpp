@@ -134,13 +134,9 @@ Component *TransformComponentFactory::CreateObject(
 
 // ----------------------------------------------------------------------------
 
-math::Vector TransformComponentFactory::ParseVector(const std::string& str)
+math::Vector TransformComponentFactory::ParseVector(json::value jv)
 {
-  auto jnums = json::value::parse(str);
-  if (!jnums.is_array_of<json::value::number_t>())
-    throw std::exception("Vector is in incorrect format");
-
-  auto nums = jnums.as_array_of<json::value::number_t>();
+  auto nums = jv.as_array_of<json::value::number_t>();
   while (nums.size() < 4)
     nums.push_back(0);
 

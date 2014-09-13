@@ -353,6 +353,68 @@ json::value ruby_engine::array_to_json(mrb_value ary)
 
 // ----------------------------------------------------------------------------
 
+mrb_value ruby_engine::json_to_value(json::value jv)
+{
+  using namespace json;
+  switch (jv.type())
+  {
+    case json_type::jbool:
+      return mrb_bool_value(jv.as_bool());
+
+    case json_type::jnumber:
+      return mrb_float_value(mrb, (mrb_float) jv.as_number());
+
+    case json_type::jobject:
+      return json_to_hash(jv);
+
+    case json_type::jarray:
+      return json_to_array(jv);
+
+    case json_type::jstring:
+    {
+      auto& str = jv.as_string();
+      return mrb_str_new(mrb, &*str.begin(), str.size());
+    }
+
+    default:
+      return mrb_nil_value();
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby_engine::json_to_hash(json::value jobj)
+{
+  mrb_value hash = mrb_hash_new(mrb);
+
+  for (auto& pair : jobj.as_object())
+  {
+    mrb_value key = mrb_str_new(mrb,&* pair.first.begin(), pair.first.size());
+    mrb_value value = json_to_value(pair.second);
+
+    mrb_hash_set(mrb, hash, key, value);
+  }
+
+  return hash;
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby_engine::json_to_array(json::value jary)
+{
+  mrb_value ary = mrb_ary_new(mrb);
+
+  for (auto& jv : jary.as_array())
+  {
+    mrb_value value = json_to_value(jv);
+    mrb_ary_push(mrb, ary, value);
+  }
+
+  return ary;
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value mrb_nop(mrb_state *, mrb_value)
 {
   return mrb_nil_value();

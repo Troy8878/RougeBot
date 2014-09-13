@@ -107,12 +107,22 @@ namespace json
       static value object(const object_t& pairs = object_t{});
       static value array(const array_t& values = array_t{});
 
+      explicit value(nullptr_t) : value(null()) {}
+      explicit value(const int val) : value(number(val)) {}
+      explicit value(number_t val) : value(number(val)) {}
+      explicit value(bool_t val) : value(boolean(val)) {}
+      explicit value(const char *val) : value(string(val)) {}
+      explicit value(const string_t& val) : value(string(val)) {}
+      explicit value(const object_t& pairs) : value(object(pairs)) {}
+      explicit value(const array_t& values) : value(array(values)) {}
+
       #pragma endregion
 
       #pragma region Convert From
 
     public:
       bool is(json_type type);
+      json_type type() { return data->type; };
 
       object_t& as_object();
       array_t& as_array();

@@ -12,13 +12,7 @@ class CameraFollowComponent < ComponentBase
 
     @camera = self.owner.camera_component
 
-    @offset = 
-      Vector.new(
-        *data.fetch("offset", "[0, 0, 0]").
-          gsub(/[\[\]]/, '').
-          split(/,/)[0..2].
-          map {|s| s.chomp(' ').to_i }
-      )
+    @offset = Vector.new(*data.fetch("offset", [1, 0, 1]))
 
     @lag = data.fetch("lag", 0.0).to_f
     @follow = Vector.new

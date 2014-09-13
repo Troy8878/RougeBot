@@ -92,13 +92,13 @@ CameraComponentFactory::CameraComponentFactory()
 Component *CameraComponentFactory::CreateObject(void *memory, component_factory_data& data)
 {
   MultiCam camera;
-  auto target_name = data["target_name"];
-  auto layer = std::stoi(map_fetch(data, "layer", "0"));
+  auto target_name = data["target_name"].as_string();
+  auto layer = (int) map_fetch(data, "layer", 0).as_number();
 
   auto copyit = data.find("copy");
   if (copyit != data.end())
   {
-    auto copyset = RenderGroup::Instance.GetSet(copyit->second);
+    auto copyset = RenderGroup::Instance.GetSet(copyit->second.as_string());
 
     auto icam = copyset->RenderCamera;
     auto multicam = reinterpret_cast<MultiCam *>(
@@ -110,7 +110,7 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
     return new (memory) CameraComponent(target_name, layer, multicam);
   }
   
-  auto type = data["type"];
+  auto type = data["type"].as_string();
   if (type == "HUDCamera")
   {
     camera.SetType<HUDCamera>();

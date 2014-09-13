@@ -59,7 +59,7 @@ public:
 private:
   BucketAllocator allocator;
 
-  math::Vector ParseVector(const std::string& str);
+  math::Vector ParseVector(json::value jv);
 };
 
 // ----------------------------------------------------------------------------

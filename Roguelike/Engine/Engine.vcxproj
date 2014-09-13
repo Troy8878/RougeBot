@@ -114,6 +114,7 @@
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TexturedComponent.h" />
+    <ClInclude Include="TextureZip.h" />
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,7 @@
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureZip.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -285,7 +285,11 @@ static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self)
   mrb_float fov;
   mrb_get_args(mrb, "f", &fov);
 
-  return mrb_float_value(mrb, lcam.fieldOfView = (float)fov);
+  lcam.fieldOfView = (float)fov;
+  lcam.Init();
+  lcam.Update();
+
+  return mrb_float_value(mrb, fov);
 }
 
 #pragma endregion

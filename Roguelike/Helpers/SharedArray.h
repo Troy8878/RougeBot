@@ -52,7 +52,11 @@ public:
   T *get() { return ptr->data; }
   T& operator[](size_t index) { return ptr->data[index]; }
 
-  size_t size() { return ptr->size; }
+  operator T const *() const { return ptr->data; }
+  T const *get() const { return ptr->data; }
+  T& operator[](size_t index) const { return ptr->data[index]; }
+
+  size_t size() const { return ptr->size; }
 
 private:
   std::shared_ptr<array_holder> ptr;

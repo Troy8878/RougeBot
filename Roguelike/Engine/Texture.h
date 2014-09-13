@@ -88,6 +88,7 @@ public:
   }
 
   friend class TextureManager;
+  friend class TextureZip;
 };
 
 // ----------------------------------------------------------------------------

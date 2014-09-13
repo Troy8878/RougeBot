@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------
 
-void ImageResource::to32BitColor(byte *destination, size_t dest_size)
+void ImageResource::to32BitColor(byte *destination, size_t dest_size) const
 {
   switch (format)
   {

@@ -31,13 +31,15 @@ struct ImageResource
   Format format;
   shared_array<byte> data;
 
-  void to32BitColor(byte *destination, size_t dest_size);
+  void to32BitColor(byte *destination, size_t dest_size) const;
+
   template <size_t dest_size>
-  void to32BitColor(byte (&destination)[dest_size])
+  void to32BitColor(byte (&destination)[dest_size]) const
   {
     to32BitColor(destination, dest_size);
   }
-  void to32BitColor(shared_array<byte>& destination)
+
+  void to32BitColor(shared_array<byte>& destination) const
   {
     to32BitColor(destination, destination.size());
   }

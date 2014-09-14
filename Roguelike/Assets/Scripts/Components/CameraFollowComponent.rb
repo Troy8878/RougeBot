@@ -14,7 +14,7 @@ class CameraFollowComponent < ComponentBase
 
     @offset = Vector.new(*data.fetch("offset", [1, 0, 1]))
 
-    @lag = data.fetch("lag", 0.0).to_f
+    @speed = data.fetch("speed", 0.0).to_f
     @follow = Vector.new
     @follow_id = data.fetch("follows", 0)
     @follow_id = @follow_id.to_i if @follow_id.is_a? Float
@@ -30,8 +30,17 @@ class CameraFollowComponent < ComponentBase
 
     follow = @follow_tr.position.dup
 
-    if @lag > 0.0
-      follow += (@follow_real - follow) / (1 / @lag + 1)
+    if @speed > 0.0
+      diff = follow - @follow_real
+      modifier = e.dt * @speed
+
+      if diff.length2 > (modifier * modifier)
+        diff.normalize!
+        diff.mul modifier
+      end
+
+      follow = @follow_real + diff
+
       @follow_real = follow
     end
 

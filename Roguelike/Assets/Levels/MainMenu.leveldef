@@ -15,12 +15,14 @@
         "CameraComponent": {
           "target_name": "Le3DCam",
           "layer": 1,
-          "fov": 45
+          "fov": 45,
+          "near": 1,
+          "far": 100
         },
         "CameraFollowComponent": {
           "offset": [0, 4, -4],
           "follows": "Pancake",
-          "lag": 20
+          "speed": 5
         }
       }
     },

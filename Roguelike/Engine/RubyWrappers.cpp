@@ -141,6 +141,8 @@ namespace vect
 {
   using namespace ruby;
 
+  #pragma region New vector
+
   static mrb_value vnew(mrb_state *mrb, mrb_value)
   {
     static auto vclass = mrb_class_get(mrb, "Vector");
@@ -185,6 +187,8 @@ namespace vect
     auto vect = (math::Vector*) mem;
     delete vect;
   }
+
+  #pragma endregion
 
   #pragma region Getters
 
@@ -249,6 +253,8 @@ namespace vect
   }
 
   #pragma endregion
+
+  #pragma region Basic Operators
 
   static mrb_value op_add(mrb_state *mrb, mrb_value self)
   {
@@ -322,6 +328,45 @@ namespace vect
     return self;
   }
 
+  #pragma endregion
+
+  #pragma region Complex vector ops
+
+  using namespace DirectX;
+
+  mrb_value length2(mrb_state *mrb, mrb_value self)
+  {
+    auto& vector = get_ruby_vector(self);
+    auto lensq = XMVector3LengthSq(vector);
+
+    return mrb_float_value(mrb, XMVectorGetX(lensq));
+  }
+
+  mrb_value length(mrb_state *mrb, mrb_value self)
+  {
+    auto& vector = get_ruby_vector(self);
+    auto len = XMVector3Length(vector);
+    
+    return mrb_float_value(mrb, XMVectorGetX(len));
+  }
+
+  mrb_value normalize(mrb_state *, mrb_value self)
+  {
+    auto& vector = get_ruby_vector(self);
+    vector = XMVector3Normalize(vector);
+
+    return self;
+  }
+
+  mrb_value normalized(mrb_state *, mrb_value self)
+  {
+    auto& vector = get_ruby_vector(self);
+
+    return create_new_vector(XMVector3Normalize(vector));
+  }
+
+  #pragma endregion
+
 }
 
 // ----------------------------------------------------------------------------
@@ -334,6 +379,7 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   auto vclass = mrb_define_class(mrb, "Vector", mrb->object_class);
   
   mrb_define_class_method(mrb, vclass, "new", vect::vnew, ARGS_OPT(4));
+  mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
 
   mrb_define_method(mrb, vclass, "x", vect::get_x, ARGS_NONE());
   mrb_define_method(mrb, vclass, "y", vect::get_y, ARGS_NONE());
@@ -350,7 +396,10 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "mul", vect::op_mul, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "div", vect::op_div, ARGS_REQ(1));
 
-  mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
+  mrb_define_method(mrb, vclass, "length2", vect::length2, ARGS_NONE());
+  mrb_define_method(mrb, vclass, "length", vect::length, ARGS_NONE());
+  mrb_define_method(mrb, vclass, "normalize!", vect::normalize, ARGS_NONE());
+  mrb_define_method(mrb, vclass, "normalized", vect::normalized, ARGS_NONE());
 
   create_memory_vector_class(mrb);
 }

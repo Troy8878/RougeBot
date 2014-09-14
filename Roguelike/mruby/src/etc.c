@@ -11,6 +11,8 @@
 #include "mruby/re.h"
 #include "mruby/irep.h"
 
+#include <string.h>
+
 struct RData*
 mrb_data_object_alloc(mrb_state *mrb, struct RClass *klass, void *ptr, const mrb_data_type *type)
 {
@@ -33,6 +35,9 @@ mrb_data_check_type(mrb_state *mrb, mrb_value obj, const mrb_data_type *type)
     const mrb_data_type *t2 = DATA_TYPE(obj);
 
     if (t2) {
+      if (strcmp(type->struct_name, t2->struct_name) == 0)
+        return;
+
       mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
                  mrb_str_new_cstr(mrb, t2->struct_name), mrb_str_new_cstr(mrb, type->struct_name));
     }

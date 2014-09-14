@@ -31,20 +31,22 @@ class TestRoomComponent < ComponentBase
 
   WHITE = Vector.new(1, 1, 1, 1)
 
-  CEIL_TL = Vector.new(0, 0  )
-  CEIL_TR = Vector.new(1, 0  )
-  CEIL_BL = Vector.new(0, 1/3)
-  CEIL_BR = Vector.new(1, 1/3)
+  TE = 0.0001
 
-  WALL_TL = Vector.new(0, 1/3)
-  WALL_TR = Vector.new(1, 1/3)
-  WALL_BL = Vector.new(0, 1/2)
-  WALL_BR = Vector.new(1, 1/2)
+  CEIL_TL  = Vector.new(0, 0       )
+  CEIL_TR  = Vector.new(1, 0       )
+  CEIL_BR  = Vector.new(1, 1/3 - TE)
+  CEIL_BL  = Vector.new(0, 1/3 - TE)
 
-  FLOOR_TL = Vector.new(0, 2/3)
-  FLOOR_TR = Vector.new(1, 2/3)
-  FLOOR_BL = Vector.new(0, 1  )
-  FLOOR_BR = Vector.new(1, 1  )
+  WALL_TL  = Vector.new(0, 1/3 + TE)
+  WALL_TR  = Vector.new(1, 1/3 + TE)
+  WALL_BR  = Vector.new(1, 1/2 - TE)
+  WALL_BL  = Vector.new(0, 1/2 - TE)
+
+  FLOOR_TL = Vector.new(0, 2/3 + TE)
+  FLOOR_TR = Vector.new(1, 2/3 + TE)
+  FLOOR_BR = Vector.new(1, 1       )
+  FLOOR_BL = Vector.new(0, 1       )
 
   def initialize(data)
     super data

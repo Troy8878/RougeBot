@@ -7,6 +7,7 @@
 #include "Common.h"
 #include "CustomModelComponent.h"
 #include "Shader.h"
+#include "TextureComponent.h"
 
 // ----------------------------------------------------------------------------
 
@@ -32,6 +33,7 @@ void CustomModelComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
+  texture = (TextureComponent *) Owner->GetComponent("TextureComponent");
   renderTarget->AddDrawable(this, ModelShader);
 }
 
@@ -51,6 +53,9 @@ void CustomModelComponent::_SetCustomModel(Model *model)
 {
   model->shader = ModelShader;
   customModel = model;
+
+  if (texture)
+    customModel->texture = texture->Textures[0];
 }
 
 // ----------------------------------------------------------------------------

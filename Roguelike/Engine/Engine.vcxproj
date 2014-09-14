@@ -114,7 +114,7 @@
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TexturedComponent.h" />
+    <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureZip.h" />
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
@@ -154,6 +154,7 @@
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureComponent.cpp" />
     <ClCompile Include="TextureZip.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>

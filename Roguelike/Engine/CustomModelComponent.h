@@ -15,6 +15,7 @@
 // ----------------------------------------------------------------------------
 
 class CustomModelComponentFactory;
+class TextureComponent;
 
 // ----------------------------------------------------------------------------
 
@@ -36,6 +37,7 @@ public:
 private:
   Model *customModel = nullptr;
   RenderSet *renderTarget = nullptr;
+  TextureComponent *texture = nullptr;
 
 public:
   inline Model *_GetCustomModel() const { return customModel; }

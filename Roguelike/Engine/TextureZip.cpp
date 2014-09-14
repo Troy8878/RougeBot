@@ -34,7 +34,7 @@ TextureZip::TextureZip(const std::vector<std::string>& assets)
     buffer.height += image.height;
   }
 
-  buffer.data = shared_array<byte>(buffer.width * buffer.height);
+  buffer.data = shared_array<byte>(buffer.width * buffer.height * sizeof(UINT));
 
   UINT y = 0;
   for (size_t i = 0; i < images.size(); ++i)

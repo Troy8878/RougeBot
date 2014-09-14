@@ -4,12 +4,13 @@
     "rotation": [0, 0, 0, 0],
     "scale": [1, 1, 1, 1]
   },
-  "SpriteComponent": {
+  "TextureComponent": {
     "textures": [
       "PancakeFace.jpg",
       "PancakeFace2.jpg"
     ]
   },
+  "SpriteComponent": {},
   "SpinnyThingComponent": {
     // This is basically 'radians per second'
     "speed": 1

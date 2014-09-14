@@ -9,6 +9,7 @@
 #include "ResourceReader\ResourcePack.h"
 #include "Game.h"
 #include "Texture.h"
+#include "TextureZip.h"
 
 // ----------------------------------------------------------------------------
 
@@ -248,6 +249,16 @@ void Texture2D::TextureResource::ValidateSpecialSurface()
   timestamp = clock::now();
 
   #pragma endregion
+}
+
+// ----------------------------------------------------------------------------
+
+Texture2D Texture2D::FromTextureZip(TextureZip& zip)
+{
+  // Just make a new Zip and point it to itself
+  auto pZip = new TextureZip(zip);
+  pZip->Texture._res->zip = pZip;
+  return pZip->Texture;
 }
 
 // ----------------------------------------------------------------------------

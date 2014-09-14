@@ -19,19 +19,9 @@ SpriteComponentFactory SpriteComponent::factory;
 
 // ----------------------------------------------------------------------------
 
-// Constructor if only one Texture/Sprite is needed (unanimated)
-SpriteComponent::SpriteComponent(Texture2D texture, 
-                                 Shader *shader, RenderSet *set)
-  : SpriteComponent(std::vector<Texture2D>{texture}, shader, set)
-{
-}
-
-// ----------------------------------------------------------------------------
-
 // Constructor if several Textures/Sprites are needed (animated)
-SpriteComponent::SpriteComponent(const std::vector<Texture2D>& textures, 
-                                 Shader *shader, RenderSet *set)
-  : _textures(textures), renderTarget(set), TextureIndex(0)
+SpriteComponent::SpriteComponent(Shader *shader, RenderSet *set)
+  : renderTarget(set), TextureIndex(0)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;
@@ -52,6 +42,7 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
+  _texture = (TextureComponent *) Owner->GetComponent("TextureComponent");
   renderTarget->AddDrawable(this, ModelShader);
 }
 
@@ -60,9 +51,13 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 void SpriteComponent::Draw()
 {
   auto transform = Owner->Transform.get();
-
+  
+  if (_texture)
+    UnitSquare->texture = _texture->Textures[TextureIndex];
+  else
+    UnitSquare->texture = Texture2D();
+  
   UnitSquare->shader = ModelShader;
-  UnitSquare->texture = _textures[TextureIndex];
   UnitSquare->Draw(transform);
 }
 
@@ -107,30 +102,7 @@ Component *SpriteComponentFactory::CreateObject(
     throw string_exception("Render Target '" + set_name + 
                            "' could not be found while initializing SpriteComponent!");
 
-  SpriteComponent *component;
-
-  auto textures_it = data.find("textures");
-  if (textures_it != data.end())
-  {
-    auto jtextures = textures_it->second;
-    auto texture_names = jtextures.as_array_of<json::value::string_t>();
-
-    std::vector<Texture2D> textures;
-    textures.reserve(texture_names.size());
-    for (auto& name : texture_names)
-    {
-      textures.push_back(TextureManager::Instance.LoadTexture(name));
-    }
-
-    component = new (memory) SpriteComponent(textures, shader, set);
-  }
-  else
-  {
-    auto texture = TextureManager::Instance.LoadTexture(data["texture"].as_string());
-    component = new (memory) SpriteComponent(texture, shader, set);
-  }
-
-  return component;
+  return new (memory) SpriteComponent(shader, set);
 }
 
 // ----------------------------------------------------------------------------

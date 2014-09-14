@@ -26,12 +26,25 @@ class TestRoomComponent < ComponentBase
   ROOM_SIZE = @@room.count
   C_L = -0.5
   C_R = 0.5
-  W_T = 0.75
+  W_T = 0.5
   W_B = 0
 
-  @@grey = Vector.new(0.5, 0.5, 0.5, 1)
-  @@blue = Vector.new(0.1, 0.1, 1, 1)
-  @@white = Vector.new(1, 1, 1, 1)
+  WHITE = Vector.new(1, 1, 1, 1)
+
+  CEIL_TL = Vector.new(0, 0  )
+  CEIL_TR = Vector.new(1, 0  )
+  CEIL_BL = Vector.new(0, 1/3)
+  CEIL_BR = Vector.new(1, 1/3)
+
+  WALL_TL = Vector.new(0, 1/3)
+  WALL_TR = Vector.new(1, 1/3)
+  WALL_BL = Vector.new(0, 1/2)
+  WALL_BR = Vector.new(1, 1/2)
+
+  FLOOR_TL = Vector.new(0, 2/3)
+  FLOOR_TR = Vector.new(1, 2/3)
+  FLOOR_BL = Vector.new(0, 1  )
+  FLOOR_BR = Vector.new(1, 1  )
 
   def initialize(data)
     super data
@@ -69,60 +82,60 @@ class TestRoomComponent < ComponentBase
   private
   def add_ceil(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), @@grey),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), @@grey),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), @@grey),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), @@grey)
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, CEIL_TL),
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, CEIL_TR),
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, CEIL_BR),
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, CEIL_BL)
     )
   end
 
   private
   def add_floor(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), @@white),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), @@white),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), @@white),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), @@white)
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, FLOOR_TL),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, FLOOR_TR),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, FLOOR_BR),
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, FLOOR_BL)
     )
   end
 
   private
   def add_west_wall(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), @@blue)
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, WALL_TL),
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, WALL_TR),
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, WALL_BR),
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, WALL_BL)
     )
   end
 
   private
   def add_east_wall(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), @@blue),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), @@blue)
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, WALL_TL),
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, WALL_TR),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, WALL_BR),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, WALL_BL)
     )
   end
 
   private
   def add_north_wall(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), @@blue),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), @@blue)
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, WALL_TL),
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, WALL_TR),
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, WALL_BR),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, WALL_BL)
     )
   end
 
   private
   def add_south_wall(builder, x, y)
     builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), @@blue),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), @@blue),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), @@blue)
+      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, WALL_TL),
+      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, WALL_TR),
+      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, WALL_BR),
+      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, WALL_BL)
     )
   end
 

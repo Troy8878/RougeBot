@@ -88,6 +88,7 @@ auto ComponentManager::_GetComponentRegistrations() -> component_map&
 #include "TransformComponent.h"
 #include "CameraComponent.h"
 #include "CustomModelComponent.h"
+#include "TextureComponent.h"
 
 void RegisterEngineComponents()
 {
@@ -124,6 +125,7 @@ void RegisterEngineComponents()
   RegisterStaticComponent<TransformComponent>("TransformComponent");
   RegisterStaticComponent<CameraComponent>("CameraComponent");
   RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
+  RegisterStaticComponent<TextureComponent>("TextureComponent");
 }
 
 // ----------------------------------------------------------------------------

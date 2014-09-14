@@ -27,10 +27,6 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   IFDEBUG(createConsole());
-  
-  std::cout << "sizeof(math::Vector): " << sizeof(math::Vector) << std::endl;
-  std::cout << "sizeof(RData):        " << sizeof(RData) << std::endl;
-
   game.Run();
   return 0;
 }

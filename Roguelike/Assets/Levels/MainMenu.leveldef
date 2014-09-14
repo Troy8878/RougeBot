@@ -20,7 +20,7 @@
         "CameraFollowComponent": {
           "offset": [0, 4, -4],
           "follows": "Pancake",
-          "lag": 5
+          "lag": 20
         }
       }
     },
@@ -36,15 +36,11 @@
     },
     {
       "name": "The Room",
+      "archetype": "Floor",
       "components": {
-        "TransformComponent": {
-          "position": [0, 0, 0],
-          "scale": [1, 0.5, 1]
-        },
         "CustomModelComponent": {
           "render_target": "Le3DCam"
-        },
-        "TestRoomComponent": {}
+        }
       }
     },
     {
@@ -73,9 +69,13 @@
           "position": [1, 0.01, 2],
           "scale": [0.75, 0.75]
         },
+        "TextureComponent": {
+          "textures": [
+            "SPECIAL/SURFACE/500:500"
+          ]
+        },
         "SpriteComponent": {
           "render_target": "TranslucentLayer",
-          "textures": ["SPECIAL/SURFACE/500:500"],
           "shader": "Textured"
         }
       }

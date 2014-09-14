@@ -12,6 +12,7 @@
 // ----------------------------------------------------------------------------
 
 struct ImageResource;
+class TextureZip;
 
 // ----------------------------------------------------------------------------
 
@@ -28,10 +29,16 @@ public:
   */
   PROPERTY(get = _GetRenderTarget) ID2D1Bitmap1 * const & RenderTarget;
 
+  /**
+    The zip for a zipped texture
+  */
+  PROPERTY(get = _GetTextureZip) TextureZip& Zip;
+
   operator bool() const { return !!_res; }
 
   static Texture2D GetNullTexture(ID3D11Device *device);
   static Texture2D CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height);
+  static Texture2D FromTextureZip(TextureZip& zip);
 
 private:
   struct TextureResource;
@@ -53,6 +60,7 @@ private:
     GraphicsDevice *device = nullptr;
     UINT width, height;
     clock::time_point timestamp;
+    TextureZip *zip;
 
     TextureResource() = default;
     ~TextureResource();
@@ -86,6 +94,7 @@ public:
     _res->ValidateSpecialSurface(); 
     return _res->target; 
   }
+  TextureZip& _GetTextureZip() const { return *_res->zip; }
 
   friend class TextureManager;
   friend class TextureZip;

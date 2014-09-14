@@ -134,13 +134,13 @@
     <ClInclude Include="CustomModelComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TexturedComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="TextureZip.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="ComponentTemplate.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="TextureZip.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

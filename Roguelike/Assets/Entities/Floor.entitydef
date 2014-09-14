@@ -1,6 +1,5 @@
 {
   "TransformComponent": {},
-  "CustomModelComponent": {},
   "TextureComponent": {
     "textures": [
       {
@@ -11,6 +10,9 @@
         ]
       }
     ]
+  },
+  "CustomModelComponent": {
+    "shader": "Textured"
   },
   "TestRoomComponent": {}
 }

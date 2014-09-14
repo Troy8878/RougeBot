@@ -52,6 +52,7 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 
 void CameraComponent::FixCameras()
 {
+  // Copy cameras, don't do this logic, it's already been applied
   if (_cameraPtr != &_camera)
     return;
 
@@ -60,6 +61,7 @@ void CameraComponent::FixCameras()
   {
     prevSize = newSize;
       
+    // Mostly just fixing the aspect ratios
     if (CameraType == typeid(HUDCamera))
     {
         auto& hcam = *MCamera.GetCamera<HUDCamera>();
@@ -74,6 +76,7 @@ void CameraComponent::FixCameras()
     }
     else if (CameraType == typeid(ManualCamera))
     {
+      // but also letting ManualCamera know its owner transform
       auto& mcam = *MCamera.GetCamera<ManualCamera>();
       mcam.cameraTransform = &Owner->Transform;
       mcam.aspectRatio = newSize.x / newSize.y;

@@ -38,7 +38,8 @@
       "name": "The Room",
       "components": {
         "TransformComponent": {
-          "position": [0, -0.01, 0]
+          "position": [0, 0, 0],
+          "scale": [1, 0.5, 1]
         },
         "CustomModelComponent": {
           "render_target": "Le3DCam"
@@ -52,7 +53,7 @@
       "components": {
         "TransformComponent": {
           "rotation": [0.77, 0, 0],
-          "position": [1, 0.5, 1],
+          "position": [1, 0.25, 1],
           "scale": [0.5, 0.5]
         },
         "SpriteComponent": {

@@ -153,12 +153,13 @@ struct ManualCamera final : ICamera
 
 __declspec(align(16)) struct MultiCam
 {
-  union
+  __declspec(align(16)) union
   {
     byte buffer[sizeof(ICamera)];
     byte _b3buffer[sizeof(Basic3DCamera)];
     byte _labuffer[sizeof(LookAtCamera)];
     byte _hdbuffer[sizeof(HUDCamera)];
+    byte _mcbuffer[sizeof(ManualCamera)];
   };
   std::type_index type = typeid(ICamera);
 
@@ -174,13 +175,12 @@ __declspec(align(16)) struct MultiCam
   template <typename CamType>
   CamType *GetCamera() 
   {
-    auto icam = reinterpret_cast<ICamera *>(buffer);
-    return static_cast<CamType *>(icam); 
+    return static_cast<CamType *>(Base); 
   }
 
   ICamera *GetBase()
   {
-    return GetCamera<ICamera>();
+    return reinterpret_cast<ICamera *>(buffer);
   }
 };
 

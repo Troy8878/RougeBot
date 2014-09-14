@@ -90,6 +90,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentTemplate.h" />
     <ClInclude Include="CustomModelComponent.h" />
     <ClInclude Include="EngineInit.h" />
     <ClInclude Include="Entity.h" />

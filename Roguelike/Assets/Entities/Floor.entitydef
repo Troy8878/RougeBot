@@ -2,10 +2,14 @@
   "TransformComponent": {},
   "CustomModelComponent": {},
   "TextureComponent": {
-    "zipped": [
-      "World/cobblestone.png",
-      "World/cobblestone_mossy.png",
-      "World/lapis_block.png"
+    "textures": [
+      {
+        "zipped": [
+          "World/cobblestone.png",
+          "World/cobblestone_mossy.png",
+          "World/lapis_block.png"
+        ]
+      }
     ]
   },
   "TestRoomComponent": {}

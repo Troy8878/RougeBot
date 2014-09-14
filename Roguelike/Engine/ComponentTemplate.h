@@ -1,10 +1,10 @@
 /*********************************
- * TexturedComponent.h
+ * COMPONENTNAMEHEREComponent.h
  * YOUR NAME HERE
  * Created 2014/YOUR DATE HERE
  *********************************/
 
-// Just Ctrl+H "Textured" with your component name
+// Just Ctrl+H "COMPONENTNAMEHERE" with your component name
 
 #pragma once
 
@@ -13,28 +13,28 @@
 
 // ----------------------------------------------------------------------------
 
-class TexturedComponentFactory;
+class COMPONENTNAMEHEREComponentFactory;
 
 // ----------------------------------------------------------------------------
 
-class TexturedComponent : public Component
+class COMPONENTNAMEHEREComponent : public Component
 {
 public:
-  TexturedComponent();
+  COMPONENTNAMEHEREComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
 
   mrb_value GetRubyWrapper() override;
 
-  static TexturedComponentFactory factory;
+  static COMPONENTNAMEHEREComponentFactory factory;
 };
 
 // ----------------------------------------------------------------------------
 
-class TexturedComponentFactory : public IComponentFactory
+class COMPONENTNAMEHEREComponentFactory : public IComponentFactory
 {
 public:
-  TexturedComponentFactory();
+  COMPONENTNAMEHEREComponentFactory();
 
   Component *CreateObject(void *memory, component_factory_data& data) override;
   IAllocator *_GetAllocator() override { return &allocator; }

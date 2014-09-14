@@ -34,6 +34,11 @@ static mrb_value mrb_lookatcamera_look_at_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_get_fov(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self);
 
+static ruby_class mrb_manualcamera_class();
+static mrb_value mrb_manualcamera_init(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_manualcamera_get_fov(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_manualcamera_set_fov(mrb_state *mrb, mrb_value self);
+
 // ----------------------------------------------------------------------------
 
 #pragma region ICamera Impls
@@ -61,13 +66,20 @@ mrb_value HUDCamera::GetRubyWrapper()
 
 void LookAtCamera::LoadFromData(const component_factory_data& data)
 {
-  auto jpos = map_fetch(data, "position", json::value::parse("[0,0,1,1]"));
-  auto jlook = map_fetch(data, "look_at", json::value::parse("[0,0,0,1]"));
+  static auto dpos = json::value::parse("[0,0,1,1]");
+  static auto dlook = json::value::parse("[0,0,0,1]");
+  
+  auto jnear = map_fetch(data, "near", 0.01);
+  auto jfar = map_fetch(data, "far", 100);
   auto jfov = map_fetch(data, "fov", 45);
-
+  auto jpos = map_fetch(data, "position", dpos);
+  auto jlook = map_fetch(data, "look_at", dlook);
+  
+  nearField = (float) jnear.as_number();
+  farField = (float) jfar.as_number();
+  fieldOfView = float(jfov.as_number() * math::pi / 180.0);
   position = math::Vector::VectorFromJson(jpos);
   lookAt = math::Vector::VectorFromJson(jlook);
-  fieldOfView = float(jfov.as_number() * math::pi / 180.0);
 
   position.w = 1;
   lookAt.w = 1;
@@ -79,6 +91,27 @@ mrb_value LookAtCamera::GetRubyWrapper()
 {
   static auto lookclass = mrb_lookatcamera_class();
   return mrb_cameras_make(lookclass, this);
+}
+
+// ----------------------------------------------------------------------------
+
+void ManualCamera::LoadFromData(const component_factory_data& data)
+{
+  auto jnear = map_fetch(data, "near", 0.01);
+  auto jfar = map_fetch(data, "far", 100);
+  auto jfov = map_fetch(data, "fov", 45);
+  
+  nearField = (float) jnear.as_number();
+  farField = (float) jfar.as_number();
+  fieldOfView = float(jfov.as_number() * math::pi / 180.0);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ManualCamera::GetRubyWrapper()
+{
+  static auto manualclass = mrb_manualcamera_class();
+  return mrb_cameras_make(manualclass, this);
 }
 
 #pragma endregion
@@ -295,3 +328,43 @@ static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self)
 #pragma endregion
 
 // ----------------------------------------------------------------------------
+
+#pragma region ManualCamera Ruby
+
+static ruby_class mrb_manualcamera_class()
+{
+  static auto module = mrb_camera_module();
+  static auto base = mrb_camera_base();
+  static ruby::ruby_class manualcamera = module.define_class("ManualCamera", base);
+  static bool init = false;
+
+  if (!init)
+  {
+    manualcamera.define_method("initialize", mrb_manualcamera_init, ARGS_REQ(1));
+
+    init = true;
+  }
+
+  return manualcamera;
+
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_manualcamera_init(mrb_state *mrb, mrb_value self)
+{
+  return mrb_cameras_camera_init(mrb, self);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_manualcamera_get_fov(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_manualcamera_set_fov(mrb_state *mrb, mrb_value self);
+
+#pragma endregion
+
+// ----------------------------------------------------------------------------
+

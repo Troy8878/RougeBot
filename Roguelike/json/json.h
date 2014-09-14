@@ -88,7 +88,7 @@ namespace json
       void set_object(const object_t& object);
       void set_array(const array_t& array);
       void set_string(const string_t& string);
-      void set_number(number_t number);
+      void set_number(const number_t number);
       void set_bool(bool_t value);
 
       friend struct serialize_method_manager;
@@ -109,8 +109,9 @@ namespace json
 
       explicit value(nullptr_t) : value(null()) {}
       explicit value(const int val) : value(number(val)) {}
-      explicit value(number_t val) : value(number(val)) {}
-      explicit value(bool_t val) : value(boolean(val)) {}
+      explicit value(const double val) : value(number(val)) {}
+      explicit value(const number_t val) : value(number(val)) {}
+      explicit value(const bool_t val) : value(boolean(val)) {}
       explicit value(const char *val) : value(string(val)) {}
       explicit value(const string_t& val) : value(string(val)) {}
       explicit value(const object_t& pairs) : value(object(pairs)) {}

@@ -176,16 +176,52 @@ static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)
   return ruby::wrap_memory_vector(&comp->Position);
 }
 
+static mrb_value rb_transform_position_set(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+
+  mrb_value value;
+  mrb_get_args(mrb, "o", &value);
+  auto vect = ruby::get_ruby_vector(value);
+
+  comp->Position = vect;
+  return value;
+}
+
 static mrb_value rb_transform_rotation(mrb_state *mrb, mrb_value self)
 {
   auto comp = get_rb_tc_wrapper(mrb, self);
   return ruby::wrap_memory_vector(&comp->Rotation);
 }
 
+static mrb_value rb_transform_rotation_set(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+
+  mrb_value value;
+  mrb_get_args(mrb, "o", &value);
+  auto vect = ruby::get_ruby_vector(value);
+
+  comp->Rotation = vect;
+  return value;
+}
+
 static mrb_value rb_transform_scale(mrb_state *mrb, mrb_value self)
 {
   auto comp = get_rb_tc_wrapper(mrb, self);
   return ruby::wrap_memory_vector(&comp->Scale);
+}
+
+static mrb_value rb_transform_scale_set(mrb_state *mrb, mrb_value self)
+{
+  auto comp = get_rb_tc_wrapper(mrb, self);
+
+  mrb_value value;
+  mrb_get_args(mrb, "o", &value);
+  auto vect = ruby::get_ruby_vector(value);
+
+  comp->Scale = vect;
+  return value;
 }
 
 // ----------------------------------------------------------------------------
@@ -223,12 +259,18 @@ mrb_value TransformComponent::GetRubyWrapper()
     comp_class = comp_mod.define_class("TransformComponent", comp_base);
 
     comp_class.define_method("initialize", rb_transform_initialize, ARGS_REQ(1));
+
     comp_class.define_method("position", rb_transform_position, ARGS_NONE());
+    comp_class.define_method("position=", rb_transform_position_set, ARGS_REQ(1));
+    
     comp_class.define_method("rotation", rb_transform_rotation, ARGS_NONE());
+    comp_class.define_method("rotation=", rb_transform_rotation_set, ARGS_REQ(1));
+
     comp_class.define_method("scale", rb_transform_scale, ARGS_NONE());
+    comp_class.define_method("scale=", rb_transform_scale_set, ARGS_REQ(1));
 
     comp_class.define_method("static", rb_transform_get_static, ARGS_NONE());
-    comp_class.define_method("static=", rb_transform_set_static, ARGS_NONE());
+    comp_class.define_method("static=", rb_transform_set_static, ARGS_REQ(1));
 
     init = true;
   }

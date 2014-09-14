@@ -52,6 +52,9 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 
 void CameraComponent::FixCameras()
 {
+  if (_cameraPtr != &_camera)
+    return;
+
   auto newSize = GetGame()->GameDevice->GetSize();
   if (prevSize != newSize)
   {
@@ -67,6 +70,13 @@ void CameraComponent::FixCameras()
     {
       auto& lcam = *MCamera.GetCamera<LookAtCamera>();
       lcam.aspectRatio = newSize.x / newSize.y;
+      Camera->Init();
+    }
+    else if (CameraType == typeid(ManualCamera))
+    {
+      auto& mcam = *MCamera.GetCamera<ManualCamera>();
+      mcam.cameraTransform = &Owner->Transform;
+      mcam.aspectRatio = newSize.x / newSize.y;
       Camera->Init();
     }
   }
@@ -110,7 +120,7 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
     return new (memory) CameraComponent(target_name, layer, multicam);
   }
   
-  auto type = data["type"].as_string();
+  auto type = map_fetch(data, "type", "ManualCamera").as_string();
   if (type == "HUDCamera")
   {
     camera.SetType<HUDCamera>();
@@ -119,9 +129,9 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
   {
     camera.SetType<LookAtCamera>();
   }
-  else if (type == "Basic3DCamera")
+  else if (type == "ManualCamera")
   {
-    //camera.SetType<Basic3DCamera>();
+    camera.SetType<ManualCamera>();
   }
   else
   {

@@ -366,5 +366,13 @@ mrb_value ruby::create_new_vector(const math::Vector& v)
 
 // ----------------------------------------------------------------------------
 
+math::Vector& ruby::get_ruby_vector(mrb_value value)
+{
+  auto ptr = mrb_data_get_ptr(*mrb_inst, value, &mrb_vector_type);
+  return *(math::Vector *) ptr;
+}
+
+// ----------------------------------------------------------------------------
+
 
 

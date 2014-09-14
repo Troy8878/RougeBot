@@ -37,7 +37,7 @@ struct Basic3DCamera : ICamera
   math::Vector rotation;
   float fieldOfView = math::degrees(45);
   float aspectRatio = 1280.f / 720.f;
-  float nearField = 0.1f, farField = 10000;
+  float nearField = 0.1f, farField = 100;
 
   void Init()
   {
@@ -69,7 +69,7 @@ struct LookAtCamera : ICamera
   math::Vector lookAt;
   float fieldOfView = math::pi / 4;
   float aspectRatio = 1280.f / 720.f;
-  float nearField = 0.1f, farField = 10000;
+  float nearField = 0.1f, farField = 100;
 
   void Init()
   {
@@ -94,11 +94,11 @@ struct LookAtCamera : ICamera
 
 // ----------------------------------------------------------------------------
 
-struct HUDCamera : ICamera
+struct HUDCamera final : ICamera
 {
   math::Vector position = {0, 0, 1, 1};
   math::Vector2D size = {1280.f / 720.f, 1};
-  float nearField = 0.1f, farField = 10000;
+  float nearField = 0.1f, farField = 100;
 
   void Init()
   {
@@ -110,6 +110,37 @@ struct HUDCamera : ICamera
   {
     using namespace DirectX;
     viewMatrix = XMMatrixLookToLH(position.get(), g_XMIdentityR2, g_XMIdentityR1);
+  }
+
+  void LoadFromData(const component_factory_data& data) override;
+  mrb_value GetRubyWrapper() override;
+};
+
+// ----------------------------------------------------------------------------
+
+struct ManualCamera final : ICamera
+{
+  math::Matrix *cameraTransform = nullptr;
+  float fieldOfView = math::pi / 4;
+  float aspectRatio = 1280.f / 720.f;
+  float nearField = 0.1f, farField = 100;
+
+  void Init() override
+  {
+    using namespace DirectX;
+    projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
+  }
+
+  void Update() override
+  {
+    using namespace DirectX;
+    XMMATRIX transfrom = *cameraTransform;
+
+    XMVECTOR position = transfrom * g_XMIdentityR3; // [transform] * <0, 0, 0, 1>
+    XMVECTOR forward  = transfrom * g_XMIdentityR2; // [transform] * <0, 0, 1, 0>
+    XMVECTOR up       = transfrom * g_XMIdentityR1; // [transform] * <0, 1, 0, 0>
+
+    viewMatrix = XMMatrixLookToLH(position, forward, up);
   }
 
   void LoadFromData(const component_factory_data& data) override;

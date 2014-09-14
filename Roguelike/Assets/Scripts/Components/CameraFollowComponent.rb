@@ -10,13 +10,14 @@ class CameraFollowComponent < ComponentBase
   def initialize(data)
     super data
 
-    @camera = self.owner.camera_component
+    @transform = self.owner.transform_component
 
     @offset = Vector.new(*data.fetch("offset", [1, 0, 1]))
 
     @lag = data.fetch("lag", 0.0).to_f
     @follow = Vector.new
     @follow_id = data.fetch("follows", 0)
+    @follow_id = @follow_id.to_i if @follow_id.is_a? Float
 
     register_event :update, :on_update
   end
@@ -34,8 +35,7 @@ class CameraFollowComponent < ComponentBase
       @follow_real = follow
     end
 
-    @camera.look_at = follow
-    @camera.position = follow + @offset
+    @transform.position = follow + @offset
   end
 
   register_component "CameraFollowComponent"

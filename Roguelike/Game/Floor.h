@@ -8,8 +8,6 @@
 
 #include <vector>
 
-void mrb_mruby_floor_init(mrb_state* mrb);
-
 /*class Grid
 {
 short ID;
@@ -26,14 +24,17 @@ public:
   int DeathLim = 4;
   int BirthLim = 4;
   int Steps = 2;
+  int PlayerX = 1;
+  int PlayerY = 1;
 
   void InitFloor(void);
   int CountNeighbors(int x, int y);
   void DoStep();
+  void ChoosePlayerStart();
   void GenerateFloor();
   void PrintFloor(void);
 
-
+  
   std::vector<std::vector<short>> OldMap;
   std::vector<std::vector<short>> Map;
 };

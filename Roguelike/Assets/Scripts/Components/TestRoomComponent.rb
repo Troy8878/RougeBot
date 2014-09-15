@@ -7,21 +7,7 @@
 class TestRoomComponent < ComponentBase
   include ModelBuilder
 
-  @@room = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-    [1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-    [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
-    [1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-  ]
+  @@room, @@px, @@py = Floor.generate(width: 30, height: 30)
 
   ROOM_SIZE = @@room.count
   C_L = -0.5
@@ -52,6 +38,18 @@ class TestRoomComponent < ComponentBase
     super data
 
     generate_room
+
+    register_event :update, :on_update
+  end
+
+  def on_update(e)
+    return if @init
+
+    tr = find_entity("Pancake").transform_component
+    tr.position.x = @@px
+    tr.position.z = @@py
+
+    @init = true
   end
 
   private

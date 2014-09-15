@@ -6,6 +6,7 @@
 
 #include "Common.h"
 #include "Floor.h"
+#include "mruby/array.h"
 
 // 1 = WALL
 
@@ -132,16 +133,75 @@ void Floor::DoStep()
 
 }
 
+void Floor::ChoosePlayerStart(void)
+{
+  std::uniform_int_distribution<int> randomx(0, Width);
+  std::uniform_int_distribution<int> randomy(0, Height);
+
+  do
+  {
+    PlayerX = randomx(RNG);
+    PlayerY = randomy(RNG);
+  } while (Map[PlayerX][PlayerY] != 0);
+}
+
 void Floor::GenerateFloor(void)
 {
   for (int i = 0; i < Steps; ++i)
   {
     DoStep();
   }
+
+  ChoosePlayerStart();
 }
 
+#define MRB_HASH_GET(name) mrb_hash_get(mrb, options, mrb_symbol_value(mrb_intern_lit(mrb, name)))
 
-void mrb_mruby_floor_init(mrb_state* mrb)
+static mrb_value mrb_floor_generate(mrb_state *mrb, mrb_value)
 {
-  auto module = mrb_inst->define_module("Floor");
+  mrb_value options = mrb_nil_value();
+  mrb_get_args(mrb, "|H", &options);
+  
+  if (mrb_nil_p(options))
+    options = mrb_hash_new(mrb);
+
+  Floor f;
+
+  mrb_value rwidth = MRB_HASH_GET("width");
+  mrb_value rheight = MRB_HASH_GET("height");
+  if (mrb_fixnum_p(rwidth))
+    f.Width = (int) mrb_fixnum(rwidth);
+  if (mrb_fixnum_p(rheight))
+    f.Height = (int) mrb_fixnum(rheight);
+
+  f.InitFloor();
+  f.GenerateFloor();
+
+  // Push the floor into a 2D ruby array
+  mrb_value rf = mrb_ary_new(mrb);
+  for (size_t y = 0; y < f.Height; ++y)
+  {
+    mrb_value row = mrb_ary_new(mrb);
+    for (size_t x = 0; x < f.Width; ++x)
+    {
+      mrb_ary_push(mrb, row, mrb_fixnum_value(f.Map[x][y]));
+    }
+    mrb_ary_push(mrb, rf, row);
+  }
+
+  // Return values
+  mrb_value items = mrb_ary_new(mrb);
+  mrb_ary_push(mrb, items, rf);
+  mrb_ary_push(mrb, items, mrb_fixnum_value(f.PlayerX));
+  mrb_ary_push(mrb, items, mrb_fixnum_value(f.PlayerY));
+
+  return items;
+}
+
+extern "C" void mrb_mruby_floor_init(mrb_state *mrb)
+{
+  auto module = mrb_define_module(mrb, "Floor");
+
+  mrb_define_module_function(mrb, module, "generate", mrb_floor_generate, ARGS_OPT(1));
+
 }

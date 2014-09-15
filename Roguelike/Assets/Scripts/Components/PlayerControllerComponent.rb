@@ -49,7 +49,7 @@ class PlayerControllerComponent < ComponentBase
     when *KEYS_MOVE_RIGHT
       @pos.x += 1 if can_move? 1, 0
     when *KEYS_MOVE_LEFT
-      @pos.x -= 1 if can_move? -1, 0
+      @pos.x -= 1 if can_move?(-1, 0)
     end
   end
 

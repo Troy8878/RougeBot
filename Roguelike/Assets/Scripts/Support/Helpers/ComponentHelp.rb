@@ -12,7 +12,7 @@ class GameEntity
       return get_component compName
     end
 
-    super *args
+    super(*args)
   end
 end
 

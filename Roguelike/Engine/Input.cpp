@@ -179,42 +179,40 @@ static mrb_value mrb_kse_plain_char(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
+extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
+{
+  mrb_kse_data_type.dfree = mrb_kse_free;
+  mrb_kse_data_type.struct_name = "const KeyState";
+
+  RClass *rclass = mrb_define_class(mrb, "KeyState", mrb->object_class);
+
+  // ruby can't make new ones
+  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_NONE());
+
+  mrb_define_method(mrb, rclass, "held?", mrb_kse_is_held, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "hold_time", mrb_kse_hold_time, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "vkey", mrb_kse_vkey, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "plain_char?", mrb_kse_is_plain_char, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "plain_char", mrb_kse_plain_char, ARGS_NONE());
+
+  #pragma region CONSTANTS
+
+  DEF_INT_CONST("ESCAPE", VK_ESCAPE);
+  DEF_INT_CONST("SPACE",  VK_SPACE);
+  DEF_INT_CONST("ENTER",  VK_RETURN);
+  DEF_INT_CONST("LEFT",   VK_LEFT);
+  DEF_INT_CONST("RIGHT",  VK_RIGHT);
+  DEF_INT_CONST("UP",     VK_UP);
+  DEF_INT_CONST("DOWN",   VK_DOWN);
+
+  #pragma endregion
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value KeyStateEvent::GetRubyWrapper()
 {
-  static mrb_state * const mrb = *mrb_inst;
-  static mrb_sym new_sym = mrb_intern_cstr(mrb, "new");
-  static RClass *rclass = nullptr;
-
-  if (!rclass)
-  {
-    mrb_kse_data_type.dfree = mrb_kse_free;
-    mrb_kse_data_type.struct_name = "const KeyState";
-
-    rclass = mrb_define_class(mrb, "KeyState", mrb->object_class);
-
-    // ruby can't make new ones
-    mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_NONE());
-
-    mrb_define_method(mrb, rclass, "held?", mrb_kse_is_held, ARGS_REQ(1));
-    mrb_define_method(mrb, rclass, "hold_time", mrb_kse_hold_time, ARGS_REQ(1));
-    mrb_define_method(mrb, rclass, "vkey", mrb_kse_vkey, ARGS_NONE());
-    mrb_define_method(mrb, rclass, "plain_char?", mrb_kse_is_plain_char, ARGS_NONE());
-    mrb_define_method(mrb, rclass, "plain_char", mrb_kse_plain_char, ARGS_NONE());
-
-    #pragma region CONSTANTS
-
-    DEF_INT_CONST("ESCAPE", VK_ESCAPE);
-    DEF_INT_CONST("SPACE",  VK_SPACE);
-    DEF_INT_CONST("ENTER",  VK_RETURN);
-    DEF_INT_CONST("LEFT",   VK_LEFT);
-    DEF_INT_CONST("RIGHT",  VK_RIGHT);
-    DEF_INT_CONST("UP",     VK_UP);
-    DEF_INT_CONST("DOWN",   VK_DOWN);
-
-    #pragma endregion
-  }
-
-  return mrb_kse_new(mrb, state);
+  return mrb_kse_new(*mrb_inst, state);
 }
 
 // ----------------------------------------------------------------------------

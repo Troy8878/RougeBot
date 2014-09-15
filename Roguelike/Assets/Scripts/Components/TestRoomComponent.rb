@@ -59,7 +59,12 @@ class TestRoomComponent < ComponentBase
   private
   def generate_room
     build_model do |builder|
-      (0..(ROOM_SIZE - 1)).combinations do |y, x|
+      (-7..(ROOM_SIZE + 6)).combinations do |y, x|
+        if y < 0 || x < 0 || y >= ROOM_SIZE || x >= ROOM_SIZE
+          add_ceil(builder, x, y)
+          next
+        end
+
         v = room_get(x, y)
         if v == 1
           add_ceil(builder, x, y)

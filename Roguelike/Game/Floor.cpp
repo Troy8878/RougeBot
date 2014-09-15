@@ -142,7 +142,7 @@ void Floor::ChoosePlayerStart(void)
   {
     PlayerX = randomx(RNG);
     PlayerY = randomy(RNG);
-  } while (Map[PlayerX][PlayerY] != 0);
+  } while (Map[PlayerX][Height - PlayerY] != 0);
 }
 
 void Floor::GenerateFloor(void)

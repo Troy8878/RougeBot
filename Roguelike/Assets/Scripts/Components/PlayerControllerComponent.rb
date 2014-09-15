@@ -56,6 +56,10 @@ class PlayerControllerComponent < ComponentBase
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo
+
+    return false if x < 0 || x >= room[0].count
+    return false if y < 0 || y >= room.count
+
     room[room.count - 1 - y][x] != 1
   end
 

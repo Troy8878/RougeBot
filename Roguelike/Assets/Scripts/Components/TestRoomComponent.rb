@@ -7,7 +7,7 @@
 class TestRoomComponent < ComponentBase
   include ModelBuilder
 
-  @@room, @@px, @@py = Floor.generate(width: 30, height: 30)
+  @@room, @@px, @@py = Floor.generate(width: 100, height: 100)
 
   ROOM_SIZE = @@room.count
   C_L = -0.5
@@ -17,7 +17,7 @@ class TestRoomComponent < ComponentBase
 
   WHITE = Vector.new(1, 1, 1, 1)
 
-  TE = 0.0001
+  TE = 0.001
 
   CEIL_TL  = Vector.new(0, 0       )
   CEIL_TR  = Vector.new(1, 0       )

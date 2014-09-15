@@ -5,11 +5,6 @@
  *********************************/
 
 #include "Common.h"
-#include "Helpers\BucketAllocator.h"
-
-#include <iomanip>
-
-#include "mruby/error.h"
 
 static void createConsole()
 {

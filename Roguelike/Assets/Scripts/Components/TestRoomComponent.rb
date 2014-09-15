@@ -7,7 +7,11 @@
 class TestRoomComponent < ComponentBase
   include ModelBuilder
 
-  @@room, @@px, @@py = Floor.generate(width: 100, height: 100)
+  @@room, @@px, @@py = Floor.generate(
+    width: 150, height: 150, 
+    birth: 3, death: 4,
+    steps: 1
+  )
 
   ROOM_SIZE = @@room.count
   C_L = -0.5

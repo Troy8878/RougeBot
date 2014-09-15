@@ -138,12 +138,14 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GameConsole.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Testcompy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GameConsole.h" />
     <ClInclude Include="Roguelike.h" />
+    <ClInclude Include="Testcompy.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Engine\Style Guide.txt" />

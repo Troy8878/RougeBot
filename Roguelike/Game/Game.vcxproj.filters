@@ -11,6 +11,12 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{a648df60-6401-4678-a270-07ba5d9bfbf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{34c49613-738e-49df-973d-c620ce946cb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{db7a5c35-6130-4e03-ad20-38d9180cc29e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\ShaderCommons.hlsli">
@@ -44,6 +50,9 @@
     <ClCompile Include="Floor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Testcompy.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Roguelike.h">
@@ -57,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Floor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Testcompy.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

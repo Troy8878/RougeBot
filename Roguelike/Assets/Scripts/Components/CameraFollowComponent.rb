@@ -15,6 +15,7 @@ class CameraFollowComponent < ComponentBase
     @offset = Vector.new(*data.fetch("offset", [1, 0, 1]))
 
     @speed = data.fetch("speed", 0.0).to_f
+    @superspeed = data.fetch("superspeed", 3).to_f
     @follow = Vector.new
     @follow_id = data.fetch("follows", 0)
     @follow_id = @follow_id.to_i if @follow_id.is_a? Float
@@ -33,8 +34,13 @@ class CameraFollowComponent < ComponentBase
     if @speed > 0.0
       diff = follow - @follow_real
       modifier = e.dt * @speed
+      dlen2 = diff.length2
 
-      if diff.length2 > (modifier * modifier)
+      if dlen2 > @superspeed * @superspeed
+        modifier *= (1 + (diff.length - @superspeed))
+      end
+      
+      if dlen2 > (modifier * modifier)
         diff.normalize!
         diff.mul modifier
       end

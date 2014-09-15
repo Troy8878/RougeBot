@@ -43,7 +43,7 @@ class PlayerControllerComponent < ComponentBase
       @pos.z -= 1 if can_move? 0, -1
     when 'D', KeyState::RIGHT
       @pos.x += 1 if can_move? 1, 0
-    when 'A', KeyState::LEFT
+    when *['A', KeyState::LEFT]
       @pos.x -= 1 if can_move? -1, 0
     end
   end

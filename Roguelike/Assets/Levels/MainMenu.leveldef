@@ -57,9 +57,6 @@
         "SpriteComponent": {
           "render_target": "Le3DCam"
         },
-        "SpinnyThingComponent": {
-          "speed": 0
-        },
         "PlayerControllerComponent": {}
       }
     },

@@ -20,10 +20,10 @@ public:
 
   int Width = 50;
   int Height = 50;
-  int AliveChance = 45;
-  int DeathLim = 4;
+  int AliveChance = 39;
   int BirthLim = 4;
-  int Steps = 2;
+  int DeathLim = 3;
+  int Steps = 3;
   int PlayerX = 1;
   int PlayerY = 1;
 

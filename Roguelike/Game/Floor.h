@@ -1,43 +1,40 @@
 /*********************************
-* Level.h
+* Floor.h
 * Avi Whitten-Vile
 * Created 2014/09/08
 *********************************/
 
-#include "common.h"
+#pragma once
 
-#define FLOOR_SIZE 75
-#define CHUNK_SIZE 25
+#include <vector>
 
-int FloorNum = 0;
-
-class Chunk
+/*class Grid
 {
-public:
-  Chunk();
-  ~Chunk();
+short ID;
 
-  void CreateChunk();
-  void ResetChunk();
-  short ChunkTiles[CHUNK_SIZE][CHUNK_SIZE];
-};
-
+};*/
 
 class Floor
 {
 public:
 
-  Floor();
-  ~Floor();
+  int Width = 50;
+  int Height = 50;
+  int AliveChance = 39;
+  int BirthLim = 4;
+  int DeathLim = 3;
+  int Steps = 3;
+  int PlayerX = 1;
+  int PlayerY = 1;
 
+  void InitFloor(void);
+  int CountNeighbors(int x, int y);
+  void DoStep();
+  void ChoosePlayerStart();
   void GenerateFloor();
-  void PrintFloor();
+  void PrintFloor(void);
 
-private:
-
-  short Tiles[FLOOR_SIZE][FLOOR_SIZE];
-  int FloorID;
-
+  
+  std::vector<std::vector<short>> OldMap;
+  std::vector<std::vector<short>> Map;
 };
-
-

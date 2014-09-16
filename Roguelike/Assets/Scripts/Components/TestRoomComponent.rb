@@ -57,9 +57,8 @@ class TestRoomComponent < ComponentBase
 
   private
   def generate_room
-
     @room, @px, @py = Floor.generate(
-      width: 50, height: 50, 
+      width: ROOM_SIZE, height: ROOM_SIZE, 
       birth: 3, death: 4,
       steps: 1
     )

@@ -13,7 +13,7 @@
 
 class Component;
 
-typedef unsigned __int64 entity_id;
+typedef uint64_t entity_id;
 
 // ----------------------------------------------------------------------------
 

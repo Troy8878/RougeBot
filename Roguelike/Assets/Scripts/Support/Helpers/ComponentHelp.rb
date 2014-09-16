@@ -14,5 +14,10 @@ class GameEntity
 
     super(*args)
   end
+
+  def create_child(*args)
+    entity = GameEntity.create_entity(*args)
+    self.add_child entity
+  end
 end
 

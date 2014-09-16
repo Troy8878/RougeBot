@@ -370,6 +370,8 @@ extern bool mrb_debug_mbox;
 
 // ----------------------------------------------------------------------------
 
-
+#define MRB_DECL_SYM(mrb, var, sname) \
+  static ::mrb_sym var = mrb_intern_lit(mrb, sname); \
+  static ::mrb_value var##_v = mrb_symbol_value(var)
 
 

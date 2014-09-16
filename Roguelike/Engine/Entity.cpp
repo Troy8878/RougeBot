@@ -6,6 +6,7 @@
 
 #include "Common.h"
 #include "Helpers\BucketAllocator.h"
+#include "Level.h"
 
 #include "mruby/variable.h"
 #include "mruby/string.h"
@@ -14,8 +15,6 @@
 #include "mruby/gems/regexp.h"
 
 #include "json/json.h"
-
-#include <sstream>
 
 // ----------------------------------------------------------------------------
 
@@ -325,16 +324,6 @@ mrb_value Entity::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
-static Entity *rb_ent_get_internal(mrb_state *mrb, mrb_value self)
-{
-  ruby::ruby_engine engine{mrb};
-  static auto ent_ptr_sym = mrb_intern_cstr(mrb, "ent_ptr_v");
-  auto ent_ptr_v = mrb_iv_get(mrb, self, ent_ptr_sym);
-  return (Entity *) engine.unwrap_native_ptr(ent_ptr_v);
-}
-
-// ----------------------------------------------------------------------------
-
 static mrb_value rb_ent_initialize(mrb_state *mrb, mrb_value self)
 {
   mrb_value ent_ptr_v;
@@ -551,6 +540,68 @@ static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_add_child(mrb_state *mrb, mrb_value self)
+{
+  mrb_value child_v;
+  mrb_get_args(mrb, "o", &child_v);
+
+  if (mrb_obj_class(mrb, child_v) != mrb_class_get(mrb, "GameEntity"))
+    mrb_raise(mrb, mrb->eException_class, "Expected param to be GameEntity");
+
+  auto *parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *child = ruby::read_native_ptr<Entity>(mrb, child_v);
+
+  parent->AddChild(child);
+
+  return child_v;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
+{
+  MRB_DECL_SYM(mrb, id_sym, "id");
+  MRB_DECL_SYM(mrb, name_sym, "name");
+  MRB_DECL_SYM(mrb, arch_sym, "archetype");
+  MRB_DECL_SYM(mrb, comp_sym, "components");
+
+  mrb_value opts = mrb_nil_value();
+  mrb_get_args(mrb, "|H", &opts);
+
+  if (mrb_nil_p(opts))
+    opts = mrb_hash_new(mrb);
+
+  mrb_value mrb_id = mrb_hash_get(mrb, opts, id_sym_v);
+  entity_id id = UNASSIGNED_ENTITY_ID;
+  if (mrb_fixnum_p(mrb_id))
+    id = (entity_id) mrb_fixnum(mrb_id);
+
+  mrb_value name = mrb_hash_get(mrb, opts, name_sym_v);
+  mrb_value archetype = mrb_hash_get(mrb, opts, arch_sym_v);
+  if (!mrb_string_p(archetype))
+    archetype = mrb_str_new_lit(mrb, "NoArchetype");
+
+  mrb_value components = mrb_hash_get(mrb, opts, comp_sym_v);
+  if (!mrb_hash_p(components))
+    components = mrb_hash_new(mrb);
+
+  entity_factory_data data;
+  auto jdata = mrb_inst->hash_to_json(components).as_object();
+  for (auto& item : jdata)
+  {
+    data[item.first] = item.second.as_object();
+  }
+
+  auto entity = EntityFactory::CreateEntity(mrb_str_to_stdstring(archetype), data, id);
+  entity->Name = mrb_str_to_stdstring(name);
+
+  GetGame()->CurrentLevel->RootEntity->AddChild(entity);
+
+  return entity->GetRubyWrapper();
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_class Entity::GetWrapperRClass()
 {
   using namespace ruby;
@@ -570,6 +621,9 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
   rclass.define_method("add_component", rb_ent_add_component, ARGS_REQ(2));
+
+  rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
+  rclass.define_method("add_child", rb_ent_add_child, ARGS_REQ(1));
 
   rclass.define_method("find_entity", rb_ent_find_entity, ARGS_REQ(1));
   rclass.define_method("search_entities", rb_ent_search_entities, MRB_ARGS_ARG(1, 1));

@@ -355,6 +355,10 @@ struct component_factory_data : public std::unordered_map<std::string, json::val
   typedef std::unordered_map<std::string, json::value> base;
 
   component_factory_data() = default;
+  component_factory_data(const base& b) 
+    : base(b) 
+  {
+  }
   component_factory_data(const std::initializer_list<value_type>& list)
     : base(list)
   {

@@ -63,23 +63,37 @@
           "children": [
             {
               "name": "PositionDisplay",
+              "archetype": "PositionDisplay",
               "components": {
                 "TransformComponent": {
-                  "position": [-1.6, -1.2, 0],
-                  "scale": [0.5, 0.25, 1]
-                },
-                "TextureComponent": {
-                  "textures": [
-                    "SPECIAL/SURFACE/400:200"
-                  ]
-                },
-                "SpriteComponent": {
-                  "render_target": "HUDLayer"
-                },
-                "PositionDisplayComponent": {
-                  "target_name": "Pancake",
-                  "font": "Segoe Script",
-                  "font_size": 60
+                  "position": [-1.6, -1.2, 0]
+                }
+              }
+            },
+            {
+              "name": "PositionDisplay",
+              "archetype": "PositionDisplay",
+              "components": {
+                "TransformComponent": {
+                  "position": [1.6, -1.2, 0]
+                }
+              }
+            },
+            {
+              "name": "PositionDisplay",
+              "archetype": "PositionDisplay",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.6, 1.2, 0]
+                }
+              }
+            },
+            {
+              "name": "PositionDisplay",
+              "archetype": "PositionDisplay",
+              "components": {
+                "TransformComponent": {
+                  "position": [1.6, 1.2, 0]
                 }
               }
             }

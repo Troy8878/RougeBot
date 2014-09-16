@@ -9,9 +9,12 @@ class TestRoomComponent < ComponentBase
 
   @@room, @@px, @@py = Floor.generate(
     width: 100, height: 100, 
-    birth: 3, death: 4,
-    steps: 1
+    birth: 4, death: 4,
+    steps: 3
   )
+
+  EMPTY_VALUE = 0
+  WALL_VALUE = 20
 
   ROOM_SIZE = @@room.count
   C_L = -0.5
@@ -66,21 +69,21 @@ class TestRoomComponent < ComponentBase
         end
 
         v = room_get(x, y)
-        if v == 1
+        if v == WALL_VALUE
           add_ceil(builder, x, y)
         else
           add_floor(builder, x, y)
 
-          if room_get(x - 1, y) == 1
+          if room_get(x - 1, y) == WALL_VALUE
             add_west_wall(builder, x, y)
           end
-          if room_get(x + 1, y) == 1
+          if room_get(x + 1, y) == WALL_VALUE
             add_east_wall(builder, x, y)
           end
-          if room_get(x, y - 1) == 1
+          if room_get(x, y - 1) == WALL_VALUE
             add_north_wall(builder, x, y)
           end
-          if room_get(x, y + 1) == 1
+          if room_get(x, y + 1) == WALL_VALUE
             add_south_wall(builder, x, y)
           end
         end
@@ -152,11 +155,10 @@ class TestRoomComponent < ComponentBase
   def room_get(x, y)
     y = ROOM_SIZE - 1 - y # because muh upside down
 
-    return 1 if x < 0 or y < 0 or y >= ROOM_SIZE
-    row = @@room[y]
-    return 1 if x >= row.count
+    return WALL_VALUE if y < 0 or y >= ROOM_SIZE
+    return WALL_VALUE if x < 0 or x >= ROOM_SIZE
 
-    row[x]
+    @@room[y][x]
   end
 
   register_component "TestRoomComponent"

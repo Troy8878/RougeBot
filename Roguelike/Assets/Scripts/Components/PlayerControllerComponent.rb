@@ -65,7 +65,7 @@ class PlayerControllerComponent < ComponentBase
     return false if x < 0 || x >= room[0].count
     return false if y < 0 || y >= room.count
 
-    room[room.count - 1 - y][x] != 1
+    room[room.count - 1 - y][x] != TestRoomComponent::WALL_VALUE
   end
 
   register_component "PlayerControllerComponent"

@@ -79,8 +79,7 @@
         "SpriteComponent": {
           "render_target": "Le3DCam"
         },
-        "PlayerControllerComponent": {},
-        "TestcompyComponent": {}
+        "PlayerControllerComponent": {}
       }
     },
     {

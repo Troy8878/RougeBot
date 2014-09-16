@@ -20,7 +20,7 @@ public:
 
   int Width = 50;
   int Height = 50;
-  int AliveChance = 40;
+  int DeathChance = 39;
   int BirthLim = 4;
   int DeathLim = 3;
   int Steps = 2;
@@ -30,8 +30,6 @@ public:
   void InitFloor(void);
   int CountNeighbors(int x, int y);
   void DoStep();
-  void CarveFloor();
-  void FloodFill(int x, int y);
   void ChoosePlayerStart();
   void GenerateFloor();
   void PrintFloor(void);

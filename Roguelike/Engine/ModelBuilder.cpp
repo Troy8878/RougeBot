@@ -77,12 +77,26 @@ Model *ModelBuilder::CreateModel()
 
 UINT ModelBuilder::SaveVertex(const TexturedVertex& vertex)
 {
-  auto it = std::find(vertices.begin(), vertices.end(), vertex);
-  if (it != vertices.end())
-    return UINT(it - vertices.begin());
+  auto& indexSlot = 
+    vertexIndex[(int64_t) vertex.position.x]
+               [(int64_t) vertex.position.y]
+               [(int64_t) vertex.position.z];
+
+  auto it = std::find_if(indexSlot.begin(), indexSlot.end(), 
+  [&vertex](const std::pair<TexturedVertex, UINT>& pair)
+  {
+    return pair.first == vertex;
+  });
+
+  if (it != indexSlot.end())
+    return it->second;
 
   vertices.push_back(vertex);
-  return UINT(vertices.size() - 1);
+  UINT index = UINT(vertices.size() - 1);
+
+  indexSlot.push_back({vertex, index});
+
+  return index;
 }
 
 // ----------------------------------------------------------------------------

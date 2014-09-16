@@ -11,10 +11,6 @@
     ]
   },
   "SpriteComponent": {},
-  "SpinnyThingComponent": {
-    // This is basically 'radians per second'
-    "speed": 1
-  },
   "AnimatedComponent": {
     // change the pic 20 times per second
     "frame_time": 0.05,

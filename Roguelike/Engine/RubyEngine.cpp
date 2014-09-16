@@ -53,6 +53,11 @@ ruby_engine::~ruby_engine()
 
 bool ruby_engine::evaluate_asset(const std::string& asset)
 {
+  auto prevfg = console::fg_color();
+  std::cout << console::fg::blue 
+            << "Loading ruby script " << asset 
+            << std::endl << prevfg;
+
   auto container = GetGame()->Respack["Scripts"];
   RELEASE_AFTER_SCOPE(container);
 

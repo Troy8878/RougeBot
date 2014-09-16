@@ -139,7 +139,6 @@
     <ClCompile Include="GameConsole.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PositionDisplayComponent.cpp" />
-    <ClCompile Include="Testcompy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
@@ -147,7 +146,6 @@
     <ClInclude Include="GameConsole.h" />
     <ClInclude Include="PositionDisplayComponent.h" />
     <ClInclude Include="Roguelike.h" />
-    <ClInclude Include="Testcompy.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Engine\Style Guide.txt" />

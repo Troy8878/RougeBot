@@ -67,7 +67,6 @@ void RubyComponent::Initialize(Entity *owner, const std::string& name)
   ruby::ruby_class rclass{&mrb, rclass_p};
 
   component_inst = rclass.new_inst(map).silent_reset();
-
   mrb.log_and_clear_error();
 }
 

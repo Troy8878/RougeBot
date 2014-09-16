@@ -43,7 +43,6 @@ extern "C"
   void mrb_mruby_eval_gem_init(mrb_state* mrb);
   void mrb_mruby_regexp_init(mrb_state *mrb);
   void mrb_mruby_floor_init(mrb_state *mrb);
-  void mrb_mruby_keystate_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -85,9 +84,6 @@ extern "C"
 
     // Making dem floors :D
     mrb_mruby_floor_init(mrb);
-
-    // Input
-    mrb_mruby_keystate_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

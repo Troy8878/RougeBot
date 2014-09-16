@@ -31,9 +31,9 @@ void Floor::InitFloor(void)
 
       Map[x][y] = 0;
 
-      if (random(RNG) < DeathChance)
+      if (random(RNG) < AliveChance)
       {
-        OldMap[x][y] = 1;
+        OldMap[x][y] = 20;
       }
 
       else
@@ -109,13 +109,13 @@ void Floor::DoStep()
           Map[x][y] = 0;
 
         else
-          Map[x][y] = 1;
+          Map[x][y] = 20;
       }
 
       else
       {
         if (nbs > BirthLim)
-          Map[x][y] = 1;
+          Map[x][y] = 20;
 
         else
           Map[x][y] = 0;
@@ -133,19 +133,29 @@ void Floor::DoStep()
 
 }
 
+void Floor::FloodFill(int x, int y)
+{
+  // Flood - fill(node, target - color, replacement - color) :
+    // 1. If target - color is equal to replacement - color, return.
+    // 2. If the color of node is not equal to target - color, return.
+    // 3. Set the color of node to replacement - color.
+    // 4. Perform Flood - fill(one step to the west of node, target - color, replacement - color).
+    // Perform Flood - fill(one step to the east of node, target - color, replacement - color).
+    // Perform Flood - fill(one step to the north of node, target - color, replacement - color).
+    // Perform Flood - fill(one step to the south of node, target - color, replacement - color).
+    // 5. Return.
+}
+
 void Floor::ChoosePlayerStart(void)
 {
-  std::uniform_int_distribution<int> randomx(1, Width - 1);
-  std::uniform_int_distribution<int> randomy(1, Height - 1);
-
-  int times = 0;
+  std::uniform_int_distribution<int> randomx(0, Width);
+  std::uniform_int_distribution<int> randomy(0, Height);
 
   do
   {
     PlayerX = randomx(RNG);
     PlayerY = randomy(RNG);
-
-  } while (Map[PlayerX][Height - PlayerY - 1] != 0 && times++ < 100);
+  } while (Map[PlayerX][PlayerY] != 0);
 }
 
 void Floor::GenerateFloor(void)
@@ -176,21 +186,6 @@ static mrb_value mrb_floor_generate(mrb_state *mrb, mrb_value)
     f.Width = (int) mrb_fixnum(rwidth);
   if (mrb_fixnum_p(rheight))
     f.Height = (int) mrb_fixnum(rheight);
-
-  mrb_value rdeath_chance = MRB_HASH_GET("death_chance");
-  if (mrb_fixnum_p(rdeath_chance))
-    f.DeathChance = (int) mrb_fixnum(rdeath_chance);
-
-  mrb_value rbirth = MRB_HASH_GET("birth");
-  mrb_value rdeath = MRB_HASH_GET("death");
-  if (mrb_fixnum_p(rbirth))
-    f.BirthLim = (int) mrb_fixnum(rbirth);
-  if (mrb_fixnum_p(rdeath))
-    f.DeathLim = (int) mrb_fixnum(rdeath);
-
-  mrb_value rsteps = MRB_HASH_GET("steps");
-  if (mrb_fixnum_p(rsteps))
-    f.Steps = (int) mrb_fixnum(rsteps);
 
   f.InitFloor();
   f.GenerateFloor();

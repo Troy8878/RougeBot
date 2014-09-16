@@ -29,18 +29,6 @@ private:
 
   std::vector<TexturedVertex> vertices;
   std::vector<UINT> indices;
-
-  template <typename Key>
-  struct int64_hashmap : public std::unordered_map<int64_t, Key>
-  {
-  };
-
-  struct textureindex : public std::vector<std::pair<TexturedVertex, UINT>>
-  {
-  };
-
-  int64_hashmap<int64_hashmap<int64_hashmap<textureindex>>> vertexIndex;
-
   GraphicsDevice *graphics;
 };
 

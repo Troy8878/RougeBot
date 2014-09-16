@@ -7,11 +7,7 @@
 class TestRoomComponent < ComponentBase
   include ModelBuilder
 
-  @@room, @@px, @@py = Floor.generate(
-    width: 100, height: 100, 
-    birth: 3, death: 4,
-    steps: 1
-  )
+  @@room, @@px, @@py = Floor.generate(width: 30, height: 30)
 
   ROOM_SIZE = @@room.count
   C_L = -0.5
@@ -21,7 +17,7 @@ class TestRoomComponent < ComponentBase
 
   WHITE = Vector.new(1, 1, 1, 1)
 
-  TE = 0.001
+  TE = 0.0001
 
   CEIL_TL  = Vector.new(0, 0       )
   CEIL_TR  = Vector.new(1, 0       )
@@ -59,12 +55,7 @@ class TestRoomComponent < ComponentBase
   private
   def generate_room
     build_model do |builder|
-      (-7..(ROOM_SIZE + 6)).combinations do |y, x|
-        if y < 0 || x < 0 || y >= ROOM_SIZE || x >= ROOM_SIZE
-          add_ceil(builder, x, y)
-          next
-        end
-
+      (0..(ROOM_SIZE - 1)).combinations do |y, x|
         v = room_get(x, y)
         if v == 1
           add_ceil(builder, x, y)

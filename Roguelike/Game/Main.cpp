@@ -5,7 +5,13 @@
  *********************************/
 
 #include "Common.h"
+#include "Helpers\BucketAllocator.h"
 
+#include <iomanip>
+
+#include "mruby/error.h"
+
+#ifdef _DEBUG
 static void createConsole()
 {
   AllocConsole();
@@ -14,12 +20,13 @@ static void createConsole()
   freopen_s(&file, "CONOUT$", "wt", stderr);
   freopen_s(&file, "CONIN$", "rt", stdin);
 }
+#endif
 
 Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
-  createConsole();
+  IFDEBUG(createConsole());
   game.Run();
   return 0;
 }

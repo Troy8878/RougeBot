@@ -5,8 +5,6 @@
  *********************************/
 
 #include "Engine/Common.h"
-#include "Engine/RenderSet.h"
-#include "Engine/Camera.h"
 
 #include <conio.h>
 
@@ -229,25 +227,6 @@ bool getline_async(std::string& str,
       Sleep(5); // Give up my time slice so I'm not just wasting cycles
     }
   }
-}
-
-// ----------------------------------------------------------------------------
-
-math::Vector ScreenToYPlane(math::Vector2D point, const std::string& cameraName, float y)
-{
-  auto camera = RenderGroup::Instance.GetSet(cameraName)->RenderCamera;
-  auto winsz = GetGame()->GameDevice->GetSize();
-
-  float x = 2.0f * point.x / winsz.x - 1;
-  float z = -2.0f * point.y / winsz.y + 1;
-
-  using namespace DirectX;
-  auto projview = XMMatrixMultiply(camera->projectionMatrix, camera->viewMatrix);
-  auto determ = XMMatrixDeterminant(projview);
-  auto inverse = XMMatrixInverse(&determ, projview);
-
-  auto planePoint = XMVectorSet(x, y, z, 1);
-  return inverse * planePoint;
 }
 
 // ----------------------------------------------------------------------------

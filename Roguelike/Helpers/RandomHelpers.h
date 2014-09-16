@@ -483,9 +483,3 @@ extern bool stop_getline_async;
 
 // ----------------------------------------------------------------------------
 
-namespace math { class Vector; class Vector2D; }
-
-math::Vector ScreenToYPlane(math::Vector2D point, const std::string& cameraName, float y);
-
-// ----------------------------------------------------------------------------
-

@@ -19,7 +19,6 @@ class SpinnyThingComponent < ComponentBase
   end
 
   def on_update(e)
-	puts self.inspect
     @transform.rotation.send(
       @set_axis,
       @transform.rotation.send(@get_axis) + e.dt * speed

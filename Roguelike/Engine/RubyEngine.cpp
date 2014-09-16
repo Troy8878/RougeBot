@@ -213,6 +213,8 @@ void ruby_engine::log_and_clear_error()
   if (!mrb->exc)
     return;
 
+  ruby_gc_guard{mrb};
+
   auto pfg = console::fg_color();
   std::cerr << console::fg::red;
 
@@ -269,11 +271,6 @@ void ruby_engine::log_and_clear_error()
 #endif
 
   std::cerr << pfg;
-
-  mrb_gc_mark_value(mrb, s);
-  mrb_gc_mark_value(mrb, b);
-
-  mrb_full_gc(mrb);
 }
 
 // ----------------------------------------------------------------------------

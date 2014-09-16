@@ -36,8 +36,14 @@ RubyComponent::~RubyComponent()
 
   mrb_funcall(mrb, component_inst, "finalize", 0);
 
-  mrb_gc_mark_iv(mrb, mrb_obj_ptr(component_inst));
-  mrb_gc_mark_value(mrb, component_inst);
+  #pragma region Unsave component
+  mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
+  mrb_value comp_reg = mrb_gv_get(mrb, comp_reg_sym);
+  mrb_value reg = mrb_hash_get(mrb, comp_reg, mrb_fixnum_value(Owner->Id));
+  mrb_value comp_name = mrb_str_new(mrb, Name.c_str(), Name.size());
+
+  mrb_hash_delete_key(mrb, reg, comp_name);
+  #pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -67,6 +73,20 @@ void RubyComponent::Initialize(Entity *owner, const std::string& name)
   ruby::ruby_class rclass{&mrb, rclass_p};
 
   component_inst = rclass.new_inst(map).silent_reset();
+
+  #pragma region Save component
+  mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
+  mrb_value comp_reg = mrb_gv_get(mrb, comp_reg_sym);
+  mrb_value reg = mrb_hash_get(mrb, comp_reg, mrb_fixnum_value(Owner->Id));
+  if (mrb_nil_p(reg))
+  {
+    reg = mrb_hash_new(mrb);
+    mrb_hash_set(mrb, comp_reg, mrb_fixnum_value(Owner->Id), reg);
+  }
+
+  mrb_value comp_name = mrb_str_new(mrb, Name.c_str(), Name.size());
+  mrb_hash_set(mrb, reg, comp_name, component_inst);
+  #pragma endregion
 
   mrb.log_and_clear_error();
 }
@@ -100,8 +120,6 @@ void RubyComponent::OnEvent(Events::EventMessage& e)
   
   mrb_funcall_argv(mrb, component_inst, events[e.EventId], 1, &edata);
   mrb.log_and_clear_error();
-
-  mrb_gc_mark_value(mrb, edata);
 }
 
 // ----------------------------------------------------------------------------

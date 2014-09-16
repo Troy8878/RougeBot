@@ -602,6 +602,16 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_parent(mrb_state *mrb, mrb_value self)
+{
+  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *parent = entity->Parent;
+
+  return parent ? parent->RubyWrapper : mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_class Entity::GetWrapperRClass()
 {
   using namespace ruby;
@@ -624,6 +634,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
   rclass.define_method("add_child", rb_ent_add_child, ARGS_REQ(1));
+  rclass.define_method("parent", rb_ent_parent, ARGS_NONE());
 
   rclass.define_method("find_entity", rb_ent_find_entity, ARGS_REQ(1));
   rclass.define_method("search_entities", rb_ent_search_entities, MRB_ARGS_ARG(1, 1));

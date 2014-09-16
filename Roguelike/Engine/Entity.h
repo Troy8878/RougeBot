@@ -204,6 +204,7 @@ public:
 
 private:
   entity_id _id;
+  bool event_list_invalidated = false;
 
   static entity_id CreateEntityId();
   static ruby::ruby_class GetWrapperRClass();

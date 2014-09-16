@@ -1,6 +1,7 @@
 {
   "TransformComponent": [],
-  "SpriteComponent": ["TransformComponent"],
+  "SpriteComponent": ["TransformComponent", "TextureComponent"],
   "SpinnyThingComponent": ["TransformComponent"],
-  "AnimatedComponent": ["SpriteComponent"]
+  "AnimatedComponent": ["SpriteComponent"],
+  "PositionDisplayComponent": ["TextureComponent"]
 }

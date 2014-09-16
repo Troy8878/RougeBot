@@ -21,7 +21,8 @@ class TransformComponent;
 class PositionDisplayComponent : public Component
 {
 public:
-  PositionDisplayComponent(const std::string& entity);
+  PositionDisplayComponent(const std::string& entity, const std::wstring& font, 
+                           FLOAT fontSize);
 
   void Initialize(Entity *owner, const std::string& name) override;
 
@@ -37,7 +38,7 @@ public:
 private:
   Texture2D texture;
   TransformComponent *watchedTransform;
-  std::string *entityName;
+  std::string entityName;
   math::Vector lastPos;
 
   // Drawing resources
@@ -46,8 +47,12 @@ private:
     typedef GraphicsDevice::D2DData::clock clock;
 
     clock::time_point timestamp;
-    ID2D1SolidColorBrush *brush;
-    IDWriteTextFormat *format;
+    ID2D1SolidColorBrush *brush = nullptr;
+    ID2D1SolidColorBrush *bgbrush = nullptr;
+    IDWriteTextFormat *format = nullptr;
+
+    std::wstring font;
+    FLOAT fontSize;
 
     void Validate();
     void Release();

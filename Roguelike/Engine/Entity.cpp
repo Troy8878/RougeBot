@@ -93,12 +93,33 @@ bool Entity::CanHandle(const Events::EventMessage& e)
 
 void Entity::Handle(Events::EventMessage& e)
 {
+  bool invalidation_occurred = false;
+  event_list_invalidated = false;
+
   auto& handlers = _events[e.EventId];
 
+  static std::vector<Component *> handled_for;
+
   // Execute all of the handlers on the components
-  for (auto& componentPair : handlers)
-    // Member function pointer application is sooo weeiird D:
-    (componentPair.first ->* componentPair.second)(e);
+  for (auto it = handlers.begin(); it != handlers.end(); ++it)
+  {
+    if (invalidation_occurred)
+    {
+      if (std::find(handled_for.begin(), handled_for.end(), it->first) != handled_for.end())
+        continue;
+    }
+
+    auto *comp = it->first;
+    // Apply member function pointer
+    (comp ->* it->second)(e);
+    handled_for.push_back(comp);
+
+    if (event_list_invalidated)
+    {
+      it = handlers.begin();
+      event_list_invalidated = false;
+    }
+  }
 
   for (auto child : children)
   {
@@ -115,6 +136,8 @@ void Entity::AddEvent(Component *component, event_id id,
   auto& handlers = _events[id];
   handlers[component] = handler;
 
+  event_list_invalidated = true;
+
   RecalculateEventCounts();
 }
 
@@ -125,6 +148,8 @@ void Entity::RemoveEvent(Component *component, event_id id)
   auto& handlers = _events[id];
   if (handlers.find(component) != handlers.end())
     handlers.erase(component);
+
+  event_list_invalidated = true;
 
   RecalculateEventCounts();
 }
@@ -556,6 +581,61 @@ static BucketAllocator entityAllocator{sizeof(Entity)};
 
 // ----------------------------------------------------------------------------
 
+static std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependencies()
+{
+  static std::unordered_map<std::string, std::vector<std::string>> items;
+
+  auto jlist = ParseJsonAsset("Definitions", "ComponentDependencies.json");
+  for (auto& pair : jlist.as_object())
+  {
+    items[pair.first] = pair.second.as_array_of<json::value::string_t>();
+  }
+
+  return items;
+}
+
+// ----------------------------------------------------------------------------
+
+/**
+  Whether b depends on a
+*/
+static bool component_depends_on(const std::string& a, const std::string& b)
+{
+  static auto& dependencies = GetComponentDependencies();
+  auto deps = dependencies.find(b);
+  if (deps == dependencies.end())
+    return false;
+
+  auto& deplist = deps->second;
+  return std::find(deplist.begin(), deplist.end(), a) != deplist.end();
+}
+
+// ----------------------------------------------------------------------------
+
+static std::vector<std::pair<std::string, component_factory_data>> 
+SortComponentDependencies(const entity_factory_data& data)
+{
+  typedef std::pair<std::string, component_factory_data> cpair;
+  std::vector<cpair> components;
+  components.reserve(data.size());
+
+  // copy the components over
+  for (auto& comp : data)
+  {
+    components.push_back(comp);
+  }
+
+  std::stable_sort(components.begin(), components.end(),
+  [](const cpair& a, const cpair& b)
+  {
+    return component_depends_on(a.first, b.first);
+  });
+
+  return components;
+}
+
+// ----------------------------------------------------------------------------
+
 Entity *EntityFactory::CreateEntity(const std::string& entdef, 
                                     const entity_factory_data& data,
                                     entity_id entid)
@@ -592,8 +672,10 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
 
   auto entity = entityAllocator.Create<Entity>(entid);
 
+  auto components = SortComponentDependencies(entdata);
+
   // Create all of the components
-  for (auto& cpair : entdata)
+  for (auto& cpair : components)
   {
     entity->AddComponent(cpair.first, cpair.second);
   }

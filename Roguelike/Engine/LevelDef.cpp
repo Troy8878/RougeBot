@@ -71,7 +71,8 @@ entity_factory_data LevelDef::EntityFactoryDataFromJson(json::value jdata)
 {
   entity_factory_data data;
 
-  for (auto& pair : jdata.as_object())
+  auto& obj = jdata.as_object();
+  for (auto& pair : obj)
   {
     auto& datamap = data[pair.first];
 

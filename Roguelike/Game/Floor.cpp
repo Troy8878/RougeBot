@@ -150,8 +150,8 @@ void Floor::FloodFill(int x, int y)
 
 void Floor::ChoosePlayerStart(void)
 {
-  std::uniform_int_distribution<int> randomx(0, Width);
-  std::uniform_int_distribution<int> randomy(0, Height);
+  std::uniform_int_distribution<int> randomx(0, Width - 1);
+  std::uniform_int_distribution<int> randomy(0, Height - 1);
 
   do
   {

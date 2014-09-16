@@ -16,9 +16,12 @@ PositionDisplayComponentFactory PositionDisplayComponent::factory;
 
 // ----------------------------------------------------------------------------
 
-PositionDisplayComponent::PositionDisplayComponent(const std::string& entity)
+PositionDisplayComponent::PositionDisplayComponent(const std::string& entity, 
+                                                   const std::wstring& font, FLOAT fontSize)
+  : entityName(entity)
 {
-  entityName = new std::string{entity};
+  drawing.font = font;
+  drawing.fontSize = fontSize;
 }
 
 // ----------------------------------------------------------------------------
@@ -37,11 +40,8 @@ void PositionDisplayComponent::Initialize(Entity *owner, const std::string& name
 
 void PositionDisplayComponent::OnFirstUpdate(Events::EventMessage&)
 {
-  auto entity =  GetGame()->CurrentLevel->RootEntity->FindEntity(*entityName);
+  auto entity = GetGame()->CurrentLevel->RootEntity->FindEntity(entityName);
   watchedTransform = entity->GetComponent<TransformComponent>("TransformComponent");
-  
-  delete entityName;
-  entityName = nullptr;
 
   DEF_EVENT_ID(update);
   Owner->RemoveEvent(this, update);
@@ -80,6 +80,8 @@ void PositionDisplayComponent::DrawDisplay()
   textbuf << L"y: " << int(lastPos.z + 0.5f);
   auto text = textbuf.str();
 
+  d2d.DeviceContext->FillRectangle(rect, drawing.bgbrush);
+
   d2d.DeviceContext->DrawText(text.c_str(), (UINT) text.size(),
                               drawing.format, rect, drawing.brush);
 
@@ -96,17 +98,32 @@ void PositionDisplayComponent::DrawingResources::Validate()
     return;
 
   Release();
-  d2d.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
-  d2d.WriteFactory->CreateTextFormat(
-    L"", // Font
+
+  HRESULT hr;
+
+  hr = d2d.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
+  CHECK_HRESULT(hr);
+
+  hr = d2d.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(0, 1, 1, 0.7f), &bgbrush);
+  CHECK_HRESULT(hr);
+
+  hr = d2d.WriteFactory->CreateTextFormat(
+    font.c_str(), // Font
     nullptr,
     DWRITE_FONT_WEIGHT_NORMAL,
     DWRITE_FONT_STYLE_NORMAL,
     DWRITE_FONT_STRETCH_NORMAL,
-    72, // font size
-    nullptr, // locale
+    fontSize, // font size
+    L"", // locale
     &format
   );
+  CHECK_HRESULT(hr);
+
+  hr = format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+  CHECK_HRESULT(hr);
+
+  hr = format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+  CHECK_HRESULT(hr);
 }
 
 // ----------------------------------------------------------------------------
@@ -114,6 +131,7 @@ void PositionDisplayComponent::DrawingResources::Validate()
 void PositionDisplayComponent::DrawingResources::Release()
 {
   ReleaseDXInterface(brush);
+  ReleaseDXInterface(bgbrush);
   ReleaseDXInterface(format);
 }
 
@@ -130,9 +148,10 @@ Component *PositionDisplayComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
   auto& name = data["target_name"].as_string();
+  auto font = map_fetch(data, "font", "").as_string();
+  auto fontSize = map_fetch(data, "font_size", 48).as_number();
 
-  auto *component = new (memory) PositionDisplayComponent(name);
-  return component;
+  return new (memory) PositionDisplayComponent(name, widen(font), (FLOAT) fontSize);
 }
 
 // ----------------------------------------------------------------------------

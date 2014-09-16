@@ -23,6 +23,7 @@
 #include <random>
 #include <limits>
 #include <regex>
+#include <sstream>
 
 #include "Helpers\UseDirectX.h"
 #include "Helpers\FlatMap.h"

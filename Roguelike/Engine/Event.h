@@ -105,6 +105,8 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
+#define DEF_EVENT_ID(id) static ::Events::EventId id{#id};
+
   class EventId
   {
     event_id _id;

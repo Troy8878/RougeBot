@@ -84,12 +84,7 @@ auto ComponentManager::_GetComponentRegistrations() -> component_map&
 
 // ----------------------------------------------------------------------------
 
-#include "SpriteComponent.h"
-#include "TransformComponent.h"
-#include "CameraComponent.h"
-#include "CustomModelComponent.h"
-#include "TextureComponent.h"
-#include "Game/Testcompy.h"
+static void RegisterStaticComponents();
 
 void RegisterEngineComponents()
 {
@@ -121,6 +116,21 @@ void RegisterEngineComponents()
     }
   }
 
+  RegisterStaticComponents();
+}
+
+// ----------------------------------------------------------------------------
+
+#include "SpriteComponent.h"
+#include "TransformComponent.h"
+#include "CameraComponent.h"
+#include "CustomModelComponent.h"
+#include "TextureComponent.h"
+#include "Game/Testcompy.h"
+#include "Game/PositionDisplayComponent.h"
+
+static void RegisterStaticComponents()
+{
   // Static components
   RegisterStaticComponent<SpriteComponent>("SpriteComponent");
   RegisterStaticComponent<TransformComponent>("TransformComponent");
@@ -128,7 +138,7 @@ void RegisterEngineComponents()
   RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
   RegisterStaticComponent<TextureComponent>("TextureComponent");
   RegisterStaticComponent<TestcompyComponent>("TestcompyComponent");
-
+  RegisterStaticComponent<PositionDisplayComponent>("PositionDisplayComponent");
 }
 
 // ----------------------------------------------------------------------------

@@ -16,7 +16,7 @@
           "target_name": "Le3DCam",
           "layer": 1,
           "fov": 45,
-          "near": 1,
+          "near": 0.1,
           "far": 100
         },
         "CameraFollowComponent": {
@@ -24,7 +24,29 @@
           "follows": "Pancake",
           "speed": 5
         }
-      }
+      },
+      "children": [
+        /*{
+          "name": "PositionDisplay",
+          "components": {
+            "TransformComponent": {
+              "position": [-0.5, 0.5, 0.5],
+              "scale": [0.5, 0.25, 1]
+            },
+            "TextureComponent": {
+              "textures": [
+                "SPECIAL/SURFACE/400:200"
+              ]
+            },
+            "SpriteComponent": {
+              "render_target": "Le3DCam"
+            },
+            "PositionDisplayComponent": {
+              "target_name": "Pancake"
+            }
+          }
+        }*/
+      ]
     },
     {
       "name": "TranslucentLayer",
@@ -58,7 +80,7 @@
           "render_target": "Le3DCam"
         },
         "PlayerControllerComponent": {},
-		"TestcompyComponent": {}
+        "TestcompyComponent": {}
       }
     },
     {

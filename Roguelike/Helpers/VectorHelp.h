@@ -41,11 +41,14 @@ namespace math
 
     inline bool operator==(const Vector& other) const
     {
-      return 
-        x == other.x &&
-        y == other.y &&
-        z == other.z &&
-        w == other.w;
+      const float epsilon_f = 0.001f;
+      const XMVECTOR epsilon = XMVectorSet(epsilon_f, epsilon_f, epsilon_f, epsilon_f);
+      return XMVector4NearEqual(*this, other, epsilon);
+    }
+
+    inline bool operator!=(const Vector& other) const
+    {
+      return !(*this == other);
     }
 
     static math::Vector VectorFromJson(json::value value)

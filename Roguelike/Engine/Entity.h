@@ -48,7 +48,10 @@ public:
   PROPERTY(get = GetRubyWrapper) mrb_value RubyWrapper;
 
   IRW_PROPERTY(std::string, Name);
-  IRW_PROPERTY(math::Matrix, Transform);
+  IRW_PROPERTY(math::Matrix, LocalTransform);
+  IR_PROPERTY(math::Matrix, Transform);
+  
+  void ApplyParentTransforms();
 
 private:
   ~Entity();

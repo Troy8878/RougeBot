@@ -121,6 +121,13 @@ void Entity::Handle(Events::EventMessage& e)
     }
   }
 
+  // Update Transform with parents
+  DEF_EVENT_ID(update);
+  if (e.EventId == update)
+  {
+    ApplyParentTransforms();
+  }
+
   for (auto child : children)
   {
     if (child->CanHandle(e))
@@ -696,6 +703,16 @@ void EntityFactory::DestroyEntity(Entity *entity)
   }
 
   entityAllocator.Destroy(entity);
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::ApplyParentTransforms()
+{
+  if (Parent)
+  {
+    Transform = LocalTransform * Parent->Transform;
+  }
 }
 
 // ----------------------------------------------------------------------------

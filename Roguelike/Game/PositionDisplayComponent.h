@@ -1,7 +1,7 @@
 /*********************************
  * PositionDisplayComponent.h
- * YOUR NAME HERE
- * Created 2014/YOUR DATE HERE
+ * Connor Hilarides
+ * Created 2014/09/16
  *********************************/
 
 // Just Ctrl+H "PositionDisplay" with your component name

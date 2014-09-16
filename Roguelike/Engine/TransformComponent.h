@@ -32,7 +32,6 @@ public:
 
   void OnUpdate(Events::EventMessage&);
   void UpdateMatrix();
-  void ApplyParentTransforms();
 
   mrb_value GetRubyWrapper() override;
 

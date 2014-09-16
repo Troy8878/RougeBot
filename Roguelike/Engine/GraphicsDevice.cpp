@@ -244,8 +244,6 @@ math::Vector2D WindowDevice::GetSize() const
 
 // ----------------------------------------------------------------------------
 
-void TestDrawText(GraphicsDevice::D2DData& D2D);
-
 bool WindowDevice::BeginFrame()
 {
   if (DeviceContext == nullptr)
@@ -254,74 +252,7 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-  TestDrawText(D2D);
-
   return true;
-}
-
-// ----------------------------------------------------------------------------
-
-void TestDrawText(GraphicsDevice::D2DData& D2D)
-{
-  HRESULT hr;
-  
-  static ID2D1SolidColorBrush *boxBrush = nullptr;
-  static ID2D1SolidColorBrush *textBrush = nullptr;
-  static IDWriteTextFormat *textFormat = nullptr;
-
-  static const WCHAR helloWorld[] = L"Hello, World!";
-
-  static GraphicsDevice::D2DData::clock::time_point created;
-  if (created < D2D.ResourceTimestamp)
-  {
-    ReleaseDXInterface(textFormat);
-    ReleaseDXInterface(textBrush);
-    ReleaseDXInterface(boxBrush);
-
-    created = GraphicsDevice::D2DData::clock::now();
-
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(1, 0, 0, 0.7f), &boxBrush);
-    CHECK_HRESULT(hr);
-
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &textBrush);
-    CHECK_HRESULT(hr);
-
-    hr = D2D.WriteFactory->
-      CreateTextFormat(L"Segoe Script", nullptr,
-                       DWRITE_FONT_WEIGHT_EXTRA_BOLD,
-                       DWRITE_FONT_STYLE_NORMAL,
-                       DWRITE_FONT_STRETCH_NORMAL,
-                       96, L"", &textFormat);
-    CHECK_HRESULT(hr);
-
-    hr = textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    CHECK_HRESULT(hr);
-
-    hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    CHECK_HRESULT(hr);
-
-    auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
-
-    auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
-    auto texture = sprite->GetTexture(0);
-
-    D2D.DrawTo(texture);
-    auto targetSize = D2D.DeviceContext->GetSize();
-
-    D2D.DeviceContext->FillRectangle(
-      D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-      boxBrush);
-
-    D2D.DeviceContext->DrawTextA(
-      helloWorld, 
-      ARRAYSIZE(helloWorld),
-      textFormat,
-      D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-      textBrush);
-
-    hr = D2D.EndDraw();
-    CHECK_HRESULT(hr);
-  }
 }
 
 // ----------------------------------------------------------------------------

@@ -78,8 +78,8 @@
                 },
                 "PositionDisplayComponent": {
                   "target_name": "Pancake",
-                  "font": "Segoe UI",
-                  "font_size": 72
+                  "font": "Segoe Script",
+                  "font_size": 60
                 }
               }
             }
@@ -109,25 +109,6 @@
           "render_target": "WorldLayer"
         },
         "PlayerControllerComponent": {}
-      }
-    },
-    {
-      "name": "2DSurfaceTest",
-      "components": {
-        "TransformComponent": {
-          "rotation": [1.57079632679489, 0, 0],
-          "position": [1, 0.01, 2],
-          "scale": [0.75, 0.75]
-        },
-        "TextureComponent": {
-          "textures": [
-            "SPECIAL/SURFACE/500:500"
-          ]
-        },
-        "SpriteComponent": {
-          "render_target": "TranslucentLayer",
-          "shader": "Textured"
-        }
       }
     }
   ]

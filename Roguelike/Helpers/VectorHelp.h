@@ -118,6 +118,11 @@ namespace math
     }
 
     inline operator XMMATRIX() const { return get(); }
+
+    inline XMMATRIX operator*(CXMMATRIX m2)
+    {
+      return get() * m2;
+    }
   };
 
   inline XMVECTOR XM_CALLCONV createVector(float x, float y, float z)

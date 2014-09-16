@@ -1,7 +1,7 @@
 /*********************************
  * PositionDisplayComponent.cpp
- * YOUR NAME HERE
- * Created 2014/YOUR DATE HERE
+ * Connor Hilarides
+ * Created 2014/09/16
  *********************************/
 
 #include "Common.h"

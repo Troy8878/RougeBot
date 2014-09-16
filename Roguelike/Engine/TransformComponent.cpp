@@ -60,10 +60,7 @@ void TransformComponent::UpdateMatrix()
              XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
              XMMatrixTranslationFromVector(Position.get());
 
-  if (Owner->Parent)
-    mat = mat * Owner->Parent->Transform.get();
-
-  Owner->Transform = mat;
+  Owner->LocalTransform = mat;
 }
 
 // ----------------------------------------------------------------------------

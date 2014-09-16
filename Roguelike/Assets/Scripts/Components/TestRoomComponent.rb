@@ -7,16 +7,12 @@
 class TestRoomComponent < ComponentBase
   include ModelBuilder
 
-  @@room, @@px, @@py = Floor.generate(
-    width: 100, height: 100, 
-    birth: 4, death: 4,
-    steps: 3
-  )
+  attr_accessor :room
 
   EMPTY_VALUE = 0
   WALL_VALUE = 20
 
-  ROOM_SIZE = @@room.count
+  ROOM_SIZE = 50
   C_L = -0.5
   C_R = 0.5
   W_T = 0.5
@@ -53,14 +49,21 @@ class TestRoomComponent < ComponentBase
     return if @init
 
     tr = find_entity("Pancake").transform_component
-    tr.position.x = @@px
-    tr.position.z = @@py
+    tr.position.x = @px
+    tr.position.z = @py
 
     @init = true
   end
 
   private
   def generate_room
+
+    @room, @px, @py = Floor.generate(
+      width: 50, height: 50, 
+      birth: 3, death: 4,
+      steps: 1
+    )
+
     build_model do |builder|
       (-7..(ROOM_SIZE + 6)).combinations do |y, x|
         if y < 0 || x < 0 || y >= ROOM_SIZE || x >= ROOM_SIZE
@@ -158,7 +161,7 @@ class TestRoomComponent < ComponentBase
     return WALL_VALUE if y < 0 or y >= ROOM_SIZE
     return WALL_VALUE if x < 0 or x >= ROOM_SIZE
 
-    @@room[y][x]
+    @room[y][x]
   end
 
   register_component "TestRoomComponent"

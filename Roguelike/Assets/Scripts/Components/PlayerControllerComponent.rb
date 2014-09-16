@@ -57,7 +57,7 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def can_move?(xo, yo)
-    room = TestRoomComponent.class_variable_get("@@room")
+    room = find_entity("MainFloor").test_room_component.room
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo

@@ -59,7 +59,7 @@
       }
     },
     {
-      "name": "The Room",
+      "name": "MainFloor",
       "archetype": "Floor",
       "components": {
         "CustomModelComponent": {

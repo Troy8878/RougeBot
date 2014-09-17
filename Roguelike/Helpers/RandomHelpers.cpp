@@ -241,12 +241,13 @@ math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
   auto viewInverse = XMMatrixInverse(nullptr, camera->viewMatrix);
 
   auto planePoint = XMVector3Unproject(point, 
-                                       0, 0, winsz.x, winsz.y, 0.0f, 100.0f, 
+                                       0, 0, winsz.x, winsz.y, 0.0f, 1.0f, 
                                        camera->projectionMatrix, 
                                        camera->viewMatrix, 
                                        XMMatrixIdentity());
 
-  XMVECTOR v = viewInverse * g_XMIdentityR2;
+  XMVECTOR c = viewInverse * g_XMIdentityR3;
+  XMVECTOR v = c - planePoint;
   XMVECTOR n = g_XMIdentityR1;
   XMMATRIX vn;
   vn.r[0] = v * XMVectorGetX(n);
@@ -261,7 +262,7 @@ math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
   oblique.r[2] = g_XMIdentityR2 - vn.r[2] / d;
   oblique.r[3] = g_XMIdentityR3 - vn.r[3] / d;
   
-  return planePoint + v;
+  return oblique * planePoint;
 }
 
 // ----------------------------------------------------------------------------

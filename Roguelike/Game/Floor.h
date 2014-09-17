@@ -27,7 +27,7 @@ public:
   int AliveChance = 40;
   int BirthLim = 4;
   int DeathLim = 3;     // Higher = bigger rooms
-  int Steps = 15;
+  int Steps = 2;
 
 
   short Fills = 1;
@@ -44,6 +44,7 @@ public:
   void CarveFloor();
   void RemoveAll(int target);
   void PlaceItem();
+  void ChoosePlayerStart();
   void GenerateFloor();
   void PrintFloor(void);
   void PrintFlood(void);

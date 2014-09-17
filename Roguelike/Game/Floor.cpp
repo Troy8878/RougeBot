@@ -14,6 +14,7 @@ static std::random_device RNG;
 
 std::uniform_int_distribution<int> random(1, 100);
 
+
 // ----------------------------------------------------------------------------
 
 void Floor::InitFloor(void)
@@ -289,6 +290,22 @@ void Floor::PlaceItem(void)
 
 // ----------------------------------------------------------------------------
 
+void Floor::ChoosePlayerStart(void)
+{
+  for (int x = 0; x < Width; x++)
+  {
+    for (int y = 0; y < Height; y++)
+    {
+      if (Map[x][y] == 0)
+      {
+        PlayerX = x;
+        PlayerY = y;
+        return;
+      }
+    }
+  }
+}
+
 void Floor::GenerateFloor(void)
 {
 
@@ -298,7 +315,9 @@ void Floor::GenerateFloor(void)
   }
 
   CarveFloor();
+  ChoosePlayerStart();
   //PlaceItem();
+
 }
 
 // ----------------------------------------------------------------------------

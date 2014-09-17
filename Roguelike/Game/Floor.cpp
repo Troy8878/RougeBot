@@ -14,8 +14,11 @@ static std::random_device RNG;
 
 std::uniform_int_distribution<int> random(1, 100);
 
+// ----------------------------------------------------------------------------
+
 void Floor::InitFloor(void)
 {
+  Fills = 1;
   OldMap.clear();
   OldMap.resize(Width);
   Map.clear();
@@ -33,7 +36,7 @@ void Floor::InitFloor(void)
 
       if (random(RNG) < AliveChance)
       {
-        OldMap[x][y] = 20;
+        OldMap[x][y] = 1;
       }
 
       else
@@ -44,13 +47,15 @@ void Floor::InitFloor(void)
   }
 }
 
+// ----------------------------------------------------------------------------
+
 void Floor::PrintFloor(void)
 {
   for (int x = 0; x < Width; ++x)
   {
     for (int y = 0; y < Height; ++y)
     {
-      if (OldMap[x][y] == 1)
+      if (Map[x][y] == 1)
         std::cout << ".";
       else
         std::cout << "O";
@@ -64,6 +69,28 @@ void Floor::PrintFloor(void)
   std::cout << std::endl;
   std::cout << std::endl;
 }
+
+// ----------------------------------------------------------------------------
+
+void Floor::PrintFlood(void)
+{
+  for (int x = 0; x < Width; ++x)
+  {
+    for (int y = 0; y < Height; ++y)
+    {
+      std::cout << Map[x][y];
+    }
+
+    std::cout << std::endl;
+  }
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << std::endl;
+}
+
+// ----------------------------------------------------------------------------
 
 int Floor::CountNeighbors(int x, int y)
 {
@@ -93,6 +120,8 @@ int Floor::CountNeighbors(int x, int y)
 
 }
 
+// ----------------------------------------------------------------------------
+
 void Floor::DoStep()
 {
 
@@ -109,13 +138,13 @@ void Floor::DoStep()
           Map[x][y] = 0;
 
         else
-          Map[x][y] = 20;
+          Map[x][y] = 1;
       }
 
       else
       {
         if (nbs > BirthLim)
-          Map[x][y] = 20;
+          Map[x][y] = 1;
 
         else
           Map[x][y] = 0;
@@ -133,42 +162,146 @@ void Floor::DoStep()
 
 }
 
-void Floor::FloodFill(int x, int y)
+// ----------------------------------------------------------------------------
+
+void Floor::FloodFill(int x, int y, short target, short replacement)
 {
-  // Flood - fill(node, target - color, replacement - color) :
-    // 1. If target - color is equal to replacement - color, return.
-    // 2. If the color of node is not equal to target - color, return.
-    // 3. Set the color of node to replacement - color.
-    // 4. Perform Flood - fill(one step to the west of node, target - color, replacement - color).
-    // Perform Flood - fill(one step to the east of node, target - color, replacement - color).
-    // Perform Flood - fill(one step to the north of node, target - color, replacement - color).
-    // Perform Flood - fill(one step to the south of node, target - color, replacement - color).
-    // 5. Return.
-
-  (x, y);
-}
-
-void Floor::ChoosePlayerStart(void)
-{
-  std::uniform_int_distribution<int> randomx(0, Width - 1);
-  std::uniform_int_distribution<int> randomy(0, Height - 1);
-
-  do
+  if (x >= Width && y >= Height && y < 0 && x < 0)
   {
-    PlayerX = randomx(RNG);
-    PlayerY = randomy(RNG);
-  } while (Map[PlayerX][Height - 1 - PlayerY] != 0);
+    return;
+  }
+  // 1. If target - num is equal to replacement - num, return.
+  if (Map[x][y] == replacement)
+  {
+    return;
+  }
+  // 2. If the num of node is not equal to target - num, return.
+  if (Map[x][y] != target)
+  {
+    return;
+  }
+  // 3. Set the num of node to replacement - num.
+  Map[x][y] = replacement;
+  FloodSteps++;
+  // 4. Perform Flood - fill(one step to the west of node, target - num, replacement - num).
+  if (x > 0)
+    FloodFill(x - 1, y, 0, Fills);
+  // Perform Flood - fill(one step to the east of node, target - num, replacement - num).
+  if (x < Width - 1)
+    FloodFill(x + 1, y, 0, Fills);
+  // Perform Flood - fill(one step to the north of node, target - num, replacement - num).
+  if (y > 0)
+    FloodFill(x, y - 1, 0, Fills);
+  // Perform Flood - fill(one step to the south of node, target - num, replacement - num).
+  if (y < Height - 1)
+    FloodFill(x, y + 1, 0, Fills);
+  // 5. Return.
+
+  return;
 }
+
+// ----------------------------------------------------------------------------
+
+void Floor::RemoveAll(short target)
+{
+  for (int i = 0; i < Width; ++i)
+  {
+    for (int j = 0; j < Height; ++j)
+    {
+      if (Map[i][j] == target)
+      {
+        Map[i][j] = 1;
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void Floor::CarveFloor(void)
+{
+  for (int i = 0; i < Width; ++i)
+  {
+    for (int j = 0; j < Height; ++j)
+    {
+      if (Map[i][j] == 0)
+      {
+        FloodSteps = 0;
+        Fills++;
+        FloodFill(i, j, 0, Fills);
+      }
+    }
+  }
+
+  short RoomSize;
+
+  for (int r = Fills; r > 1; --r)
+  {
+    RoomSize = 0;
+    for (int i = 0; i < Width; ++i)
+    {
+      for (int j = 0; j < Height; ++j)
+      {
+        if (Map[i][j] == r)
+        {
+          RoomSize++;
+        }
+
+      }
+    }
+
+    if (RoomSize < MinRoomSize)
+    {
+      RemoveAll(r);
+    }
+  }
+
+  for (int x = 0; x < Width; ++x)
+  {
+    for (int y = 0; y < Height; ++y)
+    {
+      if (Map[x][y] > 1)
+        Map[x][y] = 0;
+    }
+  }
+
+}
+
+// ----------------------------------------------------------------------------
+
+void Floor::PlaceItem(void)
+{
+  for (int x = 0; x < Width; ++x)
+  {
+    for (int y = 0; y < Height; ++y)
+    {
+      if (Map[x][y] != 1)
+      {
+        int nbs = CountNeighbors(x, y);
+        if (nbs >= ItemLimit)
+        {
+          Map[x][y] = 8;
+        }
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
 
 void Floor::GenerateFloor(void)
 {
+
   for (int i = 0; i < Steps; ++i)
   {
     DoStep();
   }
 
-  ChoosePlayerStart();
+  CarveFloor();
+  //PlaceItem();
 }
+
+// ----------------------------------------------------------------------------
 
 #define MRB_HASH_GET(name) mrb_hash_get(mrb, options, mrb_symbol_value(mrb_intern_lit(mrb, name)))
 
@@ -212,6 +345,8 @@ static mrb_value mrb_floor_generate(mrb_state *mrb, mrb_value)
 
   return items;
 }
+
+// ----------------------------------------------------------------------------
 
 extern "C" void mrb_mruby_floor_init(mrb_state *mrb)
 {

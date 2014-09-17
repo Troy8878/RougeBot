@@ -18,6 +18,7 @@ static ruby_module mrb_camera_module();
 static ruby_class mrb_camera_base();
 static mrb_value mrb_cameras_get_camera(mrb_state *mrb, mrb_value);
 static mrb_value mrb_cameras_camera_init(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value self);
 
 static ruby_class mrb_hudcamera_class();
 static mrb_value mrb_hudcamera_init(mrb_state *mrb, mrb_value self);
@@ -122,7 +123,7 @@ mrb_value ManualCamera::GetRubyWrapper()
 
 static mrb_value mrb_cameras_make(ruby::ruby_class& cls, ICamera *cam)
 {
-  return cls.new_inst(mrb_inst->wrap_native_ptr(static_cast<ICamera *>(cam)));
+  return cls.new_inst(mrb_inst->wrap_native_ptr(cam));
 }
 
 // ----------------------------------------------------------------------------
@@ -151,7 +152,7 @@ static ruby::ruby_class mrb_camera_base()
 
   if (!init)
   {
-    base.define_method("initialize", mrb_cameras_camera_init, ARGS_REQ(1));
+    base.define_method("screen_to_world", mrb_cameras_camera_screen_to_world, ARGS_REQ(1));
 
     init = true;
   }
@@ -180,6 +181,20 @@ static mrb_value mrb_cameras_camera_init(mrb_state *mrb, mrb_value self)
   ruby::save_native_ptr(mrb, self, mrb_cptr(native_ptr));
   
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value self)
+{
+  mrb_value vect_v;
+  mrb_get_args(mrb, "o", &vect_v);
+
+  auto& vect = ruby::get_ruby_vector(vect_v);
+  auto cam = ruby::read_native_ptr<ICamera>(mrb, self);
+
+  auto result = ScreenToYPlane(vect.get(), cam);
+  return ruby::create_new_vector(result);
 }
 
 #pragma endregion

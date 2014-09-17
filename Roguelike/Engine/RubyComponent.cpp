@@ -216,7 +216,7 @@ static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
   
   RubyComponent *component = (RubyComponent *) ruby::read_native_ptr<Component>(mrb, self);
@@ -227,6 +227,20 @@ static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
   component->AddEventHandler(event_sym, handler_sym);
 
   return mrb_symbol_value(handler_sym);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_component_remove_event(mrb_state *mrb, mrb_value self)
+{
+  RubyComponent *component = (RubyComponent *) ruby::read_native_ptr<Component>(mrb, self);
+
+  mrb_sym event_sym;
+  mrb_get_args(mrb, "n", &event_sym);
+
+  component->RemoveEventHandler(event_sym);
+
+  return mrb_symbol_value(event_sym);
 }
 
 // ----------------------------------------------------------------------------
@@ -248,15 +262,10 @@ ruby::ruby_class Component::GetComponentRClass()
                                  rb_component_register,
                                  ARGS_REQ(1));
 
-  comp_class.define_method("initialize",
-                           rb_component_initialize,
-                           ARGS_REQ(1));
-  comp_class.define_method("owner",
-                           rb_component_get_owner,
-                           ARGS_NONE());
-  comp_class.define_method("register_event",
-                           rb_component_register_event,
-                           ARGS_REQ(2));
+  comp_class.define_method("initialize", rb_component_initialize, ARGS_REQ(1));
+  comp_class.define_method("owner", rb_component_get_owner, ARGS_NONE());
+  comp_class.define_method("register_event", rb_component_register_event, ARGS_REQ(2));
+  comp_class.define_method("remove_event", rb_component_remove_event, ARGS_REQ(1));
 
   comp_class.define_method("finalize", mrb_nop, ARGS_ANY());
 

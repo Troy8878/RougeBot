@@ -23,6 +23,10 @@
 //      Is triggered every [key_hold_event_rate] seconds
 //      while a key is held down 
 //      type: KeyStateEvent
+//
+//    mouse_move
+//      Whenever a mouse moves, we'll be there
+//      type: MouseEvent
 
 // ----------------------------------------------------------------------------
 
@@ -38,6 +42,8 @@ struct InputSignal
   wchar_t char_code = 0;
   bool down = false;
 };
+
+// ----------------------------------------------------------------------------
 
 struct KeyState : InputSignal
 {
@@ -67,6 +73,25 @@ public:
 
 // ----------------------------------------------------------------------------
 
+struct MouseState
+{
+  math::Vector2D position;
+  double scroll_position;
+  UINT state;
+
+  bool ButtonDown(UINT button)
+  {
+    return !!(state & button);
+  }
+
+  bool ButtonUp(UINT button)
+  {
+    return !(state & button);
+  }
+};
+
+// ----------------------------------------------------------------------------
+
 struct KeyStateEvent : public Events::EventData
 {
   const KeyState *state;
@@ -75,6 +100,13 @@ struct KeyStateEvent : public Events::EventData
   mrb_value GetRubyWrapper() override;
 
   NO_ASSIGNMENT_OPERATOR(KeyStateEvent);
+};
+
+// ----------------------------------------------------------------------------
+
+struct MouseEvent : public Events::EventData
+{
+  
 };
 
 // ----------------------------------------------------------------------------

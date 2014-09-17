@@ -23,6 +23,8 @@ class SpinnyThingComponent < ComponentBase
       @set_axis,
       @transform.rotation.send(@get_axis) + e.dt * speed
     )
+
+    #@transform.position = find_entity("WorldLayer").camera_component.screen_to_world(Vector.new(0, 0))
   end
 
   def axis=(a)

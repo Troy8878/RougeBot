@@ -25,6 +25,8 @@ class AnimatedComponent < ComponentBase
     @frame_range = data.fetch("frame_range", [0, 0xffff]).map{|f| f.to_i }
     @time = 0
 
+    
+
     self.register_event :update, :animate
   end
 

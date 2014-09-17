@@ -488,8 +488,9 @@ extern bool stop_getline_async;
 // ----------------------------------------------------------------------------
 
 namespace math { class Vector; class Vector2D; }
+struct Camera;
 
-math::Vector ScreenToYPlane(math::Vector2D point, const std::string& cameraName, float y);
+math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera);
 
 // ----------------------------------------------------------------------------
 

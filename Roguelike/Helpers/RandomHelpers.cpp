@@ -233,21 +233,35 @@ bool getline_async(std::string& str,
 
 // ----------------------------------------------------------------------------
 
-math::Vector ScreenToYPlane(math::Vector2D point, const std::string& cameraName, float y)
+math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
 {
-  auto camera = RenderGroup::Instance.GetSet(cameraName)->RenderCamera;
   auto winsz = GetGame()->GameDevice->GetSize();
 
-  float x = 2.0f * point.x / winsz.x - 1;
-  float z = -2.0f * point.y / winsz.y + 1;
-
   using namespace DirectX;
-  auto projview = XMMatrixMultiply(camera->projectionMatrix, camera->viewMatrix);
-  auto determ = XMMatrixDeterminant(projview);
-  auto inverse = XMMatrixInverse(&determ, projview);
+  auto viewInverse = XMMatrixInverse(nullptr, camera->viewMatrix);
 
-  auto planePoint = XMVectorSet(x, y, z, 1);
-  return inverse * planePoint;
+  auto planePoint = XMVector3Unproject(point, 
+                                       0, 0, winsz.x, winsz.y, 0.0f, 100.0f, 
+                                       camera->projectionMatrix, 
+                                       camera->viewMatrix, 
+                                       XMMatrixIdentity());
+
+  XMVECTOR v = viewInverse * g_XMIdentityR2;
+  XMVECTOR n = g_XMIdentityR1;
+  XMMATRIX vn;
+  vn.r[0] = v * XMVectorGetX(n);
+  vn.r[1] = v * XMVectorGetY(n);
+  vn.r[2] = v * XMVectorGetZ(n);
+  vn.r[3] = v * XMVectorGetW(n);
+
+  XMVECTOR d = XMVector4Dot(v, n);
+  XMMATRIX oblique;
+  oblique.r[0] = g_XMIdentityR0 - vn.r[0] / d;
+  oblique.r[1] = g_XMIdentityR1 - vn.r[1] / d;
+  oblique.r[2] = g_XMIdentityR2 - vn.r[2] / d;
+  oblique.r[3] = g_XMIdentityR3 - vn.r[3] / d;
+  
+  return planePoint + v;
 }
 
 // ----------------------------------------------------------------------------

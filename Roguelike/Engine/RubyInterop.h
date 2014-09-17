@@ -361,6 +361,9 @@ mrb_value mrb_nop(mrb_state *, mrb_value);
 
 inline std::string mrb_str_to_stdstring(mrb_value str)
 {
+  if (mrb_nil_p(str))
+    return std::string{};
+
   return std::string{RSTRING_PTR(str), RSTRING_PTR(str) + RSTRING_LEN(str)};
 }
 

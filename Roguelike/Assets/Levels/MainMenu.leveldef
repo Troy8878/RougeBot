@@ -69,33 +69,6 @@
                   "position": [-1.6, -1.2, 0]
                 }
               }
-            },
-            {
-              "name": "PositionDisplay",
-              "archetype": "PositionDisplay",
-              "components": {
-                "TransformComponent": {
-                  "position": [1.6, -1.2, 0]
-                }
-              }
-            },
-            {
-              "name": "PositionDisplay",
-              "archetype": "PositionDisplay",
-              "components": {
-                "TransformComponent": {
-                  "position": [-1.6, 1.2, 0]
-                }
-              }
-            },
-            {
-              "name": "PositionDisplay",
-              "archetype": "PositionDisplay",
-              "components": {
-                "TransformComponent": {
-                  "position": [1.6, 1.2, 0]
-                }
-              }
             }
           ]
         }
@@ -123,6 +96,21 @@
           "render_target": "WorldLayer"
         },
         "PlayerControllerComponent": {}
+      }
+    },
+    {
+      "name": "Pancake2",
+      "archetype": "PancakeFace",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0.77, 0, 0],
+          "position": [1, 0.25, 1],
+          "scale": [0.5, 0.5]
+        },
+        "SpriteComponent": {
+          "render_target": "WorldLayer"
+        },
+        "SpinnyThingComponent": {}
       }
     }
   ]

@@ -127,8 +127,10 @@ void Entity::Handle(Events::EventMessage& e)
     ApplyParentTransforms();
   }
 
-  for (auto child : children)
+  for (size_t i = 0; i < children.size(); ++i)
   {
+    auto *child = children[i];
+
     if (child->CanHandle(e))
       child->Handle(e);
   }

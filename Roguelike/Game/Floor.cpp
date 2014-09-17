@@ -261,7 +261,7 @@ void Floor::CarveFloor(void)
   {
     for (int y = 0; y < Height; ++y)
     {
-      if (Map[x][y] > 1)
+      if (Map[x][y] != 1)
         Map[x][y] = 0;
     }
   }
@@ -305,6 +305,8 @@ void Floor::ChoosePlayerStart(void)
     }
   }
 }
+
+// ----------------------------------------------------------------------------
 
 void Floor::GenerateFloor(void)
 {

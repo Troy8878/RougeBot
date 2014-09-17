@@ -10,7 +10,7 @@ class TestRoomComponent < ComponentBase
   attr_accessor :room
 
   EMPTY_VALUE = 0
-  WALL_VALUE = 20
+  WALL_VALUE = 1
 
   ROOM_SIZE = 50
   C_L = -0.5

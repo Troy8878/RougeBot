@@ -291,19 +291,16 @@ void Floor::PlaceItem(void)
 // ----------------------------------------------------------------------------
 
 void Floor::ChoosePlayerStart(void)
-{
-  for (int x = 0; x < Width; x++)
+{ 
+  std::uniform_int_distribution<int> randomx(0, Width - 1); 
+  std::uniform_int_distribution<int> randomy(0, Height - 1); 
+
+  do
   {
-    for (int y = 0; y < Height; y++)
-    {
-      if (Map[x][y] == 0)
-      {
-        PlayerX = x;
-        PlayerY = y;
-        return;
-      }
-    }
-  }
+    PlayerX = randomx(RNG);
+    PlayerY = randomy(RNG);
+
+  } while (Map[PlayerX][Height - 1 - PlayerY]);
 }
 
 // ----------------------------------------------------------------------------

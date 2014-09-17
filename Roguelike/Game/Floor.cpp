@@ -164,7 +164,7 @@ void Floor::DoStep()
 
 // ----------------------------------------------------------------------------
 
-void Floor::FloodFill(int x, int y, short target, short replacement)
+void Floor::FloodFill(int x, int y, int target, short replacement)
 {
   if (x >= Width && y >= Height && y < 0 && x < 0)
   {
@@ -202,7 +202,7 @@ void Floor::FloodFill(int x, int y, short target, short replacement)
 
 // ----------------------------------------------------------------------------
 
-void Floor::RemoveAll(short target)
+void Floor::RemoveAll(int target)
 {
   for (int i = 0; i < Width; ++i)
   {

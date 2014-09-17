@@ -21,24 +21,28 @@ public:
   int Width = 50;
   int Height = 50;
 
+  int PlayerX = 1;
+  int PlayerY = 1;
+
   int AliveChance = 40;
   int BirthLim = 4;
   int DeathLim = 3;     // Higher = bigger rooms
   int Steps = 15;
 
 
-  int Fills = 1;
-  int FloodSteps = 0;
-  int MinRoomSize = 250;
+  short Fills = 1;
+  short FloodSteps = 0;
+
+  int MinRoomSize = 250;  // Minimum amount of tiles in a room
 
   int ItemLimit = 4;
 
   void InitFloor(void);
   int CountNeighbors(int x, int y);
   void DoStep();
-  void FloodFill(int x, int y, short target, short replacement);
+  void FloodFill(int x, int y, int target, short replacement);
   void CarveFloor();
-  void RemoveAll(short target);
+  void RemoveAll(int target);
   void PlaceItem();
   void GenerateFloor();
   void PrintFloor(void);

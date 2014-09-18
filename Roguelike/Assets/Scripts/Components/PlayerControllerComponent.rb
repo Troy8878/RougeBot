@@ -38,7 +38,6 @@ class PlayerControllerComponent < ComponentBase
     @speed = data.fetch("speed", 1).to_f
 
     self.register_event :key_held, :on_key
-    self.register_event :mouse_move, :mouse_move
   end
 
   def on_key(e)
@@ -52,10 +51,6 @@ class PlayerControllerComponent < ComponentBase
     when *KEYS_MOVE_LEFT
       @pos.x -= 1 if can_move?(-1, 0)
     end
-  end
-
-  def mouse_move(e)
-    puts e.position.inspect
   end
 
   def on_update(e)

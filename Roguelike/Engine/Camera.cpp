@@ -187,13 +187,24 @@ static mrb_value mrb_cameras_camera_init(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value self)
 {
-  mrb_value vect_v;
-  mrb_get_args(mrb, "o", &vect_v);
+  using namespace DirectX;
 
-  auto& vect = ruby::get_ruby_vector(vect_v);
+  mrb_value point;
+  mrb_value plane_origin = mrb_nil_value();
+  mrb_value plane_normal = mrb_nil_value();
+  mrb_get_args(mrb, "o|oo", &point, &plane_origin, &plane_normal);
+
   auto cam = ruby::read_native_ptr<ICamera>(mrb, self);
+  XMVECTOR point_v = ruby::get_ruby_vector(point);
+  XMVECTOR origin_v = g_XMZero;
+  XMVECTOR normal_v = g_XMIdentityR1;
 
-  auto result = ScreenToYPlane(vect.get(), cam);
+  if (!mrb_nil_p(plane_origin))
+    origin_v = ruby::get_ruby_vector(plane_origin);
+  if (!mrb_nil_p(plane_normal))
+    normal_v = ruby::get_ruby_vector(plane_normal);
+
+  auto result = ScreenToPlane(point_v, origin_v, normal_v, cam);
   return ruby::create_new_vector(result);
 }
 

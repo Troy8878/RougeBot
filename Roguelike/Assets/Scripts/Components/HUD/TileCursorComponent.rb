@@ -30,7 +30,7 @@ module HUD
     end
 
     def on_update(e)
-      position = @camera.screen_to_world(@mouse_pos)
+      position = @camera.screen_to_world(@mouse_pos, Vector.new(0, 0.25, 0))
 
       position.x = Math.round(position.x)
       position.z = Math.round(position.z)

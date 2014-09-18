@@ -153,7 +153,6 @@ ruby_gc_guard::~ruby_gc_guard()
   if (mrb)
   {
     mrb_gc_arena_restore(mrb, arena);
-    mrb_garbage_collect(mrb);
   }
 }
 

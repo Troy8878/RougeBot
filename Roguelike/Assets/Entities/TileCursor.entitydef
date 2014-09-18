@@ -10,7 +10,7 @@
       {
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.01]
+            "position": [0, 0, 0.24]
           },
           "TextureComponent": {
             "textures": [
@@ -25,7 +25,7 @@
       {
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.76]
+            "position": [0, 0, -0.51]
           },
           "TextureComponent": {
             "textures": [

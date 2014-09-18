@@ -233,7 +233,10 @@ bool getline_async(std::string& str,
 
 // ----------------------------------------------------------------------------
 
-math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
+math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
+                                        DirectX::FXMVECTOR planeOrigin, 
+                                        DirectX::FXMVECTOR planeNormal, 
+                                        Camera *camera)
 {
   auto winsz = GetGame()->GameDevice->GetSize();
 
@@ -248,7 +251,7 @@ math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
 
   XMVECTOR c = viewInverse * g_XMIdentityR3;
   XMVECTOR v = c - planePoint;
-  XMVECTOR n = g_XMIdentityR1;
+  XMVECTOR n = planeNormal;
   XMMATRIX vn;
   vn.r[0] = v * XMVectorGetX(n);
   vn.r[1] = v * XMVectorGetY(n);
@@ -261,6 +264,10 @@ math::Vector ScreenToYPlane(math::Vector2D point, Camera *camera)
   oblique.r[1] = g_XMIdentityR1 - vn.r[1] / d;
   oblique.r[2] = g_XMIdentityR2 - vn.r[2] / d;
   oblique.r[3] = g_XMIdentityR3 - vn.r[3] / d;
+
+  oblique = XMMatrixTranslationFromVector(-planeOrigin) * 
+            oblique *
+            XMMatrixTranslationFromVector(planeOrigin);
   
   return oblique * planePoint;
 }

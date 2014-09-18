@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Helpers\UseDirectX.h"
+#include "json/json.h"
 #include <iostream>
 #include <algorithm>
 

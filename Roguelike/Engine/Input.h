@@ -96,17 +96,26 @@ struct KeyStateEvent : public Events::EventData
 {
   const KeyState *state;
 
-  KeyStateEvent(const KeyState& state) : state(&state) {}
-  mrb_value GetRubyWrapper() override;
+  KeyStateEvent(const KeyState& state)
+    : state(&state)
+  {
+  }
 
-  NO_ASSIGNMENT_OPERATOR(KeyStateEvent);
+  mrb_value GetRubyWrapper() override;
 };
 
 // ----------------------------------------------------------------------------
 
 struct MouseEvent : public Events::EventData
 {
+  const MouseState *state;
+
+  MouseEvent(const MouseState *state)
+    : state(state)
+  {
+  }
   
+  mrb_value GetRubyWrapper() override;
 };
 
 // ----------------------------------------------------------------------------
@@ -126,6 +135,8 @@ public:
   // Called when the game detects a keyup signal
   void OnKeyUp(const InputSignal& signal);
 
+  void OnMouseMove(COORD position);
+
   // Gets the current state of the given virtual key
   const KeyState& GetKeyState(virtual_key key);
 
@@ -141,6 +152,7 @@ private:
 
   static wchar_t VKeyToChar(virtual_key key);
 
+  MouseState mouse;
   KeyState keyStates[0x100];
   std::unordered_map<virtual_key, KeyState> unicodeStates;
   // add in the other variables you need to keep track of the input state

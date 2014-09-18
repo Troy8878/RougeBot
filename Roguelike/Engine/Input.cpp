@@ -6,6 +6,7 @@
 
 #include "Common.h"
 #include "Input.h"
+#include "RubyWrappers.h"
 
 // ----------------------------------------------------------------------------
 
@@ -73,6 +74,18 @@ void Input::OnKeyUp(const InputSignal& signal)
   
   Events::EventId keyUpId("key_up");
   RaiseKeyEvent(keyUpId, *state);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::OnMouseMove(COORD position)
+{
+  mouse.position = math::Vector2D{(float)position.X, (float)position.Y};
+  
+  DEF_EVENT_ID(mouse_move);
+  MouseEvent edata{&mouse};
+  Events::EventMessage emsg{mouse_move, &edata, false};
+  Events::Event::Raise(emsg);
 }
 
 // ----------------------------------------------------------------------------
@@ -177,6 +190,13 @@ static mrb_value mrb_kse_vkey(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_kse_is_plain_char(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_kse_plain_char(mrb_state *mrb, mrb_value self);
 
+static mrb_data_type mrb_me_data_type;
+
+static mrb_value mrb_me_new(mrb_state *mrb, const MouseState *state);
+static void mrb_me_free(mrb_state *mrb, void *mem);
+
+static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self);
+
 // ----------------------------------------------------------------------------
 
 extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
@@ -187,7 +207,7 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   RClass *rclass = mrb_define_class(mrb, "KeyState", mrb->object_class);
 
   // ruby can't make new ones
-  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_NONE());
+  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 
   mrb_define_method(mrb, rclass, "held?", mrb_kse_is_held, ARGS_REQ(1));
   mrb_define_method(mrb, rclass, "hold_time", mrb_kse_hold_time, ARGS_REQ(1));
@@ -206,6 +226,15 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   DEF_INT_CONST("DOWN",   VK_DOWN);
 
   #pragma endregion
+
+  mrb_me_data_type.dfree = mrb_me_free;
+  mrb_me_data_type.struct_name = "MouseState";
+
+  rclass = mrb_define_class(mrb, "MouseState", mrb->object_class);
+
+  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
+
+  mrb_define_method(mrb, rclass, "position", mrb_me_position, ARGS_NONE());
 }
 
 // ----------------------------------------------------------------------------
@@ -213,6 +242,13 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
 mrb_value KeyStateEvent::GetRubyWrapper()
 {
   return mrb_kse_new(*mrb_inst, state);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value MouseEvent::GetRubyWrapper()
+{
+  return mrb_me_new(*mrb_inst, state);
 }
 
 // ----------------------------------------------------------------------------
@@ -275,6 +311,34 @@ static mrb_value mrb_kse_plain_char(mrb_state *mrb, mrb_value self)
 
   char c[] = { (char) key->char_code, 0 };
   return mrb_str_new_cstr(mrb, c);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_me_new(mrb_state *mrb, const MouseState *state)
+{
+  auto rclass = mrb_class_get(mrb, "MouseState");
+
+  auto *ptr = const_cast<MouseState *>(state);
+  auto data = mrb_data_object_alloc(mrb, rclass, ptr, &mrb_me_data_type);
+
+  return mrb_obj_value(data);
+}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_me_free(mrb_state *, void *)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self)
+{
+  const MouseState *state = (const MouseState *) 
+    mrb_data_get_ptr(mrb, self, &mrb_me_data_type);
+
+  return ruby::create_new_vector(state->position.get());
 }
 
 // ----------------------------------------------------------------------------

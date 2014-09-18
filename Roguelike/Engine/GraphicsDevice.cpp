@@ -151,12 +151,9 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
     case WM_KEYDOWN:
     {
-      if ((wparam & 0x40000000) == 0)
-      {
-        auto signal = Input::TranslateSignal(msg, wparam, lparam);
-        Input::Instance.OnKeyDown(signal);
-        return 0;
-      }
+      auto signal = Input::TranslateSignal(msg, wparam, lparam);
+      Input::Instance.OnKeyDown(signal);
+      return 0;
     }
 
     case WM_KEYUP:
@@ -164,6 +161,11 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       auto signal = Input::TranslateSignal(msg, wparam, lparam);
       Input::Instance.OnKeyUp(signal);
       return 0;
+    }
+
+    case WM_MOUSEMOVE:
+    {
+      Input::Instance.OnMouseMove(*reinterpret_cast<COORD *>(&lparam));
     }
   }
 

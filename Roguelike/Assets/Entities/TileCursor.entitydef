@@ -1,0 +1,42 @@
+{
+  "TransformComponent": {
+    "rotation": [1.57079633, 0, 0]
+  },
+  "HUD::TileCursorComponent": {
+    "camera": "TranslucentLayer"
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.01]
+          },
+          "TextureComponent": {
+            "textures": [
+              "HUD/TileCursor.png"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          }
+        }
+      },
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.76]
+          },
+          "TextureComponent": {
+            "textures": [
+              "HUD/TileCursor.png"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          }
+        }
+      }
+    ]
+  }
+}

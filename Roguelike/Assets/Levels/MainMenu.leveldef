@@ -112,6 +112,10 @@
         },
         "SpinnyThingComponent": {}
       }
+    },
+    {
+      "name": "TileCursor",
+      "archetype": "TileCursor"
     }
   ]
 }

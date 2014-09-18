@@ -3,5 +3,6 @@
   "SpriteComponent": ["TransformComponent", "TextureComponent"],
   "SpinnyThingComponent": ["TransformComponent"],
   "AnimatedComponent": ["SpriteComponent"],
-  "PositionDisplayComponent": ["TextureComponent"]
+  "PositionDisplayComponent": ["TextureComponent"],
+  "TileCursorComponent": ["TransformComponent"]
 }

@@ -19,12 +19,18 @@ module HUD
       remove_event :update
 
       @camera = find_entity("CameraRoot").find_entity(@camera).camera_component
+      @mouse_pos = Vector.new
 
+      register_event :update, :on_update
       register_event :mouse_move, :mouse_move
     end
 
     def mouse_move(e)
-      position = @camera.screen_to_world(e.position)
+      @mouse_pos = e.position
+    end
+
+    def on_update(e)
+      position = @camera.screen_to_world(@mouse_pos)
 
       position.x = Math.round(position.x)
       position.z = Math.round(position.z)

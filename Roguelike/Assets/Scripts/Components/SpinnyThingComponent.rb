@@ -13,15 +13,16 @@ class SpinnyThingComponent < ComponentBase
 
     @speed = data.fetch("speed", 1).to_f
     @transform = self.owner.transform_component
+    @rotation = @transform.rotation
     self.axis = data.fetch("axis", "z")
 
     self.register_event :update, :on_update
   end
 
   def on_update(e)
-    @transform.rotation.send(
+    @rotation.send(
       @set_axis,
-      @transform.rotation.send(@get_axis) + e.dt * speed
+      @rotation.send(@get_axis) + e.dt * speed
     )
   end
 

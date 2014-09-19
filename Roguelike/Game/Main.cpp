@@ -5,6 +5,7 @@
  *********************************/
 
 #include "Common.h"
+#include <exception>
 
 static void createConsole()
 {

@@ -42,17 +42,15 @@ class TestRoomComponent < ComponentBase
 
     generate_room
 
-    register_event :update, :on_update
+    register_event :update, :first_update
   end
 
-  def on_update(e)
-    return if @init
-
+  def first_update(e)
     tr = find_entity("Pancake").transform_component
     tr.position.x = @px
     tr.position.z = @py
 
-    @init = true
+    remove_event :update
   end
 
   private

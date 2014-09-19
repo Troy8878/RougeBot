@@ -82,8 +82,8 @@ void Game::Run()
         {
           using namespace Events;
           static EventId levelLoadId("level_load");
-
-          
+          EventMessage msg{levelLoadId, nullptr, false};
+          Event::Raise(msg);
         }
       }
 
@@ -109,12 +109,7 @@ void Game::Run()
         _graphicsDevice->EndFrame();
       }
 
-      // Perform a full GC every 120 frames, otherwise just do it incrementally
-      if (Time.Frame % 120)
-        mrb_incremental_gc(mrb);
-      else
-        mrb_full_gc(mrb);
-      
+      mrb_full_gc(mrb);
     }
 
     OnFree();

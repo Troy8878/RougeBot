@@ -25,6 +25,21 @@
       {
         "components": {
           "TransformComponent": {
+            "position": [0, 0, -0.135]
+          },
+          "TextureComponent": {
+            "textures": [
+              "HUD/TileCursor.png"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          }
+        }
+      },
+      {
+        "components": {
+          "TransformComponent": {
             "position": [0, 0, -0.51]
           },
           "TextureComponent": {

@@ -15,19 +15,5 @@
     // change the pic 20 times per second
     "frame_time": 0.05,
     "frame_range": [0, 0]
-  },
-  "ChildHierarchy": {
-    "children": [
-      {
-        "name": "PositionDisplay",
-        "archetype": "PositionDisplay",
-        "components": {
-          "TransformComponent": {
-            "position": [0, 1, 0],
-            "scale": [2, 1]
-          }
-        }
-      }
-    ]
   }
 }

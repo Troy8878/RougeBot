@@ -99,21 +99,6 @@
       }
     },
     {
-      "name": "Pancake2",
-      "archetype": "PancakeFace",
-      "components": {
-        "TransformComponent": {
-          "rotation": [0.77, 0, 0],
-          "position": [1, 0.25, 1],
-          "scale": [0.5, 0.5]
-        },
-        "SpriteComponent": {
-          "render_target": "WorldLayer"
-        },
-        "SpinnyThingComponent": {}
-      }
-    },
-    {
       "name": "TileCursor",
       "archetype": "TileCursor"
     }

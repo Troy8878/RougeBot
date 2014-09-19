@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include "Helpers\FixedWindows.h"
-#include "Event.h"
+#include "Common.h"
 #include "EventHandlers.h"
-#include <unordered_map>
-#include <vector>
 
 // ----------------------------------------------------------------------------
 

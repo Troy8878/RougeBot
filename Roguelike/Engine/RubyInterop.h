@@ -13,7 +13,7 @@
 #include "mruby/variable.h"
 #include "mruby/string.h"
 
-#include <string>
+#include "Common.h"
 
 // I should mention here that I'm using the snake_case naming convention
 // because that is the naming convention of Ruby.

@@ -7,9 +7,6 @@
 #include "Common.h"
 #include "TransformComponent.h"
 
-#include <sstream>
-#include <regex>
-
 #include "mruby/data.h"
 #include "mruby/class.h"
 #include "mruby/variable.h"

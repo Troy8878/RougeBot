@@ -24,7 +24,11 @@
 #include <limits>
 #include <regex>
 #include <sstream>
+#include <algorithm>
+#include <cstdint>
+#include <unordered_set>
 
+#include "Helpers\FixedWindows.h"
 #include "Helpers\UseDirectX.h"
 #include "Helpers\FlatMap.h"
 #include "Helpers\Console.h"

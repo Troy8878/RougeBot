@@ -265,7 +265,7 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
   oblique.r[2] = g_XMIdentityR2 - vn.r[2] / d;
   oblique.r[3] = g_XMIdentityR3 - vn.r[3] / d;
 
-  oblique = XMMatrixTranslationFromVector(-planeOrigin) * 
+  oblique = XMMatrixTranslationFromVector(-planeOrigin) *
             oblique *
             XMMatrixTranslationFromVector(planeOrigin);
   

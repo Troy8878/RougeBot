@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Event.h"
-#include <unordered_set>
 
 class Game;
 

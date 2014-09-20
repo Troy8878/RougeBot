@@ -62,6 +62,9 @@
     <ClCompile Include="Floor.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <ClCompile Include="MapComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Roguelike.h">
@@ -81,6 +84,9 @@
     </ClInclude>
     <ClInclude Include="GameConsole.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="MapComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

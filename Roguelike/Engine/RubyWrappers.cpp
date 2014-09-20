@@ -367,6 +367,35 @@ namespace vect
 
   #pragma endregion
 
+  #pragma region Equality
+
+  static mrb_value op_eql(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value other;
+    mrb_get_args(mrb, "o", &other);
+
+    XMVECTOR v1 = get_ruby_vector(self);
+    XMVECTOR v2 = get_ruby_vector(other);
+
+    return mrb_bool_value(XMVector4Equal(v1, v2));
+  }
+
+  static mrb_value op_near(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value other;
+    mrb_float epsilon = 0.01;
+    mrb_get_args(mrb, "o|f", &other, &epsilon);
+
+    XMVECTOR v1 = get_ruby_vector(self);
+    XMVECTOR v2 = get_ruby_vector(other);
+
+    const float epsilon_f = (float) epsilon;
+    const XMVECTOR epsilon_v = XMVectorSet(epsilon_f, epsilon_f, epsilon_f, epsilon_f);
+
+    return mrb_bool_value(XMVector4NearEqual(v1, v2, epsilon_v));
+  }
+
+  #pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -400,6 +429,11 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "length", vect::length, ARGS_NONE());
   mrb_define_method(mrb, vclass, "normalize!", vect::normalize, ARGS_NONE());
   mrb_define_method(mrb, vclass, "normalized", vect::normalized, ARGS_NONE());
+
+  mrb_define_method(mrb, vclass, "==", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
+  mrb_define_method(mrb, vclass, "===", vect::op_eql, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "eql?", vect::op_eql, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "near?", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
 
   create_memory_vector_class(mrb);
 }

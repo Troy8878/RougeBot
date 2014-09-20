@@ -40,5 +40,9 @@ class Vector
   def inspect
     "<#{x}, #{y}, #{z}, #{w}>"
   end
+
+  def to_s
+    self.inspect
+  end
 end
 

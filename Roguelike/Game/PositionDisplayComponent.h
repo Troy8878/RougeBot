@@ -37,7 +37,7 @@ public:
 
 private:
   Texture2D texture;
-  TransformComponent *watchedTransform;
+  TransformComponent *watchedTransform = nullptr;
   std::string entityName;
   math::Vector lastPos;
 
@@ -47,8 +47,8 @@ private:
     typedef GraphicsDevice::D2DData::clock clock;
 
     clock::time_point timestamp;
-    ID2D1SolidColorBrush *brush = nullptr;
-    ID2D1SolidColorBrush *bgbrush = nullptr;
+    ID2D1Brush *brush = nullptr;
+    ID2D1Brush *bgbrush = nullptr;
     IDWriteTextFormat *format = nullptr;
 
     std::wstring font;

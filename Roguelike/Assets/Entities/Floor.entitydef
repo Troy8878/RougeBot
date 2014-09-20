@@ -1,7 +1,7 @@
 {
   "TransformComponent": {},
   "TextureComponent": {
-    "textures": [
+    "textures": [ 
       {
         "zipped": [
           "World/cobblestone.png",

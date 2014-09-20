@@ -148,25 +148,6 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       GetGame()->Stop();
       return 0;
     }
-
-    case WM_KEYDOWN:
-    {
-      auto signal = Input::TranslateSignal(msg, wparam, lparam);
-      Input::Instance.OnKeyDown(signal);
-      return 0;
-    }
-
-    case WM_KEYUP:
-    {
-      auto signal = Input::TranslateSignal(msg, wparam, lparam);
-      Input::Instance.OnKeyUp(signal);
-      return 0;
-    }
-
-    case WM_MOUSEMOVE:
-    {
-      Input::Instance.OnMouseMove(*reinterpret_cast<COORD *>(&lparam));
-    }
   }
 
   return DefWindowProc(hwnd, msg, wparam, lparam);

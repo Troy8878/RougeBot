@@ -31,6 +31,46 @@ void Input::Initialize()
 {
   static Events::EventId updateId("update");
   SetHandler(updateId, &Input::OnUpdate);
+
+  auto& game = *GetGame();
+
+  game.SetProcHandler(WM_KILLFOCUS, [this](HWND, UINT, WPARAM, LPARAM, LRESULT&)
+  {
+    AllKeysUp();
+    AllMouseUp();
+  });
+
+  game.SetProcHandler(WM_KEYDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    auto signal = TranslateSignal(msg, wp, lp);
+    OnKeyDown(signal);
+  });
+
+  game.SetProcHandler(WM_KEYUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    auto signal = TranslateSignal(msg, wp, lp);
+    OnKeyUp(signal);
+  });
+
+  game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
+  {
+      Input::Instance.OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+  });
+
+  game.SetProcHandler(WM_XBUTTONDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    (msg, wp, lp);
+  });
+
+  game.SetProcHandler(WM_XBUTTONUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    (msg, wp, lp);
+  });
+
+  game.SetProcHandler(WM_XBUTTONDBLCLK, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    (msg, wp, lp);
+  });
 }
 
 // ----------------------------------------------------------------------------
@@ -78,14 +118,89 @@ void Input::OnKeyUp(const InputSignal& signal)
 
 // ----------------------------------------------------------------------------
 
+void Input::AllKeysUp()
+{
+  for (auto& state : keyStates)
+  {
+    if (state.down)
+    {
+      state.down = false;
+      OnKeyUp(state);
+    }
+  }
+
+  for (auto& pair : unicodeStates)
+  {
+    auto& state = pair.second;
+
+    if (state.down)
+    {
+      state.down = false;
+      OnKeyUp(state);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 void Input::OnMouseMove(COORD position)
 {
   mouse.position = math::Vector2D{(float)position.X, (float)position.Y};
   
   DEF_EVENT_ID(mouse_move);
-  MouseEvent edata{&mouse};
-  Events::EventMessage emsg{mouse_move, &edata, false};
-  Events::Event::Raise(emsg);
+  RaiseMouseEvent(mouse_move);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::OnMouseDown(const virtual_key button)
+{
+  mouse.state |= button;
+  mouse.lastButton = button;
+
+  DEF_EVENT_ID(mouse_down);
+  RaiseMouseEvent(mouse_down);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::OnMouseUp(const virtual_key button)
+{
+  mouse.state &= ~button;
+  mouse.lastButton = button;
+
+  DEF_EVENT_ID(mouse_up);
+  RaiseMouseEvent(mouse_up);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::OnDoubleClick(const virtual_key button)
+{
+  mouse.lastButton = button;
+
+  DEF_EVENT_ID(double_click);
+  RaiseMouseEvent(double_click);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::AllMouseUp()
+{
+  virtual_key const buttons[] =
+  {
+    VK_LBUTTON,
+    VK_RBUTTON,
+    VK_MBUTTON,
+    VK_XBUTTON1,
+    VK_XBUTTON2
+  };
+
+  for (const auto button : buttons)
+  {
+    if (mouse.ButtonDown(button))
+      OnMouseUp(button);
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -173,6 +288,15 @@ void Input::RaiseKeyEvent(event_id id, KeyState& state)
   KeyStateEvent eventData{state};
   Events::EventMessage eventMsg{id, &eventData, true};
   Events::Event::Raise(eventMsg);
+}
+
+// ----------------------------------------------------------------------------
+
+void Input::RaiseMouseEvent(event_id id)
+{
+  MouseEvent data{&mouse};
+  Events::EventMessage message{id, &data, true};
+  Events::Event::Raise(message);
 }
 
 // ----------------------------------------------------------------------------

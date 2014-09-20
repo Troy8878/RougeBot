@@ -10,7 +10,7 @@
       {
         "components": {
           "TransformComponent": {
-            "position": [0, 0, 0.24]
+            "position": [0, 0, -0.01]
           },
           "TextureComponent": {
             "textures": [
@@ -22,7 +22,7 @@
           }
         }
       },
-      {
+      /*{
         "components": {
           "TransformComponent": {
             "position": [0, 0, -0.135]
@@ -51,7 +51,7 @@
             "render_target": "TranslucentLayer"
           }
         }
-      }
+      }*/
     ]
   }
 }

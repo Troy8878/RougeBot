@@ -20,7 +20,7 @@ class CameraFollowComponent < ComponentBase
     @follow_id = data.fetch("follows", 0)
     @follow_id = @follow_id.to_i if @follow_id.is_a? Float
 
-    register_event :update, :on_update
+    register_event :draw, :on_update
   end
 
   def on_update(e)

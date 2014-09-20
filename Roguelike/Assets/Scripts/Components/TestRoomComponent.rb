@@ -46,9 +46,28 @@ class TestRoomComponent < ComponentBase
   end
 
   def first_update(e)
-    tr = find_entity("Pancake").transform_component
-    tr.position.x = @px
-    tr.position.z = @py
+    ent = find_entity("Pancake")
+
+    # Set the movement target
+    pcc = ent.player_controller_component
+    ppos = pcc.instance_variable_get :@pos
+    ppos.x = @px
+    ppos.z = @py
+
+    # Start the actual position at the beginning
+    trc = ent.transform_component
+    tpos = trc.position
+    tpos.x = @px
+    tpos.z = @py
+
+    # Start the camera there too
+    cam = find_entity("CameraRoot")
+    cfc = cam.camera_follow_component
+    cfr = cfc.instance_variable_get :@follow_real
+    unless cfr.nil?
+      cfr = tpos.dup
+      cfc.instance_variable_set :@follow_real, cfr
+    end
 
     remove_event :update
   end

@@ -27,6 +27,18 @@
 //    mouse_move
 //      Whenever a mouse moves, we'll be there
 //      type: MouseEvent
+//    
+//    mouse_down
+//      Whenever a mouse button is pressed
+//      type: MouseEvent
+//
+//    mouse_up
+//      Whenever a mouse button is released
+//      type: MouseEvent
+//
+//    double_click
+//      Whenever a mouse button is double-clicked
+//      type: MouseEvent
 
 // ----------------------------------------------------------------------------
 
@@ -34,7 +46,7 @@ typedef UINT virtual_key;
 
 // ----------------------------------------------------------------------------
 
-const double key_hold_event_rate = 0.25;
+const double key_hold_event_rate = 0.1;
 
 struct InputSignal
 {
@@ -44,6 +56,8 @@ struct InputSignal
 };
 
 // ----------------------------------------------------------------------------
+
+#pragma region States
 
 struct KeyState : InputSignal
 {
@@ -76,21 +90,19 @@ public:
 struct MouseState
 {
   math::Vector2D position;
-  double scroll_position;
+  double scrollPosition;
   UINT state;
+  UINT lastButton;
 
-  bool ButtonDown(UINT button)
-  {
-    return !!(state & button);
-  }
-
-  bool ButtonUp(UINT button)
-  {
-    return !(state & button);
-  }
+  bool ButtonDown(UINT button) { return !!(state & button); }
+  bool ButtonUp(UINT button) { return !(state & button); }
 };
 
+#pragma endregion
+
 // ----------------------------------------------------------------------------
+
+#pragma region Event Data
 
 struct KeyStateEvent : public Events::EventData
 {
@@ -118,6 +130,8 @@ struct MouseEvent : public Events::EventData
   mrb_value GetRubyWrapper() override;
 };
 
+#pragma endregion
+
 // ----------------------------------------------------------------------------
 
 class Input : public Events::BasicClassEventReciever<Input>
@@ -134,8 +148,14 @@ public:
   void OnKeyDown(const InputSignal& signal);
   // Called when the game detects a keyup signal
   void OnKeyUp(const InputSignal& signal);
+  void AllKeysUp();
 
   void OnMouseMove(COORD position);
+
+  void OnMouseDown(const virtual_key button);
+  void OnMouseUp(const virtual_key button);
+  void OnDoubleClick(const virtual_key button);
+  void AllMouseUp();
 
   // Gets the current state of the given virtual key
   const KeyState& GetKeyState(virtual_key key);
@@ -149,16 +169,13 @@ private:
   void OnUpdate(Events::EventMessage& e);
   void UpdateState(KeyState& state, double dt);
   void RaiseKeyEvent(event_id id, KeyState& state);
+  void RaiseMouseEvent(event_id id);
 
   static wchar_t VKeyToChar(virtual_key key);
 
   MouseState mouse;
   KeyState keyStates[0x100];
   std::unordered_map<virtual_key, KeyState> unicodeStates;
-  // add in the other variables you need to keep track of the input state
-  // feel free to modify KeyState if you feel like that's the best way
-  // Remember to check for unicode values on VK_PACKET
-  // http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
 };
 
 // ----------------------------------------------------------------------------

@@ -15,7 +15,7 @@
         "CameraFollowComponent": {
           "offset": [0, 5, -6],
           "follows": "Pancake",
-          "speed": 5
+          "speed": 0
         }
       },
       "children": [

@@ -17,6 +17,7 @@
 PLAYER_INVENTORY = Inventory.new
 
 class PlayerControllerComponent < ComponentBase
+  attr_reader :pos
 
   MIN_MOVE_TIME = 0.2
 
@@ -31,6 +32,7 @@ class PlayerControllerComponent < ComponentBase
 
     @transform = self.owner.transform_component
     @pos = @transform.position.dup
+    @real_pos = @pos.dup
 
     # Base player stats. These might be moved to other
     # components later.
@@ -58,20 +60,30 @@ class PlayerControllerComponent < ComponentBase
 
   def on_update(e)
     diff = @pos - @transform.position.dup
+    diff.y = 0
 
     amt = e.dt * @move_speed
     if diff.length2 > amt*amt
       diff.normalize!.mul amt
     end
 
-    @transform.position = @transform.position.dup + diff
+    pos = @transform.position
+    @transform.position = pos.dup + diff
+
+    xbounce = 0#Math.sin((pos.x % 1) * Math::PI) / 5
+    zbounce = 0#Math.sin((pos.z % 1) * Math::PI) / 5
+
+    pos.y = 0.5 + xbounce + zbounce
   end
 
   def can_move?(xo, yo)
     room = find_entity("MainFloor").test_room_component.room
 
     # false if the move animation isn't done
-    return false unless @pos.near? @transform.position.dup, 0.2
+    real_pos = @transform.position.dup
+    real_pos.y = @pos.y
+
+    return false unless @pos.near? real_pos, 0.2
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo

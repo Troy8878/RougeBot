@@ -13,8 +13,8 @@ class TestRoomComponent < ComponentBase
   WALL_VALUE = 1
 
   ROOM_SIZE = 50
-  C_L = -0.5
-  C_R = 0.5
+  C_L = -0.49
+  C_R = 0.49
   W_T = 0.5
   W_B = 0
 
@@ -107,6 +107,19 @@ class TestRoomComponent < ComponentBase
           end
         end
       end
+
+      y = -0.1
+      l_x = -7.5
+      b_z = -7.5
+      r_x = ROOM_SIZE + 7.5
+      t_z = ROOM_SIZE + 7.5
+
+      builder.add_quad(
+        Vertex.new(Vector.new(l_x, y, b_z, 1), WHITE, CEIL_BL),
+        Vertex.new(Vector.new(l_x, y, t_z, 1), WHITE, CEIL_TL),
+        Vertex.new(Vector.new(r_x, y, t_z, 1), WHITE, CEIL_TR),
+        Vertex.new(Vector.new(r_x, y, b_z, 1), WHITE, CEIL_BR)
+      )
     end
   end
 

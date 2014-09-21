@@ -182,6 +182,18 @@ namespace vect
     return mrb_obj_value(obj);
   }
 
+  static mrb_value scalar(mrb_state *mrb, mrb_value)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+
+    auto vect = new math::Vector{(float) s, (float) s, (float) s, (float) s};
+    auto obj = mrb_data_object_alloc(mrb, vclass, vect, &mrb_vector_type);
+    return mrb_obj_value(obj);
+  }
+
   static void free(mrb_state *, void *mem)
   {
     auto vect = (math::Vector*) mem;
@@ -408,6 +420,7 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   auto vclass = mrb_define_class(mrb, "Vector", mrb->object_class);
   
   mrb_define_class_method(mrb, vclass, "new", vect::vnew, ARGS_OPT(4));
+  mrb_define_class_method(mrb, vclass, "scalar", vect::scalar, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
 
   mrb_define_method(mrb, vclass, "x", vect::get_x, ARGS_NONE());

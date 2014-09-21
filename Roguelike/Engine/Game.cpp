@@ -87,10 +87,30 @@ void Game::Run()
         }
       }
 
+      // Raise pre-update event
+      {
+        using namespace Events;
+        static EventId updateId("pre_update");
+
+        UpdateEvent edata{_gameTime};
+        EventMessage msg{updateId, &edata, false};
+        Event::Raise(msg);
+      }
+
       // Raise update event
       {
         using namespace Events;
         static EventId updateId("update");
+
+        UpdateEvent edata{_gameTime};
+        EventMessage msg{updateId, &edata, false};
+        Event::Raise(msg);
+      }
+
+      // Raise post-update event
+      {
+        using namespace Events;
+        static EventId updateId("post_update");
 
         UpdateEvent edata{_gameTime};
         EventMessage msg{updateId, &edata, false};

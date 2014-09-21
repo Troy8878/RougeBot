@@ -70,10 +70,10 @@ class PlayerControllerComponent < ComponentBase
     pos = @transform.position
     @transform.position = pos.dup + diff
 
-    xbounce = 0#Math.sin((pos.x % 1) * Math::PI) / 5
-    zbounce = 0#Math.sin((pos.z % 1) * Math::PI) / 5
+    xbounce = Math.sin((pos.x % 1) * Math::PI) / 5
+    zbounce = Math.sin((pos.z % 1) * Math::PI) / 5
 
-    pos.y = 0.5 + xbounce + zbounce
+    pos.y = 0.25 + xbounce + zbounce
   end
 
   def can_move?(xo, yo)

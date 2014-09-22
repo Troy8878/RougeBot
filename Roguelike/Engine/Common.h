@@ -35,6 +35,7 @@
 #include "Helpers\StackTrace.h"
 #include "Helpers\CriticalSections.h"
 #include "Helpers\Allocator.h"
+#include "Helpers\VisualizePerformance.h"
 
 #include "GameTime.h"
 #include "Event.h"

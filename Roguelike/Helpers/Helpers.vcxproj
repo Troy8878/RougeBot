@@ -125,6 +125,7 @@
     <ClInclude Include="StackTrace.h" />
     <ClInclude Include="UseDirectX.h" />
     <ClInclude Include="VectorHelp.h" />
+    <ClInclude Include="VisualizePerformance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BucketAllocator.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="RandomHelpers.cpp" />
     <ClCompile Include="StackTrace.cpp" />
+    <ClCompile Include="VisualizePerformance.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

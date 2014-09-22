@@ -4,9 +4,8 @@
  * Created 2014/09/21
  *********************************/
 
-#include "Engine/Common.h"
 #include "VisualizePerformance.h"
-#include "Engine/RubyInterop.h"
+#include "Engine/Common.h"
 #include <vector>
 #include <unordered_map>
 
@@ -31,7 +30,7 @@ struct perf_entry
 
 static struct perf_mgr
 {
-  std::unordered_map<std::string, clock::duration> totals;
+  std::unordered_map<std::string, std::pair<clock::duration, size_t>> totals;
 
   void add_entry(perf_entry&& entry);
 
@@ -58,18 +57,17 @@ void performance::register_diagnostic(clock::duration duration, std::string&& id
   perf.add_entry(std::move(entry));
 }
 
-register_guard::register_guard(std::string&& identifier)
+performance::register_guard::register_guard(std::string&& identifier)
   : start(clock::now()), identifier(std::move(identifier))
 {
 }
 
-register_guard::register_guard(mrb_value object, mrb_sym method)
-  : start(clock::now()),
-    identifier(method_to_name(object, method))
+performance::register_guard::register_guard(mrb_value object, mrb_sym method)
+  : start(clock::now()), identifier(method_to_name(object, method))
 {
 }
 
-register_guard::~register_guard()
+performance::register_guard::~register_guard()
 {
   auto now = clock::now();
 
@@ -83,17 +81,38 @@ register_guard::~register_guard()
 
 void perf_mgr::add_entry(perf_entry&& entry)
 {
-  totals[entry.identifier] += entry.end - entry.start;
+  auto& total = totals[entry.identifier];
+  total.first += entry.end - entry.start;
+  total.second++;
 }
+
+const long double clock_period = clock::period::num / 
+                                 static_cast<long double>(clock::period::den);
 
 perf_mgr::~perf_mgr()
 {
-  std::fstream file{"performance_data.txt"};
+  json::value data = json::value::object();
 
   for (auto& pair : totals)
   {
-    file << pair.first << ": " << pair.second.count() << std::endl;
+    json::value entry = json::value::object();
+
+    auto total_time = pair.second.first;
+    auto instances = pair.second.second;
+
+    long double d_total = total_time.count() * clock_period;
+    long double d_avg = d_total / instances;
+    long double d_inst = static_cast<long double>(instances);
+
+    entry["total time"] = json::value{d_total};
+    entry["average time"] = json::value{d_avg};
+    entry["times ran"] = json::value{d_inst};
+
+    data[pair.first] = entry;
   }
+  
+  std::ofstream file{"performance_data.txt"};
+  data.pretty_print(file);
 }
 
 #endif

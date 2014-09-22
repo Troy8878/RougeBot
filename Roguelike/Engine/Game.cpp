@@ -65,6 +65,8 @@ void Game::Run()
 
     while (_running)
     {
+      performance::register_guard glperf("Game Loop");
+
       _graphicsDevice->ProcessMessages();
 
       // Update
@@ -72,14 +74,21 @@ void Game::Run()
 
       if (!levelChangeContext.loaded)
       {
-        if (_currentLevel)
-          Level::DestroyLevel(_currentLevel);
+        // Load the level
+        {
+          performance::register_guard perf("Level Load");
 
-        _currentLevel = Level::CreateLevel(levelChangeContext.name);
-        levelChangeContext.loaded = true;
+          if (_currentLevel)
+            Level::DestroyLevel(_currentLevel);
+
+          _currentLevel = Level::CreateLevel(levelChangeContext.name);
+          levelChangeContext.loaded = true;
+        }
 
         // Raise level_load event
         {
+          performance::register_guard perf("level_load event");
+
           using namespace Events;
           static EventId levelLoadId("level_load");
           EventMessage msg{levelLoadId, nullptr, false};
@@ -89,6 +98,8 @@ void Game::Run()
 
       // Raise pre-update event
       {
+        performance::register_guard perf("pre_update event");
+
         using namespace Events;
         static EventId updateId("pre_update");
 
@@ -99,6 +110,8 @@ void Game::Run()
 
       // Raise update event
       {
+        performance::register_guard perf("update event");
+
         using namespace Events;
         static EventId updateId("update");
 
@@ -109,6 +122,8 @@ void Game::Run()
 
       // Raise post-update event
       {
+        performance::register_guard perf("post_update event");
+
         using namespace Events;
         static EventId updateId("post_update");
 
@@ -120,6 +135,8 @@ void Game::Run()
       // Raise draw event (and draw the frame)
       if (_graphicsDevice->BeginFrame())
       {
+        performance::register_guard perf("draw event");
+
         using namespace Events;
         static EventId drawId("draw");
 
@@ -128,8 +145,11 @@ void Game::Run()
 
         _graphicsDevice->EndFrame();
       }
-
-      mrb_full_gc(mrb);
+      
+      {
+        performance::register_guard perf("mruby garbage collection");
+        mrb_full_gc(mrb);
+      }
     }
 
     OnFree();

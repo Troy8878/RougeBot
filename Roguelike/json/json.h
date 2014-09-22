@@ -141,6 +141,28 @@ namespace json
       template <typename JsonType>
       array_of_t<JsonType> as_array_of();
 
+      #pragma region Access As Object/Array
+
+      json::value& operator[](array_t::size_type index)
+      {
+        auto& ary = as_array();
+        if (ary.size() <= index)
+          ary.resize(index);
+
+        return ary[index];
+      }
+
+      json::value& operator[](const object_t::key_type& key)
+      {
+        auto& obj = as_object();
+        return obj[key];
+      }
+
+      #pragma endregion
+
+    private:
+      void assert_type(json_type type);
+
       #pragma endregion
 
       #pragma region Parse
@@ -165,13 +187,20 @@ namespace json
       std::string serialize();
       void serialize(std::ostream& out);
 
+      void pretty_print(std::ostream& out, unsigned indent = 0);
+
     private:
+      bool _pretty_print = false;
+      unsigned _pretty_level;
+
       void serialize_null(std::ostream& out);
       void serialize_object(std::ostream& out);
       void serialize_array(std::ostream& out);
       void serialize_string(std::ostream& out);
       void serialize_number(std::ostream& out);
       void serialize_bool(std::ostream& out);
+
+      void next_pretty_line(std::ostream& out);
 
       #pragma endregion
   };

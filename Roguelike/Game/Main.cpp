@@ -5,7 +5,6 @@
  *********************************/
 
 #include "Common.h"
-#include <exception>
 
 static void createConsole()
 {
@@ -20,6 +19,8 @@ Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
+  performance::register_guard glperf("The Game");
+  
   createConsole();
   game.Run();
   return 0;

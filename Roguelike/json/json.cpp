@@ -232,7 +232,7 @@ namespace json
 
   value::object_t& value::as_object()
   {
-    assert(is(json_type::jobject));
+    assert_type(json_type::jobject);
     return *data->data.as<object_t>();
   }
 
@@ -240,7 +240,7 @@ namespace json
 
   value::array_t& value::as_array()
   {
-    assert(is(json_type::jarray));
+    assert_type(json_type::jarray);
     return *data->data.as<array_t>();
   }
 
@@ -248,7 +248,7 @@ namespace json
 
   value::string_t& value::as_string()
   {
-    assert(is(json_type::jstring));
+    assert_type(json_type::jstring);
     return *data->data.as<string_t>();
   }
 
@@ -256,7 +256,7 @@ namespace json
 
   value::number_t value::as_number()
   {
-    assert(is(json_type::jnumber));
+    assert_type(json_type::jnumber);
     return *data->data.as<number_t>();
   }
 
@@ -264,8 +264,46 @@ namespace json
 
   value::bool_t value::as_bool()
   {
-    assert(is(json_type::jbool));
+    assert_type(json_type::jbool);
     return *data->data.as<bool_t>();
+  }
+
+// ----------------------------------------------------------------------------
+
+  void value::assert_type(json_type type)
+  {
+    if (is(json_type::jnull))
+    {
+      switch (type)
+      {
+        case json_type::jobject:
+          *this = object();
+          break;
+
+        case json_type::jarray:
+          *this = array();
+          break;
+
+        case json_type::jstring:
+          *this = string();
+          break;
+
+        case json_type::jnumber:
+          *this = number();
+          break;
+
+        case json_type::jbool:
+          *this = boolean();
+          break;
+
+        case json_type::jnull:
+          break;
+      }
+    }
+    else
+    {
+      assert(is(type));
+    }
   }
 
 // ----------------------------------------------------------------------------
@@ -766,6 +804,18 @@ namespace json
 
 // ----------------------------------------------------------------------------
 
+  void value::pretty_print(std::ostream& out, unsigned indent)
+  {
+    _pretty_print = true;
+    _pretty_level = indent;
+
+    serialize(out);
+
+    _pretty_print = false;
+  }
+
+// ----------------------------------------------------------------------------
+
   void value::serialize_null(std::ostream& out)
   {
     out << "null";
@@ -777,6 +827,8 @@ namespace json
   {
     out << '{';
 
+    ++_pretty_level;
+
     bool first = true;
     for (auto& pair : as_object())
     {
@@ -785,10 +837,24 @@ namespace json
       else
         out << ',';
 
+      next_pretty_line(out);
+
       value::string(pair.first).serialize_string(out);
       out << ':';
-      pair.second.serialize(out);
+
+      if (_pretty_print)
+      {
+        out << ' ';
+        pair.second.pretty_print(out, _pretty_level);
+      }
+      else
+        pair.second.serialize(out);
     }
+
+    --_pretty_level;
+
+    if (!first)
+      next_pretty_line(out);
 
     out << '}';
   }
@@ -799,6 +865,8 @@ namespace json
   {
     out << '[';
 
+    ++_pretty_level;
+
     bool first = true;
     for (auto& value : as_array())
     {
@@ -807,8 +875,18 @@ namespace json
       else
         out << ',';
 
-      value.serialize(out);
+      next_pretty_line(out);
+
+      if (_pretty_print)
+        value.pretty_print(out, _pretty_level);
+      else
+        value.serialize(out);
     }
+
+    --_pretty_level;
+
+    if (!first)
+      next_pretty_line(out);
 
     out << ']';
   }
@@ -868,6 +946,18 @@ namespace json
   void value::serialize_bool(std::ostream& out)
   {
     out << (as_bool() ? "true" : "false");
+  }
+
+// ----------------------------------------------------------------------------
+
+  void value::next_pretty_line(std::ostream& out)
+  {
+    if (!_pretty_print)
+      return;
+
+    out << std::endl;
+    for (unsigned i = 0; i < _pretty_level; ++i)
+      out << "  ";
   }
 
 // ----------------------------------------------------------------------------

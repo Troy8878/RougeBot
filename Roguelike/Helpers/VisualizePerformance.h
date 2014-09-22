@@ -4,6 +4,8 @@
  * Created 2014/09/21
  *********************************/
 
+#pragma once
+
 #include <chrono>
 #include <string>
 
@@ -19,6 +21,10 @@ namespace performance
 
   class register_guard
   {
+  public:
+    inline register_guard(const std::string& identifier)
+      : register_guard(std::string{identifier}) {}
+
     register_guard(std::string&& identifier);
     register_guard(mrb_value object, mrb_sym method);
     ~register_guard();
@@ -34,9 +40,11 @@ namespace performance
 
   class register_guard
   {
+  public:
+    inline register_guard(const std::string&) {}
     inline register_guard(std::string&&) {}
     inline register_guard(mrb_value, mrb_sym) {}
-    inline ~register_guard();
+    inline ~register_guard() {}
   };
 
 #endif

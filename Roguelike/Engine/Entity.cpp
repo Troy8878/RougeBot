@@ -5,8 +5,9 @@
  *********************************/
 
 #include "Common.h"
-#include "Helpers\BucketAllocator.h"
+#include "Helpers/BucketAllocator.h"
 #include "Level.h"
+#include "Game/Voodoo.h"
 
 #include "mruby/variable.h"
 #include "mruby/string.h"
@@ -107,6 +108,12 @@ void Entity::Handle(Events::EventMessage& e)
       if (std::find(handled_for.begin(), handled_for.end(), it->first) != handled_for.end())
         continue;
     }
+
+    #ifdef _DEBUG
+
+    performance::register_guard perf_g(translate_method_name(it->second));
+
+    #endif
 
     auto *comp = it->first;
     // Apply member function pointer

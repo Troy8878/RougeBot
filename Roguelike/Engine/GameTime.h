@@ -22,6 +22,7 @@ public:
   
   IR_PROPERTY(double, Dt);
   IR_PROPERTY(uint64_t, Frame);
+  IR_PROPERTY(clock::duration, TimeDiff);
   PROPERTY(get = _GetRunningTime) clock::duration RunningTime;
   PROPERTY(get = _GetCurrFrameTime) double CurrFrameTime;
 
@@ -34,8 +35,8 @@ public:
     _prevTime = _currTime;
     _currTime = clock::now();
 
-    auto timeDiff = _currTime - _prevTime;
-    Dt = timeDiff.count() * clock_period;
+    TimeDiff = _currTime - _prevTime;
+    Dt = TimeDiff.count() * clock_period;
 
     if (Dt > maxDt)
       Dt = maxDt;

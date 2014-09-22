@@ -69,6 +69,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -97,6 +98,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -127,6 +129,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -195,6 +198,7 @@
     <ClCompile Include="MapComponent.cpp" />
     <ClCompile Include="PositionDisplayComponent.cpp" />
     <ClCompile Include="Testcompy.cpp" />
+    <ClCompile Include="Voodoo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
@@ -204,6 +208,7 @@
     <ClInclude Include="PositionDisplayComponent.h" />
     <ClInclude Include="Roguelike.h" />
     <ClInclude Include="Testcompy.h" />
+    <ClInclude Include="Voodoo.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Engine\Style Guide.txt" />

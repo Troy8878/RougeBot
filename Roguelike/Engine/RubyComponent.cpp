@@ -118,7 +118,11 @@ void RubyComponent::OnEvent(Events::EventMessage& e)
     edata = e.Data->GetRubyWrapper();
   }
   
+  auto mid = events[e.EventId];
+
+  performance::register_guard perf(component_inst, mid);
   mrb_funcall_argv(mrb, component_inst, events[e.EventId], 1, &edata);
+
   mrb.log_and_clear_error();
 }
 

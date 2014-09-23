@@ -629,9 +629,15 @@ namespace json
     return converter.to_bytes(wide_string);
   }
 
+  inline std::wstring widen(const std::string& narrow_string)
+  {
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return converter.from_bytes(narrow_string.c_str());
+  }
+
 // ----------------------------------------------------------------------------
 
-  static bool read_char(std::istream& input, wchar_t& c)
+  static bool read_char(std::istream& input, std::string& out)
   {
     auto val = input.get();
 
@@ -645,20 +651,29 @@ namespace json
       if (!input)
         PARSE_ERROR("Unexpected end of stream");
 
+      char buf[20] = {0};
+      wchar_t wbuf[10] = {0};
+
       switch (val)
       {
-        case '"' : c = '"' ; break;
-        case '\\': c = '\\'; break;
-        case '/' : c = '/' ; break;
-        case 'b' : c = '\b'; break;
-        case 'f' : c = '\f'; break;
-        case 'n' : c = '\n'; break;
-        case 'r' : c = '\r'; break;
-        case 't' : c = '\t'; break;
+        case '"' : out = '"' ; break;
+        case '\\': out = '\\'; break;
+        case '/' : out = '/' ; break;
+        case 'b' : out = '\b'; break;
+        case 'f' : out = '\f'; break;
+        case 'n' : out = '\n'; break;
+        case 'r' : out = '\r'; break;
+        case 't' : out = '\t'; break;
         case 'u' :
-          char buf[5] = {0};
           input.read(buf, 4);
-          sscanf_s(buf, "%hx", &c);
+          wbuf[0] = (wchar_t) std::stoul(buf, 0, 16);
+          out = narrow(wbuf);
+          break;
+        case 'U' :
+          input.read(buf, 8);
+          char32_t cp[2] = { std::stoul(buf, 0, 16), 0 };
+          std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
+          out = cvt.to_bytes(cp);
           break;
       }
 
@@ -670,7 +685,7 @@ namespace json
     }
     else
     {
-      c = (wchar_t) val;
+      out = (char)val;
       return true;
     }
   }
@@ -683,13 +698,18 @@ namespace json
     if (input.get() != '\"')
       PARSE_ERROR("Expected string begin ('\"')");
 
-    std::wstring buffer;
-    wchar_t c;
+    std::string buffer;
 
-    while (read_char(input, c))
-      buffer += c;
+    for (;;)
+    {
+      std::string c;
+      if (read_char(input, c))
+        buffer += c;
+      else
+        break;
+    }
 
-    return value::string(narrow(buffer));
+    return value::string(buffer);
   }
 
 // ----------------------------------------------------------------------------
@@ -916,12 +936,6 @@ namespace json
             << std::dec << std::setfill(' ');
         break;
     }
-  }
-
-  inline std::wstring widen(const std::string& narrow_string)
-  {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.from_bytes(narrow_string.c_str());
   }
 
   void value::serialize_string(std::ostream& out)

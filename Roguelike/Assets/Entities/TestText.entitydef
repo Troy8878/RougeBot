@@ -26,17 +26,16 @@
           },
           "TextComponent": {
             "texts": [
-              "Om nom nom nom nom nom nom",
-              "I wonder if senpai will notice me (^\u0437^)-\u2606",
+              "I wonder if senpai will notice me\n｡◕‿◕｡",
             ],
 
             "text_color": "#FF0000FF",
             "bg_color": "#00000000",
 
             "font": "Segoe UI Emoji",
-            "font_size": 26,
+            "font_size": 48,
 
-            "autocreate_textures": [200, 100]
+            "autocreate_textures": [400, 200]
           },
           "AnimatedComponent": {
             "frame_time": 3

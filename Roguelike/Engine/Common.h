@@ -12,6 +12,12 @@
 // It's okay if a function hasn't been used yet :/
 #pragma warning (disable: 4505) // http://msdn.microsoft.com/en-us/library/z85eyax0.aspx
 
+// http://msdn.microsoft.com/en-us/library/6t66728h(v=vs.90).aspx
+// It's okay, we don't have a braindead compiler and our code only runs on windows
+#pragma warning(disable : 4127)
+
+#pragma warning(push)
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -44,4 +50,6 @@
 #include "Component.h"
 #include "Game.h"
 #include "Texture.h"
+
+#pragma warning(pop)
 

@@ -91,12 +91,14 @@ Component *TextureComponentFactory::CreateObject(
   auto component = new (memory) TextureComponent();
 
   auto& jtextures = data["textures"];
-  assert(jtextures.is(json::json_type::jarray));
-  auto textures = jtextures.as_array();
-
-  for (auto& Textureef : textures)
+  if(jtextures.is(json::json_type::jarray))
   {
-    component->AddTexture(Textureef);
+    auto& textures = jtextures.as_array();
+
+    for (auto& Textureef : textures)
+    {
+      component->AddTexture(Textureef);
+    }
   }
 
   return component;

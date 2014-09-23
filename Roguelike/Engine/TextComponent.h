@@ -61,10 +61,14 @@ private:
     IDWriteTextFormat *textFormat = nullptr;
     ID2D1Brush *textBrush = nullptr;
     ID2D1Brush *bgBrush = nullptr;
+
+    D2D1_SIZE_F populateSize;
+    bool shouldPopulate;
     
     void Release();
     void Validate();
     void Draw();
+    void DoPopulate();
 
     ~DrawingResources() { Release(); }
 

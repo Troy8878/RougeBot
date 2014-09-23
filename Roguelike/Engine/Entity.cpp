@@ -401,9 +401,16 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
   }
 
   auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
-  auto *comp = entity->AddComponent(name, data);
 
-  return comp->GetRubyWrapper();
+  try
+  {
+    auto *comp = entity->AddComponent(name, data);
+    return comp->GetRubyWrapper();
+  }
+  catch (std::exception& e)
+  {
+    mrb_raise(mrb, mrb->eException_class, e.what());
+  }
 }
 
 // ----------------------------------------------------------------------------

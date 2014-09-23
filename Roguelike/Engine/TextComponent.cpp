@@ -61,6 +61,14 @@ void TextComponent::AppendText(const std::string& text)
 
 // ----------------------------------------------------------------------------
 
+void TextComponent::PopulateTextureComponent(const D2D1_SIZE_F& size)
+{
+  drawing.populateSize = size;
+  drawing.shouldPopulate = true;
+}
+  
+// ----------------------------------------------------------------------------
+
 void TextComponent::OnUpdate(Events::EventMessage&)
 {
   drawing.Validate();
@@ -81,6 +89,12 @@ void TextComponent::DrawingResources::Validate()
 {
   if (!textures)
     return;
+
+  if (shouldPopulate)
+  {
+    DoPopulate();
+    shouldPopulate = false;
+  }
 
   auto& d2d = GetGame()->GameDevice->D2D;
 
@@ -151,6 +165,26 @@ void TextComponent::DrawingResources::Draw()
 
 // ----------------------------------------------------------------------------
 
+void TextComponent::DrawingResources::DoPopulate()
+{
+  auto& tc = *textures;
+
+  // Clear old textures in case someone defined them
+  while (tc.TextureCount)
+    tc.RemoveTexture(tc.TextureCount - 1);
+
+  std::ostringstream texturename;
+  texturename << "SPECIAL/SURFACE/";
+  texturename << int(populateSize.width);
+  texturename << ":";
+  texturename << int(populateSize.height);
+
+  for (size_t i = 0; i < texts.size(); ++i)
+    tc.AddTexture(json::value::string(texturename.str()));
+}
+
+// ----------------------------------------------------------------------------
+
 TextComponentFactory::TextComponentFactory()
   : allocator(sizeof(TextComponent))
 {
@@ -205,15 +239,59 @@ Component *TextComponentFactory::CreateObject(
   else if (palign == "far")
     component->ParagraphAlign = DWRITE_PARAGRAPH_ALIGNMENT_FAR;
 
+  it = data.find("autocreate_textures");
+  if (it != data.end())
+  {
+    auto jsize = it->second.as_array_of<json::value::number_t>();
+    component->PopulateTextureComponent(D2D1::SizeF((FLOAT)jsize[0], (FLOAT)jsize[1]));
+  }
+
   return component;
+}
+
+// ----------------------------------------------------------------------------
+
+static RClass *cbase;
+
+static mrb_data_type mrb_textcomp_data_type;
+
+static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp);
+static void mrb_textcomp_free(mrb_state *, void *) {}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_textcomp_gem_init(mrb_state *mrb)
+{
+  mrb_textcomp_data_type.dfree = mrb_textcomp_free;
+  mrb_textcomp_data_type.struct_name = "TextComponent";
+  
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
+
+  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 }
 
 // ----------------------------------------------------------------------------
 
 mrb_value TextComponent::GetRubyWrapper()
 {
-  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for TextComponent");
-  return mrb_nil_value();
+  RUN_ONCE(cbase = Component::GetComponentRClass(),
+           mrb_textcomp_gem_init(*mrb_inst));
+
+  return mrb_textcomp_new(*mrb_inst, this);
 }
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp)
+{
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_class_get_under(mrb, rmod, "TextComponent");
+
+  auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_textcomp_data_type);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------

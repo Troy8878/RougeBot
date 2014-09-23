@@ -4,9 +4,9 @@
     "textures": [ 
       {
         "zipped": [
-          "World/cobblestone.png",
-          "World/cobblestone_mossy.png",
-          "World/lapis_block.png"
+          "World/Roof.png",
+          "World/Wall.png",
+          "World/Floor.png"
         ]
       }
     ]

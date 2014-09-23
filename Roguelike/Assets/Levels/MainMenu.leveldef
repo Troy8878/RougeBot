@@ -69,6 +69,21 @@
                   "position": [-1.6, -1.2, 0]
                 }
               }
+            },
+            {
+              "name": "Minimap",
+              "components": {
+                "TransformComponent": {
+                  "position": [1.4, -0.8]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/260:260"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "MapComponent": {}
+              }
             }
           ]
         }

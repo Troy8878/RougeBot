@@ -25,6 +25,7 @@ public:
   void OnUpdate(Events::EventMessage&);
 
   void DrawMap();
+  void ConnorDraw();
 
   mrb_value GetRubyWrapper() override;
 
@@ -34,6 +35,7 @@ private:
   Texture2D texture;
   Entity *floor = nullptr;
   mrb_value floor_comp;
+  mrb_value player_controller;
   
   // Drawing resources
   struct DrawingResources

@@ -129,6 +129,7 @@ void RegisterEngineComponents()
 #include "TextComponent.h"
 #include "Game/Testcompy.h"
 #include "Game/PositionDisplayComponent.h"
+#include "Game/MapComponent.h"
 
 static void RegisterStaticComponents()
 {
@@ -141,6 +142,7 @@ static void RegisterStaticComponents()
   RegisterStaticComponent<TextComponent>("TextComponent");
   RegisterStaticComponent<TestcompyComponent>("TestcompyComponent");
   RegisterStaticComponent<PositionDisplayComponent>("PositionDisplayComponent");
+  RegisterStaticComponent<MapComponent>("MapComponent");
 }
 
 // ----------------------------------------------------------------------------

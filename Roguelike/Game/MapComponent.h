@@ -22,6 +22,10 @@ public:
 
   void Initialize(Entity *owner, const std::string& name) override;
 
+  void OnUpdate(Events::EventMessage&);
+
+  void DrawMap();
+
   mrb_value GetRubyWrapper() override;
 
   static MapComponentFactory factory;
@@ -29,6 +33,7 @@ public:
 private:
   Texture2D texture;
   Entity *floor = nullptr;
+  mrb_value floor_comp;
   
   // Drawing resources
   struct DrawingResources
@@ -42,7 +47,7 @@ private:
     Brush *lineBrush = nullptr;
     Brush *playerBrush = nullptr;
     
-    void Validate();
+    bool Validate();
     void Release();
 
     // Deconstructor

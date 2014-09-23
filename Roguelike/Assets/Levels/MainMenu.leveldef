@@ -90,10 +90,10 @@
         "TransformComponent": {
           "rotation": [0.85, 0, 0],
           "position": [1, 0.25, 1],
-          "scale": [0.5, 0.5, 0.5]
+          "scale": [0.8, 0.8, 0.8]
         },
         "SpriteComponent": {
-          "render_target": "WorldLayer"
+          "render_target": "TranslucentLayer"
         },
         "PlayerControllerComponent": {}
       }

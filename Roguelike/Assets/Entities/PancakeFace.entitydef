@@ -6,8 +6,7 @@
   },
   "TextureComponent": {
     "textures": [
-      "PancakeFace.jpg",
-      "PancakeFace2.jpg"
+      "Robot.png"
     ]
   },
   "SpriteComponent": {},

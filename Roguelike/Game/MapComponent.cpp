@@ -91,6 +91,7 @@ Component *MapComponentFactory::CreateObject(
 
 mrb_value MapComponent::GetRubyWrapper()
 {
+  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for MapComponent");
   return mrb_nil_value();
 }
 

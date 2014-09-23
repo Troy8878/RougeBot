@@ -150,6 +150,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="StandardShapes.h" />
+    <ClInclude Include="TextComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureZip.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="StandardShapes.cpp" />
+    <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureComponent.cpp" />
     <ClCompile Include="TextureZip.cpp" />

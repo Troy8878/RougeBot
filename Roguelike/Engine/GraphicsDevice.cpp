@@ -603,7 +603,6 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
-  DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
 }
 
 // ----------------------------------------------------------------------------

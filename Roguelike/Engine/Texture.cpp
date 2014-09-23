@@ -191,6 +191,9 @@ bool TextureManager::IsTextureCached(const std::string& asset)
 
 void Texture2D::TextureResource::ValidateSpecialSurface()
 {
+  if (!device)
+    throw std::exception("I think someone forgot to use a special surface for text drawing");
+
   if (timestamp >= device->D2D.ResourceTimestamp)
     return;
 

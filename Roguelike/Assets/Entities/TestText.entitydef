@@ -1,0 +1,57 @@
+{
+  "TransformComponent": {
+    "position": [2, 2, 0],
+    "scale": [3, 3]
+  },
+  "TextureComponent": {
+    "textures": [
+      "ThoughtBubble.png"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer"
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0.05, 0.15, -0.1],
+            "scale": [0.7, 0.35]
+          },
+          "TextureComponent": {
+            "textures": [
+              "SPECIAL/SURFACE/200:100",
+              "SPECIAL/SURFACE/200:100",
+              "SPECIAL/SURFACE/200:100",
+              "SPECIAL/SURFACE/200:100",
+              "SPECIAL/SURFACE/200:100"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "HUDLayer"
+          },
+          "TextComponent": {
+            "texts": [
+              "Om nom nom nom nom nom nom",
+              "Pancakes are delicious",
+              "Especially with maple syrup",
+              "And a side of hash browns",
+              "With ketchup!"
+            ],
+
+            "text_color": "#FF0000FF",
+            "bg_color": "#00000000",
+
+            "font": "Impact",
+            "font_size": 26
+          },
+          "AnimatedComponent": {
+            "frame_time": 3,
+            "frame_range": [0, 4]
+          }
+        }
+      }
+    ]
+  }
+}

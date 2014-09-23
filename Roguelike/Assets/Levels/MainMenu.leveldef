@@ -27,7 +27,7 @@
               "target_name": "WorldLayer",
               "layer": 1,
               "fov": 45,
-              "near": 0.1,
+              "near": 0.01,
               "far": 100
             }
           }
@@ -88,9 +88,9 @@
       "archetype": "PancakeFace",
       "components": {
         "TransformComponent": {
-          "rotation": [0.77, 0, 0],
+          "rotation": [0.85, 0, 0],
           "position": [1, 0.25, 1],
-          "scale": [0.5, 0.5]
+          "scale": [0.5, 0.5, 0.5]
         },
         "SpriteComponent": {
           "render_target": "WorldLayer"

@@ -84,7 +84,11 @@ public:
   template <typename DerivedComponent>
   DerivedComponent *GetComponent(const std::string& name)
   {
+#ifdef _DEBUG
+    return dynamic_cast<DerivedComponent *>(GetComponent(name));
+#else
     return static_cast<DerivedComponent *>(GetComponent(name));
+#endif
   }
 
   #pragma endregion

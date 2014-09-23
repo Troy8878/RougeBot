@@ -70,8 +70,8 @@ class PlayerControllerComponent < ComponentBase
     pos = @transform.position
     @transform.position = pos.dup + diff
 
-    xbounce = Math.sin((pos.x % 1) * Math::PI) / 5
-    zbounce = Math.sin((pos.z % 1) * Math::PI) / 5
+    xbounce = Math.sin((pos.x % 1) * Math::PI) / 10
+    zbounce = Math.sin((pos.z % 1) * Math::PI) / 10
 
     pos.y = 0.25 + xbounce + zbounce
   end

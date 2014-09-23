@@ -43,4 +43,5 @@
 #include "Entity.h"
 #include "Component.h"
 #include "Game.h"
+#include "Texture.h"
 

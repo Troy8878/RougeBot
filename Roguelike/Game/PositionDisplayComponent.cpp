@@ -70,6 +70,7 @@ void PositionDisplayComponent::DrawDisplay()
   drawing.Validate();
   
   auto& d2d = GetGame()->GameDevice->D2D;
+
   d2d.DrawTo(texture);
 
   auto targetSize = d2d.DeviceContext->GetSize();
@@ -80,12 +81,16 @@ void PositionDisplayComponent::DrawDisplay()
   textbuf << L"y: " << int(lastPos.z + 0.5f);
   auto text = textbuf.str();
 
-  d2d.DeviceContext->FillRectangle(rect, drawing.bgbrush);
+  HRESULT hr;
 
+  // Clear the buffer and draw the new content
+  d2d.DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
+  d2d.DeviceContext->FillRectangle(rect, drawing.bgbrush);
   d2d.DeviceContext->DrawText(text.c_str(), (UINT) text.size(),
                               drawing.format, rect, drawing.brush);
 
-  d2d.EndDraw();
+  hr = d2d.EndDraw();
+  CHECK_HRESULT(hr);
 }
 
 // ----------------------------------------------------------------------------
@@ -158,6 +163,7 @@ Component *PositionDisplayComponentFactory::CreateObject(
 
 mrb_value PositionDisplayComponent::GetRubyWrapper()
 {
+  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for PositionDisplayComponent");
   return mrb_nil_value();
 }
 

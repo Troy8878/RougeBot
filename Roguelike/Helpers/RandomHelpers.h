@@ -497,3 +497,25 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
 
 // ----------------------------------------------------------------------------
 
+D2D1::ColorF StringToColor(const std::string& name);
+
+// ----------------------------------------------------------------------------
+
+class DebugMessage
+{
+public:
+#ifdef _DEBUG
+  inline DebugMessage(const std::string& str)
+  {
+    std::cerr << str << std::endl;
+  }
+#else
+  template <typename... A>
+  inline DebugMessage(A...) {}
+#endif
+};
+
+#define ONE_TIME_MESSAGE(msg) static DebugMessage _________one_time_message(msg)
+
+// ----------------------------------------------------------------------------
+

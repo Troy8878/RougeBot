@@ -49,6 +49,7 @@ Component *COMPONENTNAMEHEREComponentFactory::CreateObject(
 
 mrb_value COMPONENTNAMEHEREComponent::GetRubyWrapper()
 {
+  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for COMPONENTNAMEHERE");
   return mrb_nil_value();
 }
 

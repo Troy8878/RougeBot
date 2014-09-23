@@ -1,0 +1,117 @@
+{
+  "mruby garbage collection": {
+    "total time": 0.162334,
+    "average time": 0.000983844,
+    "times ran": 165
+  },
+  "ChildHierarchy#first_update": {
+    "total time": 0.0250203,
+    "average time": 0.0083401,
+    "times ran": 3
+  },
+  "Level Load": {
+    "total time": 0.762047,
+    "average time": 0.762047,
+    "times ran": 1
+  },
+  "level_load event": {
+    "total time": 0,
+    "average time": 0,
+    "times ran": 1
+  },
+  "ILT+4110(?OnFirstUpdatePositionDisplayComponentQEAAXAEAVEventMessageEventsZ)": {
+    "total time": 0.0179798,
+    "average time": 0.0179798,
+    "times ran": 1
+  },
+  "pre_update event": {
+    "total time": 0.009942,
+    "average time": 6.02545e-005,
+    "times ran": 165
+  },
+  "TransformComponent::OnUpdate": {
+    "total time": 0.0089896,
+    "average time": 5.45155e-006,
+    "times ran": 1649
+  },
+  "RubyComponent::OnEvent": {
+    "total time": 0.0902171,
+    "average time": 0.000124266,
+    "times ran": 726
+  },
+  "TestRoomComponent#first_update": {
+    "total time": 0,
+    "average time": 0,
+    "times ran": 1
+  },
+  "The Game": {
+    "total time": 4.12961,
+    "average time": 4.12961,
+    "times ran": 1
+  },
+  "CameraComponent::OnUpdate": {
+    "total time": 0.0030023,
+    "average time": 6.06525e-006,
+    "times ran": 495
+  },
+  "ILT+4655(?OnUpdatePositionDisplayComponentQEAAXAEAVEventMessageEventsZ)": {
+    "total time": 0.0362601,
+    "average time": 0.000219758,
+    "times ran": 165
+  },
+  "update event": {
+    "total time": 0.55197,
+    "average time": 0.00334527,
+    "times ran": 165
+  },
+  "PlayerControllerComponent#on_update": {
+    "total time": 0.0161095,
+    "average time": 9.70452e-005,
+    "times ran": 166
+  },
+  "AnimatedComponent#animate": {
+    "total time": 0.0030112,
+    "average time": 1.81398e-005,
+    "times ran": 166
+  },
+  "draw event": {
+    "total time": 2.01311,
+    "average time": 0.0122007,
+    "times ran": 165
+  },
+  "HUD::TileCursorComponent#first_update": {
+    "total time": 0,
+    "average time": 0,
+    "times ran": 1
+  },
+  "Game Loop": {
+    "total time": 3.70069,
+    "average time": 0.0224284,
+    "times ran": 165
+  },
+  "HUD::TileCursorComponent#on_update": {
+    "total time": 0.0119941,
+    "average time": 7.26915e-005,
+    "times ran": 165
+  },
+  "CameraFollowComponent#on_update": {
+    "total time": 0.0090129,
+    "average time": 5.46236e-005,
+    "times ran": 165
+  },
+  "post_update event": {
+    "total time": 0.0310174,
+    "average time": 0.000187984,
+    "times ran": 165
+  },
+  "HUD::TileCursorComponent#mouse_move": {
+    "total time": 0.0070228,
+    "average time": 0.00016721,
+    "times ran": 42
+  },
+  "PlayerControllerComponent#on_key": {
+    "total time": 0.0060337,
+    "average time": 0.000354924,
+    "times ran": 17
+  }
+}

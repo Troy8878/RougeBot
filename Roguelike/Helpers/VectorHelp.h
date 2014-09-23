@@ -62,6 +62,13 @@ namespace math
     }
 
     inline operator XMVECTOR() const { return get(); }
+
+    inline Vector(const D2D1::ColorF color)
+      : XMFLOAT4A(color.r, color.g, color.b, color.a)
+    {
+    }
+
+    inline operator D2D1::ColorF() const { return D2D1::ColorF{x, y, z, w}; }
   };
 
   __declspec(align(16)) class Vector2D : public XMFLOAT2A

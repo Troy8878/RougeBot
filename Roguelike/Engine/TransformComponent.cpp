@@ -121,6 +121,9 @@ Component *TransformComponentFactory::CreateObject(
   rotation.w = 0;
   scale.w = 1;
 
+  if (scale.z == 0)
+    scale.z = 1;
+
   auto comp = new (memory) TransformComponent(position, rotation, scale);
 
   return comp;

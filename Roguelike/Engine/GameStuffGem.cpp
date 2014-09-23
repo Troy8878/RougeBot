@@ -138,7 +138,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
   auto kernel = mrb->kernel_module;
 
-  mrb_define_class_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
+  mrb_define_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
 
   #pragma region MessageBox stuff

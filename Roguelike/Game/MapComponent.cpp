@@ -65,19 +65,6 @@ void MapComponent::DrawMap()
 
   auto& d2d = GetGame()->GameDevice->D2D;
   d2d.DrawTo(texture);
-
-  ConnorDraw();
-
-  HRESULT hr = d2d.EndDraw();
-  CHECK_HRESULT(hr);
-}
-
-// ----------------------------------------------------------------------------
-
-void MapComponent::ConnorDraw()
-{
-  auto& d2d = GetGame()->GameDevice->D2D;
-
   d2d.DeviceContext->Clear();
   auto size = d2d.DeviceContext->GetSize();
 
@@ -85,49 +72,12 @@ void MapComponent::ConnorDraw()
 
   mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
   mrb_int len = mrb_ary_len(mrb, ary);
+  FLOAT mapScale = size.width / len;
 
-  auto mapScale = size.width / (len + 2);
+  (mapScale); // TODO: draw the minimap :3
 
-  for (mrb_int y = 0; y < len; ++y)
-  {
-    mrb_value row = mrb_ary_entry(ary, y);
-    mrb_int len = mrb_ary_len(mrb, row);
-
-    for (mrb_int x = 0; x < len; ++x)
-    {
-      auto rect = D2D1::RectF((x + 1) * mapScale, (y + 1) * mapScale, 
-                              (x + 2) * mapScale, (y + 2) * mapScale);
-      mrb_int slot = mrb_fixnum(mrb_ary_entry(row, x));
-
-      if (slot == 1) // Draw wall
-      {
-        d2d.DeviceContext->FillRectangle(rect, drawing.lineBrush);
-      }
-    }
-  }
-
-  // Borders
-  {
-    auto top = D2D1::RectF(0, 0, size.width, mapScale);
-    auto left = D2D1::RectF(0, mapScale, mapScale, size.height - mapScale);
-    auto right = D2D1::RectF(size.height - mapScale, mapScale, size.width, size.height - mapScale);
-    auto bottom = D2D1::RectF(0, size.height - mapScale, size.width, size.height);
-
-    d2d.DeviceContext->FillRectangle(top, drawing.lineBrush);
-    d2d.DeviceContext->FillRectangle(left, drawing.lineBrush);
-    d2d.DeviceContext->FillRectangle(right, drawing.lineBrush);
-    d2d.DeviceContext->FillRectangle(bottom, drawing.lineBrush);
-  }
-
-  // Player Position
-  {
-    auto pos = ruby::get_ruby_vector(
-      mrb_obj_iv_get(mrb, mrb_obj_ptr(player_controller), mrb_intern_lit(mrb, "@pos")));
-    auto prect = D2D1::RectF((pos.x + 1) * mapScale, (len - pos.z + 1) * mapScale, 
-                             (pos.x + 2) * mapScale, (len - pos.z) * mapScale);
-
-    d2d.DeviceContext->FillRectangle(prect, drawing.playerBrush);
-  }
+  HRESULT hr = d2d.EndDraw();
+  CHECK_HRESULT(hr);
 }
 
 // ----------------------------------------------------------------------------

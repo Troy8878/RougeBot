@@ -25,7 +25,6 @@ public:
   void OnUpdate(Events::EventMessage&);
 
   void DrawMap();
-  void ConnorDraw();
 
   mrb_value GetRubyWrapper() override;
 

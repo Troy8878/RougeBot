@@ -76,8 +76,8 @@ class TestRoomComponent < ComponentBase
   def generate_room
     @room, @px, @py = Floor.generate(
       width: ROOM_SIZE, height: ROOM_SIZE, 
-      birth: 3, death: 4,
-      steps: 1
+      birth: 1, death: 3,
+      steps: rand(:int, 10, 20)
     )
 
     build_model do |builder|

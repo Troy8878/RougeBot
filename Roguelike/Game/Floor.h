@@ -33,7 +33,7 @@ public:
   short Fills = 1;
   short FloodSteps = 0;
 
-  int MinRoomSize = 250;  // Minimum amount of tiles in a room
+  int MinRoomSize = 350;  // Minimum amount of tiles in a room
 
   int ItemLimit = 4;
 

@@ -130,6 +130,8 @@ void MapComponent::DrawMap()
   // Now draw them~!
   d2d.DeviceContext->FillEllipse(playerEllipse, drawing.playerBrush);
 
+  // just a little test ignore this
+  auto pancake = TextureManager::Instance.LoadTexture("PancakeFace.jpg");
 
   HRESULT hr = d2d.EndDraw();
   CHECK_HRESULT(hr);

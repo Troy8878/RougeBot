@@ -124,11 +124,11 @@ void MapComponent::DrawMap()
   // Retrieve the position from the ruby class.
   auto playerPos = mrb_funcall(mrb, player_controller, "pos", 0);
   auto& posv = ruby::get_ruby_vector(playerPos);
-  // Create the rectangle.s
-  auto playerRectangle = D2D1::RectF((posv.x + 1) * mapScale, (len - posv.z) * mapScale, 
-                                     (posv.x + 2) * mapScale, (len - posv.z + 1) * mapScale);
+  // Create the Ellipse.
+  auto playerEllipse = D2D1::Ellipse({(posv.x + 1.5f) * mapScale, (len - posv.z + 0.5f) * mapScale},
+                                      mapScale / 2, mapScale / 2);
   // Now draw them~!
-  d2d.DeviceContext->FillRectangle(playerRectangle, drawing.playerBrush);
+  d2d.DeviceContext->FillEllipse(playerEllipse, drawing.playerBrush);
 
 
   HRESULT hr = d2d.EndDraw();

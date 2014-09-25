@@ -5,7 +5,7 @@
 #########################
 
 module Components
-  class TextComponent
+  class TextComponent < ComponentBase
     class TextArray
       def initialize(text)
         @text = text
@@ -19,9 +19,36 @@ module Components
         @text.set_text_at index, value
       end
 
-      def each(&block)
-        @text.to_a.each(&block)
+      begin # Enumerable stuff
+        include Enumerable
+
+        def to_a
+          @text.to_a
+        end
+
+        def each(&block)
+          to_a.each(&block)
+        end
+
+        def map!(&block)
+          raise "map! only works with a block" unless block_given?
+          @text.texts = map(&block)
+        end
+
+        def select!(&block)
+          raise "select! only works with a block" unless block_given?
+          @text.texts = select(&block)
+        end
+
+        def reject!(&block)
+          raise "reject! only works with a block" unless block_given?
+          @text.texts = reject(&block)
+        end
       end
+    end
+
+    def texts
+      TextArray.new self
     end
   end
 end

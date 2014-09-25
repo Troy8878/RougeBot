@@ -9,12 +9,10 @@ class MapControllerComponent < ComponentBase
   def initialize(data)
     super data
 
-    puts "Initialized map controller!"
     @transform = self.owner.transform_component
     @original_pos = @transform.position.dup
     @maximized = false
-
-    puts :key_down.object_id
+    
     self.register_event :key_down, :on_key
   end
 

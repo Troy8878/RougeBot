@@ -182,9 +182,9 @@ void Entity::RecalculateEventCounts()
 
   for (auto child : children)
   {
-    for (auto& event : child->_events)
+    for (auto& count : child->_eventCounts)
     {
-      _eventCounts[event.first] += event.second.size();
+      _eventCounts[count.first] += count.second;
     }
   }
 

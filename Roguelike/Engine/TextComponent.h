@@ -77,8 +77,8 @@ private:
   void OnChanged() { drawing.timestamp = clock::from_time_t(0); }
 
 public:
-  auto begin() -> decltype(drawing.texts.begin()) { return drawing.texts.begin(); }
-  auto end() -> decltype(drawing.texts.end()) { return drawing.texts.end(); }
+  auto begin() const -> decltype(drawing.texts.cbegin()) { return drawing.texts.cbegin(); }
+  auto end() const -> decltype(drawing.texts.cend()) { return drawing.texts.cend(); }
 };
 
 // ----------------------------------------------------------------------------

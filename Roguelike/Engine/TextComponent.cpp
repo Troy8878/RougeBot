@@ -265,7 +265,6 @@ static void mrb_textcomp_free(mrb_state *, void *) {}
 static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_texts(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
@@ -291,7 +290,6 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 
   mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
-  mrb_define_method(mrb, rclass, "texts", mrb_textcomp_texts, ARGS_NONE());
   //mrb_define_method(mrb, rclass, "texts=", mrb_textcomp_texts_set, ARGS_REQ(1));
 }
 
@@ -326,7 +324,7 @@ static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self)
 
   for (auto& text : *tcomp)
   {
-    (text);
+    mrb_ary_push(mrb, ary, mrb_str_new(mrb, text.c_str(), text.size()));
   }
 
   return ary;
@@ -357,16 +355,6 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
   auto text = mrb_str_to_stdstring(str);
 
   tcomp->SetText((size_t) index, text);
-}
-
-// ----------------------------------------------------------------------------
-
-static mrb_value mrb_textcomp_texts(mrb_state *mrb, mrb_value self)
-{
-  auto tclass = mrb_obj_class(mrb, self);
-  auto rclass = mrb_class_get_under(mrb, tclass, "TextArray");
-
-  return mrb_obj_new(mrb, rclass, 1, &self);
 }
 
 // ----------------------------------------------------------------------------

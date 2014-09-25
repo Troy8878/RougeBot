@@ -92,10 +92,10 @@ void Input::OnKeyDown(const InputSignal& signal)
   state->hold_time = 0;
   state->hold_time_buffer = 0;
   
-  static Events::EventId keyDownId("key_down");
-  RaiseKeyEvent(keyDownId, *state);
-  static Events::EventId keyHeldId("key_held");
-  RaiseKeyEvent(keyHeldId, *state);
+  DEF_EVENT_ID(key_down);
+  RaiseKeyEvent(key_down, *state);
+  DEF_EVENT_ID(key_held);
+  RaiseKeyEvent(key_held, *state);
 }
 
 // ----------------------------------------------------------------------------
@@ -112,8 +112,8 @@ void Input::OnKeyUp(const InputSignal& signal)
   state->release_frame = GetGame()->Time.Frame;
   state->hold_time = 0;
   
-  Events::EventId keyUpId("key_up");
-  RaiseKeyEvent(keyUpId, *state);
+  DEF_EVENT_ID(key_up);
+  RaiseKeyEvent(key_up, *state);
 }
 
 // ----------------------------------------------------------------------------
@@ -271,8 +271,8 @@ void Input::UpdateState(KeyState& state, double dt)
     {
       state.hold_time_buffer -= key_hold_event_rate;
 
-      Events::EventId keyHeldId("key_held");
-      RaiseKeyEvent(keyHeldId, state);
+      DEF_EVENT_ID(key_held);
+      RaiseKeyEvent(key_held, state);
     }
   }
   else

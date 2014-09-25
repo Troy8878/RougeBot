@@ -521,6 +521,10 @@ eval_under(mrb_state *mrb, mrb_value self, mrb_value blk, struct RClass *c)
   }
   ci->target_class = c;
   p = mrb_proc_ptr(blk);
+
+  if (!p)
+    mrb_raise(mrb, mrb->eException_class, "missing proc");
+
   ci->proc = p;
   if (MRB_PROC_CFUNC_P(p)) {
     return p->body.func(mrb, self);

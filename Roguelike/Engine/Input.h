@@ -11,11 +11,11 @@
 // ----------------------------------------------------------------------------
 
 //  Events
-//    key_triggered
+//    key_down
 //      Happens once when a key is pushed down
 //      type: KeyStateEvent
 //
-//    key_released
+//    key_up
 //      Happens once when a key is released
 //      type: KeyStateEvent
 //

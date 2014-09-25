@@ -65,6 +65,14 @@ void TextComponent::AppendText(const std::string& text)
 
 // ----------------------------------------------------------------------------
 
+void TextComponent::ClearText()
+{
+  drawing.texts.clear();
+  OnChanged();
+}
+
+// ----------------------------------------------------------------------------
+
 void TextComponent::PopulateTextureComponent(const D2D1_SIZE_F& size)
 {
   drawing.populateSize = size;
@@ -94,18 +102,15 @@ void TextComponent::DrawingResources::Validate()
   if (!textures)
     return;
 
-  if (shouldPopulate)
-  {
-    DoPopulate();
-    shouldPopulate = false;
-  }
-
   auto& d2d = GetGame()->GameDevice->D2D;
 
   if (timestamp >= d2d.ResourceTimestamp)
     return;
 
   Release();
+
+  if (shouldPopulate)
+    DoPopulate();
 
   HRESULT hr;
   ID2D1SolidColorBrush *scBrush;
@@ -288,9 +293,17 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
   auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
 
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
-
+  
   mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
-  //mrb_define_method(mrb, rclass, "texts=", mrb_textcomp_texts_set, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "get_text_at", mrb_textcomp_get_text_at, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "set_text_at", mrb_textcomp_set_text_at, ARGS_REQ(2));
+  mrb_define_method(mrb, rclass, "texts=", mrb_textcomp_texts_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, rclass, "font", mrb_textcomp_font_get, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "font=", mrb_textcomp_font_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, rclass, "font_size", mrb_textcomp_font_size_get, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "font_size=", mrb_textcomp_font_size_set, ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -355,27 +368,74 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
   auto text = mrb_str_to_stdstring(str);
 
   tcomp->SetText((size_t) index, text);
+
+  return str;
 }
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value ary;
+  mrb_get_args(mrb, "A", &ary);
+  
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  tcomp->ClearText();
+
+  mrb_int len = mrb_ary_len(mrb, ary);
+  for (mrb_int i = 0; i < len; ++i)
+  {
+    tcomp->AppendText(mrb_str_to_stdstring(mrb_ary_entry(ary, i)));
+  }
+
+  return ary;
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self)
+{
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto font = narrow(tcomp->Font);
+  
+  return mrb_str_new(mrb, font.c_str(), font.size());
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  tcomp->Font = widen(mrb_str_to_stdstring(str));
+  
+  return str;
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self)
+{
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto size = mrb_float_value(mrb, tcomp->FontSize);
+  
+  return size;
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_float size;
+  mrb_get_args(mrb, "f", &size);
+
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  tcomp->FontSize = (FLOAT) size;
+  
+  return mrb_float_value(mrb, size);
+}
 
 // ----------------------------------------------------------------------------
 

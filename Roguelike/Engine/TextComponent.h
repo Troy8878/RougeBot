@@ -33,6 +33,7 @@ public:
   const std::string& GetText(size_t index);
   void SetText(size_t index, const std::string& text);
   void AppendText(const std::string& text);
+  void ClearText();
   void PopulateTextureComponent(const D2D1_SIZE_F& size);
 
   void OnUpdate(Events::EventMessage&);

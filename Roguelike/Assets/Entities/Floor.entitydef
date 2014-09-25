@@ -8,7 +8,14 @@
           "World/Wall.png",
           "World/Floor.png"
         ]
-      }
+      },
+      /*{
+        "zipped": [
+          "ASCII/Roof.png",
+          "ASCII/Wall.png",
+          "ASCII/Floor.png"
+        ]
+      }*/
     ]
   },
   "CustomModelComponent": {

@@ -17,7 +17,6 @@ class MapControllerComponent < ComponentBase
   end
 
   def on_key(e)
-    puts e.plain_char
     return unless e.plain_char == 'M'
 
     if maximized?

@@ -4,6 +4,13 @@
 # Created 2014/09/24
 ###########################
 
+#########################Class Details##########################
+# Component that controls the size and location of the minimap.
+#######################Property Details#########################
+# transform - the transform component of the minimap.
+# original_pos - the original position of the minimap.
+# maximized - boolean to store if the map is maximized or not.
+################################################################
 class MapControllerComponent < ComponentBase
 
   def initialize(data)
@@ -13,12 +20,13 @@ class MapControllerComponent < ComponentBase
     @original_pos = @transform.position.dup
     @maximized = false
     
+    # Look out for key presses.
     self.register_event :key_down, :on_key
   end
 
   def on_key(e)
+    # If the M key wasn't the pressed key, return.
     return unless e.plain_char == 'M'
-
     if maximized?
       minimize
     else
@@ -31,14 +39,18 @@ class MapControllerComponent < ComponentBase
   end
 
   def maximize
+    # We move the map to the center, and scale it.
     @transform.position = Vector.zero
     @transform.scale = Vector.scalar(2)
+    # We need to record that the map is now maximized.
     @maximized = true
   end
 
   def minimize
+    # Move everything back to the original location and scale.
     @transform.position = @original_pos
     @transform.scale = Vector.scalar(1)
+    # Record that the map is no longer maximized.
     @maximized = false
   end
 

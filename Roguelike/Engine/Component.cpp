@@ -127,7 +127,6 @@ void RegisterEngineComponents()
 #include "CustomModelComponent.h"
 #include "TextureComponent.h"
 #include "TextComponent.h"
-#include "Game/Testcompy.h"
 #include "Game/PositionDisplayComponent.h"
 #include "Game/MapComponent.h"
 
@@ -140,7 +139,6 @@ static void RegisterStaticComponents()
   RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
   RegisterStaticComponent<TextureComponent>("TextureComponent");
   RegisterStaticComponent<TextComponent>("TextComponent");
-  RegisterStaticComponent<TestcompyComponent>("TestcompyComponent");
   RegisterStaticComponent<PositionDisplayComponent>("PositionDisplayComponent");
   RegisterStaticComponent<MapComponent>("MapComponent");
 }

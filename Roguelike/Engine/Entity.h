@@ -47,7 +47,7 @@ public:
   PROPERTY(get = _GetEntityId) entity_id Id;
   PROPERTY(get = GetRubyWrapper) mrb_value RubyWrapper;
 
-  IRW_PROPERTY(std::string, Name);
+  PROPERTY(get = _GetName, put = _SetName) std::string Name;
   IRW_PROPERTY(math::Matrix, LocalTransform);
   IR_PROPERTY(math::Matrix, Transform);
   
@@ -55,8 +55,16 @@ public:
 
 private:
   ~Entity();
+
+  std::string _name;
+
   friend class EntityFactory;
   friend class BucketAllocator;
+
+public:
+  std::string& _GetName() { return _name; }
+  const std::string& _GetName() const { return _name; }
+  void _SetName(const std::string& name);
 
   #pragma endregion
 
@@ -177,8 +185,21 @@ public:
   PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
   const std::vector<Entity *>& _GetChildren() { return children; }
 
+  bool IsSelfOrChildOf(Entity *other)
+  {
+    if (this == other)
+      return true;
+    if (Parent == nullptr)
+      return false;
+
+    return Parent->IsSelfOrChildOf(other);
+  }
+
 private:
   void DestroyChildren();
+
+  void RegisterNamehash();
+  void UnregisterNamehash();
 
   std::vector<Entity *> children;
 

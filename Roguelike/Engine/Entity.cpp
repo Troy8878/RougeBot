@@ -29,6 +29,8 @@ Entity::Entity(entity_id id)
 {
   if (_id >= next_ent_id)
     next_ent_id = _id + 1;
+
+  RegisterNamehash();
 }
 
 // ----------------------------------------------------------------------------
@@ -41,6 +43,17 @@ Entity::~Entity()
   {
     ComponentManager::Instance.ReleaseComponent(pair.second);
   }
+
+  UnregisterNamehash();
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::_SetName(const std::string& name)
+{
+  UnregisterNamehash();
+  _name = name;
+  RegisterNamehash();
 }
 
 // ----------------------------------------------------------------------------
@@ -236,16 +249,51 @@ void Entity::RemoveChild(Entity *entity)
 
 // ----------------------------------------------------------------------------
 
+static std::unordered_multimap<entity_id, Entity *> idmap;
+static std::unordered_multimap<std::string, Entity *> namemap;
+
+// ----------------------------------------------------------------------------
+
+void Entity::RegisterNamehash()
+{
+  idmap.insert({_id, this});
+  namemap.insert({_name, this});
+
+  std::cerr << "namehash ++ (" << _id << ", " << _name << ")" << std::endl;
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::UnregisterNamehash()
+{
+  std::cerr << "namehash -- (" << _id << ", " << _name << ")" << std::endl;
+
+  typedef decltype(idmap) idmt;
+  typedef decltype(namemap) nmmt;
+
+  auto idbucket = idmap.bucket(_id);
+  idmap.erase(std::find(
+    idmap.begin(idbucket), idmap.end(idbucket), 
+    idmt::value_type{_id, this}));
+
+  auto namebucket = namemap.bucket(_name);
+  namemap.erase(std::find(
+    namemap.begin(namebucket), namemap.end(namebucket),
+    nmmt::value_type{_name, this}));
+}
+
+// ----------------------------------------------------------------------------
+
 Entity *Entity::FindEntity(entity_id id)
 {
-  if (Id == id)
-    return this;
+  auto bucket = idmap.bucket(id);
+  auto first = idmap.begin(bucket);
+  auto last = idmap.end(bucket);
 
-  for (auto child : children)
+  for (; first != last; ++first)
   {
-    auto potential = child->FindEntity(id);
-    if (potential)
-      return potential;
+    if (first->second->IsSelfOrChildOf(this))
+      return first->second;
   }
 
   return nullptr;
@@ -255,14 +303,14 @@ Entity *Entity::FindEntity(entity_id id)
 
 Entity *Entity::FindEntity(const std::string& name)
 {
-  if (Name == name)
-    return this;
+  auto bucket = namemap.bucket(name);
+  auto first = namemap.begin(bucket);
+  auto last = namemap.end(bucket);
 
-  for (auto child : children)
+  for (; first != last; ++first)
   {
-    auto potential = child->FindEntity(name);
-    if (potential)
-      return potential;
+    if (first->second->IsSelfOrChildOf(this))
+      return first->second;
   }
 
   return nullptr;
@@ -274,24 +322,38 @@ void Entity::SearchEntities(std::vector<Entity *>& results,
                             const std::string& namePattern,
                             bool partialMatch)
 {
-  if (partialMatch)
+  if (!partialMatch)
   {
-    if (Name.find(namePattern) != Name.npos)
+    auto bucket = namemap.bucket(namePattern);
+    auto first = idmap.begin(bucket);
+    auto last = idmap.end(bucket);
+
+    for (; first != last; ++first)
     {
-      results.push_back(this);
+      if (first->second->IsSelfOrChildOf(this))
+        results.push_back(first->second);
     }
   }
   else
   {
-    if (Name == namePattern)
+    for (size_t i = 0; i < namemap.bucket_count(); ++i)
     {
-      results.push_back(this);
-    }
-  }
+      auto iter = namemap.begin(i);
+      auto end = namemap.end(i);
 
-  for (auto child : children)
-  {
-    child->SearchEntities(results, namePattern, partialMatch);
+      if (iter == end)
+        continue;
+
+      // Check if this bucket matches the pattern
+      if (iter->first.find(namePattern) == iter->first.npos)
+        continue;
+
+      for (; iter != end; ++iter)
+      {
+        if (iter->second->IsSelfOrChildOf(this))
+          results.push_back(iter->second);
+      }
+    }
   }
 }
 
@@ -300,12 +362,23 @@ void Entity::SearchEntities(std::vector<Entity *>& results,
 void Entity::SearchEntities(std::vector<Entity *>& results, 
                             const std::regex& namePattern)
 {
-  if (std::regex_search(Name, namePattern))
-    results.push_back(this);
-
-  for (auto child : children)
+  for (size_t i = 0; i < namemap.bucket_count(); ++i)
   {
-    child->SearchEntities(results, namePattern);
+    auto iter = namemap.begin(i);
+    auto end = namemap.end(i);
+
+    if (iter == end)
+      continue;
+
+    // Check if this bucket matches the pattern
+    if (!std::regex_search(iter->first, namePattern))
+      continue;
+
+    for (; iter != end; ++iter)
+    {
+      if (iter->second->IsSelfOrChildOf(this))
+        results.push_back(iter->second);
+    }
   }
 }
 

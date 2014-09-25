@@ -50,9 +50,6 @@
     <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Testcompy.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="PositionDisplayComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Testcompy.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="PositionDisplayComponent.h">
       <Filter>Header Files\Components</Filter>

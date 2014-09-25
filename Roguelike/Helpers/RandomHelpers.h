@@ -528,3 +528,25 @@ public:
 
 // ----------------------------------------------------------------------------
 
+template <typename CharType, typename Traits = std::char_traits<CharType>, 
+          typename Alloc = std::allocator<CharType>>
+inline std::basic_string<CharType, Traits, Alloc> downcase(
+  const std::basic_string<CharType, Traits, Alloc>& input)
+{
+  std::basic_string<CharType, Traits, Alloc> copy = input;
+  std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+  return copy;
+}
+
+template <typename CharType, typename Traits = std::char_traits<CharType>, 
+          typename Alloc = std::allocator<CharType>>
+inline std::basic_string<CharType, Traits, Alloc> downcase(
+  const CharType *str)
+{
+  std::basic_string<CharType, Traits, Alloc> copy = str;
+  std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+  return copy;
+}
+
+// ----------------------------------------------------------------------------
+

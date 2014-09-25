@@ -7,6 +7,7 @@
 #include "Common.h"
 #include "TextComponent.h"
 #include "TextureComponent.h"
+#include "RubyWrappers.h"
 
 #include "mruby/array.h"
 
@@ -267,14 +268,14 @@ static mrb_data_type mrb_textcomp_data_type;
 static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp);
 static void mrb_textcomp_free(mrb_state *, void *) {}
 
-static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);//
 static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
@@ -304,6 +305,11 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
 
   mrb_define_method(mrb, rclass, "font_size", mrb_textcomp_font_size_get, ARGS_NONE());
   mrb_define_method(mrb, rclass, "font_size=", mrb_textcomp_font_size_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, rclass, "text_color", mrb_textcomp_text_color_get, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "text_color=", mrb_textcomp_text_color_set, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "bg_color", mrb_textcomp_bg_color_get, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "bg_color=", mrb_textcomp_bg_color_set, ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -439,19 +445,69 @@ static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self)
+{
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto color = tcomp->TextColor;
+
+  return ruby::create_new_vector(color);
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value rcolor;
+  mrb_get_args(mrb, "o", &rcolor);
+
+  D2D1::ColorF color = D2D1::ColorF(0);
+  if (mrb_string_p(rcolor))
+  {
+    color = StringToColor(mrb_str_to_stdstring(rcolor));
+  }
+  else
+  {
+    color = ruby::get_ruby_vector(rcolor);
+  }
+
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  tcomp->TextColor = color;
+
+  return rcolor;
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self)
+{
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto color = tcomp->BGColor;
+
+  return ruby::create_new_vector(color);
+}
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value rcolor;
+  mrb_get_args(mrb, "o", &rcolor);
+
+  D2D1::ColorF color = D2D1::ColorF(0);
+  if (mrb_string_p(rcolor))
+  {
+    color = StringToColor(mrb_str_to_stdstring(rcolor));
+  }
+  else
+  {
+    color = ruby::get_ruby_vector(rcolor);
+  }
+
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  tcomp->BGColor = color;
+
+  return rcolor;
+}
 
 // ----------------------------------------------------------------------------
 

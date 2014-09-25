@@ -92,9 +92,9 @@ void Input::OnKeyDown(const InputSignal& signal)
   state->hold_time = 0;
   state->hold_time_buffer = 0;
   
-  Events::EventId keyDownId("key_down");
+  static Events::EventId keyDownId("key_down");
   RaiseKeyEvent(keyDownId, *state);
-  Events::EventId keyHeldId("key_held");
+  static Events::EventId keyHeldId("key_held");
   RaiseKeyEvent(keyHeldId, *state);
 }
 

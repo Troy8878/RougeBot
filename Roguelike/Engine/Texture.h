@@ -34,6 +34,8 @@ public:
   */
   PROPERTY(get = _GetTextureZip) TextureZip& Zip;
 
+  ID2D1BitmapBrush1 *To2DBrush();
+
   operator bool() const { return !!_res; }
 
   static Texture2D GetNullTexture(ID3D11Device *device);
@@ -57,9 +59,12 @@ private:
     // SPECIAL/SURFACE data
     IDXGISurface *surface = nullptr;
     ID2D1Bitmap1 *target = nullptr;
+    ID2D1Bitmap1 *bitmap = nullptr;
+    ID2D1BitmapBrush1 *brush = nullptr;
     GraphicsDevice *device = nullptr;
     UINT width, height;
     clock::time_point timestamp;
+    clock::time_point brush_timestamp;
     TextureZip *zip;
 
     TextureResource() = default;

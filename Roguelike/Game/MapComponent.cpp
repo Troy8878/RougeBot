@@ -130,9 +130,6 @@ void MapComponent::DrawMap()
   // Now draw them~!
   d2d.DeviceContext->FillEllipse(playerEllipse, drawing.playerBrush);
 
-  // just a little test ignore this
-  auto pancake = TextureManager::Instance.LoadTexture("PancakeFace.jpg");
-
   HRESULT hr = d2d.EndDraw();
   CHECK_HRESULT(hr);
 }
@@ -159,6 +156,7 @@ bool MapComponent::DrawingResources::Validate()
   hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::CornflowerBlue, 0.8f), &scBrush);
   CHECK_HRESULT(hr);
   wallBrush = scBrush;
+
   // Create the player brush
   hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::Yellow), &scBrush);
   CHECK_HRESULT(hr);

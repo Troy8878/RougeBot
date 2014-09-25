@@ -75,6 +75,10 @@ private:
   } drawing;
 
   void OnChanged() { drawing.timestamp = clock::from_time_t(0); }
+
+public:
+  auto begin() -> decltype(drawing.texts.begin()) { return drawing.texts.begin(); }
+  auto end() -> decltype(drawing.texts.end()) { return drawing.texts.end(); }
 };
 
 // ----------------------------------------------------------------------------

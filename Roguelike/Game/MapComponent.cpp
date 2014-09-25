@@ -158,7 +158,7 @@ bool MapComponent::DrawingResources::Validate()
   CHECK_HRESULT(hr);
   wallBrush = scBrush;
   // Create the player brush
-  hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::Green), &scBrush);
+  hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::Yellow), &scBrush);
   CHECK_HRESULT(hr);
   playerBrush = scBrush;
 

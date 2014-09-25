@@ -8,6 +8,10 @@
 #include "TextComponent.h"
 #include "TextureComponent.h"
 
+#include "mruby/array.h"
+
+#pragma warning (disable : 4127)
+
 // ----------------------------------------------------------------------------
 
 TextComponentFactory TextComponent::factory;
@@ -258,6 +262,22 @@ static mrb_data_type mrb_textcomp_data_type;
 static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp);
 static void mrb_textcomp_free(mrb_state *, void *) {}
 
+static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_texts(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self);
+
+//static mrb_value mrb_textcomp_(mrb_state *mrb, mrb_value self);
+
 // ----------------------------------------------------------------------------
 
 static void mrb_textcomp_gem_init(mrb_state *mrb)
@@ -269,6 +289,10 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
   auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
 
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
+
+  mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "texts", mrb_textcomp_texts, ARGS_NONE());
+  //mrb_define_method(mrb, rclass, "texts=", mrb_textcomp_texts_set, ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -294,4 +318,92 @@ static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self)
+{
+  mrb_value ary = mrb_ary_new(mrb);
+  
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+
+  for (auto& text : *tcomp)
+  {
+    (text);
+  }
+
+  return ary;
+}
+
 // ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self)
+{
+  mrb_int index;
+  mrb_get_args(mrb, "i", &index);
+
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto& text = tcomp->GetText((size_t) index);
+
+  return mrb_str_new(mrb, text.c_str(), text.size());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
+{
+  mrb_int index;
+  mrb_value str;
+  mrb_get_args(mrb, "iS", &index, &str);
+  
+  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto text = mrb_str_to_stdstring(str);
+
+  tcomp->SetText((size_t) index, text);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_texts(mrb_state *mrb, mrb_value self)
+{
+  auto tclass = mrb_obj_class(mrb, self);
+  auto rclass = mrb_class_get_under(mrb, tclass, "TextArray");
+
+  return mrb_obj_new(mrb, rclass, 1, &self);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+

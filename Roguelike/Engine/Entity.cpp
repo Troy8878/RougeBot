@@ -258,16 +258,12 @@ void Entity::RegisterNamehash()
 {
   idmap.insert({_id, this});
   namemap.insert({_name, this});
-
-  std::cerr << "namehash ++ (" << _id << ", " << _name << ")" << std::endl;
 }
 
 // ----------------------------------------------------------------------------
 
 void Entity::UnregisterNamehash()
 {
-  std::cerr << "namehash -- (" << _id << ", " << _name << ")" << std::endl;
-
   typedef decltype(idmap) idmt;
   typedef decltype(namemap) nmmt;
 

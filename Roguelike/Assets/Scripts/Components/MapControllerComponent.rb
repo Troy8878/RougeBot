@@ -27,7 +27,6 @@ class MapControllerComponent < ComponentBase
   def on_key(e)
     # If the M key wasn't the pressed key, return.
     return unless e.plain_char == 'M'
-
     if maximized?
       minimize
     else

@@ -79,6 +79,7 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
   _res = std::make_shared<TextureResource>();
   _res->texture = tex;
   _res->resource = res;
+  _res->device = GetGame()->GameDevice;
 }
 
 // ----------------------------------------------------------------------------
@@ -108,6 +109,46 @@ Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
 
 // ----------------------------------------------------------------------------
 
+ID2D1BitmapBrush1 *Texture2D::To2DBrush()
+{
+  if (!_res->device)
+    return nullptr;
+  
+  HRESULT hr;
+  auto& d2d = _res->device->D2D;
+
+  if (_res->brush && _res->brush_timestamp >= d2d.ResourceTimestamp)
+    return _res->brush;
+
+  if (!_res->surface)
+  {
+    hr = _res->texture->QueryInterface(&_res->surface);
+    CHECK_HRESULT(hr);
+  }
+
+  D2D1_BITMAP_PROPERTIES1 props =
+    D2D1::BitmapProperties1(
+      D2D1_BITMAP_OPTIONS_NONE, 
+      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 
+      96, 96);
+
+  ReleaseDXInterface(_res->bitmap);
+  hr = d2d.DeviceContext->CreateBitmapFromDxgiSurface(
+    _res->surface,
+    &props,
+    &_res->bitmap);
+  CHECK_HRESULT(hr);
+
+  ReleaseDXInterface(_res->brush);
+  hr = d2d.DeviceContext->CreateBitmapBrush(_res->target, &_res->brush);
+  CHECK_HRESULT(hr);
+
+  _res->brush_timestamp = TextureResource::clock::now();
+  return _res->brush;
+}
+
+// ----------------------------------------------------------------------------
+
 Texture2D Texture2D::CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height)
 {
   TextureResource resource;
@@ -124,6 +165,8 @@ Texture2D Texture2D::CreateD2DSurface(GraphicsDevice *device, UINT width, UINT h
 
 Texture2D::TextureResource::~TextureResource()
 {
+  ReleaseDXInterface(brush);
+  ReleaseDXInterface(bitmap);
   ReleaseDXInterface(target);
   ReleaseDXInterface(surface);
   ReleaseDXInterface(resource);

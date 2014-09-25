@@ -6,14 +6,15 @@
   },
   "TextureComponent": {
     "textures": [
-      "Robot.png"
+      "Robot.png",
+      "PancakeFace.jpg",
     ]
   },
   "SpriteComponent": {},
   "AnimatedComponent": {
     // change the pic 20 times per second
     "frame_time": 0.05,
-    "frame_range": [0, 1]
+    "frame_range": [0, 0]
   },
   "ChildHierarchy": {
     "children": [

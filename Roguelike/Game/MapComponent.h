@@ -45,7 +45,7 @@ private:
     // Timestamp to keep track of when resources were made/changed
     clock::time_point timestamp;
 
-    Brush *lineBrush = nullptr;
+    Brush *wallBrush = nullptr;
     Brush *playerBrush = nullptr;
     
     bool Validate();

@@ -44,6 +44,7 @@ extern "C"
   void mrb_mruby_regexp_init(mrb_state *mrb);
   void mrb_mruby_floor_init(mrb_state *mrb);
   void mrb_mruby_keystate_init(mrb_state *mrb);
+  void mrb_mruby_random_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -55,6 +56,9 @@ extern "C"
 
     // Fiber gem
     mrb_mruby_fiber_gem_init(mrb);
+
+    // Randomness :D
+    mrb_mruby_random_init(mrb);
 
     // Load print gem (puts is nice to have for debugging :P)
     mrb_mruby_print_gem_init(mrb);

@@ -111,6 +111,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="mrbgem-random.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Production|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="mrbgems\mruby-array-ext\src\mrbgem-array-ext.c" />
     <ClCompile Include="mrbgems\mruby-eval\src\mrbgem-eval.c" />
     <ClCompile Include="mrbgems\mruby-fiber\src\mrbgem-fiber.c" />

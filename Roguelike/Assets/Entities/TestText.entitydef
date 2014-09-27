@@ -30,7 +30,6 @@
             ],
 
             "text_color": "#FF0000FF",
-            "bg_color": "#00000000",
 
             "font": "Segoe UI Emoji",
             "font_size": 48,

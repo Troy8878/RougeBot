@@ -645,6 +645,8 @@ static mrb_value rb_ent_add_child(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 {
+  ruby::ruby_gc_guard gcguard{mrb};
+
   MRB_DECL_SYM(mrb, id_sym, "id");
   MRB_DECL_SYM(mrb, name_sym, "name");
   MRB_DECL_SYM(mrb, arch_sym, "archetype");

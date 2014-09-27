@@ -434,9 +434,22 @@ D2D1::ColorF StringToColor(const std::string& name)
     if (name.size() >= 9)
       color.a = std::stoul(name.substr(7, 2), 0, 16) / 255.0f;
   }
-  if ((it = namedColors.find(downcase(name))) != namedColors.end())
+  else if ((it = namedColors.find(downcase(name))) != namedColors.end())
   {
     color = it->second;
+  }
+  else
+  {
+    auto delim = name.find_first_of(',');
+    auto colorName = name.substr(0, delim);
+    auto alphaStart = name.find_first_not_of(' ', delim + 1);
+    auto alphaTxt = name.substr(alphaStart);
+
+    if ((it = namedColors.find(downcase(colorName))) != namedColors.end())
+    {
+      color = it->second;
+      color.a = std::stof(alphaTxt);
+    }
   }
 
   return color;

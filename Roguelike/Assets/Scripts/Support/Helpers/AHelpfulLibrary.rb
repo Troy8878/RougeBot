@@ -22,3 +22,19 @@ module Math
     return (i - 0.5).to_i
   end
 end
+
+# nil likes turtles
+
+class Object
+  def likes_turtles?
+    true
+  end
+end
+
+class NilClass
+  def likes_turtles?
+    false
+  end
+end
+
+

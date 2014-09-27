@@ -107,10 +107,17 @@ extern "C" mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str_v, mrb_value
 
 static mrb_value mrb_regexp_create(mrb_state *mrb, const char *pattern, mrb_int opts)
 {
-  auto regexp = new std::regex(pattern, (std::regex::flag_type)opts);
-  auto data = mrb_data_object_alloc(mrb, mrb->object_class, regexp, &mrb_regex_data);
+  try
+  {
+    auto regexp = new std::regex(pattern, (std::regex::flag_type)opts);
+    auto data = mrb_data_object_alloc(mrb, mrb->object_class, regexp, &mrb_regex_data);
   
-  return mrb_obj_value(data);
+    return mrb_obj_value(data);
+  }
+  catch (std::regex_error& e)
+  {
+    mrb_raise(mrb, mrb->eException_class, e.what());
+  }
 }
 
 // ----------------------------------------------------------------------------

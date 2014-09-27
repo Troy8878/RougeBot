@@ -51,7 +51,7 @@ private:
     
     std::vector<std::string> texts;
     D2D1::ColorF textColor = D2D1::ColorF::Black;
-    D2D1::ColorF bgColor = D2D1::ColorF(1, 1, 1, 0);
+    D2D1::ColorF bgColor = D2D1::ColorF(D2D1::ColorF::White, 0.49f);
     TextureComponent *textures = nullptr;
 
     DWRITE_TEXT_ALIGNMENT textAlign = DWRITE_TEXT_ALIGNMENT_CENTER;

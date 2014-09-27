@@ -154,6 +154,8 @@ void RubyComponent::RemoveEventHandler(event_id event)
 
 static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
 {
+  ruby::ruby_gc_guard gcguard{*mrb_inst};
+
   auto& mrb = *ruby::ruby_engine::global_engine;
   assert(mrb == _mrb);
   auto comp_class = ruby::ruby_class{&mrb, (RClass *) mrb_ptr(self)};
@@ -185,6 +187,8 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
 {
+  ruby::ruby_gc_guard gcguard{*mrb_inst};
+
   auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
 

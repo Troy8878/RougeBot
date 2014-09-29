@@ -865,6 +865,10 @@ void Entity::ApplyParentTransforms()
   {
     Transform = LocalTransform * Parent->Transform;
   }
+  else
+  {
+    Transform = LocalTransform;
+  }
 }
 
 // ----------------------------------------------------------------------------

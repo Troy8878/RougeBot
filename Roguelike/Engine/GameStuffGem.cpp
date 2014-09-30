@@ -133,6 +133,16 @@ static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_toggle_debug_draw(mrb_state *, mrb_value)
+{
+  auto& dev = *GetGame()->GameDevice;
+  dev.DebugDraw = !dev.DebugDraw;
+
+  return mrb_bool_value(dev.DebugDraw);
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -140,6 +150,8 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 
   mrb_define_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
+
+  mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
 
   #pragma region MessageBox stuff
   

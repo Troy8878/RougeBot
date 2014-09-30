@@ -348,6 +348,21 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetState(RasterState);
 
+  D3D11_RASTERIZER_DESC wireframeDesc;
+  wireframeDesc.CullMode = D3D11_CULL_NONE;
+  wireframeDesc.DepthBias = -1;
+  wireframeDesc.DepthBiasClamp = 0.0f;
+  wireframeDesc.DepthClipEnable = false;
+  wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+  wireframeDesc.FrontCounterClockwise = false;
+  wireframeDesc.MultisampleEnable = true;
+  wireframeDesc.ScissorEnable = false;
+  wireframeDesc.SlopeScaledDepthBias = 0.0f;
+  wireframeDesc.AntialiasedLineEnable = true;
+
+  hr = Device->CreateRasterizerState(&wireframeDesc, &WireframeState);
+  CHECK_HRESULT(hr);
+
   #pragma endregion
 
   #pragma region Viewport

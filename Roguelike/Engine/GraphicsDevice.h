@@ -52,7 +52,11 @@ public:
   IR_PROPERTY(ID3D11DepthStencilState *, DepthStencilState);
   IR_PROPERTY(ID3D11DepthStencilView *, DepthStencilView);
   IR_PROPERTY(ID3D11RasterizerState *, RasterState);
+  IR_PROPERTY(ID3D11RasterizerState *, WireframeState);
   IR_PROPERTY(ID3D11BlendState *, BlendState);
+
+  bool WireframeDraw = false;
+  bool DebugDraw = false;
 
   // 2D stuff
   struct D2DData

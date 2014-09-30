@@ -139,9 +139,20 @@ void Game::Run()
 
         using namespace Events;
         static EventId drawId("draw");
-
         EventMessage msg{drawId, nullptr, false};
+
         Event::Raise(msg);
+
+        if (_graphicsDevice->DebugDraw)
+        {
+          _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->WireframeState);
+          _graphicsDevice->WireframeDraw = true;
+          
+          Event::Raise(msg);
+
+          _graphicsDevice->WireframeDraw = false;
+          _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->RasterState);
+        }
 
         _graphicsDevice->EndFrame();
       }

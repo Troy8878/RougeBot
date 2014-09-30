@@ -84,7 +84,7 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
 
 // ----------------------------------------------------------------------------
 
-Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
+Texture2D Texture2D::GetNullTexture()
 {
   static bool initialized = false;
   static Texture2D nullTexture;
@@ -94,7 +94,7 @@ Texture2D Texture2D::GetNullTexture(ID3D11Device *device)
 
   nullTexture = Texture2D
   {
-    device, 
+    GetGame()->GameDevice->Device, 
     ImageResource
     {
       1, 1,
@@ -201,7 +201,11 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
   auto device = GetGame()->GameDevice;
 
   Texture2D texture;
-  if (asset.find("SPECIAL/SURFACE/") == 0)
+  if (asset == "SPECIAL/NULL")
+  {
+    texture = Texture2D::GetNullTexture();
+  }
+  else if (asset.find("SPECIAL/SURFACE/") == 0)
   {
     std::string data{asset.begin() + asset.find_first_not_of("SPECIAL/SURFACE/"), asset.end()};
     auto cpos = data.find(':'); (cpos);
@@ -212,6 +216,19 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
 
     texture = Texture2D::CreateD2DSurface(device, width, height);
     // These are to be unique, don't cache them
+  }
+  else if (asset.find("SPECIAL/SHARED_SURFACE/") == 0)
+  {
+    std::string data{asset.begin() + asset.find_first_not_of("SPECIAL/SHARED_SURFACE/"), asset.end()};
+    auto cpos = data.find(':');
+    assert(cpos + 1 < data.size());
+    auto clast = data.find_first_of('/', cpos + 1);
+
+    UINT width = std::stoul(std::string{data.begin(), data.begin() + cpos});
+    UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.begin() + clast});
+
+    texture = Texture2D::CreateD2DSurface(device, width, height);
+    _resources[asset] = texture._res;
   }
   else
   {

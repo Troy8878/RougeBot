@@ -31,8 +31,8 @@
 
             "text_color": "#FF0000FF",
 
-            "font": "Segoe UI Emoji",
-            "font_size": 48,
+            "font": "Impact",
+            "font_size": 36,
 
             "autocreate_textures": [400, 200]
           },

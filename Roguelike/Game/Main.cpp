@@ -17,11 +17,16 @@ static void createConsole()
 
 Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
+extern "C" int IsAvxSupported();
+
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   performance::register_guard glperf("The Game");
   
   createConsole();
+
+  std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
+
   game.Run();
   return 0;
 }

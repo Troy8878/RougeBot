@@ -45,6 +45,7 @@ extern "C"
   void mrb_mruby_floor_init(mrb_state *mrb);
   void mrb_mruby_keystate_init(mrb_state *mrb);
   void mrb_mruby_random_init(mrb_state *mrb);
+  void mrb_mruby_events_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -92,6 +93,9 @@ extern "C"
 
     // Input
     mrb_mruby_keystate_init(mrb);
+
+    // Events
+    mrb_mruby_events_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

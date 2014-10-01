@@ -38,7 +38,7 @@ void Event::Raise(EventMessage& e, EventReciever& reciever)
 
 extern "C" void mrb_mruby_events_init(mrb_state *mrb)
 {
-  
+  (mrb);
 }
 
 // ----------------------------------------------------------------------------

@@ -32,6 +32,10 @@ void MapComponent::Initialize(Entity *owner, const std::string& name)
 
   DEF_EVENT_ID(update);
   Owner->AddEvent(this, update, &MapComponent::OnUpdate);
+
+  // Register an map_update event, so we only draw when asked.
+  DEF_EVENT_ID(map_update);
+  Owner->AddEvent(this, map_update, &MapComponent::OnMapUpdate);
 }
 
 // ----------------------------------------------------------------------------
@@ -47,13 +51,32 @@ void MapComponent::OnUpdate(Events::EventMessage&)
 
     auto *player = GetGame()->CurrentLevel->RootEntity->FindEntity("Pancake");
     player_controller = player->GetComponent<RubyComponent>("PlayerControllerComponent")->GetRubyWrapper();
+
+    // Initialize explored vector.
+    mrb_state *mrb = *mrb_inst;
+    mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
+    explored.resize(mrb_ary_len(mrb, ary));
+    mrb_value rubyRow = mrb_ary_entry(ary, 0);
+    // Initialize each inividual row.
+    for (auto& row : explored)
+    {
+      row.resize(mrb_ary_len(mrb, rubyRow));
+    }
   }
 
-  // This will only draw if it needs to be redrawn.
-  if (drawing.Validate() || true)
+  // This will only draw if it needs to be redrawn (ie the window has been resized).
+  if (drawing.Validate())
   {
     DrawMap();
   }
+}
+
+// ----------------------------------------------------------------------------
+
+void MapComponent::OnMapUpdate(Events::EventMessage&)
+{
+  drawing.Validate();
+  DrawMap();
 }
 
 // ----------------------------------------------------------------------------
@@ -162,6 +185,9 @@ bool MapComponent::DrawingResources::Validate()
   CHECK_HRESULT(hr);
   playerBrush = scBrush;
 
+  // Update the timestamp
+  timestamp = clock::now();
+
   return true;
 }
 
@@ -203,3 +229,4 @@ mrb_value MapComponent::GetRubyWrapper()
 }
 
 // ----------------------------------------------------------------------------
+

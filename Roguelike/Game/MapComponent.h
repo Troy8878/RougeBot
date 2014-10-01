@@ -24,6 +24,8 @@ public:
 
   void OnUpdate(Events::EventMessage&);
 
+  void OnMapUpdate(Events::EventMessage&);
+
   void DrawMap();
 
   mrb_value GetRubyWrapper() override;
@@ -35,6 +37,9 @@ private:
   Entity *floor = nullptr;
   mrb_value floor_comp;
   mrb_value player_controller;
+
+  // We need Vector to store where we've explored
+  std::vector<std::vector<bool>> explored;
   
   // Drawing resources
   struct DrawingResources

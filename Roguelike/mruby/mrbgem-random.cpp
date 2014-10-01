@@ -191,7 +191,7 @@ static mrb_value mrb_random_new(mrb_state *mrb, mrb_value)
 
   else
   {
-    mrb_raise(mrb, mrb->eException_class, "An unknown random generator type was specified");
+    mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), "An unknown random generator type was specified");
   }
 
   #pragma endregion

@@ -135,6 +135,8 @@ class String
       b = self[0, pos]
       a = self[pos+1..-1]
       self.replace([b, value, a].join(''))
+    else
+      raise TypeError, "String#[]= takes Fixnum, String, or Regexp"
     end
   end
 

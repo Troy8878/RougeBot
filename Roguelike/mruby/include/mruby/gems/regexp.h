@@ -22,7 +22,7 @@ extern "C" {
 
 extern mrb_data_type mrb_regex_data;
 
-mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str, mrb_value regexp);
+mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str_v, mrb_value regexp, mrb_int lim);
 
 // ----------------------------------------------------------------------------
 

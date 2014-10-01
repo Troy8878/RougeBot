@@ -72,5 +72,22 @@ namespace Events
 
 // ----------------------------------------------------------------------------
 
+  struct RubyEvent : public EventData
+  {
+    mrb_value ruby_obj;
+
+    RubyEvent(mrb_value ruby_obj)
+      : ruby_obj(ruby_obj)
+    {
+    }
+
+    mrb_value GetRubyWrapper() override
+    {
+      return ruby_obj;
+    }
+  };
+
+// ----------------------------------------------------------------------------
+
 }
 

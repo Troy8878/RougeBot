@@ -63,10 +63,13 @@ extern "C" void mrb_mruby_regexp_init(mrb_state *mrb)
 
 // ----------------------------------------------------------------------------
 
-extern "C" mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str_v, mrb_value regexp)
+extern "C" mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str_v, mrb_value regexp, mrb_int lim)
 {
   auto segments = mrb_ary_new(mrb);
   std::string str = mrb_str_to_cstr(mrb, str_v);
+
+  if (lim == 0)
+    lim = std::numeric_limits<mrb_int>::max();
   
   static mrb_sym regex_sym = mrb_intern_lit(mrb, STDREGEX_IV_NAME);
   auto regexp_v = mrb_iv_get(mrb, regexp, regex_sym);
@@ -92,6 +95,10 @@ extern "C" mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str_v, mrb_value
         mrb_ary_push(mrb, segments, newstr);
 
         it = match.second;
+
+        --lim;
+        if (lim <= 0)
+          break;
       }
     }
   }

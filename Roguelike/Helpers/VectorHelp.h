@@ -17,7 +17,7 @@ namespace math
 
   const float pi = 3.14159265358979f;
 
-  __declspec(align(16)) class Vector : public XMFLOAT4A
+  __declspec(align(16)) class Vector final : public XMFLOAT4A
   {
   public:
     inline Vector() = default;

@@ -23,17 +23,17 @@ module Math
   end
 end
 
-# nil likes turtles
-
-class Object
-  def likes_turtles?
-    true
+class Array
+  def sum
+    total = first
+    self[1..-1].each do |item|
+      total += item
+    end
+    total
   end
-end
 
-class NilClass
-  def likes_turtles?
-    false
+  def average
+    sum / count
   end
 end
 

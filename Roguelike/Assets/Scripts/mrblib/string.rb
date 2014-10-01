@@ -129,9 +129,13 @@ class String
   # Modify +self+ by replacing the content of +self+
   # at the position +pos+ with +value+.
   def []=(pos, value)
-    b = self[0, pos]
-    a = self[pos+1..-1]
-    self.replace([b, value, a].join(''))
+    if pos.is_a? Regexp or pos.is_a? String
+      self.sub! pos, value
+    elsif pos.is_a? Fixnum
+      b = self[0, pos]
+      a = self[pos+1..-1]
+      self.replace([b, value, a].join(''))
+    end
   end
 
   ##

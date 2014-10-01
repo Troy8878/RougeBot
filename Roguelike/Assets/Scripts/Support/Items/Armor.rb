@@ -16,7 +16,7 @@
 class Item
 end
 
-#An array containing every armor ever.
+# An array containing every armor ever.
 ARMOR = []
 
 class Weapon < Item

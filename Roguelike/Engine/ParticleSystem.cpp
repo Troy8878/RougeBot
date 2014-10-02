@@ -53,10 +53,10 @@ void ParticleSystem::Update(float dt)
 {
   using namespace DirectX;
 
-  XMMATRIX prefixTransform = 
+  XMMATRIX suffixTransform = 
     XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationalVelocity * dt) *
     XMMatrixTranslationFromVector(particleTransform.absoluteVelocity * dt);
-  XMMATRIX suffixTransform =
+  XMMATRIX prefixTransform =
     XMMatrixScalingFromVector(g_XMOne + particleTransform.scaleRate * dt) *
     XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationRate * dt);
 
@@ -69,8 +69,11 @@ void ParticleSystem::Update(float dt)
     if (++iterated > activeParticles)
       break;
 
-    particle.life += dt;
+    particle.life -= dt;
     particle.world = prefixTransform * particle.world * suffixTransform;
+
+    if (particle.life <= 0)
+      KillParticle(&particle);
   }
 }
 

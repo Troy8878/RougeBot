@@ -112,7 +112,10 @@
         "SpriteComponent": {
           "render_target": "TranslucentLayer"
         },
-        "PlayerControllerComponent": {}
+        "PlayerControllerComponent": {},
+        "ParticleSystemComponent": {
+          "render_target": "WorldLayer"
+        },
       }
     },
     {

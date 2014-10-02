@@ -9,7 +9,7 @@ IsAvxSupported proc
  jb not_supported
  mov eax, 1
  cpuid
- and ecx, 018000000h ;check 27 bit (OS uses XSAVE/XRSTOR)
+ and ecx, 018000000h ; check 27 bit (OS uses XSAVE/XRSTOR)
  cmp ecx, 018000000h ; and 28 (AVX supported by CPU)
  jne not_supported
  xor ecx, ecx ; XFEATURE_ENABLED_MASK/XCR0 register number = 0

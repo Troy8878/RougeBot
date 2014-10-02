@@ -15,11 +15,23 @@ ParticleSystemComponentFactory ParticleSystemComponent::factory;
 
 // ----------------------------------------------------------------------------
 
-ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles)
-  : system(maxParticles)
+ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target)
+  : system(maxParticles), renderTarget(target)
 {
   system.model = GetUnitSquare();
   system.shader = RegisteredShaders["Textured"];
+  system.camera = renderTarget->RenderCamera;
+
+  system.particleTransform.absoluteVelocity = math::Vector{0, 0.5f, 1.1f, 0};
+  system.particleTransform.scaleRate = math::Vector{0.5f, 0.5f, 0.5f, 0};
+}
+
+// ----------------------------------------------------------------------------
+
+ParticleSystemComponent::~ParticleSystemComponent()
+{
+  if (renderTarget)
+    renderTarget->RemoveDrawable(this);
 }
 
 // ----------------------------------------------------------------------------
@@ -30,6 +42,32 @@ void ParticleSystemComponent::Initialize(Entity *owner, const std::string& name)
 
   DEF_EVENT_ID(update);
   Owner->AddEvent(this, update, &ParticleSystemComponent::OnUpdate);
+
+  renderTarget->AddDrawable(this, system.shader);
+}
+
+// ----------------------------------------------------------------------------
+
+void ParticleSystemComponent::OnUpdate(Events::EventMessage& e)
+{
+  float dt = (float) e.GetData<Events::UpdateEvent>()->gameTime.Dt;
+
+  static double tb = 0;
+  tb += dt;
+  while (tb > 0.01f)
+  {
+    system.SpawnParticle(Owner->Transform, 1);
+    tb -= 0.1;
+  }
+
+  system.Update(dt);
+}
+
+// ----------------------------------------------------------------------------
+
+void ParticleSystemComponent::Draw()
+{
+  system.Draw();
 }
 
 // ----------------------------------------------------------------------------
@@ -56,11 +94,10 @@ ParticleSystemComponentFactory::ParticleSystemComponentFactory()
 Component *ParticleSystemComponentFactory::CreateObject(
   void *memory, component_factory_data& data)
 {
-  (data); // do something with the serialization data
+  auto targetName = data["render_target"].as_string();
+  auto target = RenderGroup::Instance.GetSet(targetName);
 
-  auto *component = new (memory) ParticleSystemComponent(1000);
-
-  // do something to the component
+  auto *component = new (memory) ParticleSystemComponent(1000, target);
 
   return component;
 }

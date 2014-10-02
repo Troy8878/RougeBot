@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Common.h"
-#include "RenderSet.h"
 
 // ----------------------------------------------------------------------------
 
@@ -28,10 +27,10 @@ public:
 
   struct ParticleTransform
   {
-    math::Vector scaleRate;
-    math::Vector rotationRate;
-    math::Vector absoluteVelocity;
-    math::Vector rotationalVelocity;
+    math::Vector scaleRate = {0, 0, 0, 0};
+    math::Vector rotationRate = {0, 0, 0, 0};
+    math::Vector absoluteVelocity = {0, 0, 0, 0};
+    math::Vector rotationalVelocity = {0, 0, 0, 0};
 
   } particleTransform;
 

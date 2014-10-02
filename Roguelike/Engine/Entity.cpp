@@ -84,6 +84,8 @@ void Entity::RemoveComponent(const std::string& name)
     event.second.erase(comp);
   }
 
+  ComponentManager::Instance.ReleaseComponent(comp);
+
   _components.erase(compit);
 }
 

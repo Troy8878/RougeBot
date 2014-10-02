@@ -26,17 +26,30 @@ event_id Event::CreateEventId(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
+static std::stack<EventMessage *> event_stack;
+
 void Event::Raise(EventMessage& e, EventReciever& reciever)
 {
   ruby::ruby_gc_guard gc_guard(*mrb_inst);
 
+  event_stack.emplace(&e);
+
   if (reciever.CanHandle(e))
     reciever.Handle(e);
+
+  event_stack.pop();
+}
+
+EventMessage& Event::GetCurrentEvent()
+{
+  return *event_stack.top();
 }
 
 // ----------------------------------------------------------------------------
 
 static mrb_value mrb_event_raise(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_event_handled(mrb_state *mrb, mrb_value);
+static mrb_value mrb_event_handled_set(mrb_state *mrb, mrb_value);
 
 // ----------------------------------------------------------------------------
 
@@ -47,6 +60,9 @@ extern "C" void mrb_mruby_events_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, evclass, "raise_event", mrb_event_raise, ARGS_REQ(2));
   mrb_define_method(mrb, enclass, "raise_event", mrb_event_raise, ARGS_REQ(2));
+
+  mrb_define_class_method(mrb, evclass, "handled?", mrb_event_handled, ARGS_NONE());
+  mrb_define_class_method(mrb, evclass, "handled=", mrb_event_handled_set, ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -71,6 +87,32 @@ static mrb_value mrb_event_raise(mrb_state *mrb, mrb_value self)
   }
 
   return event_data;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_event_handled(mrb_state *, mrb_value)
+{
+  return mrb_bool_value(Event::GetCurrentEvent().Handled);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_event_handled_set(mrb_state *mrb, mrb_value)
+{
+  mrb_bool value;
+  mrb_get_args(mrb, "b", &value);
+
+  try
+  {
+    Event::GetCurrentEvent().Handled = !!value;
+  }
+  catch (std::exception& e)
+  {
+    mrb_raise(mrb, mrb->eException_class, e.what());
+  }
+
+  return mrb_bool_value(value);
 }
 
 // ----------------------------------------------------------------------------

@@ -78,7 +78,7 @@
                   "position": [1.4, -0.8]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/1040:1040"]
+                  "textures": ["SPECIAL/SURFACE/5200:5200"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"

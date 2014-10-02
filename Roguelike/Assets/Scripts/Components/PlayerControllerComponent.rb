@@ -42,20 +42,33 @@ class PlayerControllerComponent < ComponentBase
     @move_speed = data.fetch("move_speed", 5).to_f
 
     self.register_event :key_held, :on_key
-    self.register_event :update, :on_update
+    self.register_event :update, :first_update
   end
 
   def on_key(e)
     case e.plain_char || e.vkey
     when *KEYS_MOVE_UP
-      @pos.z += 1 if can_move? 0, 1
+      move 0, +1 if can_move? 0, 1
     when *KEYS_MOVE_DOWN
-      @pos.z -= 1 if can_move? 0, -1
+      move 0, -1 if can_move? 0, -1
     when *KEYS_MOVE_RIGHT
-      @pos.x += 1 if can_move? 1, 0
+      move +1, 0 if can_move? 1, 0
     when *KEYS_MOVE_LEFT
-      @pos.x -= 1 if can_move?(-1, 0)
+      move -1, 0 if can_move?(-1, 0)
     end
+  end
+
+  def move(x, z)
+    @pos.x += x
+    @pos.z += z
+    @minimap ||= find_entity("Minimap")
+    @minimap.raise_event :map_update, nil
+  end
+
+  def first_update(e)
+    move 0, 0
+
+    register_event :update, :on_update
   end
 
   def on_update(e)

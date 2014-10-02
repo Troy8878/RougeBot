@@ -66,13 +66,11 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
   
   mrbc_context *cxt = mrbc_context_new(mrb);
 
-#ifdef _DEBUG
   cxt->capture_errors = true;
 
   size_t fname_size = asset.length() + 1;
   cxt->filename = new char[fname_size];
   strcpy_s(cxt->filename, fname_size, asset.c_str());
-#endif
 
   mrb_load_nstring_cxt(mrb, (char *) resource->Data, (int) resource->Size, cxt);
 
@@ -236,24 +234,19 @@ void ruby_engine::log_and_clear_error()
   std::cerr << "Backtrace:" << std::endl;
   size_t i = 0;
 
-#ifdef _DEBUG
   std::ostringstream btb;
   btb << "Backtrace:" << std::endl;
-#endif
 
   for (auto& line : btrace_lines)
   {
     std::cerr << "  [" << ++i << "] " 
               << static_cast<std::string>(line) << std::endl;
-#ifdef _DEBUG
     btb << "  [" << i << "] " 
         << static_cast<std::string>(line) << std::endl;
-#endif
 
     mrb_gc_mark_value(mrb, line);
   }
 
-#ifdef _DEBUG
   if (mrb_debug_mbox)
   {
     std::string error_message = std::string(RSTRING_PTR(s), RSTRING_PTR(s) + RSTRING_LEN(s));
@@ -265,7 +258,6 @@ void ruby_engine::log_and_clear_error()
     if (result == IDNO)
       exit(1);
   }
-#endif
 
   std::cerr << pfg;
 }

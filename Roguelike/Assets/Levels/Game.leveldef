@@ -1,10 +1,7 @@
 {
-  "name": "MainMenu",
+  "name": "LevelRoot",
   "components": {
-    "TransformComponent": {
-      "scale": [1,1,1]
-    },
-    "DebugDrawSwitchComponent": {}
+    "GameQuitCancelerComponent": {}
   },
   "entities": [
     {

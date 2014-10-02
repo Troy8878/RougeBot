@@ -41,7 +41,7 @@ public:
     using namespace DirectX;
 
     // Starting level
-    levelChangeContext.name = "MainMenu";
+    levelChangeContext.name = "Splash";
 
     _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
     _console = new GameConsole(true);

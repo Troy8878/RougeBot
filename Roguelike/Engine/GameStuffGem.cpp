@@ -143,6 +143,26 @@ static mrb_value mrb_toggle_debug_draw(mrb_state *, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_switch_level(mrb_state *mrb, mrb_value)
+{
+  const char *levelName;
+  mrb_get_args(mrb, "z", &levelName);
+
+  GetGame()->ChangeLevel(levelName);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_quit_game(mrb_state *, mrb_value)
+{
+  GetGame()->Stop();
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -152,6 +172,8 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
 
   mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
+  mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));
+  mrb_define_class_method(mrb, gameClass, "quit!", mrb_quit_game, ARGS_NONE());
 
   #pragma region MessageBox stuff
   

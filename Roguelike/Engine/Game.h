@@ -52,7 +52,11 @@ public:
   virtual void OnFree() {}
 
   void RestartLevel();
-  void ChangeLevel(const std::string& name);
+  void ChangeLevel(const std::string& name)
+  {
+    levelChangeContext.name = name;
+    levelChangeContext.loaded = false;
+  }
 
   void SetProcHandler(UINT message, wndproc_callback callback);
 

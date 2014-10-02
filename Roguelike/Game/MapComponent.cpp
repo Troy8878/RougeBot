@@ -230,3 +230,48 @@ mrb_value MapComponent::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
+void MapItem::Validate()
+{
+  using namespace D2D1;
+
+  // Get a reference to direct2D
+  auto& d2d = GetGame()->GameDevice->D2D;
+  // Make sure the timestamp is okay
+  if (_timestamp >= d2d.ResourceTimestamp)
+    return;
+  // Release resources if it is invalid
+  Release();
+
+  HRESULT hr;
+
+  ID2D1SolidColorBrush *scBrush;
+  ID2D1RectangleGeometry *rectangle;
+  ID2D1EllipseGeometry *ellipse;
+
+  // Create the brush
+  hr = d2d.DeviceContext->CreateSolidColorBrush(_color, &scBrush);
+  CHECK_HRESULT(hr);
+  _brush = scBrush;
+
+  // Create the shape
+  switch(_shape)
+  {
+  case RECTANGLE:
+    d2d.Factory->CreateRectangleGeometry(D2D1::RectF(0, 0, 1, 1), &rectangle);
+    _geometry = rectangle;
+    break;
+  case ELLIPSE:
+    d2d.Factory->CreateEllipseGeometry(D2D1::Ellipse(D2D1::Point2F(0.5, 0.5), 0.5, 0.5), &ellipse);
+    _geometry = ellipse;
+    break;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+
+void MapItem::Release()
+{
+
+}
+

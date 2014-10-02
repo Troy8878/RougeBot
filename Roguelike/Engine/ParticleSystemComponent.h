@@ -22,13 +22,17 @@ public:
   ParticleSystemComponent(size_t maxParticles);
   ~ParticleSystemComponent();
 
-  ParticleSystem system;
-
   void Initialize(Entity *owner, const std::string& name) override;
+  void OnUpdate(Events::EventMessage&);
 
   mrb_value GetRubyWrapper() override;
 
   static ParticleSystemComponentFactory factory;
+
+private:
+  ParticleSystem system;
+
+  static Model *GetUnitSquare();
 };
 
 // ----------------------------------------------------------------------------

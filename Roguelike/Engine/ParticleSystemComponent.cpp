@@ -6,6 +6,8 @@
 
 #include "Common.h"
 #include "ParticleSystemComponent.h"
+#include "StandardShapes.h"
+#include "Shader.h"
 
 // ----------------------------------------------------------------------------
 
@@ -16,6 +18,8 @@ ParticleSystemComponentFactory ParticleSystemComponent::factory;
 ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles)
   : system(maxParticles)
 {
+  system.model = GetUnitSquare();
+  system.shader = RegisteredShaders["Textured"];
 }
 
 // ----------------------------------------------------------------------------
@@ -23,6 +27,21 @@ ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles)
 void ParticleSystemComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
+
+  DEF_EVENT_ID(update);
+  Owner->AddEvent(this, update, &ParticleSystemComponent::OnUpdate);
+}
+
+// ----------------------------------------------------------------------------
+
+Model *ParticleSystemComponent::GetUnitSquare()
+{
+  static Model *square = nullptr;
+
+  if (!square)
+    square = Shapes::MakeRectangle(GetGame()->GameDevice->Device, {0.1f, 0.1f});
+
+  return square;
 }
 
 // ----------------------------------------------------------------------------

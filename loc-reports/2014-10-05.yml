@@ -1,0 +1,351 @@
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Helpers/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Helpers/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Items/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Items/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.rb
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.cpp
+# Checking for cpp and rb files in: C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.rb
+
+# > cloc --by-file --quiet --yaml "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Components/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Helpers/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Helpers/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Items/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Assets/Scripts/Support/Items/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Engine/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Game/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/Helpers/*.rb" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.cpp" "C:/Users/Connor/Documents/GitHub/Game200-Project/Roguelike/json/*.rb"
+
+
+---
+connor hilarides:
+  code: 6494
+  comments: 893
+  blank_lines: 2323
+  files_owned: 59
+  files:
+  - name: json/json.cpp
+    code: 691
+    comments: 64
+    blank_lines: 229
+  - name: Engine/Entity.cpp
+    code: 296
+    comments: 36
+    blank_lines: 107
+  - name: Engine/GraphicsDevice.cpp
+    code: 451
+    comments: 36
+    blank_lines: 144
+  - name: Helpers/RandomHelpers.cpp
+    code: 388
+    comments: 12
+    blank_lines: 60
+  - name: Engine/RubyWrappers.cpp
+    code: 344
+    comments: 13
+    blank_lines: 117
+  - name: Engine/TextComponent.cpp
+    code: 340
+    comments: 40
+    blank_lines: 138
+  - name: Engine/Input.cpp
+    code: 311
+    comments: 40
+    blank_lines: 119
+  - name: Engine/RubyEngine.cpp
+    code: 270
+    comments: 38
+    blank_lines: 111
+  - name: Engine/Shader.cpp
+    code: 261
+    comments: 13
+    blank_lines: 51
+  - name: Engine/Camera.cpp
+    code: 253
+    comments: 32
+    blank_lines: 111
+  - name: Engine/Texture.cpp
+    code: 233
+    comments: 21
+    blank_lines: 74
+  - name: Engine/RubyComponent.cpp
+    code: 192
+    comments: 24
+    blank_lines: 88
+  - name: Assets/Scripts/Components/TestRoomComponent.rb
+    code: 78
+    comments: 8
+    blank_lines: 33
+  - name: Engine/Game.cpp
+    code: 149
+    comments: 21
+    blank_lines: 59
+  - name: Engine/GameStuffGem.cpp
+    code: 147
+    comments: 16
+    blank_lines: 59
+  - name: Engine/ModelBuilder.cpp
+    code: 144
+    comments: 17
+    blank_lines: 58
+  - name: Helpers/BucketAllocator.cpp
+    code: 125
+    comments: 27
+    blank_lines: 46
+  - name: Engine/ParticleSystem.cpp
+    code: 122
+    comments: 17
+    blank_lines: 44
+  - name: Engine/RubyValue.cpp
+    code: 116
+    comments: 24
+    blank_lines: 48
+  - name: Game/PositionDisplayComponent.cpp
+    code: 108
+    comments: 18
+    blank_lines: 44
+  - name: Helpers/StackTrace.cpp
+    code: 105
+    comments: 5
+    blank_lines: 29
+  - name: Engine/CameraComponent.cpp
+    code: 102
+    comments: 18
+    blank_lines: 29
+  - name: Engine/StandardShapes.cpp
+    code: 96
+    comments: 5
+    blank_lines: 25
+  - name: Engine/RenderSet.cpp
+    code: 93
+    comments: 19
+    blank_lines: 36
+  - name: Engine/Component.cpp
+    code: 93
+    comments: 20
+    blank_lines: 35
+  - name: Engine/TextureZip.cpp
+    code: 89
+    comments: 9
+    blank_lines: 24
+  - name: Helpers/VisualizePerformance.cpp
+    code: 85
+    comments: 5
+    blank_lines: 28
+  - name: Engine/Event.cpp
+    code: 71
+    comments: 14
+    blank_lines: 34
+  - name: Engine/TextureComponent.cpp
+    code: 69
+    comments: 16
+    blank_lines: 29
+  - name: Engine/Model.cpp
+    code: 66
+    comments: 12
+    blank_lines: 28
+  - name: Engine/RubyInit.cpp
+    code: 62
+    comments: 19
+    blank_lines: 24
+  - name: Game/GameConsole.cpp
+    code: 61
+    comments: 12
+    blank_lines: 25
+  - name: Engine/LevelDef.cpp
+    code: 60
+    comments: 10
+    blank_lines: 22
+  - name: Engine/RubyClass.cpp
+    code: 49
+    comments: 16
+    blank_lines: 26
+  - name: Engine/EventHandlers.cpp
+    code: 45
+    comments: 10
+    blank_lines: 18
+  - name: Engine/CustomModelComponent.cpp
+    code: 44
+    comments: 14
+    blank_lines: 21
+  - name: Engine/EventTypes.cpp
+    code: 39
+    comments: 7
+    blank_lines: 15
+  - name: Assets/Scripts/Components/CameraFollowComponent.rb
+    code: 19
+    comments: 5
+    blank_lines: 15
+  - name: Assets/Scripts/Support/Helpers/DebugHelp.rb
+    code: 17
+    comments: 5
+    blank_lines: 10
+  - name: Assets/Scripts/Components/AnimatedComponent.rb
+    code: 15
+    comments: 25
+    blank_lines: 11
+  - name: Assets/Scripts/Support/Helpers/AHelpfulLibrary.rb
+    code: 14
+    comments: 5
+    blank_lines: 7
+  - name: Engine/Level.cpp
+    code: 26
+    comments: 11
+    blank_lines: 15
+  - name: Helpers/CriticalSections.cpp
+    code: 26
+    comments: 5
+    blank_lines: 8
+  - name: Assets/Scripts/Support/Random.rb
+    code: 13
+    comments: 18
+    blank_lines: 5
+  - name: Assets/Scripts/Components/SpinnyThingComponent.rb
+    code: 12
+    comments: 5
+    blank_lines: 7
+  - name: Game/Main.cpp
+    code: 19
+    comments: 5
+    blank_lines: 8
+  - name: Helpers/FileSystem.cpp
+    code: 17
+    comments: 5
+    blank_lines: 6
+  - name: Assets/Scripts/Components/SpinnyCameraComponent.rb
+    code: 8
+    comments: 5
+    blank_lines: 7
+  - name: Assets/Scripts/Components/ChildHierarchy.rb
+    code: 8
+    comments: 5
+    blank_lines: 6
+  - name: Engine/RubyModule.cpp
+    code: 16
+    comments: 9
+    blank_lines: 10
+  - name: Assets/Scripts/Support/Helpers/ComponentHelp.rb
+    code: 7
+    comments: 5
+    blank_lines: 4
+  - name: Assets/Scripts/Support/Helpers/ModelBuilder.rb
+    code: 5
+    comments: 5
+    blank_lines: 2
+  - name: Assets/Scripts/Support/Helpers/ReadOnlyHash.rb
+    code: 4
+    comments: 5
+    blank_lines: 2
+  - name: Game/Voodoo.cpp
+    code: 7
+    comments: 5
+    blank_lines: 2
+  - name: Game/RubyInit.cpp
+    code: 7
+    comments: 15
+    blank_lines: 5
+  - name: Helpers/Console.cpp
+    code: 4
+    comments: 5
+    blank_lines: 2
+  - name: Assets/Scripts/Support/Helpers/Constants.rb
+    code: 0
+    comments: 5
+    blank_lines: 1
+  - name: Engine/Common.cpp
+    code: 1
+    comments: 7
+    blank_lines: 1
+  - name: Game/Common.cpp
+    code: 1
+    comments: 5
+    blank_lines: 1
+jake robsahm:
+  code: 882
+  comments: 285
+  blank_lines: 394
+  files_owned: 13
+  files:
+  - name: Engine/Entity.cpp
+    code: 296
+    comments: 36
+    blank_lines: 107
+  - name: Engine/TransformComponent.cpp
+    code: 183
+    comments: 24
+    blank_lines: 72
+  - name: Game/MapComponent.cpp
+    code: 159
+    comments: 59
+    blank_lines: 59
+  - name: Engine/SpriteComponent.cpp
+    code: 116
+    comments: 22
+    blank_lines: 52
+  - name: Assets/Scripts/Components/PlayerControllerComponent.rb
+    code: 33
+    comments: 18
+    blank_lines: 26
+  - name: Assets/Scripts/Support/Inventory.rb
+    code: 26
+    comments: 25
+    blank_lines: 22
+  - name: Assets/Scripts/Components/MapControllerComponent.rb
+    code: 15
+    comments: 18
+    blank_lines: 9
+  - name: Assets/Scripts/Components/DefenseComponent.rb
+    code: 12
+    comments: 16
+    blank_lines: 12
+  - name: Assets/Scripts/Support/Items/Weapon.rb
+    code: 12
+    comments: 15
+    blank_lines: 10
+  - name: Assets/Scripts/Support/Items/Item.rb
+    code: 9
+    comments: 14
+    blank_lines: 7
+  - name: Assets/Scripts/Support/Items/Armor.rb
+    code: 9
+    comments: 15
+    blank_lines: 7
+  - name: Assets/Scripts/Components/AttackComponent.rb
+    code: 7
+    comments: 13
+    blank_lines: 6
+  - name: Assets/Scripts/Components/InventoryComponent.rb
+    code: 5
+    comments: 10
+    blank_lines: 5
+avi whitten:
+  code: 267
+  comments: 30
+  blank_lines: 78
+  files_owned: 1
+  files:
+  - name: Game/Floor.cpp
+    code: 267
+    comments: 30
+    blank_lines: 78
+your name here:
+  code: 92
+  comments: 29
+  blank_lines: 48
+  files_owned: 2
+  files:
+  - name: Engine/ParticleSystemComponent.cpp
+    code: 66
+    comments: 16
+    blank_lines: 31
+  - name: Engine/ComponentTemplate.cpp
+    code: 26
+    comments: 13
+    blank_lines: 17
+sum:
+  code: 8074
+  comments: 1237
+  blank_lines: 2843
+  files: 74
+

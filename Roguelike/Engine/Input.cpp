@@ -54,23 +54,41 @@ void Input::Initialize()
 
   game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
   {
-      Input::Instance.OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
   });
 
-  game.SetProcHandler(WM_XBUTTONDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  static const virtual_key mouse_buttons[] =
   {
-    (msg, wp, lp);
-  });
+    MK_LBUTTON,
+    MK_MBUTTON,
+    MK_RBUTTON,
+    MK_XBUTTON1,
+    MK_XBUTTON2
+  };
 
-  game.SetProcHandler(WM_XBUTTONUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
   {
-    (msg, wp, lp);
-  });
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnMouseDown(bt);
 
-  game.SetProcHandler(WM_XBUTTONDBLCLK, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
+
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
   {
-    (msg, wp, lp);
-  });
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnMouseUp(bt);
+
+  }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
+
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
+  {
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnDoubleClick(bt);
+
+  }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
 }
 
 // ----------------------------------------------------------------------------

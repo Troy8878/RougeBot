@@ -43,6 +43,7 @@ class PlayerControllerComponent < ComponentBase
 
     self.register_event :key_held, :on_key
     self.register_event :update, :first_update
+    self.register_event :mouse_down, :mouse_down
   end
 
   def on_key(e)
@@ -56,6 +57,12 @@ class PlayerControllerComponent < ComponentBase
     when *KEYS_MOVE_LEFT
       move -1, 0 if can_move?(-1, 0)
     end
+  end
+
+  def mouse_down(e)
+    @cursor ||= find_entity("TileCursor")
+
+    
   end
 
   def move(x, z)

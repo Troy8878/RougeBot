@@ -66,24 +66,30 @@ void Input::Initialize()
     MK_XBUTTON2
   };
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
   {
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+
     for (auto bt : mouse_buttons)
       if (wp & bt)
         this->OnMouseDown(bt);
 
   }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
   {
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+
     for (auto bt : mouse_buttons)
       if (wp & bt)
         this->OnMouseUp(bt);
 
   }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM, LRESULT&)
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
   {
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+
     for (auto bt : mouse_buttons)
       if (wp & bt)
         this->OnDoubleClick(bt);

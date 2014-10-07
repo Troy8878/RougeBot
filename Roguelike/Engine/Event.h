@@ -100,6 +100,8 @@ namespace Events
     static event_id CreateEventId(const std::string& name);
     static void Raise(EventMessage& e, EventReciever& reciever = *Event::GlobalDispatcher);
 
+    static void CustomRaise(EventMessage& e, std::function<void(EventMessage&)> raise);
+
     static EventMessage& GetCurrentEvent();
 
     static EventDispatcher *GlobalDispatcher;

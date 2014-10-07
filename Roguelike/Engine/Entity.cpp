@@ -108,6 +108,13 @@ bool Entity::CanHandle(const Events::EventMessage& e)
 
 void Entity::Handle(Events::EventMessage& e)
 {
+  RaiseEvent(e);
+}
+
+// ----------------------------------------------------------------------------
+  
+void Entity::LocalEvent(Events::EventMessage& e)
+{
   bool invalidation_occurred = false;
   event_list_invalidated = false;
 
@@ -148,13 +155,32 @@ void Entity::Handle(Events::EventMessage& e)
   {
     ApplyParentTransforms();
   }
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::RaiseEvent(Events::EventMessage& e)
+{
+  LocalEvent(e);
 
   for (size_t i = 0; i < children.size(); ++i)
   {
     auto *child = children[i];
 
     if (child->CanHandle(e))
-      child->Handle(e);
+      child->RaiseEvent(e);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::SinkEvent(Events::EventMessage& e)
+{
+  LocalEvent(e);
+
+  if (Parent)
+  {
+    Parent->SinkEvent(e);
   }
 }
 
@@ -701,6 +727,63 @@ static mrb_value rb_ent_parent(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_local_event(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+
+  mrb_sym event_id;
+  mrb_value event_data = mrb_nil_value();
+  mrb_get_args(mrb, "n|o", &event_id, &event_data);
+
+  Events::RubyEvent data_wrapper{event_data};
+  Events::EventMessage message{event_id, &data_wrapper, true};
+
+  using namespace std::placeholders;
+  Events::Event::CustomRaise(message, std::bind(&Entity::LocalEvent, entity, _1));
+
+  return event_data;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_raise_event(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+
+  mrb_sym event_id;
+  mrb_value event_data = mrb_nil_value();
+  mrb_get_args(mrb, "n|o", &event_id, &event_data);
+
+  Events::RubyEvent data_wrapper{event_data};
+  Events::EventMessage message{event_id, &data_wrapper, true};
+
+  using namespace std::placeholders;
+  Events::Event::CustomRaise(message, std::bind(&Entity::RaiseEvent, entity, _1));
+
+  return event_data;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+
+  mrb_sym event_id;
+  mrb_value event_data = mrb_nil_value();
+  mrb_get_args(mrb, "n|o", &event_id, &event_data);
+
+  Events::RubyEvent data_wrapper{event_data};
+  Events::EventMessage message{event_id, &data_wrapper, true};
+
+  using namespace std::placeholders;
+  Events::Event::CustomRaise(message, std::bind(&Entity::SinkEvent, entity, _1));
+
+  return event_data;
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_class Entity::GetWrapperRClass()
 {
   using namespace ruby;
@@ -732,6 +815,11 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("components", rb_ent_components, ARGS_NONE());
 
   rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
+
+  // Events
+  rclass.define_method("local_event", rb_ent_local_event, ARGS_REQ(1) | ARGS_OPT(1));
+  rclass.define_method("raise_event", rb_ent_raise_event, ARGS_REQ(1) | ARGS_OPT(1));
+  rclass.define_method("sink_event", rb_ent_sink_event, ARGS_REQ(1) | ARGS_OPT(1));
   
   return rclass;
 }

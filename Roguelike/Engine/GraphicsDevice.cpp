@@ -72,6 +72,7 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
 
   WNDCLASSEX wndc = {sizeof(wndc)};
   wndc.cbWndExtra = sizeof(WindowDevice *);
+  wndc.style = CS_DBLCLKS;
   wndc.hInstance = options.hInstance;
   wndc.lpfnWndProc = StaticWindowProc;
   wndc.lpszClassName = className.c_str();

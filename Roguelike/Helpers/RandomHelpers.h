@@ -493,7 +493,7 @@ struct Camera;
 math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
                                         DirectX::FXMVECTOR planeOrigin, 
                                         DirectX::FXMVECTOR planeNormal, 
-                                        Camera *camera);
+                                        Camera *camera, float *distance = nullptr);
 
 // ----------------------------------------------------------------------------
 

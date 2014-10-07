@@ -43,7 +43,12 @@ class PlayerControllerComponent < ComponentBase
 
     self.register_event :key_held, :on_key
     self.register_event :update, :first_update
-    self.register_event :mouse_down, :mouse_down
+
+    if Config[:touch_mode]
+      self.register_event :double_click, :mouse_down
+    else
+      self.register_event :mouse_down, :mouse_down
+    end
   end
 
   def on_key(e)

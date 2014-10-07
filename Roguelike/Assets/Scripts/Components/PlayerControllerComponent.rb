@@ -111,7 +111,7 @@ class PlayerControllerComponent < ComponentBase
     dx = Math.round(curpos.x - @pos.x)
     dz = Math.round(curpos.z - @pos.z)
 
-    if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5
+    if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5 || !can_move?(dx, dz)
       @cursor.children.first.sprite_component.texture_index = 1
     else
       @cursor.children.first.sprite_component.texture_index = 0
@@ -119,13 +119,18 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def can_move?(xo, yo)
-    room = find_entity("MainFloor").test_room_component.room
+    if xo != 0 and yo != 0
+      return false unless can_move?(xo, 0) && can_move?(0, yo)
+    end
+
+    @room ||= find_entity("MainFloor").test_room_component.room
+    room = @room
 
     # false if the move animation isn't done
     real_pos = @transform.position.dup
     real_pos.y = @pos.y
 
-    return false unless @pos.near? real_pos, 0.4
+    return false unless @pos.near? real_pos, 0.2
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo

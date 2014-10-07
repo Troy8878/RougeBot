@@ -55,14 +55,20 @@ class PlayerControllerComponent < ComponentBase
     when *KEYS_MOVE_RIGHT
       move +1, 0 if can_move? 1, 0
     when *KEYS_MOVE_LEFT
-      move -1, 0 if can_move?(-1, 0)
+      move -1, 0 if can_move? -1, 0
     end
   end
 
   def mouse_down(e)
     @cursor ||= find_entity("TileCursor")
 
-    
+    curpos = @cursor.transform_component.position
+    dx = Math.round(curpos.x - @transform.position.x)
+    dz = Math.round(curpos.z - @transform.position.z)
+
+    return if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5
+
+    move dx, dz if can_move? dx, dz
   end
 
   def move(x, z)
@@ -94,6 +100,22 @@ class PlayerControllerComponent < ComponentBase
     zbounce = Math.sin((pos.z % 1) * Math::PI) / 10
 
     pos.y = 0.25 + xbounce + zbounce
+
+    update_cursor_color
+  end
+
+  def update_cursor_color
+    @cursor ||= find_entity("TileCursor")
+
+    curpos = @cursor.transform_component.position
+    dx = Math.round(curpos.x - @pos.x)
+    dz = Math.round(curpos.z - @pos.z)
+
+    if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5
+      @cursor.children.first.sprite_component.texture_index = 1
+    else
+      @cursor.children.first.sprite_component.texture_index = 0
+    end
   end
 
   def can_move?(xo, yo)
@@ -103,7 +125,7 @@ class PlayerControllerComponent < ComponentBase
     real_pos = @transform.position.dup
     real_pos.y = @pos.y
 
-    return false unless @pos.near? real_pos, 0.2
+    return false unless @pos.near? real_pos, 0.4
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo

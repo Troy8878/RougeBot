@@ -21,6 +21,10 @@ module Math
     return (i + 0.5).to_i if i >= 0
     return (i - 0.5).to_i
   end
+
+  def Math.abs(i)
+    i < 0 ? -i : i
+  end
 end
 
 class Array

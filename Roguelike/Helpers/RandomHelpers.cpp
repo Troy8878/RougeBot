@@ -236,7 +236,7 @@ bool getline_async(std::string& str,
 math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
                                         DirectX::FXMVECTOR planeOrigin, 
                                         DirectX::FXMVECTOR planeNormal, 
-                                        Camera *camera)
+                                        Camera *camera, float *distance)
 {
   auto winsz = GetGame()->GameDevice->GetSize();
 
@@ -269,7 +269,20 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
             oblique *
             XMMatrixTranslationFromVector(planeOrigin);
   
-  return oblique * planePoint;
+  XMVECTOR projected = oblique * planePoint;
+
+  if (distance != nullptr)
+  {
+    XMVECTOR diff = projected - planePoint;
+    *distance = XMVectorGetX(XMVector3Length(diff));
+
+    if (XMVectorGetX(XMVectorAbs(XMVector3AngleBetweenVectors(diff, v))) > math::pi / 2)
+    {
+      *distance = -*distance;
+    }
+  }
+
+  return projected;
 }
 
 // ----------------------------------------------------------------------------

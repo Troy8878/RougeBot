@@ -1,20 +1,17 @@
 {
-  "name": "MainMenu",
+  "name": "LevelRoot",
   "components": {
-    "TransformComponent": {
-      "scale": [1,1,1]
-    },
-    "DebugDrawSwitchComponent": {}
+    "GameQuitCancelerComponent": {}
   },
   "entities": [
     {
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0.77, 0, 0]
+          "rotation": [1.5707, 0, 0]
         },
         "CameraFollowComponent": {
-          "offset": [0, 5, -6],
+          "offset": [0, 9, 0],
           "follows": "Pancake",
           "speed": 0
         }
@@ -105,14 +102,17 @@
       "archetype": "PancakeFace",
       "components": {
         "TransformComponent": {
-          "rotation": [0.85, 0, 0],
+          "rotation": [1.5707, 0, 0],
           "position": [1, 0.25, 1],
           "scale": [0.8, 0.8, 0.8]
         },
         "SpriteComponent": {
           "render_target": "TranslucentLayer"
         },
-        "PlayerControllerComponent": {}
+        "PlayerControllerComponent": {},
+        "ParticleSystemComponent": {
+          "render_target": "WorldLayer"
+        },
       }
     },
     {

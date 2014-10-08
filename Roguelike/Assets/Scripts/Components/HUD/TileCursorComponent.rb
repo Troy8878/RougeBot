@@ -16,26 +16,29 @@ module HUD
     end
 
     def first_update(e)
-      remove_event :update
-
       @camera = find_entity("CameraRoot").find_entity(@camera).camera_component
       @mouse_pos = Vector.new
 
-      register_event :update, :on_update
       register_event :mouse_move, :mouse_move
+      register_event :update, :on_update
     end
 
-    def mouse_move(e)
-      @mouse_pos = e.position
-    end
-
-    def on_update(e)
+    def update_transform
       position = @camera.screen_to_world(@mouse_pos)
 
       position.x = Math.round(position.x)
       position.z = Math.round(position.z)
 
       @transform.position = position
+    end
+
+    def mouse_move(e)
+      @mouse_pos = e.position
+      update_transform
+    end
+
+    def on_update(e)
+      update_transform
     end
 
     register_component "HUD::TileCursorComponent"

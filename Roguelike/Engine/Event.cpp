@@ -40,6 +40,17 @@ void Event::Raise(EventMessage& e, EventReciever& reciever)
   event_stack.pop();
 }
 
+void Event::CustomRaise(EventMessage& e, std::function<void(EventMessage&)> raise)
+{
+  ruby::ruby_gc_guard gc_guard(*mrb_inst);
+
+  event_stack.emplace(&e);
+
+  raise(e);
+
+  event_stack.pop();
+}
+
 EventMessage& Event::GetCurrentEvent()
 {
   return *event_stack.top();
@@ -56,10 +67,8 @@ static mrb_value mrb_event_handled_set(mrb_state *mrb, mrb_value);
 extern "C" void mrb_mruby_events_init(mrb_state *mrb)
 {
   auto *evclass = mrb_define_class(mrb, "Event", mrb->object_class);
-  auto *enclass = mrb_define_class(mrb, "GameEntity", mrb->object_class);
 
   mrb_define_class_method(mrb, evclass, "raise_event", mrb_event_raise, ARGS_REQ(2));
-  mrb_define_method(mrb, enclass, "raise_event", mrb_event_raise, ARGS_REQ(2));
 
   mrb_define_class_method(mrb, evclass, "handled?", mrb_event_handled, ARGS_NONE());
   mrb_define_class_method(mrb, evclass, "handled=", mrb_event_handled_set, ARGS_REQ(1));
@@ -67,24 +76,16 @@ extern "C" void mrb_mruby_events_init(mrb_state *mrb)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_event_raise(mrb_state *mrb, mrb_value self)
+static mrb_value mrb_event_raise(mrb_state *mrb, mrb_value)
 {
   mrb_sym event_id;
-  mrb_value event_data;
-  mrb_get_args(mrb, "no", &event_id, &event_data);
+  mrb_value event_data = mrb_nil_value();
+  mrb_get_args(mrb, "n|o", &event_id, &event_data);
 
   RubyEvent data_wrapper{event_data};
   EventMessage message{event_id, &data_wrapper, true};
 
-  if (self.tt == MRB_TT_CLASS)
-  {
-    Event::Raise(message);
-  }
-  else
-  {
-    auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
-    Event::Raise(message, *entity);
-  }
+  Event::Raise(message);
 
   return event_data;
 }

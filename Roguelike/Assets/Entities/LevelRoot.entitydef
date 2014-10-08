@@ -1,0 +1,7 @@
+{
+  "TransformComponent": {
+    "scale": [1,1,1]
+  },
+  "DebugDrawSwitchComponent": {},
+  "GameQuitComponent": {}
+}

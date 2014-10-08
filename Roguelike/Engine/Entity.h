@@ -116,6 +116,10 @@ public:
   */
   void Handle(Events::EventMessage& e) override;
   
+  void LocalEvent(Events::EventMessage& e);
+  void RaiseEvent(Events::EventMessage& e);
+  void SinkEvent(Events::EventMessage& e);
+  
   /**
     This will be used when one of your components wants to
     connect to an event

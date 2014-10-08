@@ -1,0 +1,95 @@
+{
+  "name": "LevelRoot",
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0, 0, 0]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "scale": [0.3, 0.3, 0.3, 1],
+              "position": [0, 0, 1]
+            }
+          },
+          "children": [
+            {
+              "components": {
+                "TransformComponent": {
+                  "scale": [1.7777777777777777777777777777778,1,1]
+                }
+              },
+              "children": [
+                {
+                  "components": {
+                    "TransformComponent": {
+                      "scale": [0.2, 0.2, 0.2]
+                    },
+                    "TextureComponent": {
+                      "textures": [
+                        "Splash/WP_20141002_10_26_28_Pro.png"
+                      ]
+                    },
+                    "SpriteComponent": {
+                      "render_target": "WorldLayer"
+                    },
+                    "SplashZoomComponent": {}
+                  }
+                }
+              ]
+            },
+            {
+              "components": {
+                "TransformComponent": {
+                  "scale": [4.1457489878542510121457489878543,1,1]
+                }
+              },
+              "children": [
+                {
+                  "components": {
+                    "TransformComponent": {
+                      "scale": [0.08, 0.08, 0.08],
+                      "position": [0, 0, 4]
+                    },
+                    "TextureComponent": {
+                      "textures": [
+                        "Splash/DigiPen_RED_1024px.png"
+                      ]
+                    },
+                    "SpriteComponent": {
+                      "render_target": "WorldLayer"
+                    },
+                    "SplashZoomComponent": {}
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "components": {
+        "SplashLevelSwitcher": {}
+      }
+    }
+  ]
+}

@@ -43,6 +43,12 @@ class PlayerControllerComponent < ComponentBase
 
     self.register_event :key_held, :on_key
     self.register_event :update, :first_update
+
+    if Config[:touch_mode]
+      self.register_event :double_click, :mouse_down
+    else
+      self.register_event :mouse_down, :mouse_down
+    end
   end
 
   def on_key(e)
@@ -54,8 +60,20 @@ class PlayerControllerComponent < ComponentBase
     when *KEYS_MOVE_RIGHT
       move +1, 0 if can_move? 1, 0
     when *KEYS_MOVE_LEFT
-      move -1, 0 if can_move?(-1, 0)
+      move -1, 0 if can_move? -1, 0
     end
+  end
+
+  def mouse_down(e)
+    @cursor ||= find_entity("TileCursor")
+
+    curpos = @cursor.transform_component.position
+    dx = Math.round(curpos.x - @transform.position.x)
+    dz = Math.round(curpos.z - @transform.position.z)
+
+    return if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5
+
+    move dx, dz if can_move? dx, dz
   end
 
   def move(x, z)
@@ -87,10 +105,31 @@ class PlayerControllerComponent < ComponentBase
     zbounce = Math.sin((pos.z % 1) * Math::PI) / 10
 
     pos.y = 0.25 + xbounce + zbounce
+
+    update_cursor_color
+  end
+
+  def update_cursor_color
+    @cursor ||= find_entity("TileCursor")
+
+    curpos = @cursor.transform_component.position
+    dx = Math.round(curpos.x - @pos.x)
+    dz = Math.round(curpos.z - @pos.z)
+
+    if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5 || !can_move?(dx, dz)
+      @cursor.children.first.sprite_component.texture_index = 1
+    else
+      @cursor.children.first.sprite_component.texture_index = 0
+    end
   end
 
   def can_move?(xo, yo)
-    room = find_entity("MainFloor").test_room_component.room
+    if xo != 0 and yo != 0
+      return false unless can_move?(xo, 0) && can_move?(0, yo)
+    end
+
+    @room ||= find_entity("MainFloor").test_room_component.room
+    room = @room
 
     # false if the move animation isn't done
     real_pos = @transform.position.dup

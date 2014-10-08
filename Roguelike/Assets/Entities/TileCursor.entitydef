@@ -14,7 +14,8 @@
           },
           "TextureComponent": {
             "textures": [
-              "HUD/TileCursor.png"
+              "HUD/TileCursor.png",
+              "HUD/TileCursorRed.png"
             ]
           },
           "SpriteComponent": {

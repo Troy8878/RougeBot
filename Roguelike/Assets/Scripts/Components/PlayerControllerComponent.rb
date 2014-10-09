@@ -21,10 +21,10 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
-  KEYS_MOVE_UP = ['W', Keys::UP]
-  KEYS_MOVE_LEFT = ['A', Keys::LEFT]
-  KEYS_MOVE_DOWN = ['S', Keys::DOWN]
-  KEYS_MOVE_RIGHT = ['D', Keys::RIGHT]
+  KEYS_MOVE_UP =    ['W'.char_code, Keys::UP   ]
+  KEYS_MOVE_LEFT =  ['A'.char_code, Keys::LEFT ]
+  KEYS_MOVE_DOWN =  ['S'.char_code, Keys::DOWN ]
+  KEYS_MOVE_RIGHT = ['D'.char_code, Keys::RIGHT]
 
   # Initialize the properties of the PlayerController
   def initialize(data)
@@ -53,7 +53,7 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_key(e)
-    case e.plain_char || e.vkey
+    case e.vkey
     when *KEYS_MOVE_UP
       move 0, +1 if can_move? 0, 1
     when *KEYS_MOVE_DOWN

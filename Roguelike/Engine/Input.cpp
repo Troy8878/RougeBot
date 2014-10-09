@@ -251,9 +251,6 @@ const KeyState& Input::GetKeyState(virtual_key key)
 
 wchar_t Input::VKeyToChar(virtual_key key)
 {
-  if (key >= VK_LWIN || key <= VK_HELP)
-    return 0;
-
   return (wchar_t) MapVirtualKey(key, MAPVK_VK_TO_CHAR);
 }
 

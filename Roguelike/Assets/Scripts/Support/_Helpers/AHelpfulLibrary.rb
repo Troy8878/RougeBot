@@ -41,4 +41,10 @@ class Array
   end
 end
 
+class String
+  def char_code
+    bytes[0]
+  end
+end
+
 

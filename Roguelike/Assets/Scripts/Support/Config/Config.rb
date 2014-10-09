@@ -44,4 +44,8 @@ module Config
   class << self
     include Enumerable
   end
+
+  def self.method_missing(*a)
+    Config[a[0]] || super(*a)
+  end
 end

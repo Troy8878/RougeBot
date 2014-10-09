@@ -15,10 +15,10 @@
   },
   "ChildHierarchy": {
     "children": [
-      {
+      /*{
         "archetype": "TestText",
         "components": {}
-      }
+      }*/
     ]
   }
 }

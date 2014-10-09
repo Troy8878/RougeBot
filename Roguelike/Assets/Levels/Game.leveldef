@@ -1,5 +1,5 @@
 {
-  "name": "LevelRoot",
+  "name": "Game",
   "components": {
     "GameQuitCancelerComponent": {}
   },
@@ -110,9 +110,9 @@
           "render_target": "TranslucentLayer"
         },
         "PlayerControllerComponent": {},
-        "ParticleSystemComponent": {
+        /*"ParticleSystemComponent": {
           "render_target": "WorldLayer"
-        },
+        },*/
       }
     },
     {

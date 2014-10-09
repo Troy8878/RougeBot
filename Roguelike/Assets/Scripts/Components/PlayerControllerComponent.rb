@@ -21,10 +21,10 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
-  KEYS_MOVE_UP = ['W', KeyState::UP]
-  KEYS_MOVE_LEFT = ['A', KeyState::LEFT]
-  KEYS_MOVE_DOWN = ['S', KeyState::DOWN]
-  KEYS_MOVE_RIGHT = ['D', KeyState::RIGHT]
+  KEYS_MOVE_UP = ['W', Keys::UP]
+  KEYS_MOVE_LEFT = ['A', Keys::LEFT]
+  KEYS_MOVE_DOWN = ['S', Keys::DOWN]
+  KEYS_MOVE_RIGHT = ['D', Keys::RIGHT]
 
   # Initialize the properties of the PlayerController
   def initialize(data)
@@ -125,7 +125,7 @@ class PlayerControllerComponent < ComponentBase
 
   def can_move?(xo, yo)
     if xo != 0 and yo != 0
-      return false unless can_move?(xo, 0) && can_move?(0, yo)
+      return false # unless can_move?(xo, 0) && can_move?(0, yo)
     end
 
     @room ||= find_entity("MainFloor").test_room_component.room

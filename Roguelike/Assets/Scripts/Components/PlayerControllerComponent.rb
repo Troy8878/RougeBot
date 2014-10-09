@@ -44,9 +44,10 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :key_held, :on_key
     self.register_event :update, :first_update
 
-    if Config[:touch_mode]
-      self.register_event :double_click, :mouse_down
-    else
+    # Double-click should do it in either case
+    # Double-click is the only way in touch mode
+    self.register_event :double_click, :mouse_down
+    unless Config[:touch_mode]
       self.register_event :mouse_down, :mouse_down
     end
   end

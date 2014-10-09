@@ -15,70 +15,6 @@ class MapComponentFactory;
 
 // ----------------------------------------------------------------------------
 
-class MapComponent : public Component
-{
-public:
-  MapComponent();
-
-  void Initialize(Entity *owner, const std::string& name) override;
-
-  void OnUpdate(Events::EventMessage&);
-
-  void OnMapUpdate(Events::EventMessage&);
-
-  void DrawMap();
-
-  mrb_value GetRubyWrapper() override;
-
-  static MapComponentFactory factory;
-
-private:
-  Texture2D texture;
-  Entity *floor = nullptr;
-  mrb_value floor_comp;
-  mrb_value player_controller;
-
-  // We need Vector to store where we've explored
-  std::vector<std::vector<bool>> explored;
-  
-  // Drawing resources
-  struct DrawingResources
-  {
-    // typedef because dear god why
-    typedef GraphicsDevice::D2DData::clock clock;
-    typedef ID2D1Brush Brush;
-    // Timestamp to keep track of when resources were made/changed
-    clock::time_point timestamp;
-
-    Brush *wallBrush = nullptr;
-    Brush *playerBrush = nullptr;
-    
-    bool Validate();
-    void Release();
-
-    // Deconstructor
-    ~DrawingResources() { Release(); }
-
-  } drawing;
-
-};
-
-// ----------------------------------------------------------------------------
-
-class MapComponentFactory : public IComponentFactory
-{
-public:
-  MapComponentFactory();
-
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
-
-private:
-  BucketAllocator allocator;
-};
-
-// ----------------------------------------------------------------------------
-
 // Class for other components to interface with the map.
 class MapItem
 {
@@ -93,10 +29,11 @@ public:
   PROPERTY(get = _GetGeometry) ID2D1Geometry *Geometry;
   PROPERTY(get = _GetBrush) ID2D1Brush *Brush;
 
+  bool visible = true;
 
   void Validate();
   void Release();
-  void Draw();
+  void Draw(float mapscale);
 
 private:
   int _x, _y;                                                   // Coordinates to draw at
@@ -153,5 +90,73 @@ public:
 };
 
 // ----------------------------------------------------------------------------
+
+class MapComponent : public Component
+{
+public:
+  MapComponent();
+
+  void Initialize(Entity *owner, const std::string& name) override;
+
+  void OnUpdate(Events::EventMessage&);
+
+  void OnMapUpdate(Events::EventMessage&);
+
+  void DrawMap();
+
+  mrb_value GetRubyWrapper() override;
+
+  static MapComponentFactory factory;
+
+private:
+  Texture2D _texture;
+  Entity *_floor = nullptr;
+  mrb_value _floor_comp;
+  mrb_value _player_controller;
+
+  // We need Vector to store where we've explored
+  std::vector<std::vector<bool>> _explored;
+
+  // We need another Vector for everything that wants to be drawn.
+  std::vector<MapItem> _items;
+  
+  // Drawing resources
+  struct DrawingResources
+  {
+    // typedef because dear god why
+    typedef GraphicsDevice::D2DData::clock clock;
+    typedef ID2D1Brush Brush;
+    // Timestamp to keep track of when resources were made/changed
+    clock::time_point timestamp;
+
+    Brush *wallBrush = nullptr;
+    Brush *playerBrush = nullptr;
+    
+    bool Validate();
+    void Release();
+
+    // Deconstructor
+    ~DrawingResources() { Release(); }
+
+  } _drawing;
+
+};
+
+// ----------------------------------------------------------------------------
+
+class MapComponentFactory : public IComponentFactory
+{
+public:
+  MapComponentFactory();
+
+  Component *CreateObject(void *memory, component_factory_data& data) override;
+  IAllocator *_GetAllocator() override { return &allocator; }
+
+private:
+  BucketAllocator allocator;
+};
+
+// ----------------------------------------------------------------------------
+
 
 

@@ -44,8 +44,8 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
-  static Events::EventId updateId("update");
-  Owner->AddEvent(this, updateId, &CameraComponent::OnUpdate);
+  DEF_EVENT_ID(draw);
+  Owner->AddEvent(this, draw, &CameraComponent::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------

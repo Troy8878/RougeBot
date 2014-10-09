@@ -79,6 +79,8 @@ class PlayerControllerComponent < ComponentBase
   def first_update(e)
     move 0, 0
 
+    find_entity("CameraRoot").parent = self.owner
+
     register_event :update, :on_update
   end
 

@@ -25,7 +25,7 @@ class KeybindingComponent < ComponentBase
   end
 
   def on_key(type, e)
-    section = Config.key_bindings[find_entity(0).name]
+    section = Config.key_bindings[self.owner.name]
     return unless section.is_a? Hash
 
     binding = section[e.vkey]
@@ -35,7 +35,7 @@ class KeybindingComponent < ComponentBase
     message = binding[type]
     return unless message.is_a? Array
 
-    Event.raise_event message.first, message.second
+    self.owner.raise_event message.first, message.second
   end
 
   register_component "KeybindingComponent"

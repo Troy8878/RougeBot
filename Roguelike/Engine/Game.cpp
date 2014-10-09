@@ -9,6 +9,7 @@
 #include "Level.h"
 #include "LevelDef.h"
 #include "Input.h"
+#include "RenderSet.h"
 
 #include "mruby/debug.h"
 #include "mruby/variable.h"
@@ -143,12 +144,14 @@ void Game::Run()
 
         Event::Raise(msg);
 
+        RenderGroup::Instance.Draw(msg);
+
         if (_graphicsDevice->DebugDraw)
         {
           _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->WireframeState);
           _graphicsDevice->WireframeDraw = true;
           
-          Event::Raise(msg);
+          RenderGroup::Instance.Draw(msg);
 
           _graphicsDevice->WireframeDraw = false;
           _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->RasterState);

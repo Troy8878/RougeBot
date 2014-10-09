@@ -272,7 +272,7 @@ void GraphicsDevice::InitializeD3DContext()
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
-  sd.BufferCount = 3;
+  sd.BufferCount = 2;
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;

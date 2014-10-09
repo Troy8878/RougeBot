@@ -96,6 +96,9 @@ extern "C"
 
     // Events
     mrb_mruby_events_init(mrb);
+
+    // Omg so lazy
+    engine.evaluate_asset("gems/mrb-enum-lazy/lazy.rb");
   }
 
   void mrb_final_mrbgems(mrb_state *)

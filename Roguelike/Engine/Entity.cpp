@@ -146,12 +146,15 @@ void Entity::LocalEvent(Events::EventMessage& e)
     {
       it = handlers.begin();
       event_list_invalidated = false;
+
+      if (it == handlers.end())
+        break;
     }
   }
 
   // Update Transform with parents
-  DEF_EVENT_ID(update);
-  if (e.EventId == update)
+  DEF_EVENT_ID(draw);
+  if (e.EventId == draw)
   {
     ApplyParentTransforms();
   }
@@ -671,6 +674,24 @@ static mrb_value rb_ent_add_child(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_remove_child(mrb_state *mrb, mrb_value self)
+{
+  mrb_value child_v;
+  mrb_get_args(mrb, "o", &child_v);
+
+  if (mrb_obj_class(mrb, child_v) != mrb_class_get(mrb, "GameEntity"))
+    mrb_raise(mrb, mrb->eException_class, "Expected param to be GameEntity");
+  
+  auto *parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *child = ruby::read_native_ptr<Entity>(mrb, child_v);
+
+  parent->RemoveChild(child);
+
+  return child_v;
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 {
   ruby::ruby_gc_guard gcguard{mrb};
@@ -723,6 +744,20 @@ static mrb_value rb_ent_parent(mrb_state *mrb, mrb_value self)
   auto *parent = entity->Parent;
 
   return parent ? parent->RubyWrapper : mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_parent_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value parent_v;
+  mrb_get_args(mrb, "o", &parent_v);
+
+  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *parent = ruby::read_native_ptr<Entity>(mrb, parent_v);
+
+  parent->AddChild(entity);
+  return parent_v;
 }
 
 // ----------------------------------------------------------------------------
@@ -797,24 +832,24 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   // TODO: Create class
   rclass.define_method("initialize", rb_ent_initialize, ARGS_REQ(1));
+  rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
 
   rclass.define_method("id", rb_ent_id, ARGS_NONE());
   rclass.define_method("name", rb_ent_name, ARGS_NONE());
-
+  
+  rclass.define_method("components", rb_ent_components, ARGS_NONE());
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
   rclass.define_method("add_component", rb_ent_add_component, ARGS_REQ(2));
-
+  
   rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
+  rclass.define_method("children", rb_ent_children, ARGS_NONE());
   rclass.define_method("add_child", rb_ent_add_child, ARGS_REQ(1));
+  rclass.define_method("remove_child", rb_ent_remove_child, ARGS_REQ(1));
   rclass.define_method("parent", rb_ent_parent, ARGS_NONE());
+  rclass.define_method("parent=", rb_ent_parent_set, ARGS_REQ(1));
 
   rclass.define_method("find_entity", rb_ent_find_entity, ARGS_REQ(1));
   rclass.define_method("search_entities", rb_ent_search_entities, MRB_ARGS_ARG(1, 1));
-
-  rclass.define_method("children", rb_ent_children, ARGS_NONE());
-  rclass.define_method("components", rb_ent_components, ARGS_NONE());
-
-  rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
 
   // Events
   rclass.define_method("local_event", rb_ent_local_event, ARGS_REQ(1) | ARGS_OPT(1));

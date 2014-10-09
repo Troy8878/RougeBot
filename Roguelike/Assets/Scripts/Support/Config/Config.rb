@@ -45,6 +45,10 @@ module Config
     end
   end
 
+  def self.inspect
+    @@items.inspect
+  end
+
   class << self
     include Enumerable
   end
@@ -63,6 +67,7 @@ module Config
     Config.key_bindings[section] ||= {}
 
     keys.each do |key|
+      key = key.char_code if key.is_a? String
       Config.key_bindings[section][key] = action
     end
   end
@@ -73,6 +78,7 @@ module Config
     Config.key_bindings[section] ||= {}
 
     keys.each do |key|
+      key = key.char_code if key.is_a? String
       Config.key_bindings[section].delete key
     end
   end

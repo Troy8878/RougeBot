@@ -39,33 +39,40 @@ class Array
   def average
     sum / count
   end
+end
 
-  def tail
-    self[1..-1]
+module Enumerable
+  def init
+    lazy.take(count - 1).to_a
   end
 
-  def init
-    self[0..-2]
+  def tail
+    lazy.drop(1).to_a
   end
 
   def first
-    self[0]
+    return nil if count < 1
+    lazy.each{break}.first
   end
 
   def second
-    self[1]
+    return nil if count < 2
+    lazy.drop(1).each{break}.first
   end
 
   def third
-    self[2]
+    return nil if count < 3
+    lazy.drop(2).each{break}.first
   end
 
   def fourth
-    self[3]
+    return nil if count < 4
+    lazy.drop(3).each{break}.first
   end
 
   def fifth
-    self[4]
+    return nil if count < 5
+    lazy.drop(4).each{break}.first
   end
 end
 

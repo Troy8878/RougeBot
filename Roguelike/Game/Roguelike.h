@@ -47,7 +47,6 @@ public:
     _console = new GameConsole(true);
 
     RenderGroup::Instance.Initialize();
-    Events::Event::GlobalDispatcher->AddListener(&RenderGroup::Instance);
 
     InitShaders();
     InitObjects();

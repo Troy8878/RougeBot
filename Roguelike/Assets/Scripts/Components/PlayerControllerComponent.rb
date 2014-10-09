@@ -41,7 +41,7 @@ class PlayerControllerComponent < ComponentBase
 
     @move_speed = data.fetch("move_speed", 5).to_f
 
-    self.register_event :key_held, :on_key
+    self.register_event :player_move, :on_move
     self.register_event :update, :first_update
 
     # Double-click should do it in either case
@@ -52,17 +52,9 @@ class PlayerControllerComponent < ComponentBase
     end
   end
 
-  def on_key(e)
-    case e.vkey
-    when *KEYS_MOVE_UP
-      move 0, +1 if can_move? 0, 1
-    when *KEYS_MOVE_DOWN
-      move 0, -1 if can_move? 0, -1
-    when *KEYS_MOVE_RIGHT
-      move +1, 0 if can_move? 1, 0
-    when *KEYS_MOVE_LEFT
-      move -1, 0 if can_move? -1, 0
-    end
+  def on_move(e)
+    raise "Invalid key binding for player movement" if e.count != 2
+    move *e if can_move? *e
   end
 
   def mouse_down(e)

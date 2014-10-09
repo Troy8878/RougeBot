@@ -39,6 +39,34 @@ class Array
   def average
     sum / count
   end
+
+  def tail
+    self[1..-1]
+  end
+
+  def init
+    self[0..-2]
+  end
+
+  def first
+    self[0]
+  end
+
+  def second
+    self[1]
+  end
+
+  def third
+    self[2]
+  end
+
+  def fourth
+    self[3]
+  end
+
+  def fifth
+    self[4]
+  end
 end
 
 class String

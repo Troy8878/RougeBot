@@ -15,23 +15,27 @@ module Config
 
   def self.[]=(key, value)
     if @@defaulting
-      @@defaults[key] = true
-    else
-      @@defaults[key] = false
+      @@defaults[key] = value
     end
 
     @@items[key] = value
   end
 
-  def is_default?(key)
-    @@defaults.has_key?(key) and @@defaults[key]
+  def self.is_default?(key)
+    @@defaults.has_key?(key) && @@defaults[key] == @@items[key]
   end
 
-  def self.begin_defaults
+  def self.load_defaults(&block)
     @@defaulting = true
-  end
+    @@defaults = {}
+    @@items = {}
 
-  def self.end_defaults
+    if block_given?
+      @@default_block = block
+    end
+
+    @@default_block.call()
+
     @@defaulting = false
   end
 
@@ -47,5 +51,29 @@ module Config
 
   def self.method_missing(*a)
     Config[a[0]] || super(*a)
+  end
+
+  def self.bind_action(name, action)
+    Config.keybind_actions[name] = action
+  end
+
+  def self.bind_key(section, keys, action)
+    keys = [keys] unless keys.is_a? Array
+
+    Config.key_bindings[section] ||= {}
+
+    keys.each do |key|
+      Config.key_bindings[section][key] = action
+    end
+  end
+
+  def self.unbind_key(section, keys)
+    keys = [keys] unless keys.is_a? Array
+
+    Config.key_bindings[section] ||= {}
+
+    keys.each do |key|
+      Config.key_bindings[section].delete key
+    end
   end
 end

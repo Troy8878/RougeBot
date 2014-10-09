@@ -43,29 +43,29 @@ void MapComponent::Initialize(Entity *owner, const std::string& name)
 void MapComponent::OnUpdate(Events::EventMessage&)
 {
   // If we haven't found the floor yet, find it and store it.
-  if (!floor)
+  if (!_floor)
   {
-    floor = GetGame()->CurrentLevel->RootEntity->FindEntity("MainFloor");
+    _floor = GetGame()->CurrentLevel->RootEntity->FindEntity("MainFloor");
     // Get the component that has the floor.
-    floor_comp = floor->GetComponent<RubyComponent>("TestRoomComponent")->GetRubyWrapper();
+    _floor_comp = _floor->GetComponent<RubyComponent>("TestRoomComponent")->GetRubyWrapper();
 
     auto *player = GetGame()->CurrentLevel->RootEntity->FindEntity("Pancake");
-    player_controller = player->GetComponent<RubyComponent>("PlayerControllerComponent")->GetRubyWrapper();
+    _player_controller = player->GetComponent<RubyComponent>("PlayerControllerComponent")->GetRubyWrapper();
 
     // Initialize explored vector.
     mrb_state *mrb = *mrb_inst;
-    mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
-    explored.resize(mrb_ary_len(mrb, ary));
+    mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(_floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
+    _explored.resize(mrb_ary_len(mrb, ary));
     mrb_value rubyRow = mrb_ary_entry(ary, 0);
     // Initialize each inividual row.
-    for (auto& row : explored)
+    for (auto& row : _explored)
     {
       row.resize(mrb_ary_len(mrb, rubyRow));
     }
   }
 
   // This will only draw if it needs to be redrawn (ie the window has been resized).
-  if (drawing.Validate())
+  if (_drawing.Validate())
   {
     DrawMap();
   }
@@ -75,7 +75,7 @@ void MapComponent::OnUpdate(Events::EventMessage&)
 
 void MapComponent::OnMapUpdate(Events::EventMessage&)
 {
-  drawing.Validate();
+  _drawing.Validate();
   DrawMap();
 }
 
@@ -100,7 +100,7 @@ void MapComponent::DrawMap()
   // Create a reference to the Ruby Engine
   mrb_state *mrb = *mrb_inst;
   // Get the room values from the ruby code.
-  mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
+  mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(_floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
   mrb_int len = mrb_ary_len(mrb, ary);
 
   // How many pixels per block of the map. We make it a bit bigger to include the edges.
@@ -125,7 +125,7 @@ void MapComponent::DrawMap()
         auto rectangle = D2D1::RectF((x + 1) * mapScale, (y + 1) * mapScale,
                                      (x + 2) * mapScale, (y + 2) * mapScale);
         // Now we actually draw the Rectangle.
-        d2d.DeviceContext->FillRectangle(rectangle, drawing.wallBrush);
+        d2d.DeviceContext->FillRectangle(rectangle, _drawing.wallBrush);
       }
     }
   }
@@ -138,20 +138,23 @@ void MapComponent::DrawMap()
                                   size.width - mapScale, size.height);
 
   // Now we do the actual drawing.
-  d2d.DeviceContext->FillRectangle(leftRectangle, drawing.wallBrush);
-  d2d.DeviceContext->FillRectangle(rightRectangle, drawing.wallBrush);
-  d2d.DeviceContext->FillRectangle(topRectangle, drawing.wallBrush);
-  d2d.DeviceContext->FillRectangle(botRectangle, drawing.wallBrush);
+  d2d.DeviceContext->FillRectangle(leftRectangle, _drawing.wallBrush);
+  d2d.DeviceContext->FillRectangle(rightRectangle, _drawing.wallBrush);
+  d2d.DeviceContext->FillRectangle(topRectangle, _drawing.wallBrush);
+  d2d.DeviceContext->FillRectangle(botRectangle, _drawing.wallBrush);
 
   // Now we get to draw the player.
   // Retrieve the position from the ruby class.
-  auto playerPos = mrb_funcall(mrb, player_controller, "pos", 0);
+  auto playerPos = mrb_funcall(mrb, _player_controller, "pos", 0);
   auto& posv = ruby::get_ruby_vector(playerPos);
   // Create the Ellipse.
   auto playerEllipse = D2D1::Ellipse({(posv.x + 1.5f) * mapScale, (len - posv.z + 0.5f) * mapScale},
                                       mapScale / 2, mapScale / 2);
   // Now draw them~!
-  d2d.DeviceContext->FillEllipse(playerEllipse, drawing.playerBrush);
+  d2d.DeviceContext->FillEllipse(playerEllipse, _drawing.playerBrush);
+
+  for(auto&item : _items)
+    item.Draw(mapScale);
 
   HRESULT hr = d2d.EndDraw();
   CHECK_HRESULT(hr);
@@ -230,6 +233,24 @@ mrb_value MapComponent::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
+void MapItem::Draw(float mapScale)
+{
+  // Make sure we even want to draw this.
+  if(!visible)
+    return;
+
+  auto& d2d = GetGame()->GameDevice->D2D;
+
+  // Set the scale and translation.
+  auto scale = D2D1::Matrix3x2F::Scale(D2D1::SizeF(mapScale, mapScale));
+  auto translation = D2D1::Matrix3x2F::Translation(D2D1::SizeF((float)_x + 1, (float) _y + 1));
+  d2d.DeviceContext->SetTransform(scale * translation);
+
+  // Draw the thing
+  d2d.DeviceContext->FillGeometry(_geometry, _brush);
+}
+// ----------------------------------------------------------------------------
+
 void MapItem::Validate()
 {
   using namespace D2D1;
@@ -265,13 +286,18 @@ void MapItem::Validate()
     _geometry = ellipse;
     break;
   }
+
+  // Update the timestamp.
+  _timestamp = clock::now();
 }
 
 // ----------------------------------------------------------------------------
 
 
-void Release()
+void MapItem::Release()
 {
+  ReleaseDXInterface(_brush);
+  ReleaseDXInterface(_geometry);
 }
 
 // ----------------------------------------------------------------------------

@@ -14,25 +14,41 @@
 #include "mruby/array.h"
 #include "Engine/RubyWrappers.h"
 
+#pragma warning (disable : 4127) // This doesn't even need to be a warning really :/
+
 // ----------------------------------------------------------------------------
 
 MapComponentFactory MapComponent::factory;
+
+// Ruby stuff for MapComponent
 static void mrb_mapcomponent_init(mrb_state *mrb);
 static mrb_value mrb_mapcomponent_new(mrb_state *mrb, MapComponent *map);
 static void mrb_mapcomponent_free(mrb_state *, void *) {};
 
+// Define the ruby functions for MapComponent
 static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self);
 
+// Stuff for creating component instances.
 static RClass *cbase;
 static mrb_data_type mrb_mapcomponent_data_type;
 
+// Ruby stuff for MapItem
 static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item);
 static void mrb_mapitem_free(mrb_state *, void *) {};
 
+// Define the ruby functions for MapItem
+static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_gety(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self);
+
+// Stuff for creating class instances.
 static mrb_data_type mrb_mapitem_data_type;
-
-
 
 // ----------------------------------------------------------------------------
 
@@ -271,8 +287,8 @@ Component *MapComponentFactory::CreateObject(
 
 mrb_value MapComponent::GetRubyWrapper()
 {
-  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for MapComponent");
-  return mrb_nil_value();
+  RUN_ONCE(mrb_mapcomponent_init(*mrb_inst));
+  return mrb_mapcomponent_new(*mrb_inst, this);
 }
 
 // ----------------------------------------------------------------------------
@@ -346,14 +362,6 @@ void MapItem::Release()
 
 // ----------------------------------------------------------------------------
 
-mrb_value MapItem::GetRubyWrapper()
-{
-  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for MapComponent");
-  return mrb_nil_value();
-}
-
-// ----------------------------------------------------------------------------
-
 static void mrb_mapcomponent_init(mrb_state *mrb)
 {
   // Initialize the MapComponent data type.
@@ -416,3 +424,78 @@ static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item)
 }
 
 // ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  return mrb_fixnum_value(item->X);
+}
+
+static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  mrb_int x;
+  mrb_get_args(mrb, "i", &x);
+  item->X = (int) x;
+  return mrb_nil_value();
+}
+static mrb_value mrb_mapitem_gety(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  return mrb_fixnum_value(item->Y);
+}
+
+static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  mrb_int y;
+  mrb_get_args(mrb, "i", &y);
+  item->Y = (int) y;
+  return mrb_nil_value();
+}
+static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  return ruby::create_new_vector(item->Color);
+}
+
+static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+
+  // Get the color arguments.
+  mrb_value rcolor;
+  mrb_get_args(mrb, "o", &rcolor);
+
+  // Support creating colors from both vectors and strings.
+  D2D1::ColorF color = D2D1::ColorF(0);
+  if (mrb_string_p(rcolor))
+  {
+    color = StringToColor(mrb_str_to_stdstring(rcolor));
+  }
+  else
+  {
+    color = ruby::get_ruby_vector(rcolor);
+  }
+
+  item->Color = color;
+  return mrb_nil_value();
+}
+
+static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+
+  return mrb_fixnum_value((mrb_int) item->Shape);
+}
+static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  
+  mrb_int shape;
+  mrb_get_args(mrb, "i", &shape);
+
+  item->Shape = (MapItem::Shapes)shape;
+  return mrb_nil_value();
+}
+

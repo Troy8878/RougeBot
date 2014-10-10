@@ -24,6 +24,7 @@ public:
 
   // Properties
   PROPERTY(get = _GetX, put = _SetX) int X;
+  PROPERTY(get = _GetX, put = _SetX) int Y;
   PROPERTY(get = _GetColor, put = _SetColor) D2D1::ColorF Color;
   PROPERTY(get = _GetShape, put = _SetShape) Shapes Shape;
   PROPERTY(get = _GetGeometry) ID2D1Geometry *Geometry;
@@ -56,6 +57,16 @@ public:
   void _SetX(int x)
   {
     _x = x;
+    _timestamp = clock::from_time_t(0);
+  }
+
+  int _GetY()
+  {
+    return _y;
+  }
+  void _SetY(int y)
+  {
+    _y = y;
     _timestamp = clock::from_time_t(0);
   }
 

@@ -431,6 +431,8 @@ static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(item->X);
 }
 
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self)
 {
   auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
@@ -439,11 +441,16 @@ static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self)
   item->X = (int) x;
   return mrb_nil_value();
 }
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_mapitem_gety(mrb_state *mrb, mrb_value self)
 {
   auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
   return mrb_fixnum_value(item->Y);
 }
+
+// ----------------------------------------------------------------------------
 
 static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self)
 {
@@ -453,11 +460,16 @@ static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self)
   item->Y = (int) y;
   return mrb_nil_value();
 }
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self)
 {
   auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
   return ruby::create_new_vector(item->Color);
 }
+
+// ----------------------------------------------------------------------------
 
 static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self)
 {
@@ -482,12 +494,17 @@ static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self)
 {
   auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
 
   return mrb_fixnum_value((mrb_int) item->Shape);
 }
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
 {
   auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
@@ -498,4 +515,6 @@ static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
   item->Shape = (MapItem::Shapes)shape;
   return mrb_nil_value();
 }
+
+// ----------------------------------------------------------------------------
 

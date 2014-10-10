@@ -372,6 +372,7 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, cclass, "create_item", mrb_mapcomponent_create_item, ARGS_NONE());
   mrb_define_method(mrb, cclass, "delete_item", mrb_mapcomponent_delete_item, ARGS_REQ(1));
 
+  (iclass);
 }
 
 // ----------------------------------------------------------------------------

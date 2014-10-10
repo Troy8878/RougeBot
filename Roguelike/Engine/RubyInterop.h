@@ -341,7 +341,7 @@ namespace ruby
   template <typename T>
   T *read_native_ptr(mrb_state *mrb, mrb_value self)
   {
-    static mrb_sym ptr_sym = mrb_intern_cstr(mrb, MRB_NATIVE_PTR_SAVED_SYM_NAME);
+    static mrb_sym ptr_sym = mrb_intern_lit(mrb, MRB_NATIVE_PTR_SAVED_SYM_NAME);
     return reinterpret_cast<T *>(mrb_cptr(mrb_iv_get(mrb, self, ptr_sym)));
   }
 

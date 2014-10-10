@@ -53,9 +53,22 @@ public:
   virtual void OnFree() {}
 
   void RestartLevel();
-  void ChangeLevel(const std::string& name);
+  void ChangeLevel(const std::string& name)
+  {
+    levelChangeContext.name = name;
+    levelChangeContext.loaded = false;
+  }
 
   void SetProcHandler(UINT message, wndproc_callback callback);
+
+  void SetProcHandlers(wndproc_callback) {}
+
+  template <typename... MSGs>
+  void SetProcHandlers(wndproc_callback callback, UINT msg, MSGs... msgs)
+  {
+    SetProcHandler(msg, callback);
+    SetProcHandlers(callback, msgs...);
+  }
 
   PROPERTY(get = __getGameTime) const GameTime& Time;
   PROPERTY(get = __getGraphicsDevice) GraphicsDevice *GameDevice;

@@ -38,7 +38,7 @@ public:
 
   operator bool() const { return !!_res; }
 
-  static Texture2D GetNullTexture(ID3D11Device *device);
+  static Texture2D GetNullTexture();
   static Texture2D CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height);
   static Texture2D FromTextureZip(TextureZip& zip);
 

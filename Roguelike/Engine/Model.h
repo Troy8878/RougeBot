@@ -59,6 +59,12 @@ public:
   Shader *shader;
   Texture2D texture;
 
+  ID3D11Buffer *GetVB() { return _vertexBuffer; }
+  ID3D11Buffer *GetIB() { return _indexBuffer; }
+  UINT GetVC() { return _vertexCount; }
+  UINT GetIC() { return _indexCount; }
+  UINT GetStride() { return _stride; }
+
 private:
   ID3D11Buffer *_vertexBuffer, *_indexBuffer;
   UINT _vertexCount, _indexCount, _stride;

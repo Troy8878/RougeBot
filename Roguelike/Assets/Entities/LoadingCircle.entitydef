@@ -4,8 +4,11 @@
     "rotation": [0, 0, 0, 0],
     "scale": [0.5, 0.5, 1, 1]
   },
+  "TextureComponent": {
+    "textures": ["Spinner.png"]
+  },
   "SpriteComponent": {
-    "texture": "Spinner.png"
+    "render_target": "WorldLayer"
   },
   "SpinnyThingComponent": {
     // This is basically 'radians per second'

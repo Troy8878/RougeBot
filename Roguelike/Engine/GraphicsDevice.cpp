@@ -72,6 +72,7 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
 
   WNDCLASSEX wndc = {sizeof(wndc)};
   wndc.cbWndExtra = sizeof(WindowDevice *);
+  wndc.style = CS_DBLCLKS;
   wndc.hInstance = options.hInstance;
   wndc.lpfnWndProc = StaticWindowProc;
   wndc.lpszClassName = className.c_str();
@@ -275,7 +276,7 @@ void GraphicsDevice::InitializeD3DContext()
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  sd.BufferDesc.RefreshRate.Numerator = 120;
+  sd.BufferDesc.RefreshRate.Numerator = 60;
   sd.BufferDesc.RefreshRate.Denominator = 1;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   sd.OutputWindow = _window;
@@ -347,6 +348,21 @@ void GraphicsDevice::InitializeD3DContext()
   CHECK_HRESULT(hr);
 
   DeviceContext->RSSetState(RasterState);
+
+  D3D11_RASTERIZER_DESC wireframeDesc;
+  wireframeDesc.CullMode = D3D11_CULL_NONE;
+  wireframeDesc.DepthBias = -1;
+  wireframeDesc.DepthBiasClamp = 0.0f;
+  wireframeDesc.DepthClipEnable = false;
+  wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+  wireframeDesc.FrontCounterClockwise = false;
+  wireframeDesc.MultisampleEnable = true;
+  wireframeDesc.ScissorEnable = false;
+  wireframeDesc.SlopeScaledDepthBias = 0.0f;
+  wireframeDesc.AntialiasedLineEnable = true;
+
+  hr = Device->CreateRasterizerState(&wireframeDesc, &WireframeState);
+  CHECK_HRESULT(hr);
 
   #pragma endregion
 

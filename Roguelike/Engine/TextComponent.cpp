@@ -224,9 +224,14 @@ Component *TextComponentFactory::CreateObject(
       component->AppendText(text.as_string());
     }
   }
+  
+  it = data.find("text_color");
+  if (it != data.end())
+    component->TextColor = StringToColor(it->second.as_string());
 
-  component->TextColor = StringToColor(data["text_color"].as_string());
-  component->BGColor = StringToColor(data["bg_color"].as_string());
+  it = data.find("bg_color");
+  if (it != data.end())
+    component->BGColor = StringToColor(it->second.as_string());
 
   component->Font = widen(data["font"].as_string());
   component->FontSize = (FLOAT) map_fetch(data, "font_size", 48).as_number();

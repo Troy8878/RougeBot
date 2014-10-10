@@ -493,7 +493,7 @@ struct Camera;
 math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
                                         DirectX::FXMVECTOR planeOrigin, 
                                         DirectX::FXMVECTOR planeNormal, 
-                                        Camera *camera);
+                                        Camera *camera, float *distance = nullptr);
 
 // ----------------------------------------------------------------------------
 
@@ -546,6 +546,31 @@ inline std::basic_string<CharType, Traits, Alloc> downcase(
   std::basic_string<CharType, Traits, Alloc> copy = str;
   std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
   return copy;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename T>
+struct array_iterator_t
+{
+  array_iterator_t(T *a, size_t c) : c(c), a(a) {}
+  size_t c;
+  T *a;
+
+  T *begin() { return a; }
+  T *end() { return a + c; }
+};
+
+template <typename T>
+array_iterator_t<T> array_iterator(T *a, size_t c)
+{
+  return array_iterator_t<T>(a, c);
+}
+
+template <typename T>
+array_iterator_t<const T> const_array_iterator(const T *a, size_t c)
+{
+  return array_iterator_t<const T>(a, c);
 }
 
 // ----------------------------------------------------------------------------

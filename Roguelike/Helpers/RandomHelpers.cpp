@@ -236,7 +236,7 @@ bool getline_async(std::string& str,
 math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
                                         DirectX::FXMVECTOR planeOrigin, 
                                         DirectX::FXMVECTOR planeNormal, 
-                                        Camera *camera)
+                                        Camera *camera, float *distance)
 {
   auto winsz = GetGame()->GameDevice->GetSize();
 
@@ -269,7 +269,20 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
             oblique *
             XMMatrixTranslationFromVector(planeOrigin);
   
-  return oblique * planePoint;
+  XMVECTOR projected = oblique * planePoint;
+
+  if (distance != nullptr)
+  {
+    XMVECTOR diff = projected - planePoint;
+    *distance = XMVectorGetX(XMVector3Length(diff));
+
+    if (XMVectorGetX(XMVectorAbs(XMVector3AngleBetweenVectors(diff, v))) > math::pi / 2)
+    {
+      *distance = -*distance;
+    }
+  }
+
+  return projected;
 }
 
 // ----------------------------------------------------------------------------
@@ -434,9 +447,22 @@ D2D1::ColorF StringToColor(const std::string& name)
     if (name.size() >= 9)
       color.a = std::stoul(name.substr(7, 2), 0, 16) / 255.0f;
   }
-  if ((it = namedColors.find(downcase(name))) != namedColors.end())
+  else if ((it = namedColors.find(downcase(name))) != namedColors.end())
   {
     color = it->second;
+  }
+  else
+  {
+    auto delim = name.find_first_of(',');
+    auto colorName = name.substr(0, delim);
+    auto alphaStart = name.find_first_not_of(' ', delim + 1);
+    auto alphaTxt = name.substr(alphaStart);
+
+    if ((it = namedColors.find(downcase(colorName))) != namedColors.end())
+    {
+      color = it->second;
+      color.a = std::stof(alphaTxt);
+    }
   }
 
   return color;

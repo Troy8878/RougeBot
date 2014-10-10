@@ -1,21 +1,15 @@
 {
-  "name": "MainMenu",
+  "name": "Game",
   "components": {
-    "TransformComponent": {
-      "scale": [1,1,1]
-    }
+    "GameQuitCancelerComponent": {}
   },
   "entities": [
     {
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0.77, 0, 0]
-        },
-        "CameraFollowComponent": {
-          "offset": [0, 5, -6],
-          "follows": "Pancake",
-          "speed": 0
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
         }
       },
       "children": [
@@ -77,7 +71,7 @@
                   "position": [1.4, -0.8]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/1040:1040"]
+                  "textures": ["SPECIAL/SURFACE/5200:5200"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
@@ -104,14 +98,17 @@
       "archetype": "PancakeFace",
       "components": {
         "TransformComponent": {
-          "rotation": [0.85, 0, 0],
+          "rotation": [1.5707, 0, 0],
           "position": [1, 0.25, 1],
           "scale": [0.8, 0.8, 0.8]
         },
         "SpriteComponent": {
           "render_target": "TranslucentLayer"
         },
-        "PlayerControllerComponent": {}
+        "PlayerControllerComponent": {},
+        /*"ParticleSystemComponent": {
+          "render_target": "WorldLayer"
+        },*/
       }
     },
     {

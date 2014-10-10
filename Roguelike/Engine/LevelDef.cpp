@@ -47,14 +47,15 @@ void LevelDef::Load(Level& level)
   
   static json::value emptyObject = json::value::object();
   auto data = EntityFactoryDataFromJson(map_fetch(leveldata, "components", emptyObject));
-  level.RootEntity = EntityFactory::CreateEntity("NoArchetype", data, 0);
+  level.RootEntity = EntityFactory::CreateEntity("LevelRoot", data, 0);
+  level.RootEntity->Name = level.Name;
 
   auto entitydefs = leveldata["entities"].as_array_of<json::value::object_t>();
   for (auto& entitydef : entitydefs)
   {
     PopulateEntityChildren(level.RootEntity, entitydef);
   }
-
+  
   level.levelEvents.AddListener(level.RootEntity);
 }
 

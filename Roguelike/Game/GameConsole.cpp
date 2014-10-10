@@ -64,17 +64,21 @@ void GameConsole::OnUpdate(Events::EventMessage&)
 
 void GameConsole::ExecuteSyncCommand(const std::string& cmd)
 {
+  ruby::ruby_gc_guard gcguard{*mrb_inst};
+
   static ruby::ruby_module kernel{mrb_inst, mrb_inst->mrb_handle()->kernel_module};
 
   mrb_debug_mbox = false;
+
   auto result = kernel.functions["eval"].call(cmd).functions["inspect"].call();
-  mrb_debug_mbox = true;
 
   auto pfg = console::fg_color();
   std::cout << console::fg::green
             << "=> "
             << static_cast<std::string>(result)
             << std::endl << pfg;
+
+  mrb_debug_mbox = true;
 }
 
 // ----------------------------------------------------------------------------

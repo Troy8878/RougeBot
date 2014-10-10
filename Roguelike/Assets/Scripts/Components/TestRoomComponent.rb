@@ -15,7 +15,7 @@ class TestRoomComponent < ComponentBase
   ROOM_SIZE = 50
   C_L = -0.5
   C_R = 0.5
-  W_T = 0.5
+  W_T = 0
   W_B = 0
 
   WHITE = Vector.new(1, 1, 1, 1)

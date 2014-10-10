@@ -160,7 +160,14 @@ $author_loc = author_loc
 
 def diff_values(diffp, *path, remove_empty: false)
   authp = $author_loc
-  path[0..-2].each{|p| authp = authp[p]; diffp = diffp[p] }
+  path[0..-2].each do |p|
+    return if authp.nil? || diffp.nil?
+
+    authp = authp[p]
+    diffp = diffp[p]
+  end
+
+  return if authp.nil? || diffp.nil?
 
   authp[path.last] -= diffp[path.last]
 

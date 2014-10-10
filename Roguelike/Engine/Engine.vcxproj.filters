@@ -48,6 +48,9 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{3328e580-9312-4b6b-b7a8-446f81504681}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Other">
+      <UniqueIdentifier>{38982159-b1e3-41c4-b18f-d32f3773349e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsDevice.h">
@@ -144,6 +147,12 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="TextComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystemComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -255,5 +264,16 @@
     <ClCompile Include="TextComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystemComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="AVXSupport.asm">
+      <Filter>Source Files\Other</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

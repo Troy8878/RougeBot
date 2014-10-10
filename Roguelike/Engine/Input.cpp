@@ -54,23 +54,47 @@ void Input::Initialize()
 
   game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
   {
-      Input::Instance.OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
   });
 
-  game.SetProcHandler(WM_XBUTTONDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  static const virtual_key mouse_buttons[] =
   {
-    (msg, wp, lp);
-  });
+    MK_LBUTTON,
+    MK_MBUTTON,
+    MK_RBUTTON,
+    MK_XBUTTON1,
+    MK_XBUTTON2
+  };
 
-  game.SetProcHandler(WM_XBUTTONUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
   {
-    (msg, wp, lp);
-  });
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-  game.SetProcHandler(WM_XBUTTONDBLCLK, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnMouseDown(bt);
+
+  }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
+
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
   {
-    (msg, wp, lp);
-  });
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnMouseUp(bt);
+
+  }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
+
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
+  {
+    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+
+    for (auto bt : mouse_buttons)
+      if (wp & bt)
+        this->OnDoubleClick(bt);
+
+  }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
 }
 
 // ----------------------------------------------------------------------------
@@ -338,18 +362,6 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   mrb_define_method(mrb, rclass, "vkey", mrb_kse_vkey, ARGS_NONE());
   mrb_define_method(mrb, rclass, "plain_char?", mrb_kse_is_plain_char, ARGS_NONE());
   mrb_define_method(mrb, rclass, "plain_char", mrb_kse_plain_char, ARGS_NONE());
-
-  #pragma region CONSTANTS
-
-  DEF_INT_CONST("ESCAPE", VK_ESCAPE);
-  DEF_INT_CONST("SPACE",  VK_SPACE);
-  DEF_INT_CONST("ENTER",  VK_RETURN);
-  DEF_INT_CONST("LEFT",   VK_LEFT);
-  DEF_INT_CONST("RIGHT",  VK_RIGHT);
-  DEF_INT_CONST("UP",     VK_UP);
-  DEF_INT_CONST("DOWN",   VK_DOWN);
-
-  #pragma endregion
 
   mrb_me_data_type.dfree = mrb_me_free;
   mrb_me_data_type.struct_name = "MouseState";

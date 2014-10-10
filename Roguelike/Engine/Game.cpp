@@ -37,7 +37,7 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
 // ----------------------------------------------------------------------------
 
 Game::~Game()
-{
+{  
   delete _respack;
 }
 
@@ -71,6 +71,9 @@ void Game::Run()
 
       // Update
       _gameTime.Update();
+
+	    // FMOD Update
+      SoundSystem.Update();
 
       if (!levelChangeContext.loaded)
       {

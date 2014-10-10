@@ -14,6 +14,7 @@
 #include "RubyInterop.h"
 #include "ResourceReader\ResourcePack.h"
 #include "Helpers\AsyncTask.h"
+#include "FMOD\SoundSystem.h"
 
 // ----------------------------------------------------------------------------
 
@@ -78,6 +79,8 @@ protected:
 public:
   EngineInitSettings initSettings;
   Events::BasicEventDispatcher globalEventDispatcher;
+
+  SoundClass SoundSystem;
 
   struct LevelEventProxy : public Events::EventReciever
   {

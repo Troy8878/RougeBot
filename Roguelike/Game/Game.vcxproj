@@ -76,7 +76,7 @@
       <AdditionalDependencies>json.lib;Engine.lib;Helpers.lib;ResourceReader.lib;mruby.lib;d3d11.lib;dxguid.lib;DXGI.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(SolutionDir)Assets\Shaders\%(Filename).cso</ObjectFileOutput>

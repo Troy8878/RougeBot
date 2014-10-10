@@ -30,10 +30,6 @@ SoundClass::SoundClass()
     std::cout << "FMOD lib version " << version << " doesn't match header version " << FMOD_VERSION;
   }
 
-  // Initialize FMOD
-  FMODresult = SoundSystem->init(512, FMOD_INIT_NORMAL, 0);
-  CheckResult(FMODresult == FMOD_OK);
-
   // Set the user selected speaker mode if it was given.  Default to stereo & 44100 Hz
   if (speakermode)
   {
@@ -41,8 +37,12 @@ SoundClass::SoundClass()
   }
   else
   {
-    FMODresult = SoundSystem->setSoftwareFormat(hertz, FMOD_SPEAKERMODE_STEREO, 2);
+    FMODresult = SoundSystem->setSoftwareFormat(hertz, FMOD_SPEAKERMODE_DEFAULT, 2);
   }
+  CheckResult(FMODresult == FMOD_OK);
+
+  // Initialize FMOD
+  FMODresult = SoundSystem->init(512, FMOD_INIT_NORMAL, 0);
   CheckResult(FMODresult == FMOD_OK);
 }
 
@@ -69,7 +69,7 @@ void SoundClass::CheckResult(bool isOkay)
 
 /* Here be the sound class itself! */
 
-SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD_MODE custom, std::vector<ExInfo> Infos = {})
+SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD_MODE custom, std::vector<ExInfo> Infos)
 {
   FMOD_MODE mode;
   FMOD_CREATESOUNDEXINFO ex = { 0 };

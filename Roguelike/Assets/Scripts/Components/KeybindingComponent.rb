@@ -9,7 +9,9 @@ class KeybindingComponent < ComponentBase
   def initialize(data)
     super data
 
+    register_event :key_down, :on_down
     register_event :key_held, :on_held
+    register_event :key_up, :on_up
   end
 
   def on_down(e)

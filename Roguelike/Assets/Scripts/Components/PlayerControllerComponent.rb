@@ -79,7 +79,9 @@ class PlayerControllerComponent < ComponentBase
   def first_update(e)
     move 0, 0
 
-    find_entity("CameraRoot").parent = self.owner
+    @camera = find_entity("CameraRoot")
+    @camera.parent = self.owner
+    @camz = @camera.transform_component.position.z
 
     register_event :update, :on_update
   end
@@ -96,10 +98,12 @@ class PlayerControllerComponent < ComponentBase
     pos = @transform.position
     @transform.position = pos.dup + diff
 
-    xbounce = Math.sin((pos.x % 1) * Math::PI) / 10
-    zbounce = Math.sin((pos.z % 1) * Math::PI) / 10
+    xbounce = Math.sin((pos.x % 1) * Math::PI) / 6
+    zbounce = Math.sin((pos.z % 1) * Math::PI) / 6
 
     pos.y = 0.25 + xbounce + zbounce
+    @camera.transform_component.position.z = 
+      @camz + (xbounce + zbounce) / @transform.scale.z
 
     update_cursor_color
   end

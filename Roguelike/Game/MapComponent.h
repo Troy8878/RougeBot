@@ -34,6 +34,7 @@ public:
   void Validate();
   void Release();
   void Draw(float mapscale);
+  mrb_value GetRubyWrapper();
 
 private:
   int _x, _y;                                                   // Coordinates to draw at
@@ -95,6 +96,7 @@ class MapComponent : public Component
 {
 public:
   MapComponent();
+  ~MapComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
 
@@ -103,6 +105,10 @@ public:
   void OnMapUpdate(Events::EventMessage&);
 
   void DrawMap();
+
+  // Map Item Functions
+  MapItem *CreateMapItem();
+  void DeleteMapItem(MapItem *item);
 
   mrb_value GetRubyWrapper() override;
 
@@ -118,7 +124,7 @@ private:
   std::vector<std::vector<bool>> _explored;
 
   // We need another Vector for everything that wants to be drawn.
-  std::vector<MapItem> _items;
+  std::vector<MapItem *> _items;
   
   // Drawing resources
   struct DrawingResources

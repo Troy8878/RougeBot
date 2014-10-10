@@ -17,11 +17,37 @@
 // ----------------------------------------------------------------------------
 
 MapComponentFactory MapComponent::factory;
+static void mrb_mapcomponent_init(mrb_state *mrb);
+static mrb_value mrb_mapcomponent_new(mrb_state *mrb, MapComponent *map);
+static void mrb_mapcomponent_free(mrb_state *, void *) {};
+
+static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self);
+
+static RClass *cbase;
+static mrb_data_type mrb_mapcomponent_data_type;
+
+static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item);
+static void mrb_mapitem_free(mrb_state *, void *) {};
+
+static mrb_data_type mrb_mapitem_data_type;
+
+
 
 // ----------------------------------------------------------------------------
 
 MapComponent::MapComponent()
 {
+  cbase = Component::GetComponentRClass();
+}
+
+// ----------------------------------------------------------------------------
+
+MapComponent::~MapComponent()
+{
+  // Delete every MapItem.
+  for (auto *item : _items)
+    delete item;
 }
 
 // ----------------------------------------------------------------------------
@@ -33,7 +59,7 @@ void MapComponent::Initialize(Entity *owner, const std::string& name)
   DEF_EVENT_ID(update);
   Owner->AddEvent(this, update, &MapComponent::OnUpdate);
 
-  // Register an map_update event, so we only draw when asked.
+  // Register a map_update event, so we only draw when asked.
   DEF_EVENT_ID(map_update);
   Owner->AddEvent(this, map_update, &MapComponent::OnMapUpdate);
 }
@@ -153,8 +179,8 @@ void MapComponent::DrawMap()
   // Now draw them~!
   d2d.DeviceContext->FillEllipse(playerEllipse, _drawing.playerBrush);
 
-  for(auto&item : _items)
-    item.Draw(mapScale);
+  for(auto *item : _items)
+    item->Draw(mapScale);
 
   HRESULT hr = d2d.EndDraw();
   CHECK_HRESULT(hr);
@@ -200,6 +226,24 @@ void MapComponent::DrawingResources::Release()
 {
   ReleaseDXInterface(wallBrush);
   ReleaseDXInterface(playerBrush);
+}
+
+// ----------------------------------------------------------------------------
+
+MapItem *MapComponent::CreateMapItem()
+{
+  MapItem *item = new MapItem;
+  _items.push_back(item);
+  return item;
+}
+
+// ----------------------------------------------------------------------------
+
+void MapComponent::DeleteMapItem(MapItem *item)
+{
+  auto it = std::find(_items.begin(), _items.end(), item);
+  _items.erase(it);
+  delete item;
 }
 
 // ----------------------------------------------------------------------------
@@ -302,3 +346,72 @@ void MapItem::Release()
 
 // ----------------------------------------------------------------------------
 
+mrb_value MapItem::GetRubyWrapper()
+{
+  ONE_TIME_MESSAGE("[WARN] TODO: Implement ruby wrapper for MapComponent");
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_mapcomponent_init(mrb_state *mrb)
+{
+  // Initialize the MapComponent data type.
+  mrb_mapcomponent_data_type.dfree = mrb_mapcomponent_free;
+  mrb_mapcomponent_data_type.struct_name = "MapComponent";
+
+  // Initialize the MapItem data type.
+  mrb_mapitem_data_type.dfree = mrb_mapitem_free;
+  mrb_mapitem_data_type.struct_name = "MapItem";
+
+  // Define the two classes.
+  RClass *cclass = mrb_define_class(mrb, "MapComponent", cbase);
+  RClass *iclass = mrb_define_class(mrb, "MapItem", mrb->object_class);
+
+  // Define the methods for MapComponent.
+  mrb_define_method(mrb, cclass, "create_item", mrb_mapcomponent_create_item, ARGS_NONE());
+  mrb_define_method(mrb, cclass, "delete_item", mrb_mapcomponent_delete_item, ARGS_REQ(1));
+
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapcomponent_new(mrb_state *mrb, MapComponent *map)
+{
+  auto *cclass = mrb_class_get(mrb, "MapComponent");
+  auto object = mrb_data_object_alloc(mrb, cclass, map, &mrb_mapcomponent_data_type);
+  return mrb_obj_value(object);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self)
+{
+  auto *map = (MapComponent *) mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type);
+  auto *item = map->CreateMapItem();
+
+  return mrb_mapitem_new(mrb, item);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self)
+{
+  auto *map = (MapComponent *) mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type);
+  mrb_value item;
+  mrb_get_args(mrb, "o", &item);
+  map->DeleteMapItem((MapItem *) mrb_data_get_ptr(mrb, item, &mrb_mapitem_data_type));
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item)
+{
+  auto *cclass = mrb_class_get(mrb, "MapItem");
+  auto object = mrb_data_object_alloc(mrb, cclass, item, &mrb_mapitem_data_type);
+  return mrb_obj_value(object);
+}
+
+// ----------------------------------------------------------------------------

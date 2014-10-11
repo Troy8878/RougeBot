@@ -49,7 +49,6 @@ public:
     RenderGroup::Instance.Initialize();
 
     InitShaders();
-    InitObjects();
     InitWMHandlers();
 
     using namespace Events;
@@ -57,9 +56,6 @@ public:
     SetHandler(updateEvent, &Roguelike::OnUpdate);
 
     static EventId resizeEvent("window_resize");
-    SetHandler(resizeEvent, &Roguelike::OnResize);
-
-    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 100, true);
 
     Event::GlobalDispatcher->AddListener(_console);
   }
@@ -68,14 +64,6 @@ public:
   {
     Shader::LoadShader(_graphicsDevice.get(), "Basic.shaderdef");
     Shader::LoadShader(_graphicsDevice.get(), "Textured.shaderdef");
-  }
-
-  void InitObjects()
-  {
-    _hudCamera.position = math::Vector{0, 0, 30, 1};
-    _hudCamera.Init();
-    _hudCamera.Update();
-    _hudCamera.GetRubyWrapper();
   }
 
   void InitWMHandlers()
@@ -145,18 +133,7 @@ public:
     delete _console;
   }
 
-  void OnResize(Events::EventMessage& e)
-  {
-    using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
-    auto& data = e.GetData<event_type>()->data;
-
-    _hudCamera.size.x = _hudCamera.size.y * data.x / data.y;
-    _hudCamera.Init();
-    _hudCamera.Update();
-  }
-
 private:
-  HUDCamera _hudCamera;
   GameConsole *_console = nullptr;
 };
 

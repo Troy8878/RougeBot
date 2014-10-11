@@ -243,9 +243,9 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
   using namespace DirectX;
   auto viewInverse = XMMatrixInverse(nullptr, camera->viewMatrix);
 
-  auto planePoint = XMVector3Unproject(point, 
-                                       0, 0, winsz.x, winsz.y, 0.0f, 1.0f, 
-                                       camera->projectionMatrix, 
+  auto planePoint = XMVector3Unproject(point,
+                                       0, 0, winsz.x, winsz.y, 0.1f, 1.0f,
+                                       camera->projectionMatrix,
                                        camera->viewMatrix, 
                                        XMMatrixIdentity());
 

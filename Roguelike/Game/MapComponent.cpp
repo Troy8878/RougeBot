@@ -389,6 +389,10 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, iclass, "set_color", mrb_mapitem_setcolor, ARGS_REQ(1));
   mrb_define_method(mrb, iclass, "get_shape", mrb_mapitem_getshape, ARGS_NONE());
   mrb_define_method(mrb, iclass, "set_shape", mrb_mapitem_setshape, ARGS_REQ(1));
+
+  // Constants
+  mrb_define_const(mrb, iclass, "RECTANGLE", mrb_fixnum_value(MapItem::Shapes::RECTANGLE));
+  mrb_define_const(mrb, iclass, "ELLIPSE", mrb_fixnum_value(MapItem::Shapes::ELLIPSE));
 }
 
 // ----------------------------------------------------------------------------

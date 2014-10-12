@@ -21,11 +21,6 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
-  KEYS_MOVE_UP =    ['W'.char_code, Keys::UP   ]
-  KEYS_MOVE_LEFT =  ['A'.char_code, Keys::LEFT ]
-  KEYS_MOVE_DOWN =  ['S'.char_code, Keys::DOWN ]
-  KEYS_MOVE_RIGHT = ['D'.char_code, Keys::RIGHT]
-
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -53,7 +48,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_move(e)
-    raise "Invalid key binding for player movement" if e.count != 2
     move *e if can_move? *e
   end
 

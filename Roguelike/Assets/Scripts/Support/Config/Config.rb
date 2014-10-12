@@ -82,4 +82,9 @@ module Config
       Config.key_bindings[section].delete key
     end
   end
+
+  def self.bound_keys(section, action)
+    section = Config.key_bindings[section]
+    section.select {|k, v| v == action }.keys
+  end
 end

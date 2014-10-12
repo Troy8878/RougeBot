@@ -380,7 +380,15 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, cclass, "create_item", mrb_mapcomponent_create_item, ARGS_NONE());
   mrb_define_method(mrb, cclass, "delete_item", mrb_mapcomponent_delete_item, ARGS_REQ(1));
 
-  (iclass);
+  // Define the methods for MapItem
+  mrb_define_method(mrb, iclass, "get_x", mrb_mapitem_getx, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "set_x", mrb_mapitem_setx, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "get_y", mrb_mapitem_gety, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "set_y", mrb_mapitem_sety, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "get_color", mrb_mapitem_getcolor, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "set_color", mrb_mapitem_setcolor, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "get_shape", mrb_mapitem_getshape, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "set_shape", mrb_mapitem_setshape, ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------

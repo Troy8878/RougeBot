@@ -24,7 +24,7 @@ public:
 
   // Properties
   PROPERTY(get = _GetX, put = _SetX) int X;
-  PROPERTY(get = _GetX, put = _SetX) int Y;
+  PROPERTY(get = _GetY, put = _SetY) int Y;
   PROPERTY(get = _GetColor, put = _SetColor) D2D1::ColorF Color;
   PROPERTY(get = _GetShape, put = _SetShape) Shapes Shape;
   PROPERTY(get = _GetGeometry) ID2D1Geometry *Geometry;
@@ -38,9 +38,9 @@ public:
   mrb_value GetRubyWrapper();
 
 private:
-  int _x, _y;                                                   // Coordinates to draw at
+  int _x = 0, _y = 0;                                           // Coordinates to draw at
   D2D1::ColorF _color = D2D1::ColorF(D2D1::ColorF::Black);      // Color to draw
-  Shapes _shape;                                                // Shape to use
+  Shapes _shape = Shapes::RECTANGLE;                            // Shape to use
   ID2D1Geometry *_geometry = 0;                                 // The Direct2D shape
   ID2D1Brush *_brush = 0;                                       // The brush to use
 

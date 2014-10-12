@@ -134,6 +134,8 @@ void MapComponent::DrawMap()
   auto& d2d = GetGame()->GameDevice->D2D;
   // This basically says what we're drawing to - in this case, the texture
   d2d.DrawTo(texture);
+  // Clear any previous transform
+  d2d.DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
   // Clear the currently existing pixels.
   d2d.DeviceContext->Clear();
   // Get the size of the context (in this case, texture) we're drawing too.
@@ -299,12 +301,14 @@ void MapItem::Draw(float mapScale)
   if(!visible)
     return;
 
+  Validate();
+
   auto& d2d = GetGame()->GameDevice->D2D;
 
   // Set the scale and translation.
-  auto scale = D2D1::Matrix3x2F::Scale(D2D1::SizeF(mapScale, mapScale));
-  auto translation = D2D1::Matrix3x2F::Translation(D2D1::SizeF((float)_x + 1, (float) _y + 1));
-  d2d.DeviceContext->SetTransform(scale * translation);
+  auto scale = D2D1::Matrix3x2F::Scale(mapScale, mapScale);
+  auto translation = D2D1::Matrix3x2F::Translation((float) _x + 1, (float) _y + 1);
+  d2d.DeviceContext->SetTransform(translation * scale);
 
   // Draw the thing
   d2d.DeviceContext->FillGeometry(_geometry, _brush);
@@ -381,14 +385,14 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, cclass, "delete_item", mrb_mapcomponent_delete_item, ARGS_REQ(1));
 
   // Define the methods for MapItem
-  mrb_define_method(mrb, iclass, "get_x", mrb_mapitem_getx, ARGS_NONE());
-  mrb_define_method(mrb, iclass, "set_x", mrb_mapitem_setx, ARGS_REQ(1));
-  mrb_define_method(mrb, iclass, "get_y", mrb_mapitem_gety, ARGS_NONE());
-  mrb_define_method(mrb, iclass, "set_y", mrb_mapitem_sety, ARGS_REQ(1));
-  mrb_define_method(mrb, iclass, "get_color", mrb_mapitem_getcolor, ARGS_NONE());
-  mrb_define_method(mrb, iclass, "set_color", mrb_mapitem_setcolor, ARGS_REQ(1));
-  mrb_define_method(mrb, iclass, "get_shape", mrb_mapitem_getshape, ARGS_NONE());
-  mrb_define_method(mrb, iclass, "set_shape", mrb_mapitem_setshape, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "x", mrb_mapitem_getx, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "x=", mrb_mapitem_setx, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "y", mrb_mapitem_gety, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "y=", mrb_mapitem_sety, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "color", mrb_mapitem_getcolor, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "color=", mrb_mapitem_setcolor, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "shape", mrb_mapitem_getshape, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "shape=", mrb_mapitem_setshape, ARGS_REQ(1));
 
   // Constants
   mrb_define_const(mrb, iclass, "RECTANGLE", mrb_fixnum_value(MapItem::Shapes::RECTANGLE));

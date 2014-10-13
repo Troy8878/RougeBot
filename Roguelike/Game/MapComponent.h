@@ -30,7 +30,7 @@ public:
   PROPERTY(get = _GetGeometry) ID2D1Geometry *Geometry;
   PROPERTY(get = _GetBrush) ID2D1Brush *Brush;
 
-  bool visible = true;
+  bool Visible = true;
 
   void Validate();
   void Release();

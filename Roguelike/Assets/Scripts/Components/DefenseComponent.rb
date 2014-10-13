@@ -48,6 +48,5 @@ class DefenseComponent < ComponentBase
     #todo later
   end
 
-
-
+  register_component "DefenseComponent"
 end

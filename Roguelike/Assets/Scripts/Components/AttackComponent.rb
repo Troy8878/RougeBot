@@ -31,4 +31,5 @@ class AttackComponent < ComponentBase
   def attack()
   end
 
+  register_component "AttackComponent"
 end

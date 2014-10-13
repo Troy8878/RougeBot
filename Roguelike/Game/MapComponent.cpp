@@ -46,6 +46,8 @@ static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_getvisible(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_setvisible(mrb_state *mrb, mrb_value self);
 
 // Stuff for creating class instances.
 static mrb_data_type mrb_mapitem_data_type;
@@ -298,7 +300,7 @@ mrb_value MapComponent::GetRubyWrapper()
 void MapItem::Draw(float mapScale)
 {
   // Make sure we even want to draw this.
-  if(!visible)
+  if(!Visible)
     return;
 
   Validate();
@@ -393,6 +395,8 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, iclass, "color=", mrb_mapitem_setcolor, ARGS_REQ(1));
   mrb_define_method(mrb, iclass, "shape", mrb_mapitem_getshape, ARGS_NONE());
   mrb_define_method(mrb, iclass, "shape=", mrb_mapitem_setshape, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "visible?", mrb_mapitem_getvisible, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "visible=", mrb_mapitem_setvisible, ARGS_REQ(1));
 
   // Constants
   mrb_define_const(mrb, iclass, "RECTANGLE", mrb_fixnum_value(MapItem::Shapes::RECTANGLE));
@@ -533,4 +537,24 @@ static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
 }
 
 // ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapitem_getvisible(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  return mrb_bool_value(item->Visible);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_mapitem_setvisible(mrb_state *mrb, mrb_value self)
+{
+  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  mrb_bool visible;
+  mrb_get_args(mrb, "b", &visible);
+  item->Visible = !!visible;
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 

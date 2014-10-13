@@ -55,7 +55,8 @@ code_dirs = [
   "Engine/", 
   "Game/", 
   "Helpers/",
-  "json/"
+  "json/",
+  "FMOD/"
 ]
 
 # Look for C files in the current directory and its sub dirrectories

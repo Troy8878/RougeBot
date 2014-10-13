@@ -7,6 +7,7 @@
 #pragma once
 
 #include "FixedWindows.h"
+#include "StackTrace.h"
 #include <unordered_map>
 #include <chrono>
 #include "json/json.h"
@@ -97,6 +98,14 @@ public:
 
 private:
   COMError _error;
+};
+
+// ----------------------------------------------------------------------------
+
+class basic_exception : public std::exception
+{
+  stack_trace trace;
+
 };
 
 // ----------------------------------------------------------------------------

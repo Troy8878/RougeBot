@@ -30,8 +30,12 @@ stack_trace stack_trace::create_trace(int skip)
 
 void stack_trace::print_trace(std::ostream& out, const char *indent)
 {
-  auto trace = create_trace(1);
-  for (auto& line : trace.get_lines())
+  create_trace(1).print(out, indent);
+}
+
+void stack_trace::print(std::ostream& out, const char *indent)
+{
+  for (auto& line : get_lines())
   {
     out << indent;
     if (line.module.length())

@@ -73,7 +73,7 @@ void Game::Run()
       // Update
       _gameTime.Update();
 
-	    // FMOD Update
+      // FMOD Update
       SoundSystem.Update();
 
       if (!levelChangeContext.loaded)
@@ -100,19 +100,8 @@ void Game::Run()
         }
       }
 
-      // Raise pre-update event
-      {
-        performance::register_guard perf("pre_update event");
-
-        using namespace Events;
-        static EventId updateId("pre_update");
-
-        UpdateEvent edata{_gameTime};
-        EventMessage msg{updateId, &edata, false};
-        Event::Raise(msg);
-      }
-
       // Raise update event
+      if (!_gameTime.Paused)
       {
         performance::register_guard perf("update event");
 
@@ -124,31 +113,25 @@ void Game::Run()
         Event::Raise(msg);
       }
 
-      // Raise post-update event
-      {
-        performance::register_guard perf("post_update event");
-
-        using namespace Events;
-        static EventId updateId("post_update");
-
-        UpdateEvent edata{_gameTime};
-        EventMessage msg{updateId, &edata, false};
-        Event::Raise(msg);
-      }
-
       // Raise draw event (and draw the frame)
       if (_graphicsDevice->BeginFrame())
       {
-        performance::register_guard perf("draw event");
-
         using namespace Events;
         static EventId drawId("draw");
         EventMessage msg{drawId, nullptr, false};
 
-        Event::Raise(msg);
+        // Draw event
+        {
+          performance::register_guard perf("draw event");
+          Event::Raise(msg);
+        }
+        
+        performance::register_guard perf("drawing");
 
+        // Do the draw
         RenderGroup::Instance.Draw(msg);
 
+        // Draw the wireframes
         if (_graphicsDevice->DebugDraw)
         {
           _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->WireframeState);
@@ -160,6 +143,7 @@ void Game::Run()
           _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->RasterState);
         }
 
+        // Done :D
         _graphicsDevice->EndFrame();
       }
       
@@ -172,7 +156,17 @@ void Game::Run()
     OnFree();
   }
 #if !defined(_DEBUG)
-  catch(const std::exception& ex)
+  catch (const basic_exception& ex)
+  {
+    std::stringstream buf;
+    buf << "A fatal exception occurred: ";
+    buf << ex.what();
+    buf << '\n';
+    ex.print_trace(buf);
+
+    MessageBox(NULL, buf.str().c_str(), NULL, MB_ICONERROR);
+  }
+  catch (const std::exception& ex)
   {
     std::string message = "A fatal exception occurred: ";
     message += ex.what();

@@ -33,7 +33,7 @@ void stack_trace::print_trace(std::ostream& out, const char *indent)
   create_trace(1).print(out, indent);
 }
 
-void stack_trace::print(std::ostream& out, const char *indent)
+void stack_trace::print(std::ostream& out, const char *indent) const
 {
   for (auto& line : get_lines())
   {

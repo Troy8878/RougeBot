@@ -40,7 +40,7 @@ void stack_trace::print(std::ostream& out, const char *indent)
     out << indent;
     if (line.module.length())
       out << fs::path{line.module}.filename() << "!";
-    out << line.method << " (" 
+    out << line.method << "(" 
         << fs::path{line.file}.filename() << ":" 
         << line.line << ")" << std::endl;
   }

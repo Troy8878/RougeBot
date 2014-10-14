@@ -351,7 +351,12 @@ void MapItem::Validate()
     d2d.Factory->CreateEllipseGeometry(D2D1::Ellipse(D2D1::Point2F(0.5, 0.5), 0.5, 0.5), &ellipse);
     _geometry = ellipse;
     break;
+  default:
+    _geometry = nullptr;
   }
+
+  if (_geometry == nullptr)
+    throw basic_exception("Unknown geometry type for map item");
 
   // Update the timestamp.
   _timestamp = clock::now();

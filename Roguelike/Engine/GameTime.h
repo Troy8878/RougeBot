@@ -19,10 +19,18 @@ public:
   const double clock_period = clock::period::num / static_cast<double>(clock::period::den);
 
 // ----------------------------------------------------------------------------
+
+  GameTime()
+    : _Paused(false)
+  {
+  }
+
+// ----------------------------------------------------------------------------
   
   IR_PROPERTY(double, Dt);
   IR_PROPERTY(uint64_t, Frame);
   IR_PROPERTY(clock::duration, TimeDiff);
+  IR_PROPERTY(bool, Paused);
   PROPERTY(get = _GetRunningTime) clock::duration RunningTime;
   PROPERTY(get = _GetCurrFrameTime) double CurrFrameTime;
 
@@ -42,6 +50,9 @@ public:
       Dt = maxDt;
     if (Dt < minDt)
       Dt = maxDt;
+
+    if (Paused)
+      Dt = 0;
   }
 
 // ----------------------------------------------------------------------------

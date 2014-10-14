@@ -72,7 +72,30 @@ inline std::string GetLastErrorString()
 
 // ----------------------------------------------------------------------------
 
-class DXFatalError : public std::exception
+class basic_exception : public std::exception
+{
+  stack_trace trace;
+
+public:
+  basic_exception()
+    : trace(stack_trace::create_trace())
+  {
+  }
+
+  basic_exception(const char *what)
+    : std::exception(what), trace(stack_trace::create_trace())
+  {
+  }
+
+  void print_trace(std::ostream& out) const
+  {
+    trace.print(out);
+  }
+};
+
+// ----------------------------------------------------------------------------
+
+class DXFatalError : public basic_exception
 {
 public:
 
@@ -102,27 +125,14 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class basic_exception : public std::exception
-{
-  stack_trace trace;
-
-};
-
-// ----------------------------------------------------------------------------
-
-class string_exception : public std::exception
+class string_exception : public basic_exception
 {
   std::string message;
 
 public:
   string_exception(const std::string& message)
-    : message(message)
+    : message(message), basic_exception(this->message.c_str())
   {
-  }
-
-  const char *what() const override
-  {
-    return message.c_str();
   }
 };
 

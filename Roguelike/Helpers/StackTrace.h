@@ -27,7 +27,7 @@ class stack_trace
 public:
   static stack_trace create_trace(int skip = 0);
   static void print_trace(std::ostream& out = std::cerr, const char *indent = "  ");
-  void print(std::ostream& out = std::cerr, const char *indent = "  ");
+  void print(std::ostream& out = std::cerr, const char *indent = "  ") const;
 
   const std::vector<trace_line>& get_lines() const { return _lines; };
 

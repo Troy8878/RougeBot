@@ -8,8 +8,6 @@
 
 #include "HttpClient.h"
 
-#include <winhttp.h>
-
 // ----------------------------------------------------------------------------
 
 class HttpRequestImpl

@@ -8,6 +8,8 @@
 
 #include "Common.h"
 
+#include <winhttp.h>
+
 // ----------------------------------------------------------------------------
 
 template <typename T>
@@ -75,6 +77,27 @@ enum HttpMethod
   HTTP_OPTIONS,
   HTTP_PATCH,
 };
+
+static inline const char *HttpMethodString(HttpMethod method)
+{
+  switch (method)
+  {
+    case HTTP_GET:
+      return "GET";
+    case HTTP_HEAD:
+      return "HEAD";
+    case HTTP_POST:
+      return "POST";
+    case HTTP_PUT:
+      return "PUT";
+    case HTTP_DELETE:
+      return "DELETE";
+    case HTTP_OPTIONS:
+      return "OPTIONS";
+    case HTTP_PATCH:
+      return "PATCH";
+  }
+}
 
 // ----------------------------------------------------------------------------
 

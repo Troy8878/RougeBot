@@ -137,6 +137,27 @@ public:
 
 // ----------------------------------------------------------------------------
 
+class HttpClient
+{
+public:
+  HttpClient();
+  HttpClient(HttpShared<HttpClientImpl> shared) : impl(shared) {}
+
+  PROPERTY(get = _GetTimeout, put = _SetTimeout) DWORD Timeout;
+
+  HttpResult MakeRequest(const HttpRequest& request);
+
+private:
+  HttpShared<HttpClientImpl> impl;
+  friend class HttpClientImpl;
+
+public:
+  DWORD _GetTimeout();
+  void _SetTimeout(DWORD val);
+};
+
+// ----------------------------------------------------------------------------
+
 class HttpRequest
 {
 public:
@@ -221,10 +242,12 @@ public:
     int StatusCode;
 
 private:
-  HttpResult();
+  HttpResult(HttpClient client);
 
   HttpShared<HttpResultImpl> impl;
   friend class HttpClientImpl;
+
+  HttpClient client;
 
 public:
   bool _HasHeaders();
@@ -235,25 +258,6 @@ public:
   json::value _GetAsJson();
 
   int _GetStatusCode();
-};
-
-// ----------------------------------------------------------------------------
-
-class HttpClient
-{
-public:
-  HttpClient();
-
-  PROPERTY(get = _GetTimeout, put = _SetTimeout) DWORD Timeout;
-
-  HttpResult MakeRequest(const HttpRequest& request);
-
-private:
-  HttpShared<HttpClientImpl> impl;
-
-public:
-  DWORD _GetTimeout();
-  void _SetTimeout(DWORD val);
 };
 
 // ----------------------------------------------------------------------------

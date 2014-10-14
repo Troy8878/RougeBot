@@ -70,13 +70,15 @@ public:
   HttpClientImpl();
   ~HttpClientImpl();
 
+  std::weak_ptr<HttpClientImpl> self_ref;
+
   struct
   {
     HINTERNET session;
   } handles;
 
   HttpResult PerformEmpty(const HttpRequest& request);
-  static void AsyncPerformEmpty(HttpClientImpl& impl, const HttpRequest& request, HttpResultImpl *res);
+  static void AsyncPerformEmpty(HttpClient client, const HttpRequest& request, HttpResultImpl *res);
 };
 
 // ----------------------------------------------------------------------------

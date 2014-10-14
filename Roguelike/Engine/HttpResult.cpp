@@ -9,7 +9,8 @@
 
 // ----------------------------------------------------------------------------
 
-HttpResult::HttpResult()
+HttpResult::HttpResult(HttpClient client)
+  : client(client)
 {
 }
 

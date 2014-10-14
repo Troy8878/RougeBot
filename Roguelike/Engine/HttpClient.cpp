@@ -25,6 +25,7 @@ static const std::unordered_map<std::string, int> defaultPorts =
 HttpClient::HttpClient()
 {
   impl = std::make_shared<HttpClientImpl>();
+  impl->self_ref = impl;
 }
 
 // ----------------------------------------------------------------------------
@@ -92,7 +93,7 @@ void HttpClient::_SetTimeout(DWORD val)
 
 #pragma region Requests
 
-void HttpClientImpl::AsyncPerformEmpty(HttpClientImpl& impl, 
+void HttpClientImpl::AsyncPerformEmpty(HttpClient client, 
                                        const HttpRequest& request, 
                                        HttpResultImpl *res)
 {
@@ -113,9 +114,9 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClientImpl& impl,
   
   auto& h = res->handles;
 
-  h.server = WinHttpConnect(impl.handles.session, server.c_str(), port, 0);
+  h.server = WinHttpConnect(client.impl->handles.session, server.c_str(), port, 0);
   if (!h.server)
-  { 
+  {
     res->failMsg = "Failed to connect to server";
     res->hasFailed = true;
     return;
@@ -124,11 +125,11 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClientImpl& impl,
 
 HttpResult HttpClientImpl::PerformEmpty(const HttpRequest& request)
 {
-  HttpResult result;
-  result.impl = HttpShared<HttpResultImpl>(
-    new HttpResultImpl(
-      std::bind(HttpClientImpl::AsyncPerformEmpty,
-                *this, request, result.impl.get())));
+  HttpResult result(self_ref.lock());
+
+  result.impl = std::make_shared<HttpResultImpl>(
+    std::bind(HttpClientImpl::AsyncPerformEmpty,
+              self_ref.lock(), request, result.impl.get()));
 
   return result;
 }

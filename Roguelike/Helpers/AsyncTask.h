@@ -67,7 +67,7 @@ template <typename ReturnT>
 void async_task<ReturnT>::start()
 {
   if (!intern)
-    throw std::exception("This task does not represent any task instance");
+    throw basic_exception("This task does not represent any task instance");
 
   critical_section::guard guard{intern->lock};
 

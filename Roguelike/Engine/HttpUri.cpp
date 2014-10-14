@@ -1,0 +1,141 @@
+/*********************************
+ * HttpUri.cpp
+ * Connor Hilarides
+ * Created 2014/10/14
+ *********************************/
+
+#include "Common.h"
+#include "HttpClientImpl.h"
+
+// ----------------------------------------------------------------------------
+
+HttpUri::HttpUri()
+{
+}
+
+// ----------------------------------------------------------------------------
+
+HttpUri::HttpUri(const std::string& uri)
+  : HttpUri(Parse(uri))
+{
+}
+
+// ----------------------------------------------------------------------------
+
+HttpUri HttpUri::Parse(const std::string& _uri)
+{
+  std::string uri = _uri;
+  HttpUri result;
+  size_t pos = 0;
+
+  if ((pos = uri.find_first_of("://")) != uri.npos)
+  {
+    result.Scheme = uri.substr(0, pos);
+    uri = uri.substr(pos + 3);
+  }
+  else if ((pos = uri.find_first_of("//")) == 0)
+  {
+    uri = uri.substr(2);
+  }
+
+  size_t path_start = uri.find_first_of('/');
+  size_t at_sign = uri.find_first_of('@');
+  if (at_sign < path_start)
+  {
+    std::string userinfo = uri.substr(0, at_sign);
+    pos = userinfo.find_first_of(':');
+    if (pos != userinfo.npos)
+    {
+      result.Password = userinfo.substr(pos + 1);
+      userinfo = userinfo.substr(0, pos);
+    }
+
+    result.Username = userinfo;
+
+    uri = uri.substr(at_sign + 1);
+    path_start = uri.find_first_of('/');
+  }
+
+  size_t port_start = uri.find_first_of(':');
+  if (port_start < path_start)
+  {
+    result.Host = uri.substr(0, port_start);
+
+    size_t port_len = path_start - (port_start + 1);
+    result.Port = std::stoi(uri.substr(port_start + 1, port_len));
+  }
+  else
+  {
+    result.Host = uri.substr(0, path_start);
+  }
+
+  uri = uri.substr(path_start);
+
+  size_t query_start = uri.find_first_of('?');
+  if (query_start != uri.npos)
+  {
+    result.Path = uri.substr(0, query_start);
+    uri = uri.substr(query_start + 1);
+  }
+  else
+  {
+    result.Path = uri;
+    return result;
+  }
+
+  size_t fragment_start = uri.find_first_of('#');
+  if (fragment_start != uri.npos)
+  {
+    result.Query = uri.substr(0, fragment_start);
+    uri = uri.substr(fragment_start + 1);
+  }
+  else
+  {
+    result.Query = uri;
+    return result;
+  }
+
+  // The rest of the URI will be the fragment
+  result.Fragment = uri;
+  return result;
+}
+
+// ----------------------------------------------------------------------------
+
+std::string HttpUri::Build() const
+{
+  if (!HasHost)
+    throw basic_exception("A URI must have a host");
+
+  std::stringstream buf;
+
+  if (HasScheme)
+    buf << Scheme << "://";
+
+  if (HasUsername)
+  {
+    buf << Username;
+    if (HasPassword)
+      buf << ':' << Password;
+    buf << '@';
+  }
+
+  buf << Host;
+  
+  if (HasPort)
+    buf << ':' << Port;
+
+  if (HasPath)
+    buf << Path;
+
+  if (HasQuery)
+    buf << '?' << Query;
+
+  if (HasFragment)
+    buf << '#' << Fragment;
+
+  return buf.str();
+}
+
+// ----------------------------------------------------------------------------
+

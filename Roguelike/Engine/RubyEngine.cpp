@@ -180,7 +180,7 @@ ruby_value ruby_func::call_argv(const ruby_value *values, mrb_int num)
   mrb_value mvalues[128] = {0};
 
   if (num > 128)
-    throw std::exception("Over 128 params? >.> y u do dis? srsly, tell me");
+    throw basic_exception("Over 128 params? >.> y u do dis? srsly, tell me");
 
   for (int i = 0; i < num; ++i)
     mvalues[i] = values[i];
@@ -296,7 +296,7 @@ json::value ruby_engine::value_to_json(mrb_value value)
     return json::value::boolean(!!mrb_bool(value));
   }
 
-  throw std::exception("Unknown type in hash. "
+  throw basic_exception("Unknown type in hash. "
                        "Please only use basics "
                        "(hash, array, string, num, bool).");
 }

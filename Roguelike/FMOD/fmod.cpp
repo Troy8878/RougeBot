@@ -8,6 +8,7 @@
 
 #include "SoundSystem.h"
 #include "fmod/fmod_errors.h"
+#include "Helpers/FixedWindows.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +64,7 @@ void SoundClass::CheckResult(bool isOkay)
   if (!isOkay)
   {
     std::cout << "FMOD error " << FMODresult << ":  " << FMOD_ErrorString(FMODresult);
-    throw std::exception("FMOD init error.");
+    throw basic_exception("FMOD init error.");
   }
 }
 
@@ -292,6 +293,6 @@ void SoundClass::Sound::CheckResult(bool isOkay)
   if (!isOkay)
   {
     std::cout << "FMOD error " << FMODresult << ":  " << FMOD_ErrorString(FMODresult);
-    throw std::exception("FMOD init error.");
+    throw basic_exception("FMOD init error.");
   }
 }

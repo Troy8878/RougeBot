@@ -58,7 +58,7 @@ namespace Events
     { 
 #ifdef _DEBUG
       if (handled && !_handleable)
-        throw std::exception("Tried to set that an event was handled on an event that cannot be handled");
+        throw basic_exception("Tried to set that an event was handled on an event that cannot be handled");
 #endif
       _handled = handled; 
     }

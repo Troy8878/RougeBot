@@ -26,7 +26,7 @@ CameraComponent::CameraComponent(const std::string& name, int layer, MultiCam *c
   : _Name(name), _cameraPtr(copy)
 {
   if (!_cameraPtr)
-    throw std::exception("Camera copy pointer was null D:");
+    throw basic_exception("Camera copy pointer was null D:");
 
   RenderGroup::Instance.CreateSet(name, Camera, layer, false);
 }

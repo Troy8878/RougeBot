@@ -5,8 +5,9 @@
  *********************************/
 
 #include "Common.h"
+#include "Engine/HttpClient.h"
 
-static void createConsole()
+static void CreateConsole()
 {
   AllocConsole();
   FILE *file;
@@ -23,9 +24,12 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   performance::register_guard glperf("The Game");
   
-  createConsole();
+  CreateConsole();
 
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
+
+  HttpUri uri("cloudsdale://connorcpu:derp@cloudsdale.org:80/clouds/hammock?haxor=true#pro");
+  HttpClient client;
 
   game.Run();
   return 0;

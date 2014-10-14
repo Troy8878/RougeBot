@@ -929,7 +929,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   {
     auto tree = ParseJsonAsset("Entities", entdef + ".entitydef");
     if (!tree.is_object_of<json::value::object_t>())
-      throw std::exception("Incorrect entity definition file");
+      throw basic_exception("Incorrect entity definition file");
 
     auto parts = tree.as_object_of<json::value::object_t>();
     for (auto& part : parts)

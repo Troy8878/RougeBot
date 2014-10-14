@@ -84,7 +84,7 @@ struct random_func
     APPLY_TYPE(ranlux48)
     APPLY_TYPE(knuth_b)
 
-    throw std::exception("An unknown random device type has been given");
+    throw basic_exception("An unknown random device type has been given");
   }
 
   #undef APPLY_TYPE

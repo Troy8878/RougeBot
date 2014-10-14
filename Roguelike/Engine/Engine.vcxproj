@@ -103,6 +103,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GraphicsDevice.h" />
+    <ClInclude Include="HttpClient.h" />
+    <ClInclude Include="HttpClientImpl.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelDef.h" />
@@ -146,6 +148,11 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameStuffGem.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
+    <ClCompile Include="HttpClient.cpp" />
+    <ClCompile Include="HttpHelpers.cpp" />
+    <ClCompile Include="HttpRequest.cpp" />
+    <ClCompile Include="HttpResult.cpp" />
+    <ClCompile Include="HttpUri.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />

@@ -131,8 +131,13 @@ class string_exception : public basic_exception
 
 public:
   string_exception(const std::string& message)
-    : message(message), basic_exception(this->message.c_str())
+    : message(message)
   {
+  }
+
+  const char *what() const override
+  {
+    return message.c_str();
   }
 };
 

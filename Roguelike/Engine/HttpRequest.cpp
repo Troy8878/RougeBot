@@ -9,6 +9,13 @@
 
 // ----------------------------------------------------------------------------
 
+HttpRequest::HttpRequest(const HttpUri& uri, HttpMethod method)
+{
+  impl = std::make_shared<HttpRequestImpl>(uri, method);
+}
+
+// ----------------------------------------------------------------------------
+
 HttpRequestImpl::HttpRequestImpl(const HttpUri& uri, HttpMethod method)
   : uri(uri), method(method)
 {

@@ -28,22 +28,30 @@ public:
 class HttpResultImpl
 {
 public:
-  template <typename ThreadFunc>
-  HttpResultImpl(ThreadFunc&& func)
-    : thread(func)
+  HttpResultImpl()
   {
+    _HasFailed = false;
+    _HasHeaders = false;
+    _HasData = false;
   }
 
   ~HttpResultImpl();
-
+  
+  template <typename ThreadFunc>
+  void Start(ThreadFunc&& func)
+  {
+    thread = std::thread(func);
+    thread.detach();
+  }
+  
+  mutable critical_section lock;
   std::thread thread;
-  critical_section lock;
 
-  bool hasFailed = false;
-  bool hasHeaders = false;
-  bool hasData = false;
+  SRW_PROPERTY(bool, HasFailed);
+  SRW_PROPERTY(bool, HasHeaders);
+  SRW_PROPERTY(bool, HasData);
 
-  std::string failMsg;
+  SRW_PROPERTY(std::string, FailMsg);
 
   struct
   {
@@ -78,7 +86,11 @@ public:
   } handles;
 
   HttpResult PerformEmpty(const HttpRequest& request);
-  static void AsyncPerformEmpty(HttpClient client, const HttpRequest& request, HttpResultImpl *res);
+  
+  static void AsyncBeginRequest(HttpClient client, const HttpRequest& request, HttpResult result);
+  static void AsyncCompleteRequest(HttpClient client, HttpResult result);
+
+  static void AsyncPerformEmpty(HttpClient client, const HttpRequest& request, HttpResult result);
 };
 
 // ----------------------------------------------------------------------------
@@ -114,8 +126,18 @@ public:
 class HttpHeaderCollectionImpl
 {
 public:
-  HttpHeaderCollectionImpl();
-  ~HttpHeaderCollectionImpl();
+  std::unordered_map<std::string, std::vector<HttpHeaderEntry>> headers;
+};
+
+// ----------------------------------------------------------------------------
+
+class HttpResultStreamImpl
+{
+public:
+  critical_section lock;
+
+  std::ostringstream data;
+  size_t read_pos;
 };
 
 // ----------------------------------------------------------------------------

@@ -121,9 +121,16 @@ std::string HttpUri::Build() const
   }
 
   buf << Host;
-  
-  if (HasPort)
-    buf << ':' << Port;
+  buf << BuildPath();
+
+  return buf.str();
+}
+
+// ----------------------------------------------------------------------------
+
+std::string HttpUri::BuildPath() const
+{
+  std::stringstream buf;
 
   if (HasPath)
     buf << Path;

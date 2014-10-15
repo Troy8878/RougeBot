@@ -41,8 +41,23 @@ class HttpRequestBody;
 class HttpRequestBodyImpl;
 
 class HttpHeaderCollection;
+class HttpHeaderSet;
 class HttpHeaderEntry;
 class HttpHeaderCollectionImpl;
+
+// ----------------------------------------------------------------------------
+
+#define FRIEND_IMPLS                    \
+  friend class HttpRequest;             \
+  friend class HttpResult;              \
+  friend class HttpClient;              \
+  friend class HttpRequestImpl;         \
+  friend class HttpResultImpl;          \
+  friend class HttpClientImpl;          \
+  friend class HttpResultStreamImpl;    \
+  friend class HttpRequestBodyImpl;     \
+  friend class HttpHeaderCollection;    \
+  friend class HttpHeaderCollectionImpl \
 
 // ----------------------------------------------------------------------------
 
@@ -78,25 +93,27 @@ enum HttpMethod
   HTTP_PATCH,
 };
 
-static inline const char *HttpMethodString(HttpMethod method)
+static inline const wchar_t *HttpMethodString(HttpMethod method)
 {
   switch (method)
   {
     case HTTP_GET:
-      return "GET";
+      return L"GET";
     case HTTP_HEAD:
-      return "HEAD";
+      return L"HEAD";
     case HTTP_POST:
-      return "POST";
+      return L"POST";
     case HTTP_PUT:
-      return "PUT";
+      return L"PUT";
     case HTTP_DELETE:
-      return "DELETE";
+      return L"DELETE";
     case HTTP_OPTIONS:
-      return "OPTIONS";
+      return L"OPTIONS";
     case HTTP_PATCH:
-      return "PATCH";
+      return L"PATCH";
   }
+
+  throw basic_exception("Unknown HTTP Method");
 }
 
 // ----------------------------------------------------------------------------
@@ -109,6 +126,7 @@ public:
 
   static HttpUri Parse(const std::string& uri);
   std::string Build() const;
+  std::string BuildPath() const;
 
   #define URI_PROP(type, name) \
     bool _PropHas##name() const { return (_##name).IsSpecified; } \
@@ -149,7 +167,7 @@ public:
 
 private:
   HttpShared<HttpClientImpl> impl;
-  friend class HttpClientImpl;
+  FRIEND_IMPLS;
 
 public:
   DWORD _GetTimeout();
@@ -170,7 +188,7 @@ public:
 
 private:
   HttpShared<HttpRequestImpl> impl;
-  friend class HttpClientImpl;
+  FRIEND_IMPLS;
 
 public:
   HttpMethod _GetMethod() const;
@@ -235,17 +253,22 @@ public:
   PROPERTY(get = _GetStatusCode)
     /**
       Returns the web service status code.
-
-      This operation is constant time if the headers have been
-      loaded. It will take longer if the headers are not loaded.
+      Behavior undocumented if HasHeaders is false.
     */
     int StatusCode;
+
+  PROPERTY(get = _GetContentLength)
+    /**
+      Returns the response content length.
+      Behavior undocumented if HasHeaders is false.
+    */
+    size_t ContentLength;
 
 private:
   HttpResult(HttpClient client);
 
   HttpShared<HttpResultImpl> impl;
-  friend class HttpClientImpl;
+  FRIEND_IMPLS;
 
   HttpClient client;
 
@@ -258,6 +281,7 @@ public:
   json::value _GetAsJson();
 
   int _GetStatusCode();
+  size_t _GetContentLength();
 };
 
 // ----------------------------------------------------------------------------
@@ -272,7 +296,7 @@ private:
   HttpResultStream();
 
   HttpShared<HttpResultStreamImpl> impl;
-  friend class HttpResultImpl;
+  FRIEND_IMPLS;
 
 public:
   std::istream& _GetStream();
@@ -288,8 +312,7 @@ private:
   HttpRequestBody();
 
   HttpShared<HttpRequestBodyImpl> impl;
-  friend class HttpClient;
-  friend class HttpRequestImpl;
+  FRIEND_IMPLS;
 };
 
 // ----------------------------------------------------------------------------
@@ -297,13 +320,96 @@ private:
 class HttpHeaderCollection
 {
 public:
+  static HttpHeaderCollection ParseHeaders(const WCHAR *str);
+
+  HttpHeaderSet operator[](const std::string& key);
+  const HttpHeaderSet operator[](const std::string& key) const;
+
+  std::wstring BuildList() const;
 
 private:
   HttpHeaderCollection();
 
   HttpShared<HttpHeaderCollectionImpl> impl;
-  friend class HttpRequestImpl;
-  friend class HttpResultImpl;
+  FRIEND_IMPLS;
 };
 
 // ----------------------------------------------------------------------------
+
+class HttpHeaderSet
+{
+  std::string key;
+  std::vector<HttpHeaderEntry> *items;
+
+public:
+  HttpHeaderSet(const decltype(key)& key, decltype(items) items)
+    : key(key), items(items)
+  {
+  }
+
+  void AddValue(const std::string& val);
+  void RemoveValue(const std::string& val);
+  void Clear();
+
+  size_t Count() { return items->size(); }
+
+  auto begin() -> decltype(items->begin()) { return items->begin(); }
+  auto end() -> decltype(items->end()) { return items->end(); }
+
+private:
+  FRIEND_IMPLS;
+};
+
+// ----------------------------------------------------------------------------
+
+class HttpHeaderEntry
+{
+public:
+  HttpHeaderEntry(const std::string& key, const std::string& value)
+    : Key(key), Value(value)
+  {
+  }
+
+  bool operator==(const HttpHeaderEntry& rhs) const
+  {
+    return Key == rhs.Key && Value == rhs.Value;
+  }
+
+  bool operator!=(const HttpHeaderEntry& rhs) const
+  {
+    return !(*this == rhs);
+  }
+
+  std::string Key, Value;
+};
+
+// ----------------------------------------------------------------------------
+
+#undef FRIEND_IMPLS
+
+// ----------------------------------------------------------------------------
+
+static inline std::string HttpURLEscape(const std::string& unescaped, bool escapeSpace = true)
+{
+  static std::locale loc("en-US");
+
+  std::wstringstream out;
+
+  for (auto& c : widen(unescaped))
+  {
+    if (std::isalnum(c, loc) || (!escapeSpace && c == L' '))
+      out << c;
+    else
+    {
+      for (auto& uc : narrow({c}))
+      {
+        out << std::hex << L'%' << std::setw(2) << std::setfill(L'0') << ((unsigned)(byte)uc);
+      }
+    }
+  }
+
+  return narrow(out.str());
+}
+
+// ----------------------------------------------------------------------------
+

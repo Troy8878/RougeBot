@@ -34,6 +34,50 @@ inline std::string narrow(const std::wstring& wide_string)
 
 // ----------------------------------------------------------------------------
 
+template <typename Elem>
+inline std::basic_string<Elem> chomp(std::basic_string<Elem> str)
+{
+  if (str.empty())
+    return str;
+
+  std::locale loc("en-US");
+  size_t pos = 0;
+
+  while (pos < str.size() && std::isspace(str[pos], loc))
+    pos++;
+
+  str = str.substr(pos);
+
+  while (!str.empty() && std::isspace(*str.rbegin(), loc))
+    str.pop_back();
+
+  return str;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename Elem, typename Delim>
+inline std::vector<std::basic_string<Elem>> 
+split(const std::basic_string<Elem>& str, Delim&& delim)
+{
+  std::vector<std::basic_string<Elem>> items;
+  size_t pos = 0, next;
+
+  while ((next = str.find_first_of(delim, pos)) != str.npos)
+  {
+    items.push_back(str.substr(pos, next - pos));
+
+    if (next != str.npos)
+      pos = str.find_first_not_of(delim, next);
+  }
+
+  items.push_back(str.substr(pos));
+
+  return items;
+}
+
+// ----------------------------------------------------------------------------
+
 #define CSTR_WIDEN(x) widen(x).c_str()
 #define CSTR_NARROW(x) narrow(x).c_str()
 
@@ -303,6 +347,22 @@ void variadic_push_array(T array[], size_t index,
     this->_##pName = value;                     \
   }
 
+#define _SPROPERTY_GET(pType, pName)               \
+  inline pType& _PropGet ## pName() {              \
+    critical_section::guard guard(this->lock);     \
+    return this->_##pName;                         \
+  }                                                \
+  inline pType const & _PropGet ## pName() const { \
+    critical_section::guard guard(this->lock);     \
+    return this->_##pName;                         \
+  }
+
+#define _SPROPERTY_SET(pType, pName)                  \
+  inline void _PropSet ## pName(pType const& value) { \
+    critical_section::guard guard(this->lock);        \
+    this->_##pName = value;                           \
+  }
+
 #define _PROPERTY_STORAGE(pType, pName) \
   private: pType _##pName; public:
 
@@ -368,9 +428,23 @@ void variadic_push_array(T array[], size_t index,
     put = _PropSet ## pName)       \
   ) pType pName
 
+#define SRW_PROPERTY(pType, pName) \
+  _PROPERTY_STORAGE(pType, pName)  \
+  _SPROPERTY_GET(pType, pName)     \
+  _SPROPERTY_SET(pType, pName)     \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
+  ) pType pName
+
 // ----------------------------------------------------------------------------
 
 #define PROPERTY(...) __declspec(property(__VA_ARGS__))
+
+// ----------------------------------------------------------------------------
+
+#define SYNC_PROPERTY(type, name)
+  
 
 // ----------------------------------------------------------------------------
 

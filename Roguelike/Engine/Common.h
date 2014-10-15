@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <unordered_set>
+#include <iomanip>
 
 #include "Helpers\FixedWindows.h"
 #include "Helpers\UseDirectX.h"
@@ -50,7 +51,6 @@
 #include "Component.h"
 #include "Game.h"
 #include "Texture.h"
-//#include "HttpClient.h"
 
 #pragma warning(pop)
 

@@ -93,10 +93,12 @@ void HttpClient::_SetTimeout(DWORD val)
 
 #pragma region Requests
 
-void HttpClientImpl::AsyncPerformEmpty(HttpClient client, 
+void HttpClientImpl::AsyncBeginRequest(HttpClient client, 
                                        const HttpRequest& request, 
-                                       HttpResultImpl *res)
+                                       HttpResult result)
 {
+  auto res = result.impl;
+
   auto server = widen(request.Uri.Host);
   INTERNET_PORT port = 0;
 
@@ -114,22 +116,172 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClient client,
   
   auto& h = res->handles;
 
+  // Connect to the server
   h.server = WinHttpConnect(client.impl->handles.session, server.c_str(), port, 0);
   if (!h.server)
   {
-    res->failMsg = "Failed to connect to server";
-    res->hasFailed = true;
+    res->FailMsg = "Failed to connect to server";
+    res->HasFailed = true;
     return;
   }
+  
+  std::vector<std::wstring> wide_accepts;
+  auto accepts_set = request.Headers["Accept"];
+
+  LPCWSTR *accepts = WINHTTP_DEFAULT_ACCEPT_TYPES;
+  if (accepts_set.Count())
+  {
+    for (auto& accept : accepts_set)
+      wide_accepts.push_back(widen(accept.Value));
+
+    accepts = new LPCWSTR[wide_accepts.size() + 1];
+    for (size_t i = 0; i < wide_accepts.size(); ++i)
+      accepts[i] = wide_accepts[i].c_str();
+    accepts[wide_accepts.size()] = 0;
+  }
+
+  // Open the request
+  auto wide_path = widen(request.Uri.BuildPath());
+
+  h.request = WinHttpOpenRequest(h.server, HttpMethodString(request.Method),
+                                 wide_path.c_str(), nullptr, 
+                                 WINHTTP_NO_REFERER, accepts,
+                                 request.Uri.Scheme == "https" 
+                                   ? WINHTTP_FLAG_SECURE 
+                                   : 0);
+  if (!h.request)
+  {
+    res->FailMsg = "Failed to open request";
+    res->HasFailed = true;
+  }
+
+  delete[] accepts;
 }
+
+// ----------------------------------------------------------------------------
+
+void HttpClientImpl::AsyncCompleteRequest(HttpClient client, 
+                                          HttpResult result)
+{
+  auto res = result.impl;
+  auto& h = res->handles;
+
+  BOOL results = WinHttpReceiveResponse(h.request, nullptr);
+  WCHAR *buffer = nullptr;
+
+  if (results)
+  {
+    DWORD dwSize;
+
+    WinHttpQueryHeaders(h.request, WINHTTP_QUERY_RAW_HEADERS_CRLF,
+                        WINHTTP_HEADER_NAME_BY_INDEX, nullptr,
+                        &dwSize, WINHTTP_NO_HEADER_INDEX);
+
+    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+    {
+      buffer = new WCHAR[dwSize / sizeof(WCHAR)];
+      results = WinHttpQueryHeaders(h.request, WINHTTP_QUERY_RAW_HEADERS_CRLF,
+                                    WINHTTP_HEADER_NAME_BY_INDEX,
+                                    buffer, &dwSize, WINHTTP_NO_HEADER_INDEX);
+    }
+    else
+    {
+      results = false;
+    }
+  }
+
+  std::ostringstream buf;
+
+  if (results)
+  {
+    res->headers = HttpHeaderCollection::ParseHeaders(buffer);
+    res->HasHeaders = true;
+
+    // Now read in the actual data
+    DWORD dwSize, dwRead;
+    do
+    {
+      dwSize = 0;
+      if (!WinHttpQueryDataAvailable(h.request, &dwSize))
+      {
+        results = false;
+        break;
+      }
+
+      auto temp = new char[dwSize + 1];
+      temp[dwSize] = 0;
+
+      if (!WinHttpReadData(h.request, temp, dwSize, &dwRead))
+      {
+        delete[] temp;
+        results = false;
+        break;
+      }
+
+      temp[dwRead] = 0;
+      buf << temp;
+      delete[] temp;
+
+    } while (dwSize);
+  }
+
+  delete[] buffer;
+
+  if (results)
+  {
+    auto data = buf.str();
+    res->data = shared_array<byte>((const byte *)data.c_str(), data.size());
+    res->HasData = true;
+  }
+  else
+  {
+    res->FailMsg = GetLastErrorString();
+    res->HasFailed = true;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void HttpClientImpl::AsyncPerformEmpty(HttpClient client, 
+                                       const HttpRequest& request, 
+                                       HttpResult result)
+{
+  auto res = result.impl;
+  auto& h = res->handles;
+
+  // Connect to the server and open the request
+  AsyncBeginRequest(client, request, result);
+  if (res->HasFailed)
+    return;
+
+  std::wstring headers = request.Headers.BuildList();
+
+  // Send the request
+  BOOL results = WinHttpSendRequest(h.request,
+                                    headers.c_str(), 0,
+                                    WINHTTP_NO_REQUEST_DATA, 0,
+                                    0, 0);
+  if (results)
+  {
+    AsyncCompleteRequest(client, result);
+  }
+  else
+  {
+    res->FailMsg = GetLastErrorString();
+    res->HasFailed = true;
+  }
+}
+
+// ----------------------------------------------------------------------------
 
 HttpResult HttpClientImpl::PerformEmpty(const HttpRequest& request)
 {
   HttpResult result(self_ref.lock());
 
-  result.impl = std::make_shared<HttpResultImpl>(
+  result.impl = std::make_shared<HttpResultImpl>();
+  result.impl->Start(
     std::bind(HttpClientImpl::AsyncPerformEmpty,
-              self_ref.lock(), request, result.impl.get()));
+              self_ref.lock(), request, result));
 
   return result;
 }

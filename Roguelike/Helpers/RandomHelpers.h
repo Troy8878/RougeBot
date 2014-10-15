@@ -469,9 +469,12 @@ template <typename CharT, typename TraitsT = std::char_traits<CharT>>
 class ibufferstream : public std::basic_streambuf<CharT, TraitsT>
 {
 public:
-  ibufferstream(CharT *start, size_t size)
+  ibufferstream() = default;
+
+  ibufferstream(const CharT *start, size_t size)
   {
-    setg(start, start, start + size);
+    CharT *s = const_cast<CharT *>(start);
+    setg(s, s, s + size);
   }
 };
 

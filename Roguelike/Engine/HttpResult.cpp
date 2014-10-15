@@ -74,3 +74,37 @@ HttpHeaderCollection HttpResult::_GetHeaders()
 }
 
 // ----------------------------------------------------------------------------
+
+HttpResultStream HttpResult::_GetAsStream()
+{
+  return HttpResultStream(*this);
+}
+
+// ----------------------------------------------------------------------------
+
+HttpShared<std::string> HttpResult::_GetAsString()
+{
+  return impl->data;
+}
+
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+
+HttpResultStream::HttpResultStream(HttpResult result)
+{
+  auto data = result.impl->data;
+
+  impl = std::make_shared<HttpResultStreamImpl>();
+  impl->databuf = ibufferstream<char>(data->c_str(), data->size() + 1);
+  impl->data.rdbuf(&impl->databuf);
+}
+
+// ----------------------------------------------------------------------------
+
+void HttpResultStream::Reset()
+{
+  impl->data.seekg(0);
+}
+
+// ----------------------------------------------------------------------------

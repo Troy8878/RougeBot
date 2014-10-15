@@ -15,6 +15,8 @@
 template <typename T>
 using HttpShared = std::shared_ptr<T>;
 template <typename T>
+using HttpUnique = std::unique_ptr<T>;
+template <typename T>
 class HttpOptional;
 
 enum HttpMethod;
@@ -54,6 +56,7 @@ class HttpHeaderCollectionImpl;
   friend class HttpRequestImpl;         \
   friend class HttpResultImpl;          \
   friend class HttpClientImpl;          \
+  friend class HttpResultStream;        \
   friend class HttpResultStreamImpl;    \
   friend class HttpRequestBodyImpl;     \
   friend class HttpHeaderCollection;    \
@@ -301,8 +304,10 @@ public:
   PROPERTY(get = _GetStream) std::istream& Stream;
   inline operator std::istream&() { return Stream; }
 
+  void Reset();
+
 private:
-  HttpResultStream();
+  HttpResultStream(HttpResult result);
 
   HttpShared<HttpResultStreamImpl> impl;
   FRIEND_IMPLS;

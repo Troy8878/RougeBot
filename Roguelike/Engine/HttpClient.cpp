@@ -229,8 +229,7 @@ void HttpClientImpl::AsyncCompleteRequest(HttpClient client,
 
   if (results)
   {
-    auto data = buf.str();
-    res->data = shared_array<byte>((const byte *)data.c_str(), data.size());
+    res->data = std::make_shared<std::string>(buf.str());
     res->HasData = true;
   }
   else

@@ -61,8 +61,10 @@ public:
   } handles;
 
   HttpHeaderCollection headers;
-  shared_array<byte> data;
+  HttpShared<std::string> data;
   json::value jvalue;
+
+  bool hasJson = false;
 
   void LoadResult();
 
@@ -134,10 +136,13 @@ public:
 class HttpResultStreamImpl
 {
 public:
-  critical_section lock;
+  HttpResultStreamImpl()
+    : data(&databuf)
+  {
+  }
 
-  std::ostringstream data;
-  size_t read_pos;
+  ibufferstream<char> databuf;
+  std::istream data;
 };
 
 // ----------------------------------------------------------------------------

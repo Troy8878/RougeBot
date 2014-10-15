@@ -28,16 +28,19 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
-  HttpUri uri("http://www.cloudsdale.org/v1/clouds/hammock");
+  HttpUri uri("http://www.cloudsdale.org/v1/clouds/50b7582bcff4e82a6b000ebe/users/online");
   HttpClient client;
   HttpRequest request(uri, HTTP_GET);
   request.Headers["Accept"].AddValue("application/json");
+
+  
+
   auto res = client.MakeRequest(request);
 
   while (!res.HasData)
     Sleep(10);
 
-  std::cout << res.Headers["Content-Type"].begin()->Value << std::endl;
+  std::cout << *res.AsString;
 
   game.Run();
   return 0;

@@ -212,12 +212,12 @@ public:
     */
     bool HasHeaders;
 
-  PROPERTY(get = _GetIsLoaded)
+  PROPERTY(get = _HasData)
     /**
       Checks whether Preload has finished on this
       HTTP result, if it had been initiated.
     */
-    bool IsLoaded;
+    bool HasData;
 
 
   PROPERTY(get = _GetAsStream)
@@ -250,6 +250,13 @@ public:
     */
     json::value AsJson;
 
+  PROPERTY(get = _GetHeaders)
+    /**
+      Gets the header colection.
+      Behavior undocumented if HasHeaders is false.
+    */
+    HttpHeaderCollection Headers;
+
   PROPERTY(get = _GetStatusCode)
     /**
       Returns the web service status code.
@@ -274,14 +281,16 @@ private:
 
 public:
   bool _HasHeaders();
-  bool _GetIsLoaded();
+  bool _HasData();
+
+  HttpHeaderCollection _GetHeaders();
+
+  int _GetStatusCode();
+  size_t _GetContentLength();
 
   HttpResultStream _GetAsStream();
   HttpShared<std::string> _GetAsString();
   json::value _GetAsJson();
-
-  int _GetStatusCode();
-  size_t _GetContentLength();
 };
 
 // ----------------------------------------------------------------------------

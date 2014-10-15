@@ -34,6 +34,11 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   request.Headers["Accept"].AddValue("application/json");
   auto res = client.MakeRequest(request);
 
+  while (!res.HasData)
+    Sleep(10);
+
+  std::cout << res.Headers["Content-Type"].begin()->Value << std::endl;
+
   game.Run();
   return 0;
 }

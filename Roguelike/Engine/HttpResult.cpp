@@ -53,3 +53,24 @@ size_t HttpResult::_GetContentLength()
 }
 
 // ----------------------------------------------------------------------------
+
+bool HttpResult::_HasHeaders()
+{
+  return impl->HasHeaders;
+}
+
+// ----------------------------------------------------------------------------
+
+bool HttpResult::_HasData()
+{
+  return impl->HasData;
+}
+
+// ----------------------------------------------------------------------------
+
+HttpHeaderCollection HttpResult::_GetHeaders()
+{
+  return impl->headers;
+}
+
+// ----------------------------------------------------------------------------

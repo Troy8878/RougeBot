@@ -18,6 +18,9 @@
     <ClCompile Include="fmod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ExInfoVec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoundSystem.h">

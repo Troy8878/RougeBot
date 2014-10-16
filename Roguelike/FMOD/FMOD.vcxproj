@@ -82,6 +82,7 @@
     <ClInclude Include="SoundSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ExInfoVec.cpp" />
     <ClCompile Include="fmod.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

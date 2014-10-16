@@ -7,7 +7,6 @@
 /******************************************************************************/
 
 #include "SoundSystem.h"
-#include "Helpers/FixedWindows.h"
 
 #include <stdio.h>
 #include <stdlib.h>

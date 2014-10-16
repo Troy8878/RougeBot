@@ -8,6 +8,7 @@
 
 #include "FMOD/fmod.hpp"
 #include "FMOD/fmod_errors.h"
+#include "Helpers/FixedWindows.h"
 #include <vector>
 
 class SoundClass

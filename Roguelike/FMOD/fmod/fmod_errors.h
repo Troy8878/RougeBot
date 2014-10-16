@@ -11,6 +11,8 @@
 #ifndef _FMOD_ERRORS_H
 #define _FMOD_ERRORS_H
 
+#pragma warning (disable: 4505)
+
 #include "fmod.h"
 
 #ifdef __GNUC__ 

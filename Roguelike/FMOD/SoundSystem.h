@@ -101,34 +101,8 @@ public:
         FMOD_TIMEUNIT exInfoSeekTime;
       };
 
-      /*
-      ExInfo()
-      {
-        exInfoInt = 0;
-        exInfoU_Int = 0;
-        *exInfoIP = 0;
-        // *exInfoVP can't be set this way
-        // *exInfoCChar can't be set this way
-        // exInfoFSF can't be set this way
-        exInfoPCMRW = 0;
-        exInfoPCMSeek = 0;
-        exInfoNonBlock = 0;
-        // exInfoSoundType can't be set this way
-        exInfoFOpen = 0;
-        exInfoFClose = 0;
-        exInfoFRead = 0;
-        exInfoFSeek = 0;
-        exInfoARead = 0;
-        exInfoACancel = 0;
-        // exInfoChanOrder can't be set this way
-        exInfoChanMask = 0;
-        // *exInfoSoundGroup can't be set this way
-        exInfoSeekTime = 0;
-      }
-      */
-
       EXTRA_INFO type = EXTRA_INFO::NONE;
-      INFO u_info;
+      INFO u_info;  // Regarded as having no info until type is set to something other than none
     };
 
     Sound(const char* name, SoundClass Sys, SOUND_TYPE type = SOUND_TYPE::NONE, FMOD_MODE custom = 0, std::vector<ExInfo> Infos = {});  // type = MUSIC (0) for looping or SFX (1) for non-looping.  Use the custom constructors instead!

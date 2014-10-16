@@ -47,5 +47,8 @@
     <ClInclude Include="..\..\..\..\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\lowlevel\inc\fmod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExInfoVec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

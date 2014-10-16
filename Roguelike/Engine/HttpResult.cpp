@@ -89,6 +89,17 @@ HttpShared<std::string> HttpResult::_GetAsString()
 
 // ----------------------------------------------------------------------------
 
+json::value HttpResult::_GetAsJson()
+{
+  if (!impl->hasJson)
+  {
+    impl->jvalue = json::value::parse(AsStream);
+    impl->hasJson = true;
+  }
+
+  return impl->jvalue;
+}
+
 // ----------------------------------------------------------------------------
 
 HttpResultStream::HttpResultStream(HttpResult result)
@@ -105,6 +116,13 @@ HttpResultStream::HttpResultStream(HttpResult result)
 void HttpResultStream::Reset()
 {
   impl->data.seekg(0);
+}
+
+// ----------------------------------------------------------------------------
+
+std::istream& HttpResultStream::_GetStream()
+{
+  return impl->data;
 }
 
 // ----------------------------------------------------------------------------

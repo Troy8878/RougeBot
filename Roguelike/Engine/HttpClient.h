@@ -127,7 +127,7 @@ public:
   HttpUri();
   HttpUri(const std::string& uri);
 
-  static HttpUri Parse(const std::string& uri);
+  static HttpUri Parse(std::string uri);
   std::string Build() const;
   std::string BuildPath() const;
 
@@ -321,6 +321,23 @@ public:
 class HttpRequestBody
 {
 public:
+  typedef std::function<void(std::ostream& out)> WriteFunc;
+
+  void SetJson(json::value jvalue);
+  void SetString(const std::string& str);
+  void SetString(HttpShared<std::string> str);
+  void SetForm(const std::unordered_map<std::string, std::string>& data);
+
+  void SetContentType(const std::string& type);
+
+  /**
+    Delays writing data to a buffer.
+    The callback will be called when HttpClient::MakeRequest
+    is called, so use something that will be valid at that point.
+
+    The function may be called multiple times if redirects happen.
+  */
+  void WriteStream(WriteFunc func);
   
 private:
   HttpRequestBody();

@@ -22,9 +22,8 @@ HttpUri::HttpUri(const std::string& uri)
 
 // ----------------------------------------------------------------------------
 
-HttpUri HttpUri::Parse(const std::string& _uri)
+HttpUri HttpUri::Parse(std::string uri)
 {
-  std::string uri = _uri;
   HttpUri result;
   size_t pos = 0;
 

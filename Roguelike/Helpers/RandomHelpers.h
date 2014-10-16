@@ -94,16 +94,19 @@ split(const std::basic_string<Elem>& str, Delim&& delim)
 // ----------------------------------------------------------------------------
 
 // just a nice little helper to turn GetLastError() into a readable message
-inline std::string GetLastErrorString()
+inline std::string GetLastErrorString(DWORD error = 0)
 {
   LPSTR pBuffer = 0;
+
+  if (error == 0)
+    error = GetLastError();
 
   FormatMessage(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
     FORMAT_MESSAGE_FROM_SYSTEM |
     FORMAT_MESSAGE_IGNORE_INSERTS,
     NULL,
-    GetLastError(),
+    error,
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
     (LPTSTR) &pBuffer,
     0, NULL);

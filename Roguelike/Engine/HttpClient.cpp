@@ -57,6 +57,10 @@ HttpResult HttpClient::MakeRequest(const HttpRequest& request)
   {
     return impl->PerformEmpty(request);
   }
+  else if (request.Body.impl->bodyType == HttpRequestBodyImpl::BODY_DATA)
+  {
+    return impl->PerformBody(request);
+  }
 
   throw basic_exception("Unknown HTTP Body Type");
 }
@@ -92,6 +96,33 @@ void HttpClient::_SetTimeout(DWORD val)
 // ----------------------------------------------------------------------------
 
 #pragma region Requests
+
+void HttpClientImpl::AsyncWriteData(HttpClient client, 
+                                    const HttpRequest& request, 
+                                    HttpResult result)
+{
+  auto res = result.impl;
+  
+  HttpRequestBuffer buffer(res->handles.request);
+  std::ostream stream(&buffer);
+
+  request.Body.impl->func(stream);
+
+  stream.flush();
+
+  if (buffer.error)
+  {
+    if (buffer.error == ERROR_WINHTTP_RESEND_REQUEST)
+    {
+      AsyncWriteData(client, request, result);
+    }
+    else
+    {
+      res->FailMsg = GetLastErrorString(buffer.error);
+      res->HasFailed = true;
+    }
+  }
+}
 
 void HttpClientImpl::AsyncBeginRequest(HttpClient client, 
                                        const HttpRequest& request, 
@@ -273,6 +304,48 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClient client,
 
 // ----------------------------------------------------------------------------
 
+void HttpClientImpl::AsyncPerformBody(HttpClient client, 
+                                      const HttpRequest& request, 
+                                      HttpResult result)
+{
+  auto res = result.impl;
+  auto& h = res->handles;
+
+  // I hate this, but it would be a mess to rework
+  auto transfer = const_cast<HttpRequest&>(request).Headers["Transfer-Encoding"];
+  transfer.Clear();
+  transfer.AddValue("Chunked");
+  auto content = const_cast<HttpRequest&>(request).Headers["Content-Type"];
+  content.Clear();
+  content.AddValue(request.Body.impl->contentType);
+
+  AsyncWriteData(client, request, result);
+
+  // Connect to the server and open the request
+  AsyncBeginRequest(client, request, result);
+  if (res->HasFailed)
+    return;
+
+  std::wstring headers = request.Headers.BuildList();
+
+  // Send the request
+  BOOL results = WinHttpSendRequest(h.request,
+                                    headers.c_str(), 0,
+                                    WINHTTP_NO_REQUEST_DATA, 0,
+                                    WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH, 0);
+  if (results)
+  {
+    AsyncCompleteRequest(client, result);
+  }
+  else
+  {
+    res->FailMsg = GetLastErrorString();
+    res->HasFailed = true;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 HttpResult HttpClientImpl::PerformEmpty(const HttpRequest& request)
 {
   HttpResult result(self_ref.lock());
@@ -280,6 +353,20 @@ HttpResult HttpClientImpl::PerformEmpty(const HttpRequest& request)
   result.impl = std::make_shared<HttpResultImpl>();
   result.impl->Start(
     std::bind(HttpClientImpl::AsyncPerformEmpty,
+              self_ref.lock(), request, result));
+
+  return result;
+}
+
+// ----------------------------------------------------------------------------
+
+HttpResult HttpClientImpl::PerformBody(const HttpRequest& request)
+{
+  HttpResult result(self_ref.lock());
+
+  result.impl = std::make_shared<HttpResultImpl>();
+  result.impl->Start(
+    std::bind(HttpClientImpl::AsyncPerformBody,
               self_ref.lock(), request, result));
 
   return result;

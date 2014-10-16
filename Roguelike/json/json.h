@@ -184,23 +184,23 @@ namespace json
       #pragma region Serialize
 
     public:
-      std::string serialize();
-      void serialize(std::ostream& out);
+      std::string serialize() const;
+      void serialize(std::ostream& out) const;
 
-      void pretty_print(std::ostream& out, unsigned indent = 0);
+      void pretty_print(std::ostream& out, unsigned indent = 0) const;
 
     private:
-      bool _pretty_print = false;
-      unsigned _pretty_level;
+      mutable bool _pretty_print = false;
+      mutable unsigned _pretty_level;
 
-      void serialize_null(std::ostream& out);
-      void serialize_object(std::ostream& out);
-      void serialize_array(std::ostream& out);
-      void serialize_string(std::ostream& out);
-      void serialize_number(std::ostream& out);
-      void serialize_bool(std::ostream& out);
+      void serialize_null(std::ostream& out) const;
+      void serialize_object(std::ostream& out) const;
+      void serialize_array(std::ostream& out) const;
+      void serialize_string(std::ostream& out) const;
+      void serialize_number(std::ostream& out) const;
+      void serialize_bool(std::ostream& out) const;
 
-      void next_pretty_line(std::ostream& out);
+      void next_pretty_line(std::ostream& out) const;
 
       #pragma endregion
   };

@@ -26,21 +26,34 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   
   CreateConsole();
 
+  std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
-  HttpUri uri("http://www.cloudsdale.org/v1/clouds/50b7582bcff4e82a6b000ebe/users/online");
-  HttpClient client;
-  HttpRequest request(uri, HTTP_GET);
-  request.Headers["Accept"].AddValue("application/json");
+#if 0
+  // HTTP test
+  {
+    HttpUri uri("http://www.cloudsdale.org/v1/sessions");
+    HttpClient client;
+    HttpRequest request(uri, HTTP_GET);
+    request.Headers["Accept"].AddValue("application/json");
 
-  
+    using namespace json;
+    request.Body.SetJson(value::object(
+    {
+      {"email", value("connorcpu@cloudsdale.org")},
+      {"password", value("12ltfromwil1-")}
+    }));
 
-  auto res = client.MakeRequest(request);
+    auto res = client.MakeRequest(request);
 
-  while (!res.HasData)
-    Sleep(10);
+    while (!res.HasData)
+      Sleep(10);
 
-  std::cout << *res.AsString;
+    auto jval = res.AsJson;
+    jval.pretty_print(std::cout);
+    std::cout << std::endl;
+  }
+#endif
 
   game.Run();
   return 0;

@@ -785,7 +785,7 @@ namespace json
   
   #pragma region Serialize
 
-  std::string value::serialize()
+  std::string value::serialize() const
   {
     std::ostringstream out;
     serialize(out);
@@ -796,7 +796,7 @@ namespace json
 
   struct serialize_method_manager
   {
-    typedef void(value::*serialize_fn)(std::ostream& out);
+    typedef void(value::*serialize_fn)(std::ostream& out) const;
     serialize_fn serialize_fns[(uint64_t) json_type::num_types];
 
     serialize_fn operator[](json_type type)
@@ -816,7 +816,7 @@ namespace json
     }
   };
 
-  void value::serialize(std::ostream& out)
+  void value::serialize(std::ostream& out) const
   {
     static serialize_method_manager serialize_fns;
     (this ->* serialize_fns[data->type])(out);
@@ -824,7 +824,7 @@ namespace json
 
 // ----------------------------------------------------------------------------
 
-  void value::pretty_print(std::ostream& out, unsigned indent)
+  void value::pretty_print(std::ostream& out, unsigned indent) const
   {
     _pretty_print = true;
     _pretty_level = indent;
@@ -836,21 +836,21 @@ namespace json
 
 // ----------------------------------------------------------------------------
 
-  void value::serialize_null(std::ostream& out)
+  void value::serialize_null(std::ostream& out) const
   {
     out << "null";
   }
 
 // ----------------------------------------------------------------------------
 
-  void value::serialize_object(std::ostream& out)
+  void value::serialize_object(std::ostream& out) const
   {
     out << '{';
 
     ++_pretty_level;
 
     bool first = true;
-    for (auto& pair : as_object())
+    for (auto& pair : *data->data.as<object_t>())
     {
       if (first)
         first = false;
@@ -881,14 +881,14 @@ namespace json
 
 // ----------------------------------------------------------------------------
 
-  void value::serialize_array(std::ostream& out)
+  void value::serialize_array(std::ostream& out) const
   {
     out << '[';
 
     ++_pretty_level;
 
     bool first = true;
-    for (auto& value : as_array())
+    for (auto& value : *data->data.as<array_t>())
     {
       if (first)
         first = false;
@@ -938,11 +938,11 @@ namespace json
     }
   }
 
-  void value::serialize_string(std::ostream& out)
+  void value::serialize_string(std::ostream& out) const
   {
     out << '"';
 
-    for (auto c : widen(as_string()))
+    for (auto c : widen(*data->data.as<string_t>()))
       write_escaped_char(out, c);
 
     out << '"';
@@ -950,21 +950,21 @@ namespace json
 
 // ----------------------------------------------------------------------------
 
-  void value::serialize_number(std::ostream& out)
+  void value::serialize_number(std::ostream& out) const
   {
-    out << as_number();
+    out << *data->data.as<number_t>();
   }
 
 // ----------------------------------------------------------------------------
 
-  void value::serialize_bool(std::ostream& out)
+  void value::serialize_bool(std::ostream& out) const
   {
-    out << (as_bool() ? "true" : "false");
+    out << (*data->data.as<bool_t>() ? "true" : "false");
   }
 
 // ----------------------------------------------------------------------------
 
-  void value::next_pretty_line(std::ostream& out)
+  void value::next_pretty_line(std::ostream& out) const
   {
     if (!_pretty_print)
       return;

@@ -88,11 +88,97 @@ public:
   } handles;
 
   HttpResult PerformEmpty(const HttpRequest& request);
+  HttpResult PerformBody(const HttpRequest& request);
+
+  static void AsyncWriteData(HttpClient client, const HttpRequest& request, HttpResult result);
   
   static void AsyncBeginRequest(HttpClient client, const HttpRequest& request, HttpResult result);
   static void AsyncCompleteRequest(HttpClient client, HttpResult result);
 
   static void AsyncPerformEmpty(HttpClient client, const HttpRequest& request, HttpResult result);
+  static void AsyncPerformBody(HttpClient client, const HttpRequest& request, HttpResult result);
+};
+
+// ----------------------------------------------------------------------------
+
+class HttpRequestBuffer : public std::streambuf
+{
+  static const int buffer_size = 16384;
+
+public:
+  HttpRequestBuffer(HINTERNET request)
+    : request(request), temp_buf(internal_buffer + 6)
+  {
+  }
+
+  ~HttpRequestBuffer()
+  {
+    if (error)
+      return;
+    
+    WriteBuffer();
+    WriteBuffer(true);
+  }
+
+  DWORD error = 0;
+
+protected:
+  virtual int_type overflow(int_type c) override
+  {
+    if (error)
+      return c;
+
+    if (c == EOF)
+      return c;
+
+    if (buf_count == sizeof(temp_buf))
+      WriteBuffer();
+
+    temp_buf[buf_count++] = (char)c;
+
+    return c;
+  }
+
+  virtual int sync() override
+  {
+    WriteBuffer();
+    return 0;
+  }
+
+  void WriteBuffer(bool writeEmpty = false)
+  {
+    if (error)
+      return;
+
+    DWORD written;
+    BOOL res;
+
+    if (!buf_count && !writeEmpty)
+      return;
+
+    char size[8];
+    sprintf_s(size, "%04x\r\n", (unsigned)buf_count);
+
+    memcpy_s(internal_buffer, sizeof(internal_buffer), size, 6);
+
+    temp_buf[buf_count + 0] = '\r';
+    temp_buf[buf_count + 1] = '\n';
+
+    res = WinHttpWriteData(request, internal_buffer, (DWORD)buf_count + 8, &written);
+    if (!res)
+    {
+      error = GetLastError();
+      return;
+    }
+
+    buf_count = 0;
+  }
+
+private:
+  char internal_buffer[buffer_size + 8];
+  HINTERNET request;
+  char *temp_buf;
+  size_t buf_count = 0;
 };
 
 // ----------------------------------------------------------------------------
@@ -106,21 +192,11 @@ public:
   enum BodyType
   {
     BODY_EMPTY,
-    BODY_STRING,
-    BODY_JSON,
-    BODY_FORM,
-    BODY_MULTIPART
+    BODY_DATA
 
   } bodyType;
-
-  union
-  {
-    std::string *str;
-    json::value *json;
-
-    // TODO: Make some kind of form multipart wrapper
-
-  } body;
+  std::string contentType;
+  HttpRequestBody::WriteFunc func = [](const std::ostream&){};
 };
 
 // ----------------------------------------------------------------------------

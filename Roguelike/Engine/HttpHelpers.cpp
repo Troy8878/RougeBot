@@ -102,7 +102,7 @@ std::wstring HttpHeaderCollection::BuildList() const
       else
         buf << L';';
 
-      buf << widen(HttpURLEscape(val.Value));
+      buf << widen(val.Value);
     }
 
     buf << "\r\n";

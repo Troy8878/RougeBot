@@ -68,6 +68,20 @@ bool HttpResult::_HasData()
 
 // ----------------------------------------------------------------------------
 
+bool HttpResult::_HasFailed()
+{
+  return impl->HasFailed;
+}
+
+// ----------------------------------------------------------------------------
+
+const std::string& HttpResult::_ErrorMsg()
+{
+  return impl->FailMsg;
+}
+
+// ----------------------------------------------------------------------------
+
 HttpHeaderCollection HttpResult::_GetHeaders()
 {
   return impl->headers;

@@ -222,6 +222,12 @@ public:
     */
     bool HasData;
 
+  PROPERTY(get = _HasFailed)
+    bool HasFailed;
+
+  PROPERTY(get = _ErrorMsg)
+    const std::string& ErrorMessage;
+
 
   PROPERTY(get = _GetAsStream)
     /**
@@ -285,6 +291,8 @@ private:
 public:
   bool _HasHeaders();
   bool _HasData();
+  bool _HasFailed();
+  const std::string& _ErrorMsg();
 
   HttpHeaderCollection _GetHeaders();
 

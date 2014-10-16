@@ -122,6 +122,8 @@ public:
 
   DWORD error = 0;
 
+  NO_ASSIGNMENT_OPERATOR(HttpRequestBuffer);
+
 protected:
   virtual int_type overflow(int_type c) override
   {
@@ -131,7 +133,7 @@ protected:
     if (c == EOF)
       return c;
 
-    if (buf_count == sizeof(temp_buf))
+    if (buf_count == buffer_size)
       WriteBuffer();
 
     temp_buf[buf_count++] = (char)c;
@@ -139,32 +141,27 @@ protected:
     return c;
   }
 
-  virtual int sync() override
-  {
-    WriteBuffer();
-    return 0;
-  }
-
   void WriteBuffer(bool writeEmpty = false)
   {
     if (error)
       return;
 
-    DWORD written;
+    DWORD written = 0;
     BOOL res;
 
     if (!buf_count && !writeEmpty)
       return;
 
     char size[8];
-    sprintf_s(size, "%04x\r\n", (unsigned)buf_count);
+    sprintf_s(size, "%x\r\n", (unsigned)buf_count);
+    DWORD buf_off = 6 - (DWORD)strlen(size);
 
-    memcpy_s(internal_buffer, sizeof(internal_buffer), size, 6);
+    memcpy_s(internal_buffer + buf_off, sizeof(internal_buffer) - buf_off, size, 6 - buf_off);
 
     temp_buf[buf_count + 0] = '\r';
     temp_buf[buf_count + 1] = '\n';
 
-    res = WinHttpWriteData(request, internal_buffer, (DWORD)buf_count + 8, &written);
+    res = WinHttpWriteData(request, internal_buffer + buf_off, (DWORD)buf_count + 8 - buf_off, &written);
     if (!res)
     {
       error = GetLastError();
@@ -177,7 +174,7 @@ protected:
 private:
   char internal_buffer[buffer_size + 8];
   HINTERNET request;
-  char *temp_buf;
+  char * const temp_buf;
   size_t buf_count = 0;
 };
 

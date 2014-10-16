@@ -314,12 +314,10 @@ void HttpClientImpl::AsyncPerformBody(HttpClient client,
   // I hate this, but it would be a mess to rework
   auto transfer = const_cast<HttpRequest&>(request).Headers["Transfer-Encoding"];
   transfer.Clear();
-  transfer.AddValue("Chunked");
+  transfer.AddValue("chunked");
   auto content = const_cast<HttpRequest&>(request).Headers["Content-Type"];
   content.Clear();
   content.AddValue(request.Body.impl->contentType);
-
-  AsyncWriteData(client, request, result);
 
   // Connect to the server and open the request
   AsyncBeginRequest(client, request, result);
@@ -332,9 +330,11 @@ void HttpClientImpl::AsyncPerformBody(HttpClient client,
   BOOL results = WinHttpSendRequest(h.request,
                                     headers.c_str(), 0,
                                     WINHTTP_NO_REQUEST_DATA, 0,
-                                    WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH, 0);
+                                    0, 0);
+
   if (results)
   {
+    AsyncWriteData(client, request, result);
     AsyncCompleteRequest(client, result);
   }
   else

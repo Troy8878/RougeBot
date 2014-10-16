@@ -111,6 +111,9 @@ inline std::string GetLastErrorString(DWORD error = 0)
     (LPTSTR) &pBuffer,
     0, NULL);
 
+  if (pBuffer == 0)
+    return "UNKNOWN ERROR";
+
   std::string result = pBuffer;
   LocalFree(pBuffer);
 

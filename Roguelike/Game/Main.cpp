@@ -29,7 +29,7 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
-#if 0
+#if defined(_DEBUG)
   // HTTP test
   {
     HttpUri uri("http://www.cloudsdale.org/v1/sessions");
@@ -41,7 +41,7 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
     request.Body.SetJson(value::object(
     {
       {"email", value("connorcpu@cloudsdale.org")},
-      {"password", value("12ltfromwil1-")}
+      {"password", value("not my password")}
     }));
 
     auto res = client.MakeRequest(request);

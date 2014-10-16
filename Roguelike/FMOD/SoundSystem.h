@@ -95,11 +95,8 @@ public:
         FMOD_FILE_READ_CALLBACK exInfoFRead;
         FMOD_FILE_SEEK_CALLBACK exInfoFSeek;
         FMOD_FILE_ASYNCREAD_CALLBACK exInfoARead;
-        FMOD_FILE_ASYNCCANCEL_CALLBACK exInfoACancel;
         FMOD_CHANNELORDER exInfoChanOrder;
-        FMOD_CHANNELMASK exInfoChanMask;
         FMOD_SOUNDGROUP *exInfoSoundGroup;
-        FMOD_TIMEUNIT exInfoSeekTime;
       };
 
       EXTRA_INFO type = EXTRA_INFO::NONE;

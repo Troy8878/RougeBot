@@ -72,7 +72,7 @@ end
 puts
 
 # Do the calculation
-command_line = "cloc --by-file --quiet --yaml #{filters.map{|filter| "\"#{filter}\""}.join ' '}"
+command_line = "cloc --by-file --quiet --yaml #{filters.map{|filter| "#{filter.inspect}"}.join ' '}"
 puts "> #{command_line}\n" # just print it so we can see what the command line was
 file_data_raw = `#{command_line}` # run the actual command
 file_data = YAML.load(file_data_raw) # 

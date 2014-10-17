@@ -249,6 +249,13 @@ const KeyState& Input::GetKeyState(virtual_key key)
 
 // ----------------------------------------------------------------------------
 
+const MouseState& Input::GetMouseState()
+{
+  return mouse;
+}
+
+// ----------------------------------------------------------------------------
+
 wchar_t Input::VKeyToChar(virtual_key key)
 {
   return (wchar_t) MapVirtualKey(key, MAPVK_VK_TO_CHAR);

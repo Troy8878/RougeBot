@@ -340,9 +340,11 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 void MrbHttpClient::Update(mrb_state *mrb)
 {
   std::vector<decltype(results.begin())> kill;
+
   for (auto it = results.begin(); it != results.end(); ++it)
   {
     auto& result = *it;
+
     if (result.result.HasFailed || result.result.HasData)
     {
       mrb_funcall(mrb, result.proc, "call", 1, result.mrb_result);

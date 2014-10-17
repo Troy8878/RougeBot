@@ -104,7 +104,7 @@ class PlayerControllerComponent < ComponentBase
     dx = Math.round(curpos.x - @pos.x)
     dz = Math.round(curpos.z - @pos.z)
 
-    if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5 || !can_move?(dx, dz)
+    if !can_move?(dx, dz)
       @cursor.children.first.sprite_component.texture_index = 1
     else
       @cursor.children.first.sprite_component.texture_index = 0
@@ -115,6 +115,11 @@ class PlayerControllerComponent < ComponentBase
     if xo != 0 and yo != 0
       @blocked_reason = "Can't move diagonally"
       return false # unless can_move?(xo, 0) && can_move?(0, yo)
+    end
+
+    if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
+      @blocked_reason = "Can't move more than 1 space at a time"
+      return false
     end
 
     @room ||= find_entity("MainFloor").test_room_component.room

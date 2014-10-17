@@ -61,7 +61,8 @@ void SoundClass::CheckResult(bool isOkay)
 {
   if (!isOkay)
   {
-    std::cout << "FMOD error " << FMODresult << ":  " << FMOD_ErrorString(FMODresult);
+    auto err_str = FMOD_ErrorString(FMODresult);
+    std::cout << "FMOD error " << FMODresult << ":  " << err_str;
     throw basic_exception("FMOD init error.");
   }
 }

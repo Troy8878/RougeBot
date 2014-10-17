@@ -99,6 +99,7 @@ namespace json
 
     public:
       value() : value(null()) {}
+      value(std::_Uninitialized) {}
 
       static value null();
       static value number(number_t value = 0);

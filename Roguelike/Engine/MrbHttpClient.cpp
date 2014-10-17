@@ -116,6 +116,8 @@ static RClass *mrb_http_get_class(mrb_state *mrb, Path&&... path)
 
 static mrb_value mrb_http_client_new(mrb_state *mrb, mrb_value self);
 
+static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self);
+
 #pragma endregion
 
 // ----------------------------------------------------------------------------
@@ -219,9 +221,18 @@ MrbHttpUriStringProp(Fragment, fragment);
 
 static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value self);
 
+static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self);
+
 #pragma endregion
 
 #pragma region Http::Request::Body
+
+static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody& body);
+
+static mrb_value mrb_http_request_body_json_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_request_body_string_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_request_body_form_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
 
@@ -243,6 +254,9 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value self);
 
 extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 {
+
+#pragma region Define classes
+
   MRB_INIT_DT(MrbHttpClient, http_client);
   MRB_INIT_DT(HttpUri, http_uri);
   MRB_INIT_DT(HttpHeaderCollection, http_headers);
@@ -262,11 +276,15 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
   mrb_define_const(mrb, http, "OPTIONS", mrb_fixnum_value(HTTP_OPTIONS));
   mrb_define_const(mrb, http, "PATCH", mrb_fixnum_value(HTTP_PATCH));
 
+#pragma endregion
+
 #pragma region Http::Client
 
   auto client = mrb_define_class_under(mrb, http, "Client", mrb->object_class);
 
-  mrb_define_class_method(mrb, client, "new", mrb_http_client_new, ARGS_NONE());
+  mrb_define_class_method(mrb, client, "new", mrb_http_client_new, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, client, "update", mrb_http_client_update, MRB_ARGS_NONE());
 
 #pragma endregion
   
@@ -275,11 +293,11 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto uri = mrb_define_class_under(mrb, http, "Uri", mrb->object_class);
 
-  mrb_define_class_method(mrb, uri, "new", mrb_http_uri_new, ARGS_OPT(1));
-  mrb_define_method(mrb, uri, "inspect", mrb_http_uri_inspect, ARGS_NONE());
+  mrb_define_class_method(mrb, uri, "new", mrb_http_uri_new, MRB_ARGS_OPT(1));
+  mrb_define_method(mrb, uri, "inspect", mrb_http_uri_inspect, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, uri, "build", mrb_http_uri_build, ARGS_NONE());
-  mrb_define_method(mrb, uri, "build_path", mrb_http_uri_build_path, ARGS_NONE());
+  mrb_define_method(mrb, uri, "build", mrb_http_uri_build, MRB_ARGS_NONE());
+  mrb_define_method(mrb, uri, "build_path", mrb_http_uri_build_path, MRB_ARGS_NONE());
 
   MrbHttpUriDefMethods(scheme);
   MrbHttpUriDefMethods(username);
@@ -309,11 +327,24 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto request = mrb_define_class_under(mrb, http, "Request", mrb->object_class);
 
+  mrb_define_class_method(mrb, request, "new", mrb_http_request_new, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, request, "body", mrb_http_request_body, MRB_ARGS_NONE());
+
 #pragma endregion
 
 #pragma region Http::Request::Body
 
   auto request_body = mrb_define_class_under(mrb, request, "Body", mrb->object_class);
+
+  mrb_define_method(mrb, request_body, "json=", 
+                    mrb_http_request_body_json_set, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, request_body, "string=", 
+                    mrb_http_request_body_string_set, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, request_body, "form=", 
+                    mrb_http_request_body_form_set, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, request_body, "content_type=",
+                    mrb_http_request_body_type_set, MRB_ARGS_REQ(1));
 
 #pragma endregion
   
@@ -362,8 +393,17 @@ static mrb_value mrb_http_client_new(mrb_state *mrb, mrb_value)
 {
   static auto client_c = mrb_http_get_class(mrb, "Client");
 
-  auto obj = mrb_data_object_alloc(mrb, client_c, new HttpClient, &mrb_http_client_dt);
+  auto obj = mrb_data_object_alloc(mrb, client_c, new MrbHttpClient, &mrb_http_client_dt);
   return mrb_obj_value(obj);
+}
+
+static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self)
+{
+  auto& client = *(MrbHttpClient *)mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
+
+  client.Update(mrb);
+
+  return mrb_nil_value();
 }
 
 #pragma endregion
@@ -467,11 +507,29 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
   mrb_int verb;
   mrb_get_args(mrb, "oi", &uri, &verb);
 
-  auto& cpp_uri = *(HttpUri *)mrb_data_get_ptr(mrb, uri, &mrb_http_uri_dt);
+  HttpUri cpp_uri;
+
+  if (mrb_string_p(uri))
+  {
+    cpp_uri = HttpUri(mrb_str_to_stdstring(uri));
+  }
+  else
+  {
+    cpp_uri = *(HttpUri *)mrb_data_get_ptr(mrb, uri, &mrb_http_uri_dt);
+  }
+
   auto request = new HttpRequest(cpp_uri, (HttpMethod) verb);
   auto obj = mrb_data_object_alloc(mrb, req_c, request, &mrb_http_request_dt);
 
   return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self)
+{
+  auto& request = *(HttpRequest *)mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+  return mrb_http_request_body_new(mrb, request.Body);
 }
 
 #pragma endregion
@@ -480,7 +538,93 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
 
 #pragma region Http::Request::Body
 
+static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody& body)
+{
+  static auto body_c = mrb_http_get_class(mrb, "Request", "Body");
 
+  auto pBody = new HttpRequestBody(body);
+  auto obj = mrb_data_object_alloc(mrb, body_c, pBody, &mrb_http_request_body_dt);
+
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_body_json_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value data;
+  mrb_get_args(mrb, "o", &data);
+
+  json::value jval;
+  try
+  {
+    jval = mrb_inst->value_to_json(data);
+  }
+  catch(std::exception& ex)
+  {
+    mrb_raise(mrb, mrb->eException_class, ex.what());
+  }
+
+  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+  body.SetJson(jval);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_body_string_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+  
+  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+  body.SetString(mrb_str_to_stdstring(str));
+  
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_body_form_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value data;
+  mrb_get_args(mrb, "o", &data);
+
+  json::value jval;
+  try
+  {
+    jval = mrb_inst->value_to_json(data);
+  }
+  catch(std::exception& ex)
+  {
+    mrb_raise(mrb, mrb->eException_class, ex.what());
+  }
+
+  if (!jval.is_object_of<json::value::string_t>())
+  {
+    jval = json::value(std::_Noinit);
+    mrb_raise(mrb, mrb->eException_class, "Form must be a Hash containing Strings");
+  }
+  
+  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+  body.SetForm(jval.as_object_of<json::value::string_t>());
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+  
+  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+  body.SetContentType(mrb_str_to_stdstring(str));
+  
+  return mrb_nil_value();
+}
 
 #pragma endregion
 

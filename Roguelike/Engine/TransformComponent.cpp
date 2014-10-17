@@ -29,8 +29,8 @@ void TransformComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
-  DEF_EVENT_ID(update);
-  Owner->AddEvent(this, update, &TransformComponent::OnUpdate);
+  DEF_EVENT_ID(draw);
+  Owner->AddEvent(this, draw, &TransformComponent::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------

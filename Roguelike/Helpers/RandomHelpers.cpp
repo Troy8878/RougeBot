@@ -243,31 +243,22 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
   using namespace DirectX;
   auto viewInverse = XMMatrixInverse(nullptr, camera->viewMatrix);
 
-  auto planePoint = XMVector3Unproject(point, 
-                                       0, 0, winsz.x, winsz.y, 0.0f, 1.0f, 
-                                       camera->projectionMatrix, 
+  auto planePoint = XMVector3Unproject(point,
+                                       0, 0, winsz.x, winsz.y, 0.1f, 1.0f,
+                                       camera->projectionMatrix,
                                        camera->viewMatrix, 
                                        XMMatrixIdentity());
 
   XMVECTOR c = viewInverse * g_XMIdentityR3;
   XMVECTOR v = c - planePoint;
   XMVECTOR n = planeNormal;
-  XMMATRIX vn;
-  vn.r[0] = v * XMVectorGetX(n);
-  vn.r[1] = v * XMVectorGetY(n);
-  vn.r[2] = v * XMVectorGetZ(n);
-  vn.r[3] = v * XMVectorGetW(n);
-
   XMVECTOR d = XMVector4Dot(v, n);
-  XMMATRIX oblique;
-  oblique.r[0] = g_XMIdentityR0 - vn.r[0] / d;
-  oblique.r[1] = g_XMIdentityR1 - vn.r[1] / d;
-  oblique.r[2] = g_XMIdentityR2 - vn.r[2] / d;
-  oblique.r[3] = g_XMIdentityR3 - vn.r[3] / d;
 
-  oblique = XMMatrixTranslationFromVector(-planeOrigin) *
-            oblique *
-            XMMatrixTranslationFromVector(planeOrigin);
+  XMMATRIX vn = XMMatrixFromVectorTimesVectorTranspose(v, n);
+  XMMATRIX oblique = 
+    XMMatrixTranslationFromVector(-planeOrigin) *
+    XMMatrixSubDiv(XMMatrixIdentity(), vn, d) *
+    XMMatrixTranslationFromVector(planeOrigin);
   
   XMVECTOR projected = oblique * planePoint;
 

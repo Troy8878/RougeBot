@@ -363,18 +363,6 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   mrb_define_method(mrb, rclass, "plain_char?", mrb_kse_is_plain_char, ARGS_NONE());
   mrb_define_method(mrb, rclass, "plain_char", mrb_kse_plain_char, ARGS_NONE());
 
-  #pragma region CONSTANTS
-
-  DEF_INT_CONST("ESCAPE", VK_ESCAPE);
-  DEF_INT_CONST("SPACE",  VK_SPACE);
-  DEF_INT_CONST("ENTER",  VK_RETURN);
-  DEF_INT_CONST("LEFT",   VK_LEFT);
-  DEF_INT_CONST("RIGHT",  VK_RIGHT);
-  DEF_INT_CONST("UP",     VK_UP);
-  DEF_INT_CONST("DOWN",   VK_DOWN);
-
-  #pragma endregion
-
   mrb_me_data_type.dfree = mrb_me_free;
   mrb_me_data_type.struct_name = "MouseState";
 

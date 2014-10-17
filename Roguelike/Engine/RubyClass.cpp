@@ -70,7 +70,7 @@ ruby_class ruby_class::define_class(const char *name, RClass *baseClass)
 ruby_value ruby_class::new_inst_argv(ruby_value *values, mrb_int num)
 {
   if (num > 128)
-    throw std::exception("WTF ARE YOU DOING?! OVER 128 PARAMS?!");
+    throw basic_exception("WTF ARE YOU DOING?! OVER 128 PARAMS?!");
 
   THREAD_EXCLUSIVE_SCOPE;
   static mrb_value items[128];

@@ -41,7 +41,7 @@ void BucketAllocator::Free(void *item)
     return;
   }
 
-  throw std::exception("Attempted to free an item that did not belong to this allocator");
+  throw basic_exception("Attempted to free an item that did not belong to this allocator");
 }
 
 // ----------------------------------------------------------------------------

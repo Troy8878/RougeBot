@@ -276,7 +276,7 @@ void GraphicsDevice::InitializeD3DContext()
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  sd.BufferDesc.RefreshRate.Numerator = 120;
+  sd.BufferDesc.RefreshRate.Numerator = 60;
   sd.BufferDesc.RefreshRate.Denominator = 1;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   sd.OutputWindow = _window;

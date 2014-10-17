@@ -241,4 +241,73 @@ inline std::ostream& XM_CALLCONV operator<<(std::ostream& os, DirectX::CXMMATRIX
   return os;
 }
 
+namespace DirectX
+{
+  inline XMMATRIX XM_CALLCONV
+    operator-(FXMMATRIX m1, CXMMATRIX m2)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0];
+    m.r[1] = m1.r[1] - m2.r[1];
+    m.r[2] = m1.r[2] - m2.r[2];
+    m.r[3] = m1.r[3] - m2.r[3];
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV 
+    XMMatrixFromVectorTimesVectorTranspose(FXMVECTOR v1, FXMVECTOR v2)
+  {
+    XMMATRIX m;
+    m.r[0] = v1 * XMVectorGetX(v2);
+    m.r[1] = v1 * XMVectorGetY(v2);
+    m.r[2] = v1 * XMVectorGetZ(v2);
+    m.r[3] = v1 * XMVectorGetW(v2);
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixAddMul(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0] * scale;
+    m.r[1] = m1.r[1] + m2.r[1] * scale;
+    m.r[2] = m1.r[2] + m2.r[2] * scale;
+    m.r[3] = m1.r[3] + m2.r[3] * scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixSubMul(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0] * scale;
+    m.r[1] = m1.r[1] - m2.r[1] * scale;
+    m.r[2] = m1.r[2] - m2.r[2] * scale;
+    m.r[3] = m1.r[3] - m2.r[3] * scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixAddDiv(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0] / scale;
+    m.r[1] = m1.r[1] + m2.r[1] / scale;
+    m.r[2] = m1.r[2] + m2.r[2] / scale;
+    m.r[3] = m1.r[3] + m2.r[3] / scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixSubDiv(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0] / scale;
+    m.r[1] = m1.r[1] - m2.r[1] / scale;
+    m.r[2] = m1.r[2] - m2.r[2] / scale;
+    m.r[3] = m1.r[3] - m2.r[3] / scale;
+    return m;
+  }
+}
+
 

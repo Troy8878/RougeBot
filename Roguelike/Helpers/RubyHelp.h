@@ -42,7 +42,7 @@ inline bool mrb_errord(mrb_state *mrb)
 void mrb_get_error(mrb_state *mrb, std::string& message, std::string& backtrace)
 {
   if (!mrb_errord(mrb))
-    throw std::exception("mruby did not just raise an error");
+    throw basic_exception("mruby did not just raise an error");
 
   message = mrb_to_s(mrb, mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0));
   backtrace = mrb_to_s(mrb, mrb_get_backtrace(mrb));

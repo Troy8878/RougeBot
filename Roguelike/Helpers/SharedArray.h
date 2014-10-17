@@ -40,7 +40,7 @@ public:
     for (auto& item : items)
       *data++ = item;
   }
-  shared_array(T *items, size_t size)
+  shared_array(const T *items, size_t size)
     : shared_array(size)
   {
     T *data = get();

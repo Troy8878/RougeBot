@@ -51,6 +51,12 @@
     <Filter Include="Source Files\Other">
       <UniqueIdentifier>{38982159-b1e3-41c4-b18f-d32f3773349e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Net">
+      <UniqueIdentifier>{398ec745-79d0-4bce-8a10-346c54caf74a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Net">
+      <UniqueIdentifier>{4de49132-8126-4089-8e95-6dffe27427dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsDevice.h">
@@ -154,6 +160,12 @@
     </ClInclude>
     <ClInclude Include="ParticleSystemComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpClient.h">
+      <Filter>Header Files\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpClientImpl.h">
+      <Filter>Header Files\Net</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Header Files\Input</Filter>
@@ -274,12 +286,6 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystemComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="ButtonComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>

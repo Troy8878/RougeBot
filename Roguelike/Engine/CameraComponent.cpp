@@ -26,7 +26,7 @@ CameraComponent::CameraComponent(const std::string& name, int layer, MultiCam *c
   : _Name(name), _cameraPtr(copy)
 {
   if (!_cameraPtr)
-    throw std::exception("Camera copy pointer was null D:");
+    throw basic_exception("Camera copy pointer was null D:");
 
   RenderGroup::Instance.CreateSet(name, Camera, layer, false);
 }
@@ -44,8 +44,8 @@ void CameraComponent::Initialize(Entity *owner, const std::string& name)
 {
   Component::Initialize(owner, name);
 
-  static Events::EventId updateId("update");
-  Owner->AddEvent(this, updateId, &CameraComponent::OnUpdate);
+  DEF_EVENT_ID(draw);
+  Owner->AddEvent(this, draw, &CameraComponent::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------

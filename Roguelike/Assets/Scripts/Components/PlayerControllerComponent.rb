@@ -21,11 +21,6 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
-  KEYS_MOVE_UP = ['W', KeyState::UP]
-  KEYS_MOVE_LEFT = ['A', KeyState::LEFT]
-  KEYS_MOVE_DOWN = ['S', KeyState::DOWN]
-  KEYS_MOVE_RIGHT = ['D', KeyState::RIGHT]
-
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -41,27 +36,19 @@ class PlayerControllerComponent < ComponentBase
 
     @move_speed = data.fetch("move_speed", 5).to_f
 
-    self.register_event :key_held, :on_key
+    self.register_event :player_move, :on_move
     self.register_event :update, :first_update
 
-    if Config[:touch_mode]
-      self.register_event :double_click, :mouse_down
-    else
+    # Double-click should do it in either case
+    # Double-click is the only way in touch mode
+    self.register_event :double_click, :mouse_down
+    unless Config[:touch_mode]
       self.register_event :mouse_down, :mouse_down
     end
   end
 
-  def on_key(e)
-    case e.plain_char || e.vkey
-    when *KEYS_MOVE_UP
-      move 0, +1 if can_move? 0, 1
-    when *KEYS_MOVE_DOWN
-      move 0, -1 if can_move? 0, -1
-    when *KEYS_MOVE_RIGHT
-      move +1, 0 if can_move? 1, 0
-    when *KEYS_MOVE_LEFT
-      move -1, 0 if can_move? -1, 0
-    end
+  def on_move(e)
+    move *e if can_move? *e
   end
 
   def mouse_down(e)
@@ -86,6 +73,10 @@ class PlayerControllerComponent < ComponentBase
   def first_update(e)
     move 0, 0
 
+    @camera = find_entity("CameraRoot")
+    @camera.parent = self.owner
+    @camz = @camera.transform_component.position.z
+
     register_event :update, :on_update
   end
 
@@ -101,10 +92,12 @@ class PlayerControllerComponent < ComponentBase
     pos = @transform.position
     @transform.position = pos.dup + diff
 
-    xbounce = Math.sin((pos.x % 1) * Math::PI) / 10
-    zbounce = Math.sin((pos.z % 1) * Math::PI) / 10
+    xbounce = Math.sin((pos.x % 1) * Math::PI) / 6
+    zbounce = Math.sin((pos.z % 1) * Math::PI) / 6
 
     pos.y = 0.25 + xbounce + zbounce
+    @camera.transform_component.position.z = 
+      @camz + (xbounce + zbounce) / @transform.scale.z
 
     update_cursor_color
   end
@@ -125,7 +118,7 @@ class PlayerControllerComponent < ComponentBase
 
   def can_move?(xo, yo)
     if xo != 0 and yo != 0
-      return false unless can_move?(xo, 0) && can_move?(0, yo)
+      return false # unless can_move?(xo, 0) && can_move?(0, yo)
     end
 
     @room ||= find_entity("MainFloor").test_room_component.room

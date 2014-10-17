@@ -1,5 +1,5 @@
 {
-  "name": "LevelRoot",
+  "name": "Game",
   "components": {
     "GameQuitCancelerComponent": {}
   },
@@ -8,12 +8,8 @@
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [1.5707, 0, 0]
-        },
-        "CameraFollowComponent": {
-          "offset": [0, 9, 0],
-          "follows": "Pancake",
-          "speed": 0
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
         }
       },
       "children": [
@@ -110,9 +106,9 @@
           "render_target": "TranslucentLayer"
         },
         "PlayerControllerComponent": {},
-        "ParticleSystemComponent": {
+        /*"ParticleSystemComponent": {
           "render_target": "WorldLayer"
-        },
+        },*/
       }
     },
     {

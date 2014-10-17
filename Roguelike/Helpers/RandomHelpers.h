@@ -7,6 +7,7 @@
 #pragma once
 
 #include "FixedWindows.h"
+#include "StackTrace.h"
 #include <unordered_map>
 #include <chrono>
 #include "json/json.h"
@@ -33,6 +34,50 @@ inline std::string narrow(const std::wstring& wide_string)
 
 // ----------------------------------------------------------------------------
 
+template <typename Elem>
+inline std::basic_string<Elem> chomp(std::basic_string<Elem> str)
+{
+  if (str.empty())
+    return str;
+
+  std::locale loc("en-US");
+  size_t pos = 0;
+
+  while (pos < str.size() && std::isspace(str[pos], loc))
+    pos++;
+
+  str = str.substr(pos);
+
+  while (!str.empty() && std::isspace(*str.rbegin(), loc))
+    str.pop_back();
+
+  return str;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename Elem, typename Delim>
+inline std::vector<std::basic_string<Elem>> 
+split(const std::basic_string<Elem>& str, Delim&& delim)
+{
+  std::vector<std::basic_string<Elem>> items;
+  size_t pos = 0, next;
+
+  while ((next = str.find_first_of(delim, pos)) != str.npos)
+  {
+    items.push_back(str.substr(pos, next - pos));
+
+    if (next != str.npos)
+      pos = str.find_first_not_of(delim, next);
+  }
+
+  items.push_back(str.substr(pos));
+
+  return items;
+}
+
+// ----------------------------------------------------------------------------
+
 #define CSTR_WIDEN(x) widen(x).c_str()
 #define CSTR_NARROW(x) narrow(x).c_str()
 
@@ -49,19 +94,25 @@ inline std::string narrow(const std::wstring& wide_string)
 // ----------------------------------------------------------------------------
 
 // just a nice little helper to turn GetLastError() into a readable message
-inline std::string GetLastErrorString()
+inline std::string GetLastErrorString(DWORD error = 0)
 {
   LPSTR pBuffer = 0;
+
+  if (error == 0)
+    error = GetLastError();
 
   FormatMessage(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
     FORMAT_MESSAGE_FROM_SYSTEM |
     FORMAT_MESSAGE_IGNORE_INSERTS,
     NULL,
-    GetLastError(),
+    error,
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
     (LPTSTR) &pBuffer,
     0, NULL);
+
+  if (pBuffer == 0)
+    return "UNKNOWN ERROR";
 
   std::string result = pBuffer;
   LocalFree(pBuffer);
@@ -71,7 +122,30 @@ inline std::string GetLastErrorString()
 
 // ----------------------------------------------------------------------------
 
-class DXFatalError : public std::exception
+class basic_exception : public std::exception
+{
+  stack_trace trace;
+
+public:
+  basic_exception()
+    : trace(stack_trace::create_trace())
+  {
+  }
+
+  basic_exception(const char *what)
+    : std::exception(what), trace(stack_trace::create_trace())
+  {
+  }
+
+  void print_trace(std::ostream& out) const
+  {
+    trace.print(out);
+  }
+};
+
+// ----------------------------------------------------------------------------
+
+class DXFatalError : public basic_exception
 {
 public:
 
@@ -101,7 +175,7 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class string_exception : public std::exception
+class string_exception : public basic_exception
 {
   std::string message;
 
@@ -279,6 +353,22 @@ void variadic_push_array(T array[], size_t index,
     this->_##pName = value;                     \
   }
 
+#define _SPROPERTY_GET(pType, pName)               \
+  inline pType& _PropGet ## pName() {              \
+    critical_section::guard guard(this->lock);     \
+    return this->_##pName;                         \
+  }                                                \
+  inline pType const & _PropGet ## pName() const { \
+    critical_section::guard guard(this->lock);     \
+    return this->_##pName;                         \
+  }
+
+#define _SPROPERTY_SET(pType, pName)                  \
+  inline void _PropSet ## pName(pType const& value) { \
+    critical_section::guard guard(this->lock);        \
+    this->_##pName = value;                           \
+  }
+
 #define _PROPERTY_STORAGE(pType, pName) \
   private: pType _##pName; public:
 
@@ -344,9 +434,23 @@ void variadic_push_array(T array[], size_t index,
     put = _PropSet ## pName)       \
   ) pType pName
 
+#define SRW_PROPERTY(pType, pName) \
+  _PROPERTY_STORAGE(pType, pName)  \
+  _SPROPERTY_GET(pType, pName)     \
+  _SPROPERTY_SET(pType, pName)     \
+  __declspec(property(             \
+    get = _PropGet ## pName,       \
+    put = _PropSet ## pName)       \
+  ) pType pName
+
 // ----------------------------------------------------------------------------
 
 #define PROPERTY(...) __declspec(property(__VA_ARGS__))
+
+// ----------------------------------------------------------------------------
+
+#define SYNC_PROPERTY(type, name)
+  
 
 // ----------------------------------------------------------------------------
 
@@ -371,9 +475,12 @@ template <typename CharT, typename TraitsT = std::char_traits<CharT>>
 class ibufferstream : public std::basic_streambuf<CharT, TraitsT>
 {
 public:
-  ibufferstream(CharT *start, size_t size)
+  ibufferstream() = default;
+
+  ibufferstream(const CharT *start, size_t size)
   {
-    setg(start, start, start + size);
+    CharT *s = const_cast<CharT *>(start);
+    setg(s, s, s + size);
   }
 };
 

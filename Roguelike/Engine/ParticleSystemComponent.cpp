@@ -1,7 +1,7 @@
 /*********************************
  * ParticleSystemComponent.cpp
- * YOUR NAME HERE
- * Created 2014/YOUR DATE HERE
+ * Connor Hilarides
+ * Created 2014/09/30
  *********************************/
 
 #include "Common.h"

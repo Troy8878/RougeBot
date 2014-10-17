@@ -21,12 +21,10 @@ class MapControllerComponent < ComponentBase
     @maximized = false
     
     # Look out for key presses.
-    self.register_event :key_down, :on_key
+    self.register_event :minimap_toggle, :on_toggle
   end
 
-  def on_key(e)
-    # If the M key wasn't the pressed key, return.
-    return unless e.plain_char == 'M'
+  def on_toggle(e)
     if maximized?
       minimize
     else

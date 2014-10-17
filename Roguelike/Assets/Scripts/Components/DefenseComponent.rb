@@ -1,6 +1,6 @@
 #######################
 # DefenseComponent.rb
-# Jake Robsahm
+# Jake Robsahm, Leonardo Saikali
 # Created 2014/09/05
 #######################
 
@@ -20,6 +20,12 @@ class DefenseComponent < ComponentBase
     @health = data.fetch("health", 1)
 
 
+  end
+
+  def be_attacked(attack, damage)
+    return :miss if attack < @defense
+    @health -= damage
+    return :hit
   end
 
   def equip_armor()

@@ -1,6 +1,8 @@
 {
   "TransformComponent": {},
-  "DefenseComponent": {},
+  "DefenseComponent": {
+    "health": 10
+  },
   "AttackComponent": {},
 
   "ChildHierarchy": {

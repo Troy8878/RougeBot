@@ -17,6 +17,8 @@ class DefenseComponent < ComponentBase
 
     @defense = 0.0
     @armor = 0
+    @health = data.fetch("health", 1)
+
 
   end
 

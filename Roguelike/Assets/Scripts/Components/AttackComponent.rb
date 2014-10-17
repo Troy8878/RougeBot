@@ -29,6 +29,7 @@ class AttackComponent < ComponentBase
   end
 
   def do_attack()
+    
   end
 
   register_component "AttackComponent"

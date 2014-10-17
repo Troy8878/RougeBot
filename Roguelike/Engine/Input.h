@@ -164,6 +164,8 @@ public:
   // InputSignal with the proper fields set.
   static InputSignal TranslateSignal(UINT msg, WPARAM wParam, LPARAM lParam);
 
+  const MouseState& GetMouseState();
+
 private:
   // Handler for the update event
   void OnUpdate(Events::EventMessage& e);

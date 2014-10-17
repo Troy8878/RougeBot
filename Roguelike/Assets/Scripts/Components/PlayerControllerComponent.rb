@@ -9,7 +9,6 @@
 #######################Property Details#########################
 # health - the health of the player. May be changed if we use
 #the same health system for enemies.
-# speed - how fast the player moves or attacks. TBD.
 # inventory - an inventory object containing all of the player's
 #items.
 ################################################################
@@ -29,10 +28,6 @@ class PlayerControllerComponent < ComponentBase
     @pos = @transform.position.dup
     @real_pos = @pos.dup
 
-    # Base player stats. These might be moved to other
-    # components later.
-    @health = data.fetch("health", 10).to_i
-    @speed = data.fetch("speed", 1).to_f
 
     @move_speed = data.fetch("move_speed", 5).to_f
 
@@ -118,6 +113,7 @@ class PlayerControllerComponent < ComponentBase
 
   def can_move?(xo, yo)
     if xo != 0 and yo != 0
+      @blocked_reason = "Can't move diagonally"
       return false # unless can_move?(xo, 0) && can_move?(0, yo)
     end
 
@@ -128,15 +124,19 @@ class PlayerControllerComponent < ComponentBase
     real_pos = @transform.position.dup
     real_pos.y = @pos.y
 
+    @blocked_reason = "Already moving"
     return false unless @pos.near? real_pos, 0.2
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.z + 0.5).to_i + yo
 
+    @blocked_reason = "Out of bounds"
     return false if x < 0 || x >= room[0].count
     return false if y < 0 || y >= room.count
 
-    room[room.count - 1 - y][x] == TestRoomComponent::EMPTY_VALUE
+    res = room[room.count - 1 - y][x] == TestRoomComponent::EMPTY_VALUE
+    @blocked_reason = "Blocked by wall" if !res
+    return res
   end
 
   register_component "PlayerControllerComponent"

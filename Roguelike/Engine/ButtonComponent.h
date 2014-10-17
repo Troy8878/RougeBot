@@ -8,6 +8,7 @@
 
 #include "Common.h"
 #include "Helpers\BucketAllocator.h"
+#include "RenderSet.h"
 
 // ----------------------------------------------------------------------------
 
@@ -22,6 +23,10 @@ public:
 
   void Initialize(Entity *owner, const std::string& name) override;
   void OnUpdate(Events::EventMessage&);
+  void OnProbe(Events::EventMessage& e);
+
+  RenderSet *RenderTarget;
+  math::Vector2D Size;
 
   mrb_value GetRubyWrapper() override;
 

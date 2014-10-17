@@ -128,6 +128,8 @@ void RegisterEngineComponents()
 #include "TextureComponent.h"
 #include "TextComponent.h"
 #include "ParticleSystemComponent.h"
+#include "ButtonComponent.h"
+
 #include "Game/PositionDisplayComponent.h"
 #include "Game/MapComponent.h"
 
@@ -141,6 +143,8 @@ static void RegisterStaticComponents()
   RegisterStaticComponent<TextureComponent>("TextureComponent");
   RegisterStaticComponent<TextComponent>("TextComponent");
   RegisterStaticComponent<ParticleSystemComponent>("ParticleSystemComponent");
+  RegisterStaticComponent<ButtonComponent>("ButtonComponent");
+
   RegisterStaticComponent<PositionDisplayComponent>("PositionDisplayComponent");
   RegisterStaticComponent<MapComponent>("MapComponent");
 }

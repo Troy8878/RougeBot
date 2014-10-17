@@ -288,6 +288,24 @@
     <ClCompile Include="ParticleSystemComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="HttpClient.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpRequest.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpResult.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpUri.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpHelpers.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="MrbHttpClient.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

@@ -47,6 +47,7 @@ extern "C"
   void mrb_mruby_random_init(mrb_state *mrb);
   void mrb_mruby_events_init(mrb_state *mrb);
   void mrb_mruby_http_init(mrb_state *mrb);
+  void mrb_mruby_file_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -58,6 +59,9 @@ extern "C"
 
     // Fiber gem
     mrb_mruby_fiber_gem_init(mrb);
+
+    // Files are useful
+    mrb_mruby_file_init(mrb);
 
     // Randomness :D
     mrb_mruby_random_init(mrb);

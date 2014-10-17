@@ -208,6 +208,8 @@ public:
 class HttpResult
 {
 public:
+  HttpResult(std::_Uninitialized) {}
+
   PROPERTY(get = _GetHasHeaders)
     /**
       Checks whether enough of the HTTP data has

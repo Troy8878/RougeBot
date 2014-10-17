@@ -192,15 +192,15 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_const(mrb, iconModule, "ERROR", mrb_fixnum_value(0x10L));
   mrb_define_const(mrb, iconModule, "HAND", mrb_fixnum_value(0x10L));
     
-  auto buttonsModule = mrb_define_module_under(mrb, mbModule, "Buttons");
-  mrb_define_const(mrb, buttonsModule, "HELP", mrb_fixnum_value(0x4000L));
-  mrb_define_const(mrb, buttonsModule, "ABORTRETRYIGNORE", mrb_fixnum_value(0x2L));
-  mrb_define_const(mrb, buttonsModule, "CANCELTRYCONTINUE", mrb_fixnum_value(0x6L));
-  mrb_define_const(mrb, buttonsModule, "OK", mrb_fixnum_value(0x0L));
-  mrb_define_const(mrb, buttonsModule, "OKCANCEL", mrb_fixnum_value(0x1L));
-  mrb_define_const(mrb, buttonsModule, "RETRYCANCEL", mrb_fixnum_value(0x5L));
-  mrb_define_const(mrb, buttonsModule, "YESNO", mrb_fixnum_value(0x4L));
-  mrb_define_const(mrb, buttonsModule, "YESNOCANCEL", mrb_fixnum_value(0x3L));
+  auto sModule = mrb_define_module_under(mrb, mbModule, "s");
+  mrb_define_const(mrb, sModule, "HELP", mrb_fixnum_value(0x4000L));
+  mrb_define_const(mrb, sModule, "ABORTRETRYIGNORE", mrb_fixnum_value(0x2L));
+  mrb_define_const(mrb, sModule, "CANCELTRYCONTINUE", mrb_fixnum_value(0x6L));
+  mrb_define_const(mrb, sModule, "OK", mrb_fixnum_value(0x0L));
+  mrb_define_const(mrb, sModule, "OKCANCEL", mrb_fixnum_value(0x1L));
+  mrb_define_const(mrb, sModule, "RETRYCANCEL", mrb_fixnum_value(0x5L));
+  mrb_define_const(mrb, sModule, "YESNO", mrb_fixnum_value(0x4L));
+  mrb_define_const(mrb, sModule, "YESNOCANCEL", mrb_fixnum_value(0x3L));
 
   auto modalModule = mrb_define_module_under(mrb, mbModule, "Modal");
   mrb_define_const(mrb, modalModule, "APPLICATION", mrb_fixnum_value(0x0L));

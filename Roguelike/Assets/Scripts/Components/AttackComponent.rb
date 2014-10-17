@@ -11,7 +11,7 @@
 # damage - the range of damage an object can do
 ################################################################
 class AttackComponent < ComponentBase
-  attr_reader :attack, :damage
+  attr_accessor :attack, :damage
 
   def initialize(data)
     super data
@@ -28,7 +28,7 @@ class AttackComponent < ComponentBase
     damage = item.damage
   end
 
-  def attack
+  def do_attack()
   end
 
   register_component "AttackComponent"

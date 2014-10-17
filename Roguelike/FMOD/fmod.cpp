@@ -165,7 +165,7 @@ SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD
         ex.fileuserasyncread = iter->u_info.exInfoARead;
         break;
       case EXTRA_INFO::USER_DATA_SC:
-        ex.fileuserasynccancel = iter->u_info.exInfoACancel;
+        ex.fileuserasynccancel = iter->u_info.exInfoARead;
         break;
       case EXTRA_INFO::USER_DATA_TO_CALL:
         ex.fileuserdata = iter->u_info.exInfoVP;
@@ -174,7 +174,7 @@ SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD
         ex.channelorder = iter->u_info.exInfoChanOrder;
         break;
       case EXTRA_INFO::CHANNEL_MASK:
-        ex.channelmask = iter->u_info.exInfoChanMask;
+        ex.channelmask = iter->u_info.exInfoU_Int;
         break;
       case EXTRA_INFO::INIT_SOUND_GROUP:
         ex.initialsoundgroup = iter->u_info.exInfoSoundGroup;
@@ -183,7 +183,7 @@ SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD
         ex.initialseekposition = iter->u_info.exInfoU_Int;
         break;
       case EXTRA_INFO::INIT_SEEK_TIME:
-        ex.initialseekpostype = iter->u_info.exInfoSeekTime;
+        ex.initialseekpostype = iter->u_info.exInfoU_Int;
         break;
       case EXTRA_INFO::IGNORE_SET_FILE:
         ex.ignoresetfilesystem = iter->u_info.exInfoInt;

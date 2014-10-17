@@ -113,6 +113,20 @@ std::wstring HttpHeaderCollection::BuildList() const
 
 // ----------------------------------------------------------------------------
 
+auto HttpHeaderCollection::begin() -> map::iterator
+{
+  return impl->headers.begin();
+}
+
+// ----------------------------------------------------------------------------
+
+auto HttpHeaderCollection::end() -> map::iterator
+{
+  return impl->headers.end();
+}
+
+// ----------------------------------------------------------------------------
+
 void HttpHeaderSet::AddValue(const std::string& val)
 {
   HttpHeaderEntry entry(key, val);

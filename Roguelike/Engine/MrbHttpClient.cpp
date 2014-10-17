@@ -11,7 +11,7 @@
 
 struct MrbHttpResult
 {
-  MrbHttpResult() : result(std::_Noinit) { }
+  MrbHttpResult(const HttpResult& res) : result(res) { }
 
   HttpResult result;
   mrb_value mrb_result;
@@ -116,6 +116,7 @@ static RClass *mrb_http_get_class(mrb_state *mrb, Path&&... path)
 
 static mrb_value mrb_http_client_new(mrb_state *mrb, mrb_value self);
 
+static mrb_value mrb_http_client_request(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
@@ -205,13 +206,22 @@ MrbHttpUriStringProp(Fragment, fragment);
 
 #pragma region Http::Headers
 
+static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection& headers);
 
+static mrb_value mrb_http_headers_each(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
 
 #pragma region Http::Headers::Set
 
+static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet& set);
 
+static mrb_value mrb_http_header_set_key(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_header_set_each(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_header_set_add(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_header_set_remove(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_header_set_clear(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
 
@@ -222,6 +232,7 @@ MrbHttpUriStringProp(Fragment, fragment);
 static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value self);
 
 static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_request_headers(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
 
@@ -314,11 +325,28 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto headers = mrb_define_class_under(mrb, http, "Headers", mrb->object_class);
 
+  mrb_define_class_method(mrb, headers, "new", mrb_nop, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, headers, "each", mrb_http_headers_each, MRB_ARGS_NONE());
+  mrb_define_method(mrb, headers, "[]", mrb_http_headers_get, MRB_ARGS_NONE());
+
+  mrb_funcall(mrb, mrb_obj_value(headers), "include", 1, mrb_obj_value(mrb_module_get(mrb, "Enumerable")));
+
 #pragma endregion
 
 #pragma region Http::Headers::Set
 
   auto header_set = mrb_define_class_under(mrb, headers, "Set", mrb->object_class);
+
+  mrb_define_class_method(mrb, header_set, "new", mrb_nop, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, header_set, "key", mrb_http_header_set_key, MRB_ARGS_NONE());
+  mrb_define_method(mrb, header_set, "each", mrb_http_header_set_each, MRB_ARGS_BLOCK());
+  mrb_define_method(mrb, header_set, "add", mrb_http_header_set_add, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, header_set, "remove", mrb_http_header_set_remove, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, header_set, "clear", mrb_http_header_set_clear, MRB_ARGS_NONE());
+
+  mrb_funcall(mrb, mrb_obj_value(header_set), "include", 1, mrb_obj_value(mrb_module_get(mrb, "Enumerable")));
 
 #pragma endregion
   
@@ -330,12 +358,15 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
   mrb_define_class_method(mrb, request, "new", mrb_http_request_new, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, request, "body", mrb_http_request_body, MRB_ARGS_NONE());
+  mrb_define_method(mrb, request, "headers", mrb_http_request_headers, MRB_ARGS_NONE());
 
 #pragma endregion
 
 #pragma region Http::Request::Body
 
   auto request_body = mrb_define_class_under(mrb, request, "Body", mrb->object_class);
+
+  mrb_define_class_method(mrb, request_body, "new", mrb_nop, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, request_body, "json=", 
                     mrb_http_request_body_json_set, MRB_ARGS_REQ(1));
@@ -353,15 +384,18 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto result = mrb_define_class_under(mrb, http, "Result", mrb->object_class);
 
+  mrb_define_class_method(mrb, result, "new", mrb_nop, MRB_ARGS_NONE());
+
 #pragma endregion
 
 #pragma region Http::Result::LineReader
 
   auto result_linereader = mrb_define_class_under(mrb, result, "LineReader", mrb->object_class);
 
+  mrb_define_class_method(mrb, result_linereader, "new", mrb_nop, MRB_ARGS_NONE());
+
 #pragma endregion
 
-  (headers, header_set, request, request_body, result, result_linereader);
 }
 
 // ----------------------------------------------------------------------------
@@ -397,9 +431,32 @@ static mrb_value mrb_http_client_new(mrb_state *mrb, mrb_value)
   return mrb_obj_value(obj);
 }
 
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_client_request(mrb_state *mrb, mrb_value self)
+{
+  mrb_value request_v;
+  mrb_value block = mrb_nil_value();
+  mrb_get_args(mrb, "o|&", &request_v, &block);
+  
+  auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
+  auto& request = *(HttpRequest *) mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+
+  auto result = client.client.MakeRequest(request);
+  auto mresult = new MrbHttpResult(result);
+  mresult->proc = block;
+
+  if (!mrb_nil_p(mresult->proc))
+  {
+    
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self)
 {
-  auto& client = *(MrbHttpClient *)mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
+  auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
 
   client.Update(mrb);
 
@@ -483,7 +540,48 @@ static mrb_value mrb_http_uri_build_path(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Headers
 
+static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection& headers)
+{
+  static auto headers_c = mrb_http_get_class(mrb, "Headers");
 
+  auto pHeaders = new HttpHeaderCollection(headers);
+  auto obj = mrb_data_object_alloc(mrb, headers_c, pHeaders, &mrb_http_headers_dt);
+
+  return mrb_obj_value(obj);
+}
+
+static mrb_value mrb_http_headers_each(mrb_state *mrb, mrb_value self)
+{
+  mrb_value block = mrb_nil_value();
+  mrb_get_args(mrb, "|&", &block);
+
+  if (mrb_nil_p(block))
+  {
+    static const auto to_enum = mrb_intern_lit(mrb, "to_enum");
+    static const auto each = mrb_symbol_value(mrb_intern_lit(mrb, "each"));
+
+    return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
+  }
+
+  auto& headers = *(HttpHeaderCollection *) mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt);
+
+  for (auto& pair : headers)
+  {
+    mrb_yield(mrb, block, mrb_http_header_set_new(mrb, headers[pair.first]));
+  }
+
+  return self;
+}
+
+static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+  
+  auto& headers = *(HttpHeaderCollection *) mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt);
+
+  return mrb_http_header_set_new(mrb, headers[mrb_str_to_stdstring(str)]);
+}
 
 #pragma endregion
 
@@ -491,7 +589,84 @@ static mrb_value mrb_http_uri_build_path(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Headers::Set
 
+static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet& set)
+{
+  static auto set_c = mrb_http_get_class(mrb, "Headers", "Set");
 
+  auto pSet = new HttpHeaderSet(set);
+  auto obj = mrb_data_object_alloc(mrb, set_c, pSet, &mrb_http_header_set_dt);
+
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_header_set_key(mrb_state *mrb, mrb_value self)
+{
+  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  return mrb_str_new(mrb, set.Key.c_str(), set.Key.size());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_header_set_each(mrb_state *mrb, mrb_value self)
+{
+  mrb_value block;
+  mrb_get_args(mrb, "|&", &block);
+
+  if (mrb_nil_p(block))
+  {
+    static const auto to_enum = mrb_intern_lit(mrb, "to_enum");
+    static const auto each = mrb_symbol_value(mrb_intern_lit(mrb, "each"));
+
+    return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
+  }
+
+  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+
+  for (auto& item : set)
+  {
+    mrb_yield(mrb, block, mrb_str_new(mrb, item.Value.c_str(), item.Value.size()));
+  }
+
+  return self;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_header_set_add(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+
+  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  set.AddValue(mrb_str_to_stdstring(str));
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_header_set_remove(mrb_state *mrb, mrb_value self)
+{
+  mrb_value str;
+  mrb_get_args(mrb, "S", &str);
+
+  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  set.RemoveValue(mrb_str_to_stdstring(str));
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_header_set_clear(mrb_state *mrb, mrb_value self)
+{
+  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  set.Clear();
+
+  return mrb_nil_value();
+}
 
 #pragma endregion
 
@@ -530,6 +705,14 @@ static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self)
 {
   auto& request = *(HttpRequest *)mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
   return mrb_http_request_body_new(mrb, request.Body);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_request_headers(mrb_state *mrb, mrb_value self)
+{
+  auto& request = *(HttpRequest *)mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+  return mrb_http_headers_new(mrb, request.Headers);
 }
 
 #pragma endregion

@@ -303,10 +303,13 @@
       <Filter>Source Files\Net</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyFile.cpp">
+      <Filter>Source Files\Ruby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

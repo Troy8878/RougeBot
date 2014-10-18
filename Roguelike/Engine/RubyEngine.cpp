@@ -353,7 +353,13 @@ mrb_value ruby_engine::json_to_value(json::value jv)
       return mrb_bool_value(jv.as_bool());
 
     case json_type::jnumber:
-      return mrb_float_value(mrb, (mrb_float) jv.as_number());
+    {
+      auto num = (mrb_float) jv.as_number();
+      if (std::fmod(num, 1) == 0)
+        return mrb_fixnum_value((mrb_int) num);
+
+      return mrb_float_value(mrb, num);
+    }
 
     case json_type::jobject:
       return json_to_hash(jv);

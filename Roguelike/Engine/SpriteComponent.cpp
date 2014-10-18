@@ -113,8 +113,7 @@ mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
   mrb_value spriteWrapper;
   mrb_get_args(mrb, "o", &spriteWrapper);
 
-  static mrb_sym wrapperSym = mrb_intern_cstr(mrb, "comp_ptr");
-  mrb_iv_set(mrb, self, wrapperSym, spriteWrapper);
+  ruby::save_native_ptr(mrb, self, mrb_ptr(spriteWrapper));
 
   return mrb_nil_value();
 }
@@ -123,12 +122,7 @@ mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 
 SpriteComponent *rb_help_getSpriteComponent(mrb_state *mrb, mrb_value self)
 {
-  static mrb_sym wrapperSym = mrb_intern_cstr(mrb, "comp_ptr");
-  mrb_value spriteWrapper = mrb_iv_get(mrb, self, wrapperSym);
-
-  ruby::ruby_engine engine{mrb};
-
-  return static_cast<SpriteComponent *>(engine.unwrap_native_ptr(spriteWrapper));
+  return ruby::read_native_ptr<SpriteComponent>(mrb, self);
 }
 
 // ----------------------------------------------------------------------------

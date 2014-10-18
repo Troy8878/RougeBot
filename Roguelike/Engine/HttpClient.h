@@ -210,7 +210,7 @@ class HttpResult
 public:
   HttpResult(std::_Uninitialized) {}
 
-  PROPERTY(get = _GetHasHeaders)
+  PROPERTY(get = _HasHeaders)
     /**
       Checks whether enough of the HTTP data has
       been loaded to decipher the headers.

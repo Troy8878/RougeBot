@@ -12,6 +12,7 @@
 #include "mruby/value.h"
 #include "mruby/variable.h"
 #include "mruby/string.h"
+#include "mruby/array.h"
 
 #include "Common.h"
 

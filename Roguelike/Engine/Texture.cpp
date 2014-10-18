@@ -103,6 +103,8 @@ Texture2D Texture2D::GetNullTexture()
     }
   };
 
+  nullTexture._res->name = "SPECIAL/NULL";
+
   initialized = true;
   return nullTexture;
 }
@@ -215,6 +217,7 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.end()});
 
     texture = Texture2D::CreateD2DSurface(device, width, height);
+    texture._res->name = asset;
     // These are to be unique, don't cache them
   }
   else if (asset.find("SPECIAL/SHARED_SURFACE/") == 0)
@@ -228,11 +231,13 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.begin() + clast});
 
     texture = Texture2D::CreateD2DSurface(device, width, height);
+    texture._res->name = asset;
     _resources[asset] = texture._res;
   }
   else
   {
     texture = Texture2D{device->Device, asset};
+    texture._res->name = asset;
     _resources[asset] = texture._res;
   }
 
@@ -322,6 +327,46 @@ Texture2D Texture2D::FromTextureZip(TextureZip& zip)
   auto pZip = new TextureZip(zip);
   pZip->Texture._res->zip = pZip;
   return pZip->Texture;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_data_type mrb_texture_dt;
+
+static void mrb_texture_gem_init(mrb_state *mrb);
+
+static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
+static void mrb_texture_free(mrb_state *, void *tex) { delete (Texture2D *) tex; }
+
+
+// ----------------------------------------------------------------------------
+
+mrb_value Texture2D::GetRubyWrapper() const
+{
+  RUN_ONCE(mrb_texture_gem_init(*mrb_inst));
+  return mrb_texture_init(*mrb_inst, *this);
+}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_texture_gem_init(mrb_state *mrb)
+{
+  mrb_texture_dt.dfree = mrb_texture_free;
+  mrb_texture_dt.struct_name = typeid(Texture2D).name();
+
+  auto tex = mrb_define_class(mrb, "Texture", mrb->object_class);
+  (tex);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex)
+{
+  static auto tex_c = mrb_class_get(mrb, "Texture");
+
+  auto pTex = new Texture2D(tex);
+  auto obj = mrb_data_object_alloc(mrb, tex_c, pTex, &mrb_texture_dt);
+  return mrb_obj_value(obj);
 }
 
 // ----------------------------------------------------------------------------

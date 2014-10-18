@@ -7,6 +7,8 @@
 #include "Common.h"
 #include "HttpClient.h"
 
+#include "mruby/proc.h"
+
 // ----------------------------------------------------------------------------
 
 struct MrbHttpResult
@@ -23,9 +25,8 @@ struct MrbHttpResult
 struct MrbHttpClient
 {
   HttpClient client;
-  std::list<MrbHttpResult> results;
 
-  void Update(mrb_state *mrb);
+  void Update(mrb_state *mrb, mrb_value self);
 };
 
 // ----------------------------------------------------------------------------
@@ -109,8 +110,6 @@ static RClass *mrb_http_get_class(mrb_state *mrb, Path&&... path)
 #pragma endregion
 
 // ----------------------------------------------------------------------------
-
-// static mrb_value mrb_http_(mrb_state *mrb, mrb_value self);
 
 #pragma region Http::Client
 
@@ -251,7 +250,13 @@ static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self);
 
 #pragma region Http::Result
 
+static mrb_value mrb_http_result_headers(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_result_as_json(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_result_as_string(mrb_state *mrb, mrb_value self);
 
+static mrb_value mrb_http_result_headers_p(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_result_data_p(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_http_result_failed_p(mrb_state *mrb, mrb_value self);
 
 #pragma endregion
 
@@ -293,9 +298,13 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto client = mrb_define_class_under(mrb, http, "Client", mrb->object_class);
 
-  mrb_define_class_method(mrb, client, "new", mrb_http_client_new, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, client, "new", 
+                          mrb_http_client_new, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, client, "update", mrb_http_client_update, MRB_ARGS_NONE());
+  mrb_define_method(mrb, client, "make_request", 
+                    mrb_http_client_request, MRB_ARGS_REQ(1) | MRB_ARGS_BLOCK());
+  mrb_define_method(mrb, client, "update", 
+                    mrb_http_client_update, MRB_ARGS_NONE());
 
 #pragma endregion
   
@@ -386,6 +395,14 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, result, "new", mrb_nop, MRB_ARGS_NONE());
 
+  mrb_define_method(mrb, result, "headers", mrb_http_result_headers, MRB_ARGS_NONE());
+  mrb_define_method(mrb, result, "as_json", mrb_http_result_as_json, MRB_ARGS_NONE());
+  mrb_define_method(mrb, result, "as_string", mrb_http_result_as_string, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, result, "headers?", mrb_http_result_headers_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, result, "data?", mrb_http_result_data_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, result, "failed?", mrb_http_result_failed_p, MRB_ARGS_NONE());
+
 #pragma endregion
 
 #pragma region Http::Result::LineReader
@@ -402,54 +419,73 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
 #pragma region Http::Client
 
-void MrbHttpClient::Update(mrb_state *mrb)
+void MrbHttpClient::Update(mrb_state *mrb, mrb_value self)
 {
-  std::vector<decltype(results.begin())> kill;
+  static auto queue_sym = mrb_intern_lit(mrb, "@waiting_results");
+  auto queue = mrb_iv_get(mrb, self, queue_sym);
 
-  for (auto it = results.begin(); it != results.end(); ++it)
+  for (mrb_int i = 0; i < mrb_ary_len(mrb, queue); ++i)
   {
-    auto& result = *it;
+    auto mrb_result = mrb_ary_entry(queue, i);
+    auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, mrb_result, &mrb_http_result_dt);
 
     if (result.result.HasFailed || result.result.HasData)
     {
       mrb_funcall(mrb, result.proc, "call", 1, result.mrb_result);
-      kill.push_back(it);
+
+      static auto delete_sym = mrb_intern_lit(mrb, "delete_at");
+      mrb_value index = mrb_fixnum_value(i);
+      mrb_funcall_argv(mrb, queue, delete_sym, 1, &index);
     }
   }
-
-  for (auto& it : kill)
-  {
-    results.erase(it);
-  }
 }
+
+// ----------------------------------------------------------------------------
 
 static mrb_value mrb_http_client_new(mrb_state *mrb, mrb_value)
 {
   static auto client_c = mrb_http_get_class(mrb, "Client");
 
   auto obj = mrb_data_object_alloc(mrb, client_c, new MrbHttpClient, &mrb_http_client_dt);
-  return mrb_obj_value(obj);
+  auto client = mrb_obj_value(obj);
+
+  mrb_iv_set(mrb, client, mrb_intern_lit(mrb, "@waiting_results"), mrb_ary_new(mrb));
+
+  return client;
 }
 
 // ----------------------------------------------------------------------------
 
 static mrb_value mrb_http_client_request(mrb_state *mrb, mrb_value self)
 {
+  static auto result_c = mrb_http_get_class(mrb, "Result");
+
   mrb_value request_v;
   mrb_value block = mrb_nil_value();
   mrb_get_args(mrb, "o|&", &request_v, &block);
   
   auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
-  auto& request = *(HttpRequest *) mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+  auto& request = *(HttpRequest *) mrb_data_get_ptr(mrb, request_v, &mrb_http_request_dt);
 
   auto result = client.client.MakeRequest(request);
   auto mresult = new MrbHttpResult(result);
   mresult->proc = block;
 
+  auto mresult_obj = mrb_data_object_alloc(mrb, result_c, mresult, &mrb_http_result_dt);
+  mresult->mrb_result = mrb_obj_value(mresult_obj);
+
   if (!mrb_nil_p(mresult->proc))
   {
-    
+    static auto callback_sym = mrb_intern_lit(mrb, "@callback");
+    mrb_iv_set(mrb, mresult->mrb_result, callback_sym, mresult->proc);
+
+    static auto queue_sym = mrb_intern_lit(mrb, "@waiting_results");
+    auto queue = mrb_iv_get(mrb, self, queue_sym);
+
+    mrb_ary_push(mrb, queue, mresult->mrb_result);
   }
+
+  return mresult->mrb_result;
 }
 
 // ----------------------------------------------------------------------------
@@ -458,7 +494,7 @@ static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self)
 {
   auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
 
-  client.Update(mrb);
+  client.Update(mrb, self);
 
   return mrb_nil_value();
 }
@@ -815,7 +851,55 @@ static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Result
 
+static mrb_value mrb_http_result_headers(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  return mrb_http_headers_new(mrb, result.result.Headers);
+}
 
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_result_as_json(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto json = result.result.AsJson;
+
+  return mrb_inst->json_to_value(json);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_result_as_string(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto& str = *result.result.AsString;
+
+  return mrb_str_new(mrb, str.c_str(), str.size());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_result_headers_p(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  return mrb_bool_value(result.result.HasHeaders);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_result_data_p(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  return mrb_bool_value(result.result.HasData);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_http_result_failed_p(mrb_state *mrb, mrb_value self)
+{
+  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  return mrb_bool_value(result.result.HasFailed);
+}
 
 #pragma endregion
 

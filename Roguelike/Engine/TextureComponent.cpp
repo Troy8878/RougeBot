@@ -106,9 +106,76 @@ Component *TextureComponentFactory::CreateObject(
 
 // ----------------------------------------------------------------------------
 
+static mrb_data_type mrb_texturecomp_dt;
+
+static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base);
+
+static mrb_value mrb_texture_new(mrb_state *mrb, TextureComponent *comp);
+static void mrb_texture_free(mrb_state *, void *) {}
+
+static mrb_value mrb_texture_each(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
 mrb_value TextureComponent::GetRubyWrapper()
 {
-  return mrb_nil_value();
+  RUN_ONCE(mrb_texture_gem_init(*mrb_inst, GetComponentRModule(), GetComponentRClass()));
+
+  return mrb_texture_new(*mrb_inst, this);
 }
 
 // ----------------------------------------------------------------------------
+
+static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base)
+{
+  mrb_texturecomp_dt.dfree = mrb_texture_free;
+  mrb_texturecomp_dt.struct_name = typeid(TextureComponent).name();
+  
+  auto texture = mrb_define_class_under(mrb, module, "TextureComponent", base);
+
+  mrb_define_class_method(mrb, texture, "new", mrb_nop, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, texture, "each", mrb_texture_each, MRB_ARGS_BLOCK());
+
+  mrb_funcall(mrb, mrb_obj_value(texture), "include", 1,
+              mrb_obj_value(mrb_module_get(mrb, "Enumerable")));
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_new(mrb_state *mrb, TextureComponent *comp)
+{
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_class_get_under(mrb, rmod, "TextureComponent");
+
+  auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_texturecomp_dt);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_each(mrb_state *mrb, mrb_value self)
+{
+  mrb_value block;
+  mrb_get_args(mrb, "|&", &block);
+
+  if (mrb_nil_p(block))
+  {
+    static const auto to_enum = mrb_intern_lit(mrb, "to_enum");
+    static const auto each = mrb_symbol_value(mrb_intern_lit(mrb, "each"));
+
+    return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
+  }
+
+  auto& comp = *(TextureComponent *) mrb_data_get_ptr(mrb, self, &mrb_texturecomp_dt);
+
+  for (auto& texture : comp.Textures)
+  {
+    mrb_yield(mrb, block, texture.RubyWrapper);
+  }
+
+  return self;
+}
+
+// ----------------------------------------------------------------------------
+

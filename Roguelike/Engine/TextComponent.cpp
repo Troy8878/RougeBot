@@ -286,8 +286,6 @@ static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self);
 
-//static mrb_value mrb_textcomp_(mrb_state *mrb, mrb_value self);
-
 // ----------------------------------------------------------------------------
 
 static void mrb_textcomp_gem_init(mrb_state *mrb)

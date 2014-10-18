@@ -5,6 +5,8 @@
 #########################
 
 module Http
+  INSTANCE = Client.new
+
   class Headers
     def []=(key, value)
       value = [value] if value.is_a? String

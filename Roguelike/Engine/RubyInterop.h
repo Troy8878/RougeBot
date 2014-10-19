@@ -369,7 +369,7 @@ namespace ruby
   mrb_value data_getter_access_string(mrb_state *mrb, mrb_value self)
   {
     auto& obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
-    std::string val = (obj.*MFP)();
+    std::string val = static_cast<std::string>((obj.*MFP)());
     return mrb_str_new(mrb, val.c_str(), val.size());
   }
 

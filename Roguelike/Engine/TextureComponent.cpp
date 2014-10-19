@@ -9,6 +9,8 @@
 #include "Texture.h"
 #include "TextureZip.h"
 
+#pragma warning (disable: 4127)
+
 // ----------------------------------------------------------------------------
 
 TextureComponentFactory TextureComponent::factory;
@@ -40,12 +42,12 @@ void TextureComponent::AddTexture(json::value Textureef)
   {
     auto& obj = Textureef.as_object();
 
-    assert(obj.size() == 1); // THERE CAN ONLY BE ONE!!!!
+    assert(obj.size() == 1); // THERE CAN ONLY BE ONE!!1!
     auto& pair = *obj.begin();
 
     textures.push_back(constructors[pair.first](pair.second));
   }
-  else
+  else // A single string must mean a single texture
   {
     assert(Textureef.is(json::json_type::jstring));
     textures.push_back(ConstructTexture(Textureef));
@@ -106,14 +108,14 @@ Component *TextureComponentFactory::CreateObject(
 
 // ----------------------------------------------------------------------------
 
-static mrb_data_type mrb_texturecomp_dt;
+mrb_data_type mrb_texturecomp_dt;
 
 static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base);
 
 static mrb_value mrb_texture_new(mrb_state *mrb, TextureComponent *comp);
 static void mrb_texture_free(mrb_state *, void *) {}
 
-static mrb_value mrb_texture_each(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -135,7 +137,16 @@ static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base)
 
   mrb_define_class_method(mrb, texture, "new", mrb_nop, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, texture, "each", mrb_texture_each, MRB_ARGS_BLOCK());
+  mrb_define_method(mrb, texture, "[]", mrb_texture_at, MRB_ARGS_NONE());
+  mrb_define_method(
+    mrb, texture, "length",
+    ruby::data_getter_access_integer<
+      TextureComponent, &mrb_texturecomp_dt,
+      size_t, &TextureComponent::_GetTextureCount>,
+    MRB_ARGS_NONE());
+    
+  mrb_define_alias(mrb, texture, "size", "length");
+  mrb_define_alias(mrb, texture, "count", "length");
 
   mrb_funcall(mrb, mrb_obj_value(texture), "include", 1,
               mrb_obj_value(mrb_module_get(mrb, "Enumerable")));
@@ -154,27 +165,14 @@ static mrb_value mrb_texture_new(mrb_state *mrb, TextureComponent *comp)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_texture_each(mrb_state *mrb, mrb_value self)
+static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self)
 {
-  mrb_value block;
-  mrb_get_args(mrb, "|&", &block);
-
-  if (mrb_nil_p(block))
-  {
-    static const auto to_enum = mrb_intern_lit(mrb, "to_enum");
-    static const auto each = mrb_symbol_value(mrb_intern_lit(mrb, "each"));
-
-    return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
-  }
+  mrb_int index;
+  mrb_get_args(mrb, "i", &index);
 
   auto& comp = *(TextureComponent *) mrb_data_get_ptr(mrb, self, &mrb_texturecomp_dt);
 
-  for (auto& texture : comp.Textures)
-  {
-    mrb_yield(mrb, block, texture.RubyWrapper);
-  }
-
-  return self;
+  return comp.Textures[(size_t) index].RubyWrapper;
 }
 
 // ----------------------------------------------------------------------------

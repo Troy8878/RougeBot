@@ -41,6 +41,9 @@ private:
 public:
   const std::vector<Texture2D>& _GetTextures() const { return textures; }
   size_t _GetTextureCount() const { return textures.size(); }
+
+  // For the sake of ruby
+  size_t _GetTextureCount() { return textures.size(); }
 };
 
 // ----------------------------------------------------------------------------

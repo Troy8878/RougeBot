@@ -185,7 +185,7 @@ typedef struct mrb_state {
 # define mrb_noreturn
 #endif
 
-typedef mrb_value (*mrb_func_t)(mrb_state *mrb, mrb_value);
+typedef mrb_value (__cdecl *mrb_func_t)(mrb_state *mrb, mrb_value);
 struct RClass *mrb_define_class(mrb_state *, const char*, struct RClass*);
 struct RClass *mrb_define_module(mrb_state *, const char*);
 mrb_value mrb_singleton_class(mrb_state*, mrb_value);

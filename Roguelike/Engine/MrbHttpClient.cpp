@@ -716,7 +716,8 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
 
   mrb_value uri;
   mrb_int verb;
-  mrb_get_args(mrb, "oi", &uri, &verb);
+  mrb_value block = mrb_nil_value();
+  mrb_get_args(mrb, "oi&", &uri, &verb, &block);
 
   HttpUri cpp_uri;
 
@@ -731,8 +732,14 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
 
   auto request = new HttpRequest(cpp_uri, (HttpMethod) verb);
   auto obj = mrb_data_object_alloc(mrb, req_c, request, &mrb_http_request_dt);
+  auto req = mrb_obj_value(obj);
 
-  return mrb_obj_value(obj);
+  if (!mrb_nil_p(block))
+  {
+    mrb_yield(mrb, block, req);
+  }
+
+  return req;
 }
 
 // ----------------------------------------------------------------------------
@@ -872,8 +879,11 @@ static mrb_value mrb_http_result_as_json(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_http_result_as_string(mrb_state *mrb, mrb_value self)
 {
   auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
-  auto& str = *result.result.AsString;
 
+  if (result.result.HasFailed)
+    mrb_raise(mrb, mrb->eException_class, "HTTP Request failed, cannot get data");
+
+  auto& str = *result.result.AsString;
   return mrb_str_new(mrb, str.c_str(), str.size());
 }
 

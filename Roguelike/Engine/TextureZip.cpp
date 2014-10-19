@@ -45,7 +45,24 @@ TextureZip::TextureZip(const std::vector<std::string>& assets)
     y += image.height;
   }
 
-  _texture =  Texture2D{GetGame()->GameDevice->Device, buffer};
+  _texture = Texture2D{GetGame()->GameDevice->Device, buffer};
+
+  std::ostringstream buf;
+  buf << "Zip[";
+  
+  bool first = true;
+  for (auto& asset : assets)
+  {
+    if (first)
+      first = false;
+    else
+      buf << ", ";
+
+    buf << asset;
+  }
+  buf << "]";
+
+  _texture._res->name = buf.str();
 }
 
 // ----------------------------------------------------------------------------

@@ -90,13 +90,13 @@ public:
   HttpResult PerformEmpty(const HttpRequest& request);
   HttpResult PerformBody(const HttpRequest& request);
 
-  static void AsyncWriteData(HttpClient client, const HttpRequest& request, HttpResult result);
+  static void AsyncWriteData(HttpClient client, HttpRequest request, HttpResult result);
   
-  static void AsyncBeginRequest(HttpClient client, const HttpRequest& request, HttpResult result);
+  static void AsyncBeginRequest(HttpClient client, HttpRequest request, HttpResult result);
   static void AsyncCompleteRequest(HttpClient client, HttpResult result);
 
-  static void AsyncPerformEmpty(HttpClient client, const HttpRequest& request, HttpResult result);
-  static void AsyncPerformBody(HttpClient client, const HttpRequest& request, HttpResult result);
+  static void AsyncPerformEmpty(HttpClient client, HttpRequest request, HttpResult result);
+  static void AsyncPerformBody(HttpClient client, HttpRequest request, HttpResult result);
 };
 
 // ----------------------------------------------------------------------------

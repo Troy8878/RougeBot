@@ -189,18 +189,8 @@ void MapComponent::DrawMap()
   d2d.DeviceContext->FillRectangle(topRectangle, _drawing.wallBrush);
   d2d.DeviceContext->FillRectangle(botRectangle, _drawing.wallBrush);
 
-  // Now we get to draw the player.
-  // Retrieve the position from the ruby class.
-  auto playerPos = mrb_funcall(mrb, _player_controller, "pos", 0);
-  auto& posv = ruby::get_ruby_vector(playerPos);
-  // Create the Ellipse.
-  auto playerEllipse = D2D1::Ellipse({(posv.x + 1.5f) * mapScale, (len - posv.z + 0.5f) * mapScale},
-                                      mapScale / 2, mapScale / 2);
-  // Now draw them~!
-  d2d.DeviceContext->FillEllipse(playerEllipse, _drawing.playerBrush);
-
   for(auto *item : _items)
-    item->Draw(mapScale);
+    item->Draw(mapScale, len);
 
   HRESULT hr = d2d.EndDraw();
   CHECK_HRESULT(hr);
@@ -297,7 +287,7 @@ mrb_value MapComponent::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
-void MapItem::Draw(float mapScale)
+void MapItem::Draw(float mapScale, mrb_int mapSize)
 {
   // Make sure we even want to draw this.
   if(!Visible)
@@ -309,7 +299,7 @@ void MapItem::Draw(float mapScale)
 
   // Set the scale and translation.
   auto scale = D2D1::Matrix3x2F::Scale(mapScale, mapScale);
-  auto translation = D2D1::Matrix3x2F::Translation((float) _x + 1, (float) _y + 1);
+  auto translation = D2D1::Matrix3x2F::Translation((float) _x + 1, (float) mapSize - _y);
   d2d.DeviceContext->SetTransform(translation * scale);
 
   // Draw the thing

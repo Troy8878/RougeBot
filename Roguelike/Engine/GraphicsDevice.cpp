@@ -79,12 +79,26 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
   RegisterClassEx(&wndc);
 
+  #pragma region Fix the width and height for the client rect
+
+  RECT rect;
+  rect.left = 0;
+  rect.right = (LONG)options.size.x;
+  rect.top = 0;
+  rect.bottom = (LONG)options.size.y;
+
+  AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+
+  UINT width = UINT(rect.right - rect.left);
+  UINT height = UINT(rect.bottom - rect.top);
+
+  #pragma endregion
+
   HWND window = CreateWindow(wndc.lpszClassName,
                              options.gameTitle.c_str(),
                              WS_OVERLAPPEDWINDOW,
                              CW_USEDEFAULT, CW_USEDEFAULT,
-                             static_cast<UINT>(options.size.x),
-                             static_cast<UINT>(options.size.y),
+                             width, height,
                              NULL, NULL, options.hInstance,
                              reinterpret_cast<void *>(this));
 

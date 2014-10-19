@@ -61,11 +61,22 @@ class PlayerControllerComponent < ComponentBase
   def move(x, z)
     @pos.x += x
     @pos.z += z
+    @map_item.x = @pos.x
+    @map_item.y = @pos.z
     @minimap ||= find_entity("Minimap")
     @minimap.raise_event :map_update, nil
   end
 
   def first_update(e)
+    # Create a MapItem.
+    @minimap ||= find_entity("Minimap")
+    @map_item = @minimap.map_component.create_item
+    @map_item.shape = MapItem::ELLIPSE
+    @map_item.color = "Yellow"
+    @map_item.x = @pos.x
+    @map_item.y = @pos.z
+    @minimap.raise_event :map_update, nil
+
     move 0, 0
 
     @camera = find_entity("CameraRoot")

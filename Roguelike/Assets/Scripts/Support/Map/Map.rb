@@ -33,6 +33,10 @@ class Map
       @row.each(&block)
     end
 
+    def length
+      @row.length
+    end
+
     def [](index)
       @row[index]
     end
@@ -40,6 +44,10 @@ class Map
 
   def [](index)
     MapRow.new @rows[index]
+  end
+
+  def length
+    @rows.length
   end
 
   def each(&block)

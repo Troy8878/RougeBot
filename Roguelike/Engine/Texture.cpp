@@ -366,10 +366,12 @@ static void mrb_texture_gem_init(mrb_state *mrb)
     ruby::data_getter_access_string<
       Texture2D, &mrb_texture_2d_dt,
       const std::string&, &Texture2D::GetName>;
+
   mrb_func_t get_width =
     ruby::data_getter_access_integer<
       Texture2D, &mrb_texture_2d_dt,
       size_t, &Texture2D::GetWidth>;
+
   mrb_func_t get_height =
     ruby::data_getter_access_integer<
       Texture2D, &mrb_texture_2d_dt,

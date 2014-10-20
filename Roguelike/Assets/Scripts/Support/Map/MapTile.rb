@@ -6,6 +6,7 @@
 
 class MapTile
   attr_reader :x, :y, :type_id, :item
+  attr_accessor :actor
 
   TYPE_DATA = {
     0 => {
@@ -37,5 +38,9 @@ class MapTile
     @item.picked_up if @item
     @item = val
     @item.put_down self if @item
+  end
+
+  def actor?
+    !@actor.nil?
   end
 end

@@ -34,7 +34,7 @@ public:
 
   void Validate();
   void Release();
-  void Draw(float mapscale);
+  void Draw(float mapScale, mrb_int mapSize);
   mrb_value GetRubyWrapper();
 
 private:

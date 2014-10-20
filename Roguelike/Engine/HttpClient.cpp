@@ -98,7 +98,7 @@ void HttpClient::_SetTimeout(DWORD val)
 #pragma region Requests
 
 void HttpClientImpl::AsyncWriteData(HttpClient client, 
-                                    const HttpRequest& request, 
+                                    HttpRequest request, 
                                     HttpResult result)
 {
   auto res = result.impl;
@@ -125,7 +125,7 @@ void HttpClientImpl::AsyncWriteData(HttpClient client,
 }
 
 void HttpClientImpl::AsyncBeginRequest(HttpClient client, 
-                                       const HttpRequest& request, 
+                                       HttpRequest request, 
                                        HttpResult result)
 {
   auto res = result.impl;
@@ -273,7 +273,7 @@ void HttpClientImpl::AsyncCompleteRequest(HttpClient client,
 // ----------------------------------------------------------------------------
 
 void HttpClientImpl::AsyncPerformEmpty(HttpClient client, 
-                                       const HttpRequest& request, 
+                                       HttpRequest request, 
                                        HttpResult result)
 {
   auto res = result.impl;
@@ -305,17 +305,17 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClient client,
 // ----------------------------------------------------------------------------
 
 void HttpClientImpl::AsyncPerformBody(HttpClient client, 
-                                      const HttpRequest& request, 
+                                      HttpRequest request, 
                                       HttpResult result)
 {
   auto res = result.impl;
   auto& h = res->handles;
 
   // I hate this, but it would be a mess to rework
-  auto transfer = const_cast<HttpRequest&>(request).Headers["Transfer-Encoding"];
+  auto transfer = request.Headers["Transfer-Encoding"];
   transfer.Clear();
   transfer.AddValue("chunked");
-  auto content = const_cast<HttpRequest&>(request).Headers["Content-Type"];
+  auto content = request.Headers["Content-Type"];
   content.Clear();
   content.AddValue(request.Body.impl->contentType);
 

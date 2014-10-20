@@ -147,10 +147,7 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
   mrb_value tc_wrapper; // TransformComponent *
   mrb_get_args(mrb, "o", &tc_wrapper);
 
-  // ruby equiv:
-  //  @comp_ptr = tc_wrapper
-  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
-  mrb_iv_set(mrb, self, tc_wrapper_sym, tc_wrapper);
+  ruby::save_native_ptr(mrb, self, mrb_ptr(tc_wrapper));
 
   return mrb_nil_value();
 }
@@ -159,12 +156,8 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 
 static TransformComponent *get_rb_tc_wrapper(mrb_state *mrb, mrb_value self)
 {
-  ruby::ruby_engine engine{mrb};
-
-  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
-  auto tc_wrapper = mrb_iv_get(mrb, self, tc_wrapper_sym);
-
-  return (TransformComponent *) engine.unwrap_native_ptr(tc_wrapper);
+  auto tc_wrapper = ruby::read_native_ptr<TransformComponent>(mrb, self);
+  return tc_wrapper;
 }
 
 static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)

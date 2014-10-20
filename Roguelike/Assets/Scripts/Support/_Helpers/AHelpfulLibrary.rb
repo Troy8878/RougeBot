@@ -50,29 +50,32 @@ module Enumerable
     lazy.drop(1).to_a
   end
 
+  def enum_at(i)
+    self.each do |item|
+      return item if i == 0
+      i -= 1
+    end
+    nil
+  end
+
   def first
-    return nil if count < 1
-    lazy.each{break}.first
+    enum_at 0
   end
 
   def second
-    return nil if count < 2
-    lazy.drop(1).each{break}.first
+    enum_at 1
   end
 
   def third
-    return nil if count < 3
-    lazy.drop(2).each{break}.first
+    enum_at 2
   end
 
   def fourth
-    return nil if count < 4
-    lazy.drop(3).each{break}.first
+    enum_at 3
   end
 
   def fifth
-    return nil if count < 5
-    lazy.drop(4).each{break}.first
+    enum_at 4
   end
 end
 

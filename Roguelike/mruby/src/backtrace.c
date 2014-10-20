@@ -77,6 +77,9 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
     filename = NULL;
     lineno = -1;
 
+    if (ci->proc->tt != MRB_TT_PROC)
+      continue;
+
     struct st_trace *proc_trace = NULL;
 
     if (!ci->proc) continue;
@@ -101,6 +104,7 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
       filename = mrb_debug_get_filename(irep, (uint32_t)(pc - irep->iseq));
       lineno = mrb_debug_get_line(irep, (uint32_t)(pc - irep->iseq));
     }
+
     if (lineno == -1)
     {
       if (proc_trace)

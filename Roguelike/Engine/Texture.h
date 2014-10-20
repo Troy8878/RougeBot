@@ -42,6 +42,12 @@ public:
   static Texture2D CreateD2DSurface(GraphicsDevice *device, UINT width, UINT height);
   static Texture2D FromTextureZip(TextureZip& zip);
 
+  PROPERTY(get = GetName) const std::string& Name;
+  PROPERTY(get = GetWidth) size_t Width;
+  PROPERTY(get = GetHeight) size_t Height;
+
+  PROPERTY(get = GetRubyWrapper) mrb_value RubyWrapper;
+
 private:
   struct TextureResource;
   
@@ -52,6 +58,8 @@ private:
   struct TextureResource
   {
     typedef GraphicsDevice::D2DData::clock clock;
+
+    std::string name;
 
     ID3D11Texture2D *texture = nullptr;
     ID3D11ShaderResourceView *resource = nullptr;
@@ -100,6 +108,16 @@ public:
     return _res->target; 
   }
   TextureZip& _GetTextureZip() const { return *_res->zip; }
+
+  mrb_value GetRubyWrapper() const;
+  const std::string& GetName() const { return _res->name; }
+  size_t GetWidth() const { return _res->width; }
+  size_t GetHeight() const { return _res->height; }
+  
+  // Non-const versions because ruby demands it :/
+  const std::string& GetName() { return _res->name; }
+  size_t GetWidth() { return _res->width; }
+  size_t GetHeight() { return _res->height; }
 
   friend class TextureManager;
   friend class TextureZip;

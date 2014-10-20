@@ -210,7 +210,7 @@ class HttpResult
 public:
   HttpResult(std::_Uninitialized) {}
 
-  PROPERTY(get = _GetHasHeaders)
+  PROPERTY(get = _HasHeaders)
     /**
       Checks whether enough of the HTTP data has
       been loaded to decipher the headers.
@@ -360,6 +360,8 @@ private:
 
 class HttpHeaderCollection
 {
+  typedef std::unordered_map<std::string, std::vector<HttpHeaderEntry>> map;
+
 public:
   static HttpHeaderCollection ParseHeaders(const WCHAR *str);
 
@@ -367,6 +369,9 @@ public:
   const HttpHeaderSet operator[](const std::string& key) const;
 
   std::wstring BuildList() const;
+
+  map::iterator begin();
+  map::iterator end();
 
 private:
   HttpHeaderCollection();
@@ -388,6 +393,8 @@ public:
   {
   }
 
+  PROPERTY(get = _GetKey) const std::string& Key;
+
   void AddValue(const std::string& val);
   void RemoveValue(const std::string& val);
   void Clear();
@@ -399,6 +406,9 @@ public:
 
 private:
   FRIEND_IMPLS;
+
+public:
+  inline const std::string& _GetKey() { return key; }
 };
 
 // ----------------------------------------------------------------------------

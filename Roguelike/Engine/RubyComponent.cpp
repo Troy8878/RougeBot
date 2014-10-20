@@ -37,12 +37,14 @@ RubyComponent::~RubyComponent()
   mrb_funcall(mrb, component_inst, "finalize", 0);
 
   #pragma region Unsave component
+
   mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
   mrb_value comp_reg = mrb_gv_get(mrb, comp_reg_sym);
   mrb_value reg = mrb_hash_get(mrb, comp_reg, mrb_fixnum_value(Owner->Id));
   mrb_value comp_name = mrb_str_new(mrb, Name.c_str(), Name.size());
 
   mrb_hash_delete_key(mrb, reg, comp_name);
+
   #pragma endregion
 }
 
@@ -210,12 +212,28 @@ static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static Component *rb_component_get_ptr(mrb_state *mrb, mrb_value self)
+{
+  Component *component;
+  if (self.tt == MRB_TT_DATA)
+  {
+    component = (Component *)((RData *)self.value.p)->data;
+  }
+  else
+  {
+    component = ruby::read_native_ptr<Component>(mrb, self);
+  }
+  return component;
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
 {
   auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
-  
-  Component *component = ruby::read_native_ptr<Component>(mrb, self);
+
+  Component *component = rb_component_get_ptr(mrb, self);
 
   return component->Owner->RubyWrapper;
 }
@@ -227,7 +245,7 @@ static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
   auto& mrb = *mrb_inst;
   assert(mrb == _mrb);
   
-  RubyComponent *component = (RubyComponent *) ruby::read_native_ptr<Component>(mrb, self);
+  RubyComponent *component = (RubyComponent *) rb_component_get_ptr(mrb, self);
 
   mrb_sym event_sym, handler_sym;
   mrb_get_args(mrb, "nn", &event_sym, &handler_sym);
@@ -241,7 +259,7 @@ static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_remove_event(mrb_state *mrb, mrb_value self)
 {
-  RubyComponent *component = (RubyComponent *) ruby::read_native_ptr<Component>(mrb, self);
+  RubyComponent *component = (RubyComponent *) rb_component_get_ptr(mrb, self);
 
   mrb_sym event_sym;
   mrb_get_args(mrb, "n", &event_sym);

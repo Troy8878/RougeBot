@@ -12,6 +12,7 @@
 #include "mruby/value.h"
 #include "mruby/variable.h"
 #include "mruby/string.h"
+#include "mruby/array.h"
 
 #include "Common.h"
 
@@ -347,6 +348,33 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  template <typename T>
+  void data_scalar_delete(mrb_state *, void *data)
+  {
+    delete reinterpret_cast<T *>(data);
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
+  mrb_value data_getter_access_integer(mrb_state *mrb, mrb_value self)
+  {
+    auto& obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
+    return mrb_fixnum_value((mrb_int) (obj.*MFP)());
+  }
+
+// ----------------------------------------------------------------------------
+
+  template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
+  mrb_value data_getter_access_string(mrb_state *mrb, mrb_value self)
+  {
+    auto& obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
+    std::string val = static_cast<std::string>((obj.*MFP)());
+    return mrb_str_new(mrb, val.c_str(), val.size());
+  }
+
+// ----------------------------------------------------------------------------
+
   extern mrb_data_type mrb_dt_native_ptr;
 
 // ----------------------------------------------------------------------------
@@ -376,5 +404,7 @@ extern bool mrb_debug_mbox;
 #define MRB_DECL_SYM(mrb, var, sname) \
   static ::mrb_sym var = mrb_intern_lit(mrb, sname); \
   static ::mrb_value var##_v = mrb_symbol_value(var)
+
+// ----------------------------------------------------------------------------
 
 

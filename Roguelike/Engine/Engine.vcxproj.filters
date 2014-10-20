@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{c9c66c84-ea59-46fa-9b23-ad880a0111f4}</UniqueIdentifier>
     </Filter>
@@ -307,10 +303,10 @@
       <Filter>Source Files\Net</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="RubyFile.cpp">
       <Filter>Source Files\Ruby</Filter>

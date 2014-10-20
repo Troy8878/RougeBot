@@ -79,6 +79,8 @@ Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
   _res = std::make_shared<TextureResource>();
   _res->texture = tex;
   _res->resource = res;
+  _res->width = resource.width;
+  _res->height = resource.height;
   _res->device = GetGame()->GameDevice;
 }
 
@@ -102,6 +104,8 @@ Texture2D Texture2D::GetNullTexture()
       {255, 255, 255, 255}
     }
   };
+
+  nullTexture._res->name = "SPECIAL/NULL";
 
   initialized = true;
   return nullTexture;
@@ -215,6 +219,7 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.end()});
 
     texture = Texture2D::CreateD2DSurface(device, width, height);
+    texture._res->name = asset;
     // These are to be unique, don't cache them
   }
   else if (asset.find("SPECIAL/SHARED_SURFACE/") == 0)
@@ -228,11 +233,13 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     UINT height = std::stoul(std::string{data.begin() + cpos + 1, data.begin() + clast});
 
     texture = Texture2D::CreateD2DSurface(device, width, height);
+    texture._res->name = asset;
     _resources[asset] = texture._res;
   }
   else
   {
     texture = Texture2D{device->Device, asset};
+    texture._res->name = asset;
     _resources[asset] = texture._res;
   }
 
@@ -323,6 +330,72 @@ Texture2D Texture2D::FromTextureZip(TextureZip& zip)
   pZip->Texture._res->zip = pZip;
   return pZip->Texture;
 }
+
+// ----------------------------------------------------------------------------
+
+mrb_data_type mrb_texture_2d_dt;
+
+static void mrb_texture_gem_init(mrb_state *mrb);
+
+static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
+
+static mrb_value mrb_texture_name(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+mrb_value Texture2D::GetRubyWrapper() const
+{
+  RUN_ONCE(mrb_texture_gem_init(*mrb_inst));
+  return mrb_texture_init(*mrb_inst, *this);
+}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_texture_gem_init(mrb_state *mrb)
+{
+  mrb_texture_2d_dt.dfree = ruby::data_scalar_delete<Texture2D>;
+  mrb_texture_2d_dt.struct_name = typeid(Texture2D).name();
+
+  auto tex = mrb_define_class(mrb, "Texture", mrb->object_class);
+  
+  mrb_func_t get_name =
+    ruby::data_getter_access_string<
+      Texture2D, &mrb_texture_2d_dt,
+      const std::string&, &Texture2D::GetName>;
+  mrb_func_t get_width =
+    ruby::data_getter_access_integer<
+      Texture2D, &mrb_texture_2d_dt,
+      size_t, &Texture2D::GetWidth>;
+  mrb_func_t get_height =
+    ruby::data_getter_access_integer<
+      Texture2D, &mrb_texture_2d_dt,
+      size_t, &Texture2D::GetHeight>;
+
+  mrb_define_method(mrb, tex, "name", get_name, MRB_ARGS_NONE());
+  mrb_define_method(mrb, tex, "width", get_width, MRB_ARGS_NONE());
+  mrb_define_method(mrb, tex, "height", get_height, MRB_ARGS_NONE());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex)
+{
+  static auto tex_c = mrb_class_get(mrb, "Texture");
+
+  auto pTex = new Texture2D(tex);
+  auto obj = mrb_data_object_alloc(mrb, tex_c, pTex, &mrb_texture_2d_dt);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 

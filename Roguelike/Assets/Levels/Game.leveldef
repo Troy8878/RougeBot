@@ -1,7 +1,10 @@
 {
   "name": "Game",
   "components": {
-    "GameQuitCancelerComponent": {}
+    "GameQuitCancelerComponent": {},
+    "TransformComponent": {
+      "scale": [1,1,1,1]
+    }
   },
   "entities": [
     {

@@ -6,9 +6,15 @@
   },
   "TextureComponent": {
     "textures": [
-      "Robot.png",
-      "PancakeFace.jpg",
+      "Enemies/Slime/Slime0.png",
+      "Enemies/Slime/Slime1.png",
+      "Enemies/Slime/Slime2.png",
+      "Enemies/Slime/Slime3.png",
     ]
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.3
   },
   "SpriteComponent": {
     "render_target": "WorldLayer"

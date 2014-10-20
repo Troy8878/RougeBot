@@ -1,0 +1,34 @@
+{
+  "TransformComponent": {},
+  "DefenseComponent": {
+    "health": 5
+  },
+  "AttackComponent": {},
+
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Sprite",
+        "components": {
+          "TransformComponent": {},
+          "TextureComponent": {
+            "textures": [
+              "Enemies/Slime/Slime0.png",
+              "Enemies/Slime/Slime1.png",
+              "Enemies/Slime/Slime2.png",
+              "Enemies/Slime/Slime3.png",
+              "Enemies/Slime/Slime4.png",
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "WorldLayer"
+          },
+          "AnimatedComponent": {
+            "frame_range": [0, 4],
+            "frame_time": 0.3
+          }
+        }
+      }
+    ]
+  }
+}

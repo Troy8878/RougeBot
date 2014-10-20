@@ -4,7 +4,7 @@
     "textures": [ 
       {
         "zipped": [
-          "World/Roof.png",
+          "World/Full.png",
           "World/Wall.png",
           "World/Floor.png"
         ]

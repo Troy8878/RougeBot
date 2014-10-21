@@ -23,6 +23,10 @@ static entity_id next_ent_id = 0;
 
 // ----------------------------------------------------------------------------
 
+static std::list<Entity *> death_row;
+
+// ----------------------------------------------------------------------------
+
 Entity::Entity(entity_id id)
   : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId()),
     _Parent(nullptr), _Transform(DirectX::XMMatrixIdentity())
@@ -822,6 +826,15 @@ static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_zombify(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  entity->Zombify();
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_class Entity::GetWrapperRClass()
 {
   using namespace ruby;
@@ -858,6 +871,9 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("local_event", rb_ent_local_event, ARGS_REQ(1) | ARGS_OPT(1));
   rclass.define_method("raise_event", rb_ent_raise_event, ARGS_REQ(1) | ARGS_OPT(1));
   rclass.define_method("sink_event", rb_ent_sink_event, ARGS_REQ(1) | ARGS_OPT(1));
+
+  // RAWR I'M A ZOMBIE!
+  rclass.define_method("zombify!", rb_ent_zombify, ARGS_NONE());
   
   return rclass;
 }
@@ -1017,4 +1033,34 @@ void Entity::ApplyParentTransforms()
 
 // ----------------------------------------------------------------------------
 
+void Entity::Zombify()
+{
+  // You better not zombify LevelRoot, or Connor is coming after you :U (LevelRoot is id: 0)
+  if (Id == 0)
+    mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
+    "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+    "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
+  death_row.push_front(this);
+
+  while (!children.empty())
+    children.front()->Zombify();
+
+  if (Parent)
+    Parent->RemoveChild(this);
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::ExecuteZombies()
+{
+  while(!death_row.empty())
+  {
+    auto *zombie = death_row.front();
+    death_row.pop_front();
+
+    EntityFactory::DestroyEntity(zombie);
+  }
+}
+
+// ----------------------------------------------------------------------------

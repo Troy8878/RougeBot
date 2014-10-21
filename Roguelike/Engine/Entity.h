@@ -246,6 +246,16 @@ private:
 
   #pragma endregion
 
+  #pragma region Orphans
+
+public:
+  // Adds the entity to Death Row, and will be deleted next frame
+  void Zombify();
+  // Deletes all entities on Death Row (in the death_row vector)
+  static void ExecuteZombies();
+
+  #pragma endregion
+
 };
 
 // ----------------------------------------------------------------------------

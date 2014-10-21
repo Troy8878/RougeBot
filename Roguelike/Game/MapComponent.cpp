@@ -150,9 +150,10 @@ void MapComponent::DrawMap()
   // Create a reference to the Ruby Engine
   mrb_state *mrb = *mrb_inst;
   // Get the room values from the ruby code.
-  static mrb_sym to_ary = mrb_intern_lit(mrb, "to_ary");
-  mrb_value ary = mrb_funcall_argv(mrb, _map_obj, to_ary, 0, nullptr);
-  mrb_int len = mrb_ary_len(mrb, ary);
+  static mrb_sym ary_len = mrb_intern_lit(mrb, "length");
+  static mrb_sym ary_at = mrb_intern_lit(mrb, "[]");
+
+  mrb_int len = ruby::enumerable_length(mrb, _map_obj);
 
   // How many pixels per block of the map. We make it a bit bigger to include the edges.
   FLOAT mapScale = size.width / (len + 2);
@@ -160,16 +161,19 @@ void MapComponent::DrawMap()
   // Loop over all of the rows.
   for (mrb_int y = 0; y < len; ++y)
   {
-    // Retrieve the current row.
-    mrb_value row = mrb_funcall_argv(mrb, mrb_ary_entry(ary, y), to_ary, 0, nullptr);
-    // Find the length of that row.
-    mrb_int row_len = mrb_ary_len(mrb, row);
+    // Retrieve the current row and get its length
+    mrb_value row = ruby::enumerable_at(mrb, _map_obj, y);
+    mrb_int row_len = ruby::enumerable_length(mrb, _map_obj);
+
     // Now we need to loop over every value in this row.
     for (mrb_int x = 0; x < row_len; ++x)
     {
       // Retrieve the current index value of the row array.
       static mrb_sym type_id = mrb_intern_lit(mrb, "type_id");
-      mrb_int val = mrb_fixnum(mrb_funcall_argv(mrb, mrb_ary_entry(row, x), type_id, 0, nullptr));
+
+      mrb_value tile = ruby::enumerable_at(mrb, row, x);
+      mrb_int val = mrb_fixnum(mrb_funcall_argv(mrb, tile, type_id, 0, nullptr));
+
       // If the val is 1, it means there's a wall. Draw.
       if (val == 1)
       {

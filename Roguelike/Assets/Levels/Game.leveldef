@@ -79,8 +79,8 @@
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
                 },
-                //"MapComponent": {},
-                //"MapControllerComponent": {}
+                "MapComponent": {},
+                "MapControllerComponent": {}
               }
             }
           ]

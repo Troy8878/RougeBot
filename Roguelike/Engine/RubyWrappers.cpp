@@ -377,6 +377,42 @@ namespace vect
     return create_new_vector(XMVector3Normalize(vector));
   }
 
+  mrb_value distance2(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
+
+    auto& v1 = get_ruby_vector(self);
+    auto& v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR diff = XMVectorSubtract(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(XMVector3LengthSq(diff)));
+  }
+
+  mrb_value distance(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
+
+    auto& v1 = get_ruby_vector(self);
+    auto& v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR diff = XMVectorSubtract(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(XMVector3Length(diff)));
+  }
+
+  mrb_value angle(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
+
+    auto& v1 = get_ruby_vector(self);
+    auto& v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR vangle = XMVector3AngleBetweenVectors(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(vangle));
+  }
+
   #pragma endregion
 
   #pragma region Equality
@@ -442,6 +478,10 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "length", vect::length, ARGS_NONE());
   mrb_define_method(mrb, vclass, "normalize!", vect::normalize, ARGS_NONE());
   mrb_define_method(mrb, vclass, "normalized", vect::normalized, ARGS_NONE());
+
+  mrb_define_method(mrb, vclass, "distance2", vect::distance2, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "distance", vect::distance, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "angle", vect::angle, ARGS_REQ(1));
 
   mrb_define_method(mrb, vclass, "==", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
   mrb_define_method(mrb, vclass, "===", vect::op_eql, ARGS_REQ(1));

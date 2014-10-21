@@ -391,6 +391,32 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  inline mrb_value enumerable_at(mrb_state *mrb, mrb_value enumerable, mrb_int index)
+  {
+    static mrb_sym subscript = mrb_intern_lit(mrb, "[]");
+    static mrb_sym enum_at = mrb_intern_lit(mrb, "enum_at");
+
+    if (mrb_array_p(enumerable))
+    {
+      return mrb_ary_entry(enumerable, index);
+    }
+    
+    const mrb_value index_val = mrb_fixnum_value(index);
+    if (mrb_respond_to(mrb, enumerable, subscript))
+    {
+      return mrb_funcall_argv(mrb, enumerable, subscript, 1, &index_val);
+    }
+
+    if (mrb_respond_to(mrb, enumerable, enum_at))
+    {
+      return mrb_funcall_argv(mrb, enumerable, enum_at, 1, &index_val);
+    }
+
+    mrb_raisef(mrb, mrb->eException_class, "%S is not an Enumerable object", enumerable);
+  }
+
+// ----------------------------------------------------------------------------
+
   extern mrb_data_type mrb_dt_native_ptr;
 
 // ----------------------------------------------------------------------------

@@ -59,8 +59,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def create_mapitem
-    return
-
     # Create a MapItem.
     @minimap ||= find_entity("Minimap")
     @map_item = @minimap.map_component.create_item
@@ -69,8 +67,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def update_mapitem
-    return
-
     # Update the position on the map
     @map_item.x = @pos.x
     @map_item.y = @pos.y

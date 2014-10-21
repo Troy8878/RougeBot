@@ -146,7 +146,13 @@ void Game::Run()
         // Done :D
         _graphicsDevice->EndFrame();
       }
+
+      // Oh no! Zombies!
+      {
+        Entity::ExecuteZombies();
+      }
       
+      // Collect dat garbage
       {
         performance::register_guard perf("mruby garbage collection");
         mrb_full_gc(mrb);

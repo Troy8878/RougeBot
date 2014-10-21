@@ -20,6 +20,10 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
+  BLOCKED_BY_UNKNOWN = 0
+  BLOCKED_BY_ACTOR = 1
+  BLOCKED_BY_WALL = 2
+
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -41,27 +45,17 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_move(e)
-    if can_move? *e
-      move *e
-    else
-      puts @blocked_reason
-    end
+    move *e
   end
 
   def mouse_down(e)
     @cursor ||= find_entity("TileCursor")
+    @curpos ||= @cursor.transform_component.position
 
-    curpos = @cursor.transform_component.position
-    dx = Math.round(curpos.x - @pos.x)
-    dy = Math.round(curpos.z - @pos.y)
+    dx = Math.round(@curpos.x - @pos.x)
+    dy = Math.round(@curpos.z - @pos.y)
 
-    return if Math.abs(dx) > 1.5 || Math.abs(dy) > 1.5
-
-    if can_move? dx, dy
-      move dx, dy
-    else
-      puts @blocked_reason
-    end
+    move dx, dy
   end
 
   def create_mapitem
@@ -84,6 +78,14 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def move(x, y)
+    unless can_move? x, y
+      if @blocked_reason == BLOCKED_BY_ACTOR
+        # Probably do an attack
+      else
+        return
+      end
+    end
+
     @pos.x += x
     @pos.y += y
     update_mapitem
@@ -130,12 +132,12 @@ class PlayerControllerComponent < ComponentBase
 
   def can_move?(xo, yo)
     if xo != 0 and yo != 0
-      @blocked_reason = "Can't move diagonally"
+      @blocked_reason = BLOCKED_BY_UNKNOWN
       return false # unless can_move?(xo, 0) && can_move?(0, yo)
     end
 
     if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
-      @blocked_reason = "Can't move more than 1 space at a time"
+      @blocked_reason = BLOCKED_BY_UNKNOWN
       return false
     end
 
@@ -147,24 +149,25 @@ class PlayerControllerComponent < ComponentBase
     real_pos.z = @pos.z
     real_pos.w = 0
 
-    @blocked_reason = "Already moving"
+    @blocked_reason = BLOCKED_BY_UNKNOWN
     return false unless @pos.near? real_pos, 0.2
 
     x = (@pos.x + 0.5).to_i + xo
     y = (@pos.y + 0.5).to_i + yo
 
-    @blocked_reason = "Out of bounds"
+    @blocked_reason = BLOCKED_BY_UNKNOWN
     return false if x < 0 || x >= room[0].count
     return false if y < 0 || y >= room.count
 
     tile = room[room.count - 1 - y][x]
+    @move_tile = tile
 
     res = !tile.actor?
-    @blocked_reason = "Blocked by actor"
+    @blocked_reason = BLOCKED_BY_ACTOR
     return res unless res
 
     res = !tile.solid?
-    @blocked_reason = "Blocked by wall"
+    @blocked_reason = BLOCKED_BY_WALL
     return res
   end
 

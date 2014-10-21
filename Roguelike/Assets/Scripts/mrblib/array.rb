@@ -199,6 +199,7 @@ class Array
     self.each do |a|
       ary << a
     end
+    puts ary
     ary
   end
 

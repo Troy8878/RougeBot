@@ -52,6 +52,8 @@ class DefenseComponent < ComponentBase
     message = StatusMessage.new("👻", 2, "Black")
     message.delete_owner!
     message.display transient
+
+    Event.raise_event :actor_death, self.owner
   end
 
   def heal(amount)

@@ -1,0 +1,28 @@
+{
+  "TransformComponent": {
+    "rotation": [1.5707, 0, 0],
+    "position": [1, 0.25, 1],
+    "scale": [0.8, 0.8, 0.8]
+  },
+  "TextureComponent": {
+    "textures": [
+      "Robot.png",
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "TranslucentLayer"
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.3
+  },
+  "PlayerControllerComponent": {},
+  "PositionComponent": {
+    "mode": "linear"
+  },
+  "AttackComponent": {},
+  "DefenseComponent": {
+    "health": 50,
+    "max_health": 50
+  },
+}

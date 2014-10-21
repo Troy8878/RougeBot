@@ -16,6 +16,8 @@ class PositionComponent < ComponentBase
 
     @tpos = self.owner.transform_component.position
 
+    self.jump(0)
+
     register_event :update, :update
   end
 

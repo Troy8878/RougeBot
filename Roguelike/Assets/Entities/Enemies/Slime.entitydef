@@ -1,16 +1,27 @@
 {
-  "TransformComponent": {},
+  "TransformComponent": {
+    "rotation": [1.5707, 0, 0],
+  },
   "DefenseComponent": {
-    "health": 5
+    "health": 10,
+    "max_health": 10
   },
   "AttackComponent": {},
+  
+  "PositionComponent": {
+    "mode": "linear"
+  },
+
+  "EnemyLogicComponent": {},
 
   "ChildHierarchy": {
     "children": [
       {
         "name": "Sprite",
         "components": {
-          "TransformComponent": {},
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
           "TextureComponent": {
             "textures": [
               "Enemies/Slime/Slime0.png",

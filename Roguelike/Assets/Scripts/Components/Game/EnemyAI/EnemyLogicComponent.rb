@@ -18,8 +18,8 @@ class EnemyLogicComponent < ComponentBase
   end
 
   def first_update(e)
-    create_mapitem
-    update_mapitem
+    actor_init(MapItem::ELLIPSE, "Red")
+    actor_minimap_update
 
     remove_event :update
   end
@@ -28,15 +28,11 @@ class EnemyLogicComponent < ComponentBase
     position_player = player.position_component.position
     distance = @position.distance position_player
 
-    puts distance
-
     if distance < 1.1
       @attack.do_attack player
     elsif distance < 20
       move_towards player
     end
-
-    update_mapitem
   end
 
   def move_towards(target)
@@ -68,26 +64,6 @@ class EnemyLogicComponent < ComponentBase
     @position.y += dy
 
     actor_moved
-  end
-
-  def create_mapitem
-    # Create a MapItem.
-    @minimap ||= find_entity("Minimap")
-
-    return if @minimap.nil? || @minimap.map_component.nil?
-
-    @map_item = @minimap.map_component.create_item
-    @map_item.shape = MapItem::ELLIPSE
-    @map_item.color = "Red"
-  end
-
-  def update_mapitem
-    return if @minimap.nil? || @minimap.map_component.nil?
-    
-    # Update the position on the map
-    @map_item.x = @position.x
-    @map_item.y = @position.y
-    @minimap.raise_event :map_update, nil
   end
 
   register_component "EnemyLogicComponent"

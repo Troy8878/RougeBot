@@ -16,7 +16,7 @@ class SplashLevelSwitcher < ComponentBase
   def on_update(e)
     @time += e.dt
 
-    if @time > 4
+    if @time > 1
       Game.switch_level "Game"
     end
   end

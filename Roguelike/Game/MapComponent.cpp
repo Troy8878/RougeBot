@@ -80,6 +80,8 @@ void MapComponent::Initialize(Entity *owner, const std::string& name)
   // Register a map_update event, so we only draw when asked.
   DEF_EVENT_ID(map_update);
   Owner->AddEvent(this, map_update, &MapComponent::OnMapUpdate);
+
+  GetRubyWrapper();
 }
 
 // ----------------------------------------------------------------------------

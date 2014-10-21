@@ -25,17 +25,17 @@ class PlayerControllerComponent < ComponentBase
   BLOCKED_BY_UNKNOWN = 0
   BLOCKED_BY_ACTOR = 1
   BLOCKED_BY_WALL = 2
+  BLOCKED_BY_COOLDOWN = 3
 
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
 
-    puts self.owner.components.inspect
-
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
     @logic_initialized = false
+    @logic_cooldown = 0
 
     self.register_event :player_move, :on_move
     self.register_event :update, :first_update
@@ -46,22 +46,21 @@ class PlayerControllerComponent < ComponentBase
     unless Config[:touch_mode]
       self.register_event :mouse_down, :mouse_down
     end
+
   end
 
   def move(x, y)
     unless can_move? x, y
-      if @blocked_reason != BLOCKED_BY_ACTOR
-        return
-      end
+      return if @blocked_reason != BLOCKED_BY_ACTOR
     end
 
     if @blocked_reason == BLOCKED_BY_ACTOR
       self.owner.attack_component.do_attack @move_tile.actor
+      @logic_cooldown += 0.5
     else
       @pos.x += x
       @pos.y += y
 
-      update_mapitem
       actor_moved
     end
 
@@ -84,28 +83,9 @@ class PlayerControllerComponent < ComponentBase
     move dx, dy
   end
 
-  def create_mapitem
-    # Create a MapItem.
-    @minimap ||= find_entity("Minimap")
-
-    return if @minimap.nil? || @minimap.map_component.nil?
-
-    @map_item = @minimap.map_component.create_item
-    @map_item.shape = MapItem::ELLIPSE
-    @map_item.color = "Yellow"
-  end
-
-  def update_mapitem
-    return if @minimap.nil? || @minimap.map_component.nil?
-
-    # Update the position on the map
-    @map_item.x = @pos.x
-    @map_item.y = @pos.y
-    @minimap.local_event :map_update, nil
-  end
-
   def first_update(e)
-    create_mapitem
+    shape = MapItem::ELLIPSE
+    actor_init(shape, "Yellow")
 
     move 0, 0
 
@@ -146,6 +126,14 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def can_move?(xo, yo)
+    @blocked_reason = -1
+
+    if @logic_cooldown > 0
+      @logic_cooldown -= GameTime.dt
+      @blocked_reason = BLOCKED_BY_COOLDOWN
+      return false
+    end
+
     if xo != 0 and yo != 0
       @blocked_reason = BLOCKED_BY_UNKNOWN
       return false # unless can_move?(xo, 0) && can_move?(0, yo)

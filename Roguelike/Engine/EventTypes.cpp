@@ -15,46 +15,30 @@
 
 // ----------------------------------------------------------------------------
 
-static GameTime& rb_update_event_get_gametime(mrb_state *mrb, mrb_value self)
+
+static mrb_value rb_gametime_dt(mrb_state *mrb, mrb_value)
 {
-  ruby::ruby_engine engine{mrb};
-
-  static auto gt_sym = mrb_intern_cstr(mrb, "gt_sym");
-  auto gt_val = mrb_iv_get(mrb, self, gt_sym);
-
-  return *reinterpret_cast<GameTime *>(engine.unwrap_native_ptr(gt_val));
+  return mrb_float_value(mrb, GetGame()->Time.Dt);
 }
 
-static mrb_value rb_update_event_dt(mrb_state *mrb, mrb_value self)
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_update_event_class()
 {
-  return mrb_float_value(mrb, rb_update_event_get_gametime(mrb, self).Dt);
+  mrb_state *mrb = *mrb_inst;
+
+  auto gt = mrb_define_class(mrb, "GameTime", mrb->object_class);
+
+  mrb_define_class_method(mrb, gt, "dt", rb_gametime_dt, ARGS_NONE());
+
+  return mrb_obj_value(gt);
 }
 
-static mrb_value rb_update_event_init(mrb_state *mrb, mrb_value self)
-{
-  mrb_value gt_val;
-  mrb_get_args(mrb, "o", &gt_val);
-  
-  static auto gt_sym = mrb_intern_cstr(mrb, "gt_sym");
-  mrb_iv_set(mrb, self, gt_sym, gt_val);
-
-  return mrb_nil_value();
-}
-
-static mrb_value rb_update_event_class(GameTime *gt)
-{
-  auto& mrb = *ruby::ruby_engine::global_engine;
-  auto rclass = mrb.define_class("UpdateEvent");
-
-  rclass.define_method("initialize", rb_update_event_init, ARGS_REQ(1));
-  rclass.define_method("dt", rb_update_event_dt, ARGS_NONE());
-
-  return rclass.new_inst(mrb.wrap_native_ptr(gt)).silent_reset();
-}
+// ----------------------------------------------------------------------------
 
 mrb_value Events::UpdateEvent::GetRubyWrapper()
 {
-  auto wrapper = rb_update_event_class(&gameTime);
+  static auto wrapper = rb_update_event_class();
   return wrapper;
 }
 

@@ -15,7 +15,9 @@
       {
         "name": "Sprite",
         "components": {
-          "TransformComponent": {},
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
           "TextureComponent": {
             "textures": [
               "Enemies/Derpaderp/Idle0.png",

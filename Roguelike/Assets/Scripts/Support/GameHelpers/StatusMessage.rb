@@ -9,6 +9,7 @@ class StatusMessage
     @message = message
     @scale = scale
     @color = color
+    @delete_owner = false
   end
 
   def display(target)
@@ -23,9 +24,16 @@ class StatusMessage
         "TextComponent" => {
           "texts" => [ @message ],
           "text_color" => @color,
-          "font_size" => 20
+          "font_size" => 60
+        },
+        "StatusMessageComponent" => {
+          "delete_owner" => @delete_owner
         }
       }
     )
+  end
+
+  def delete_owner!
+    @delete_owner = true
   end
 end

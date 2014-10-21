@@ -151,12 +151,17 @@ void Entity::LocalEvent(Events::EventMessage& e)
 
     if (event_list_invalidated)
     {
+      invalidation_occurred = true;
+
       it = handlers.begin();
       event_list_invalidated = false;
 
       if (it == handlers.end())
         break;
     }
+
+    if (_events.empty() || _events.find(e.EventId) == _events.end())
+      break;
   }
 
   // Update Transform with parents
@@ -1043,6 +1048,13 @@ void Entity::Zombify()
     mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
     "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
     "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
+  // Zombified event
+  {
+    DEF_EVENT_ID(zombified);
+    Events::EventMessage message(zombified, nullptr, false);
+    LocalEvent(message);
+  }
 
   _events.clear();
   this->RecalculateEventCounts();

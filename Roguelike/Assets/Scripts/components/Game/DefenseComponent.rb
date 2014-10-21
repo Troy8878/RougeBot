@@ -26,15 +26,39 @@ class DefenseComponent < ComponentBase
 
   def be_attacked(attack, damage)
     return :miss if attack < @defense
+
+    total_dmg = damage - @armor
     @health -= (damage - @armor)
 
     if @health <= 0
-      current_tile.actor = nil
+      notify_death
       self.owner.zombify!
       return :kill
     end
 
+    message = StatusMessage.new("#{total_dmg}", 1, "Red")
+    message.display self.owner
+
     return :hit
+  end
+
+  def notify_death
+    transient = self.owner.parent.create_child(
+      components: {
+        "TransformComponent" => self.owner.transform_component.dup_for_hash
+      }
+    )
+
+    message = StatusMessage.new("👻", 2, "Black")
+    message.delete_owner!
+    message.display transient
+  end
+
+  def heal(amount)
+    @health += amount
+
+    message = StatusMessage.new("#{amount}", 1, "Green")
+    message.display self.owner
   end
 
   def equip_armor()

@@ -87,16 +87,21 @@ class PlayerControllerComponent < ComponentBase
   def create_mapitem
     # Create a MapItem.
     @minimap ||= find_entity("Minimap")
+
+    return if @minimap.nil? || @minimap.map_component.nil?
+
     @map_item = @minimap.map_component.create_item
     @map_item.shape = MapItem::ELLIPSE
     @map_item.color = "Yellow"
   end
 
   def update_mapitem
+    return if @minimap.nil? || @minimap.map_component.nil?
+
     # Update the position on the map
     @map_item.x = @pos.x
     @map_item.y = @pos.y
-    @minimap.raise_event :map_update, nil
+    @minimap.local_event :map_update, nil
   end
 
   def first_update(e)

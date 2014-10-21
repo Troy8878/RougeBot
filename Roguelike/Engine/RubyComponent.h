@@ -22,6 +22,8 @@ public:
   ~RubyComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
+  void Cleanup() override;
+
   void OnEvent(Events::EventMessage& e);
 
   void AddEventHandler(event_id event, mrb_sym handler);

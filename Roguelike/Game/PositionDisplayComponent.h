@@ -54,7 +54,7 @@ private:
     std::wstring font;
     FLOAT fontSize;
 
-    void Validate();
+    bool Validate();
     void Release();
 
     ~DrawingResources() { Release(); }

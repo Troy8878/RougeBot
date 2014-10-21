@@ -631,6 +631,8 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 {
   assert(texture.RenderTarget);
 
+  //std::cout << "D2D::DrawTo('" << texture.Name << "');" << std::endl;
+
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
 }
@@ -639,6 +641,9 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 
 HRESULT GraphicsDevice::D2DData::EndDraw()
 {
+  //std::cout << "D2D::EndDraw();" << std::endl;
+
+  DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
   return DeviceContext->EndDraw();
 }
 

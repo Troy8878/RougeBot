@@ -73,12 +73,17 @@ class EnemyLogicComponent < ComponentBase
   def create_mapitem
     # Create a MapItem.
     @minimap ||= find_entity("Minimap")
+
+    return if @minimap.nil? || @minimap.map_component.nil?
+
     @map_item = @minimap.map_component.create_item
     @map_item.shape = MapItem::ELLIPSE
     @map_item.color = "Red"
   end
 
   def update_mapitem
+    return if @minimap.nil? || @minimap.map_component.nil?
+    
     # Update the position on the map
     @map_item.x = @position.x
     @map_item.y = @position.y

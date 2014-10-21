@@ -56,7 +56,7 @@ void PositionDisplayComponent::OnFirstUpdate(Events::EventMessage&)
 void PositionDisplayComponent::OnUpdate(Events::EventMessage&)
 {
   auto newPos = watchedTransform->Position;
-  if (newPos != lastPos)
+  if (newPos != lastPos || !drawing.Validate())
   {
     lastPos = newPos;
     DrawDisplay();
@@ -68,7 +68,7 @@ void PositionDisplayComponent::OnUpdate(Events::EventMessage&)
 void PositionDisplayComponent::DrawDisplay()
 {
   drawing.Validate();
-  
+
   auto& d2d = GetGame()->GameDevice->D2D;
 
   d2d.DrawTo(texture);
@@ -95,12 +95,12 @@ void PositionDisplayComponent::DrawDisplay()
 
 // ----------------------------------------------------------------------------
 
-void PositionDisplayComponent::DrawingResources::Validate()
+bool PositionDisplayComponent::DrawingResources::Validate()
 {
   auto& d2d = GetGame()->GameDevice->D2D;
 
   if (timestamp >= d2d.ResourceTimestamp)
-    return;
+    return true;
 
   Release();
 
@@ -129,6 +129,10 @@ void PositionDisplayComponent::DrawingResources::Validate()
 
   hr = format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
   CHECK_HRESULT(hr);
+
+  timestamp = clock::now();
+
+  return false;
 }
 
 // ----------------------------------------------------------------------------

@@ -34,8 +34,6 @@ RubyComponent::~RubyComponent()
 {
   mrb_state *mrb = *ruby::ruby_engine::global_engine;
 
-  mrb_funcall(mrb, component_inst, "finalize", 0);
-
   #pragma region Unsave component
 
   mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
@@ -46,6 +44,13 @@ RubyComponent::~RubyComponent()
   mrb_hash_delete_key(mrb, reg, comp_name);
 
   #pragma endregion
+}
+
+// ----------------------------------------------------------------------------
+
+void RubyComponent::Cleanup()
+{
+  mrb_funcall(*mrb_inst, component_inst, "finalize", 0);
 }
 
 // ----------------------------------------------------------------------------

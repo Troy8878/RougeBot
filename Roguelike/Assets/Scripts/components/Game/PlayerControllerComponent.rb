@@ -47,6 +47,7 @@ class PlayerControllerComponent < ComponentBase
       self.register_event :mouse_down, :mouse_down
     end
 
+    self.register_event :mouse_move, :mouse_move
   end
 
   def move(x, y)
@@ -70,6 +71,7 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_move(e)
+    set_kb_mode
     move *e
   end
 
@@ -94,6 +96,8 @@ class PlayerControllerComponent < ComponentBase
     @camz = @camera.transform_component.position.z
 
     @logic_initialized = true
+
+    set_kb_mode
 
     register_event :update, :on_update
   end
@@ -172,6 +176,26 @@ class PlayerControllerComponent < ComponentBase
     res = !tile.solid?
     @blocked_reason = BLOCKED_BY_WALL
     return res
+  end
+
+  def mouse_move(e)
+    set_mouse_mode
+  end
+
+  def set_kb_mode
+    return if Config[:touch_mode]
+    @cursor ||= find_entity("TileCursor")
+    @curpos ||= @cursor.transform_component.position
+
+    @curpos.y = -1
+  end
+
+  def set_mouse_mode
+    return if Config[:touch_mode]
+    @cursor ||= find_entity("TileCursor")
+    @curpos ||= @cursor.transform_component.position
+
+    @curpos.y = 0
   end
 
   register_component "PlayerControllerComponent"

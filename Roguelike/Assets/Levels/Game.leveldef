@@ -113,7 +113,9 @@
           "mode": "linear"
         },
         "AttackComponent": {},
-        "DefenseComponent": {},
+        "DefenseComponent": {
+          "health": 400
+        },
       }
     },
     {

@@ -133,20 +133,38 @@ void RegisterEngineComponents()
 #include "Game/PositionDisplayComponent.h"
 #include "Game/MapComponent.h"
 
+template <typename Component>
+static void RegisterComponents()
+{
+  std::string name = typeid(Component).name();
+  auto parts = split(name, ' ');
+  name = parts[parts.size() - 1];
+
+  RegisterStaticComponent<Component>(name);
+}
+
+template <typename Component1, typename Component2, typename... Components>
+static void RegisterComponents()
+{
+  RegisterComponents<Component1>();
+  RegisterComponents<Component2, Components...>();
+}
+
 static void RegisterStaticComponents()
 {
-  // Static components
-  RegisterStaticComponent<SpriteComponent>("SpriteComponent");
-  RegisterStaticComponent<TransformComponent>("TransformComponent");
-  RegisterStaticComponent<CameraComponent>("CameraComponent");
-  RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
-  RegisterStaticComponent<TextureComponent>("TextureComponent");
-  RegisterStaticComponent<TextComponent>("TextComponent");
-  RegisterStaticComponent<ParticleSystemComponent>("ParticleSystemComponent");
-  RegisterStaticComponent<ButtonComponent>("ButtonComponent");
-
-  RegisterStaticComponent<PositionDisplayComponent>("PositionDisplayComponent");
-  RegisterStaticComponent<MapComponent>("MapComponent");
+  RegisterComponents<
+    SpriteComponent,
+    TransformComponent,
+    CameraComponent,
+    CustomModelComponent,
+    TextureComponent,
+    TextComponent,
+    ParticleSystemComponent,
+    ButtonComponent,
+  
+    PositionDisplayComponent,
+    MapComponent
+  >();
 }
 
 // ----------------------------------------------------------------------------

@@ -17,7 +17,7 @@ class DefenseComponent < ComponentBase
 
     @defense = 0.0
     @armor = 0
-    @health = data.fetch("health", 1)
+    @health = data.fetch("health", 10)
 
 
   end
@@ -27,7 +27,7 @@ class DefenseComponent < ComponentBase
     @health -= (damage - @armor)
 
     if @health <= 0
-      this.owner.zombify!
+      self.owner.zombify!
       return :kill
     end
 

@@ -7,5 +7,6 @@
   "TileCursorComponent": ["TransformComponent"],
   "PositionComponent": ["TransformComponent"],
   "PlayerControllerComponent": ["TransformComponent", "PositionComponent"],
-  "FloorGeneratorComponent": ["CustomModelComponent"]
+  "FloorGeneratorComponent": ["CustomModelComponent"],
+  "EnemyLogicComponent": ["PositionComponent", "AttackComponent"]
 }

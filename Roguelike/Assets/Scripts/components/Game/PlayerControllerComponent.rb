@@ -33,6 +33,8 @@ class PlayerControllerComponent < ComponentBase
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
+    @logic_initialized = false
+
     self.register_event :player_move, :on_move
     self.register_event :update, :first_update
 
@@ -41,6 +43,34 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :double_click, :mouse_down
     unless Config[:touch_mode]
       self.register_event :mouse_down, :mouse_down
+    end
+  end
+
+  def move(x, y)
+    unless can_move? x, y
+      if @blocked_reason != BLOCKED_BY_ACTOR
+        return
+      end
+    end
+
+    if @blocked_reason == BLOCKED_BY_ACTOR
+      self.owner.attack_component.do_attack @move_tile.actor
+    else
+      @pos.x += x
+      @pos.y += y
+      update_mapitem
+
+      new_tile = nil
+
+      if @prev_tile
+
+      end
+
+      @prev_tile = nil
+    end
+
+    if @logic_initialized
+      Event.raise_event :logic_update, self.owner
     end
   end
 
@@ -73,20 +103,6 @@ class PlayerControllerComponent < ComponentBase
     @minimap.raise_event :map_update, nil
   end
 
-  def move(x, y)
-    unless can_move? x, y
-      if @blocked_reason == BLOCKED_BY_ACTOR
-        self.owner.attack_component.do_attack @move_tile.actor
-      else
-        return
-      end
-    end
-
-    @pos.x += x
-    @pos.y += y
-    update_mapitem
-  end
-
   def first_update(e)
     create_mapitem
 
@@ -95,6 +111,8 @@ class PlayerControllerComponent < ComponentBase
     @camera = find_entity("CameraRoot")
     @camera.parent = self.owner
     @camz = @camera.transform_component.position.z
+
+    @logic_initialized = true
 
     register_event :update, :on_update
   end
@@ -165,6 +183,12 @@ class PlayerControllerComponent < ComponentBase
     res = !tile.solid?
     @blocked_reason = BLOCKED_BY_WALL
     return res
+  end
+
+  private
+  def current_tile
+    room = current_floor
+    room[room.count - 1 - @position.y][@position.x]
   end
 
   register_component "PlayerControllerComponent"

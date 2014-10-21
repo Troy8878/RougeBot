@@ -112,11 +112,17 @@
         "PositionComponent": {
           "mode": "linear"
         },
+        "AttackComponent": {},
+        "DefenseComponent": {},
       }
     },
     {
       "name": "TileCursor",
       "archetype": "TileCursor"
+    },
+    {
+      "name": "TheDerp",
+      "archetype": "Enemies/Derpaderp"
     }
   ]
 }

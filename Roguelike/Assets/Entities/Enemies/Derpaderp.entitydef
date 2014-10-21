@@ -1,9 +1,14 @@
 {
-  "TransformComponent": {},
+  "TransformComponent": {
+    "rotation": [1.5707, 0, 0],
+  },
   "DefenseComponent": {
     "health": 10
   },
   "AttackComponent": {},
+  "PositionComponent": {},
+
+  "EnemyLogicComponent": {},
 
   "ChildHierarchy": {
     "children": [

@@ -17,7 +17,7 @@ class AttackComponent < ComponentBase
     super data
 
     @attack = 0
-    @damage = [8,10]
+    @damage = [2,4]
   end
 
   def equip_weapon

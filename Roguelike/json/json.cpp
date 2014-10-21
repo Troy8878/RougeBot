@@ -12,6 +12,17 @@
 #include <codecvt>
 #include <locale>
 
+#include "Helpers/FixedWindows.h"
+
+class jintex : public json::json_syntax_exception, public basic_exception
+{
+public:
+  jintex(const char *message, const std::streampos& pos)
+    : json_syntax_exception(message, pos), basic_exception(message)
+  {
+  }
+};
+
 namespace json
 {
 
@@ -526,7 +537,7 @@ namespace json
   
   #pragma region Parse
 
-  #define PARSE_ERROR(msg) throw json_syntax_exception(msg, input.tellg())
+  #define PARSE_ERROR(msg) throw jintex(msg, input.tellg())
 
   value value::parse(const std::string& str_input)
   {

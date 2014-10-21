@@ -1,0 +1,15 @@
+{
+  "TransformComponent": {},
+  "TextureComponent": {
+    "textures": [
+      "SPECIAL/SURFACE/200:100"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "TranslucentLayer"
+  },
+  "TextComponent": {
+    "font": "Impact",
+    "font_size": 36
+  }
+}

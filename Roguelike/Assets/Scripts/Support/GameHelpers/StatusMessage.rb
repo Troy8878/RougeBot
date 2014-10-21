@@ -22,7 +22,8 @@ class StatusMessage
         },
         "TextComponent" => {
           "texts" => [ @message ],
-          "text_color" => @color
+          "text_color" => @color,
+          "font_size" => 20
         }
       }
     )

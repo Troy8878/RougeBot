@@ -8,5 +8,6 @@
   "PositionComponent": ["TransformComponent"],
   "PlayerControllerComponent": ["TransformComponent", "PositionComponent"],
   "FloorGeneratorComponent": ["CustomModelComponent"],
-  "EnemyLogicComponent": ["PositionComponent", "AttackComponent"]
+  "EnemyLogicComponent": ["PositionComponent", "AttackComponent"],
+  "TextComponent": ["TextureComponent"],
 }

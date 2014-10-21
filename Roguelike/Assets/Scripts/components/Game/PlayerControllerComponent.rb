@@ -80,7 +80,7 @@ class PlayerControllerComponent < ComponentBase
   def move(x, y)
     unless can_move? x, y
       if @blocked_reason == BLOCKED_BY_ACTOR
-        # Probably do an attack
+        self.owner.attack_component.do_attack @move_tile.actor
       else
         return
       end

@@ -24,7 +24,7 @@ class DefenseComponent < ComponentBase
 
   def be_attacked(attack, damage)
     return :miss if attack < @defense
-    @health -= damage
+    @health -= (damage - @armor)
     return :hit
   end
 

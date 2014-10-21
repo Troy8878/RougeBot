@@ -150,7 +150,8 @@ void MapComponent::DrawMap()
   // Create a reference to the Ruby Engine
   mrb_state *mrb = *mrb_inst;
   // Get the room values from the ruby code.
-  mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(_floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
+  static mrb_sym to_ary = mrb_intern_lit(mrb, "to_ary");
+  mrb_value ary = mrb_funcall_argv(mrb, _map_obj, to_ary, 0, nullptr);
   mrb_int len = mrb_ary_len(mrb, ary);
 
   // How many pixels per block of the map. We make it a bit bigger to include the edges.
@@ -160,14 +161,15 @@ void MapComponent::DrawMap()
   for (mrb_int y = 0; y < len; ++y)
   {
     // Retrieve the current row.
-    mrb_value row = mrb_ary_entry(ary, y);
+    mrb_value row = mrb_funcall_argv(mrb, mrb_ary_entry(ary, y), to_ary, 0, nullptr);
     // Find the length of that row.
     mrb_int row_len = mrb_ary_len(mrb, row);
     // Now we need to loop over every value in this row.
     for (mrb_int x = 0; x < row_len; ++x)
     {
       // Retrieve the current index value of the row array.
-      mrb_int val = mrb_fixnum(mrb_ary_entry(row, x));
+      static mrb_sym type_id = mrb_intern_lit(mrb, "type_id");
+      mrb_int val = mrb_fixnum(mrb_funcall_argv(mrb, mrb_ary_entry(row, x), type_id, 0, nullptr));
       // If the val is 1, it means there's a wall. Draw.
       if (val == 1)
       {

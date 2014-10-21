@@ -193,6 +193,16 @@ class Array
       self
     end
   end
+
+  def to_ary
+    ary = []
+    self.each do |a|
+      ary << a
+    end
+    ary
+  end
+
+  alias to_a to_ary
 end
 
 ##
@@ -206,13 +216,5 @@ class Array
   # elements.
   def sort!(&block)
     self.replace(self.sort(&block))
-  end
-end
-
-##
-# Other Array helpers
-class Array
-  def count
-    self.size
   end
 end

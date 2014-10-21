@@ -375,6 +375,22 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  inline mrb_int enumerable_length(mrb_state *mrb, mrb_value enumerable)
+  {
+    static mrb_sym length = mrb_intern_lit(mrb, "length");
+    return mrb_fixnum(mrb_funcall_argv(mrb, enumerable, length, 0, nullptr));
+  }
+
+// ----------------------------------------------------------------------------
+
+  inline mrb_value enumerable_first(mrb_state *mrb, mrb_value enumerable)
+  {
+    static mrb_sym first = mrb_intern_lit(mrb, "first");
+    return mrb_funcall_argv(mrb, enumerable, first, 0, nullptr);
+  }
+
+// ----------------------------------------------------------------------------
+
   extern mrb_data_type mrb_dt_native_ptr;
 
 // ----------------------------------------------------------------------------

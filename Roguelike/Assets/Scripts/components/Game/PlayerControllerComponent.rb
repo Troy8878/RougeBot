@@ -24,12 +24,10 @@ class PlayerControllerComponent < ComponentBase
   def initialize(data)
     super data
 
+    puts self.owner.components.inspect
+
     @transform = self.owner.transform_component
-    @pos = @transform.position.dup
-    @real_pos = @pos.dup
-
-
-    @move_speed = data.fetch("move_speed", 5).to_f
+    @pos = self.owner.position_component.position
 
     self.register_event :player_move, :on_move
     self.register_event :update, :first_update
@@ -43,39 +41,56 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_move(e)
-    move *e if can_move? *e
+    if can_move? *e
+      move *e
+    else
+      puts @blocked_reason
+    end
   end
 
   def mouse_down(e)
     @cursor ||= find_entity("TileCursor")
 
     curpos = @cursor.transform_component.position
-    dx = Math.round(curpos.x - @transform.position.x)
-    dz = Math.round(curpos.z - @transform.position.z)
+    dx = Math.round(curpos.x - @pos.x)
+    dy = Math.round(curpos.z - @pos.y)
 
-    return if Math.abs(dx) > 1.5 || Math.abs(dz) > 1.5
+    return if Math.abs(dx) > 1.5 || Math.abs(dy) > 1.5
 
-    move dx, dz if can_move? dx, dz
+    if can_move? dx, dy
+      move dx, dy
+    else
+      puts @blocked_reason
+    end
   end
 
-  def move(x, z)
-    @pos.x += x
-    @pos.z += z
-    @map_item.x = @pos.x
-    @map_item.y = @pos.z
-    @minimap ||= find_entity("Minimap")
-    @minimap.raise_event :map_update, nil
-  end
+  def create_mapitem
+    return
 
-  def first_update(e)
     # Create a MapItem.
     @minimap ||= find_entity("Minimap")
     @map_item = @minimap.map_component.create_item
     @map_item.shape = MapItem::ELLIPSE
     @map_item.color = "Yellow"
+  end
+
+  def update_mapitem
+    return
+
+    # Update the position on the map
     @map_item.x = @pos.x
-    @map_item.y = @pos.z
+    @map_item.y = @pos.y
     @minimap.raise_event :map_update, nil
+  end
+
+  def move(x, y)
+    @pos.x += x
+    @pos.y += y
+    update_mapitem
+  end
+
+  def first_update(e)
+    create_mapitem
 
     move 0, 0
 
@@ -87,16 +102,7 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_update(e)
-    diff = @pos - @transform.position.dup
-    diff.y = 0
-
-    amt = e.dt * @move_speed
-    if diff.length2 > amt*amt
-      diff.normalize!.mul amt
-    end
-
     pos = @transform.position
-    @transform.position = pos.dup + diff
 
     xbounce = Math.sin((pos.x % 1) * Math::PI) / 6
     zbounce = Math.sin((pos.z % 1) * Math::PI) / 6
@@ -113,7 +119,7 @@ class PlayerControllerComponent < ComponentBase
 
     curpos = @cursor.transform_component.position
     dx = Math.round(curpos.x - @pos.x)
-    dz = Math.round(curpos.z - @pos.z)
+    dz = Math.round(curpos.z - @pos.y)
 
     if !can_move?(dx, dz)
       @cursor.children.first.sprite_component.texture_index = 1
@@ -133,25 +139,32 @@ class PlayerControllerComponent < ComponentBase
       return false
     end
 
-    @room ||= find_entity("MainFloor").test_room_component.room
-    room = @room
+    room = current_floor
 
     # false if the move animation isn't done
     real_pos = @transform.position.dup
-    real_pos.y = @pos.y
+    real_pos.y = real_pos.z
+    real_pos.z = @pos.z
+    real_pos.w = 0
 
     @blocked_reason = "Already moving"
     return false unless @pos.near? real_pos, 0.2
 
     x = (@pos.x + 0.5).to_i + xo
-    y = (@pos.z + 0.5).to_i + yo
+    y = (@pos.y + 0.5).to_i + yo
 
     @blocked_reason = "Out of bounds"
     return false if x < 0 || x >= room[0].count
     return false if y < 0 || y >= room.count
 
-    res = room[room.count - 1 - y][x] == TestRoomComponent::EMPTY_VALUE
-    @blocked_reason = "Blocked by wall" if !res
+    tile = room[room.count - 1 - y][x]
+
+    res = !tile.actor?
+    @blocked_reason = "Blocked by actor"
+    return res unless res
+
+    res = !tile.solid?
+    @blocked_reason = "Blocked by wall"
     return res
   end
 

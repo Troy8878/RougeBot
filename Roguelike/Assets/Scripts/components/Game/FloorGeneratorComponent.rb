@@ -21,16 +21,10 @@ class FloorGeneratorComponent < ComponentBase
     ent = find_entity("Pancake")
 
     # Set the movement target
-    pcc = ent.player_controller_component
-    ppos = pcc.instance_variable_get :@pos
-    ppos.x = @px
-    ppos.z = @py
-
-    # Start the actual position at the beginning
-    trc = ent.transform_component
-    tpos = trc.position
-    tpos.x = @px
-    tpos.z = @py
+    pos = ent.position_component
+    pos.position.x = floor.player_start[0]
+    pos.position.y = floor.player_start[1]
+    pos.jump(0)
 
     remove_event :update
   end

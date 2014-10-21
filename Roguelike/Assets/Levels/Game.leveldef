@@ -79,8 +79,8 @@
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
                 },
-                "MapComponent": {},
-                "MapControllerComponent": {}
+                //"MapComponent": {},
+                //"MapControllerComponent": {}
               }
             }
           ]
@@ -109,9 +109,9 @@
           "render_target": "TranslucentLayer"
         },
         "PlayerControllerComponent": {},
-        /*"ParticleSystemComponent": {
-          "render_target": "WorldLayer"
-        },*/
+        "PositionComponent": {
+          "mode": "linear"
+        },
       }
     },
     {

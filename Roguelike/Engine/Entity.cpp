@@ -606,6 +606,9 @@ static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self)
   auto results = mrb_hash_new(mrb);
   for (auto& component : entity->_components)
   {
+    if (component.second == nullptr)
+      continue;
+
     auto key = mrb_str_new_cstr(mrb, component.first.c_str());
     auto value = component.second->GetRubyWrapper();
 
@@ -896,10 +899,26 @@ static bool component_depends_on(const std::string& a, const std::string& b)
 
 // ----------------------------------------------------------------------------
 
+typedef std::pair<std::string, component_factory_data> cpair;
+bool ComponentsAreSorted(std::vector<cpair>& components, size_t& i, size_t& j)
+{
+  for (i = 0; i < components.size(); ++i)
+  {
+    for (j = i + 1; j < components.size(); ++j)
+    {
+      if (component_depends_on(components[j].first, components[i].first))
+        return false;
+    }
+  }
+
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+
 static std::vector<std::pair<std::string, component_factory_data>> 
 SortComponentDependencies(const entity_factory_data& data)
 {
-  typedef std::pair<std::string, component_factory_data> cpair;
   std::vector<cpair> components;
   components.reserve(data.size());
 
@@ -909,11 +928,11 @@ SortComponentDependencies(const entity_factory_data& data)
     components.push_back(comp);
   }
 
-  std::stable_sort(components.begin(), components.end(),
-  [](const cpair& a, const cpair& b)
+  size_t i, j;
+  while (!ComponentsAreSorted(components, i, j))
   {
-    return component_depends_on(a.first, b.first);
-  });
+    std::swap(components[i], components[j]);
+  }
 
   return components;
 }

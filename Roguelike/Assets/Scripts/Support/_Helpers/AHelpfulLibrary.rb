@@ -27,6 +27,16 @@ module Math
   end
 end
 
+module Enumerable
+  def size
+    length
+  end
+
+  def count
+    length
+  end
+end
+
 class Array
   def sum
     total = first

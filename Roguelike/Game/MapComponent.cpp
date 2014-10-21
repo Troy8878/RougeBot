@@ -89,22 +89,26 @@ void MapComponent::OnUpdate(Events::EventMessage&)
   // If we haven't found the floor yet, find it and store it.
   if (!_floor)
   {
+    mrb_state *mrb = *mrb_inst;
     _floor = GetGame()->CurrentLevel->RootEntity->FindEntity("MainFloor");
     // Get the component that has the floor.
-    _floor_comp = _floor->GetComponent<RubyComponent>("TestRoomComponent")->GetRubyWrapper();
+    _floor_comp = _floor->GetComponent<RubyComponent>("FloorGeneratorComponent")->GetRubyWrapper();
+    _map_obj = mrb_funcall_argv(mrb, _floor_comp, mrb_intern_lit(mrb, "floor"), 0, nullptr);
 
     auto *player = GetGame()->CurrentLevel->RootEntity->FindEntity("Pancake");
     _player_controller = player->GetComponent<RubyComponent>("PlayerControllerComponent")->GetRubyWrapper();
 
     // Initialize explored vector.
-    mrb_state *mrb = *mrb_inst;
-    mrb_value ary = mrb_obj_iv_get(mrb, mrb_obj_ptr(_floor_comp), mrb_intern_lit(*mrb_inst, "@room"));
-    _explored.resize(mrb_ary_len(mrb, ary));
-    mrb_value rubyRow = mrb_ary_entry(ary, 0);
+    mrb_int rows = ruby::enumerable_length(mrb, _map_obj);
+    _explored.resize((size_t) rows);
+
+    mrb_value rubyRow = ruby::enumerable_first(mrb, _map_obj);
+    mrb_int cols = ruby::enumerable_length(mrb, rubyRow);
+
     // Initialize each inividual row.
     for (auto& row : _explored)
     {
-      row.resize(mrb_ary_len(mrb, rubyRow));
+      row.resize((size_t) cols);
     }
   }
 

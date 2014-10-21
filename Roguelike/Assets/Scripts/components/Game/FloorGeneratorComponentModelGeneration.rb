@@ -158,6 +158,6 @@ class FloorGeneratorComponent < ComponentBase
     return WALL_VALUE if y < 0 or y >= ROOM_SIZE
     return WALL_VALUE if x < 0 or x >= ROOM_SIZE
 
-    @room[y][x]
+    @floor[y][x].type_id
   end
 end

@@ -4,5 +4,8 @@
   "SpinnyThingComponent": ["TransformComponent"],
   "AnimatedComponent": ["SpriteComponent"],
   "PositionDisplayComponent": ["TextureComponent"],
-  "TileCursorComponent": ["TransformComponent"]
+  "TileCursorComponent": ["TransformComponent"],
+  "PositionComponent": ["TransformComponent"],
+  "PlayerControllerComponent": ["TransformComponent", "PositionComponent"],
+  "FloorGeneratorComponent": ["CustomModelComponent"]
 }

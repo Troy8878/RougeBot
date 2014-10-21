@@ -584,7 +584,7 @@ namespace json
       map[key.as_string()] = value;
 
       skip_ws_and_comments(input);
-      auto next = input.get();
+      auto next = char(input.get());
       if (next == '}')
         return object;
       else if (next != ',')
@@ -775,7 +775,7 @@ namespace json
       }
 
       // Skip any extra whitespace after the comment
-      input >> std::ws;
+      skip_ws_and_comments(input);
     }
   }
 

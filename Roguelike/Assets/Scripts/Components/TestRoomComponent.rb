@@ -48,17 +48,11 @@ class TestRoomComponent < ComponentBase
   def first_update(e)
     ent = find_entity("Pancake")
 
-    # Set the movement target
-    pcc = ent.player_controller_component
-    ppos = pcc.instance_variable_get :@pos
-    ppos.x = @px
-    ppos.z = @py
-
-    # Start the actual position at the beginning
-    trc = ent.transform_component
-    tpos = trc.position
-    tpos.x = @px
-    tpos.z = @py
+    # Set the player position
+    pos_comp = ent.position_component
+    pos_comp.position.x = @px
+    pos_comp.position.y = @py
+    pos_comp.jump(0)
 
     # Start the camera there too
     cam = find_entity("CameraRoot")

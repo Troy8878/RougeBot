@@ -129,6 +129,7 @@ private:
   Texture2D _texture;
   Entity *_floor = nullptr;
   mrb_value _floor_comp;
+  mrb_value _map_obj;
   mrb_value _player_controller;
 
   // We need Vector to store where we've explored

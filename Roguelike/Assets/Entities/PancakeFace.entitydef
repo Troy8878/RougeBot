@@ -19,12 +19,4 @@
   "SpriteComponent": {
     "render_target": "WorldLayer"
   },
-  "ChildHierarchy": {
-    "children": [
-      /*{
-        "archetype": "TestText",
-        "components": {}
-      }*/
-    ]
-  }
 }

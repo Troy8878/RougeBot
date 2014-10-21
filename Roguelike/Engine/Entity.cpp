@@ -97,6 +97,9 @@ void Entity::RemoveComponent(const std::string& name)
 
 Component *Entity::GetComponent(const std::string& name)
 {
+  if (_components.empty())
+    return nullptr;
+
   auto it = _components.find(name);
   return it != _components.end() ? it->second : nullptr;
 }
@@ -1040,6 +1043,9 @@ void Entity::Zombify()
     mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
     "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
     "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
+  _events.clear();
+  this->RecalculateEventCounts();
 
   death_row.push_front(this);
 

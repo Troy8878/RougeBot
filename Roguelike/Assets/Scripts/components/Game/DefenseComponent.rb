@@ -12,14 +12,16 @@
 ################################################################
 
 class DefenseComponent < ComponentBase
+  include Actor
+
+  attr_accessor :health
+
   def initialize(data)
     super data
 
     @defense = 0.0
     @armor = 0
     @health = data.fetch("health", 10)
-
-
   end
 
   def be_attacked(attack, damage)
@@ -27,6 +29,7 @@ class DefenseComponent < ComponentBase
     @health -= (damage - @armor)
 
     if @health <= 0
+      current_tile.actor = nil
       self.owner.zombify!
       return :kill
     end

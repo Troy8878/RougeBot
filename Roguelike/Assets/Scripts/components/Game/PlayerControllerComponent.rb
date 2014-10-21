@@ -16,6 +16,8 @@
 PLAYER_INVENTORY = Inventory.new
 
 class PlayerControllerComponent < ComponentBase
+  include Actor
+
   attr_reader :pos
 
   MIN_MOVE_TIME = 0.2
@@ -58,15 +60,9 @@ class PlayerControllerComponent < ComponentBase
     else
       @pos.x += x
       @pos.y += y
+
       update_mapitem
-
-      new_tile = nil
-
-      if @prev_tile
-
-      end
-
-      @prev_tile = nil
+      actor_moved
     end
 
     if @logic_initialized
@@ -183,12 +179,6 @@ class PlayerControllerComponent < ComponentBase
     res = !tile.solid?
     @blocked_reason = BLOCKED_BY_WALL
     return res
-  end
-
-  private
-  def current_tile
-    room = current_floor
-    room[room.count - 1 - @position.y][@position.x]
   end
 
   register_component "PlayerControllerComponent"

@@ -21,6 +21,7 @@ TextComponentFactory TextComponent::factory;
 
 TextComponent::TextComponent()
 {
+  drawing.shouldPopulate = false;
 }
 
 // ----------------------------------------------------------------------------

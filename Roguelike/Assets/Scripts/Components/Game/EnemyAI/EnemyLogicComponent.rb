@@ -5,6 +5,7 @@
 #########################
 
 class EnemyLogicComponent < ComponentBase
+  include Actor
 
   def initialize(data)
     super data
@@ -65,6 +66,8 @@ class EnemyLogicComponent < ComponentBase
   def move(dx, dy)
     @position.x += dx
     @position.y += dy
+
+    actor_moved
   end
 
   def create_mapitem
@@ -80,22 +83,6 @@ class EnemyLogicComponent < ComponentBase
     @map_item.x = @position.x
     @map_item.y = @position.y
     @minimap.raise_event :map_update, nil
-  end
-
-  def x
-    @position.x
-  end
-
-  def y
-    @position.y
-  end
-
-  def x=(val)
-    @position.x = val
-  end
-
-  def y=(val)
-    @position.y = val
   end
 
   register_component "EnemyLogicComponent"

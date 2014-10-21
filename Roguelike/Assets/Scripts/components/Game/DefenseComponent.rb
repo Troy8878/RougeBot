@@ -25,6 +25,12 @@ class DefenseComponent < ComponentBase
   def be_attacked(attack, damage)
     return :miss if attack < @defense
     @health -= (damage - @armor)
+
+    if @health <= 0
+      this.owner.zombify!
+      return :kill
+    end
+
     return :hit
   end
 

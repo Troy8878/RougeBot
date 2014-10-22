@@ -173,6 +173,8 @@ public:
   */
   Entity *FindEntity(const std::string& name);
 
+  Entity *LocalFind(const std::string& name);
+
   /**
     Finds entities by a full or partial match on their name.
   */

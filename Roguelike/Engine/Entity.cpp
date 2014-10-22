@@ -292,14 +292,14 @@ void Entity::RemoveChild(Entity *entity)
 
 // ----------------------------------------------------------------------------
 
-static std::unordered_multimap<entity_id, Entity *> idmap;
+static std::unordered_map<entity_id, Entity *> idmap;
 static std::unordered_multimap<std::string, Entity *> namemap;
 
 // ----------------------------------------------------------------------------
 
 void Entity::RegisterNamehash()
 {
-  idmap.insert({_id, this});
+  idmap[_id] = this;
   namemap.insert({_name, this});
 }
 
@@ -307,13 +307,9 @@ void Entity::RegisterNamehash()
 
 void Entity::UnregisterNamehash()
 {
-  typedef decltype(idmap) idmt;
   typedef decltype(namemap) nmmt;
 
-  auto idbucket = idmap.bucket(_id);
-  idmap.erase(std::find(
-    idmap.begin(idbucket), idmap.end(idbucket), 
-    idmt::value_type{_id, this}));
+  idmap.erase(_id);
 
   auto namebucket = namemap.bucket(_name);
   namemap.erase(std::find(
@@ -325,17 +321,8 @@ void Entity::UnregisterNamehash()
 
 Entity *Entity::FindEntity(entity_id id)
 {
-  auto bucket = idmap.bucket(id);
-  auto first = idmap.begin(bucket);
-  auto last = idmap.end(bucket);
-
-  for (; first != last; ++first)
-  {
-    if (first->second->IsSelfOrChildOf(this))
-      return first->second;
-  }
-
-  return nullptr;
+  auto it = idmap.find(id);
+  return it == idmap.end() ? nullptr : it->second;
 }
 
 // ----------------------------------------------------------------------------
@@ -350,6 +337,26 @@ Entity *Entity::FindEntity(const std::string& name)
   {
     if (first->second->IsSelfOrChildOf(this))
       return first->second;
+  }
+
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+Entity *Entity::LocalFind(const std::string& name)
+{
+  if (name == _name)
+    return this;
+
+  if (children.empty())
+    return nullptr;
+
+  for (auto& child : children)
+  {
+    auto res = child->LocalFind(name);
+    if (res)
+      return res;
   }
 
   return nullptr;

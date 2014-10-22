@@ -163,6 +163,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelBuilder.cpp" />
     <ClCompile Include="MrbHttpClient.cpp" />
+    <ClCompile Include="MrbInput.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ParticleSystemComponent.cpp" />
     <ClCompile Include="RenderSet.cpp" />

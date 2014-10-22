@@ -21,7 +21,7 @@ SpriteComponentFactory SpriteComponent::factory;
 
 // Constructor if several Textures/Sprites are needed (animated)
 SpriteComponent::SpriteComponent(Shader *shader, RenderSet *set)
-  : renderTarget(set), TextureIndex(0)
+  : renderTarget(set), _TextureIndex(0)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;
@@ -50,6 +50,9 @@ void SpriteComponent::Initialize(Entity *owner, const std::string& name)
 
 void SpriteComponent::Draw()
 {
+  if (!Visible)
+    return;
+
   auto transform = Owner->Transform.get();
   
   if (_texture)
@@ -158,6 +161,27 @@ mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+mrb_value rb_sprite_get_visible(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  return mrb_bool_value(sprite->Visible);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self)
+{
+  mrb_bool value;
+  mrb_get_args(mrb, "b", &value);
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+
+  sprite->Visible = !!value;
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value SpriteComponent::GetRubyWrapper()
 {
   THREAD_EXCLUSIVE_SCOPE;
@@ -175,6 +199,8 @@ mrb_value SpriteComponent::GetRubyWrapper()
     component.define_method("texture_index", rb_sprite_get_textureindex, ARGS_NONE());
     component.define_method("texture_index=", rb_sprite_set_textureindex, ARGS_REQ(1));
     component.define_method("texture_count", rb_sprite_get_texturecount, ARGS_NONE());
+    component.define_method("visible", rb_sprite_get_visible, ARGS_NONE());
+    component.define_method("visible=", rb_sprite_set_visible, ARGS_REQ(1));
 
     initialized = true;
   }

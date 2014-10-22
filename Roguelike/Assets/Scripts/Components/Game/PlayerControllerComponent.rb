@@ -68,6 +68,8 @@ class PlayerControllerComponent < ComponentBase
     if @logic_initialized
       Event.raise_event :logic_update, self.owner
     end
+    
+    actor_minimap_refresh
   end
 
   def on_move(e)
@@ -185,17 +187,13 @@ class PlayerControllerComponent < ComponentBase
   def set_kb_mode
     return if Config[:touch_mode]
     @cursor ||= find_entity("TileCursor")
-    @curpos ||= @cursor.transform_component.position
-
-    @curpos.y = -1
+    @cursor.children[0].sprite_component.visible = false
   end
 
   def set_mouse_mode
     return if Config[:touch_mode]
     @cursor ||= find_entity("TileCursor")
-    @curpos ||= @cursor.transform_component.position
-
-    @curpos.y = 0
+    @cursor.children[0].sprite_component.visible = true
   end
 
   register_component "PlayerControllerComponent"

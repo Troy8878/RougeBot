@@ -26,7 +26,9 @@ module Actor
   def actor_minimap_update
     @actor_map_item.x = actor_position.x
     @actor_map_item.y = actor_position.y
+  end
 
+  def actor_minimap_refresh
     @actor_minimap.local_event :map_update, nil
   end
 

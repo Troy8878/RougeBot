@@ -311,6 +311,9 @@
     <ClCompile Include="RubyFile.cpp">
       <Filter>Source Files\Ruby</Filter>
     </ClCompile>
+    <ClCompile Include="MrbInput.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

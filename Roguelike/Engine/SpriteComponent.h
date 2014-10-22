@@ -35,7 +35,9 @@ public:
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
-  size_t TextureIndex;
+  IRW_PROPERTY(size_t, TextureIndex);
+
+  IRW_PROPERTY(bool, Visible);
 
   Texture2D GetTexture(size_t index) { return _texture ? _texture->Textures[index] : Texture2D(); }
 
@@ -47,6 +49,7 @@ public:
 private:
   RenderSet *renderTarget = nullptr;
   TextureComponent *_texture = nullptr;
+  bool _visible;
 
   static Model *GetSpriteModel();
 

@@ -35,11 +35,11 @@ static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self);
 extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
 {
   mrb_kse_data_type.dfree = mrb_kse_free;
-  mrb_kse_data_type.struct_name = "const KeyState";
+  mrb_kse_data_type.struct_name = typeid(KeyState).name();
 
   RClass *rclass = mrb_define_class(mrb, "KeyState", mrb->object_class);
 
-  // ruby can't make new ones
+  // ruby can't make new ones, only Input can
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 
   mrb_define_method(mrb, rclass, "held?", mrb_kse_is_held, ARGS_REQ(1));
@@ -52,7 +52,8 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   mrb_me_data_type.struct_name = "MouseState";
 
   rclass = mrb_define_class(mrb, "MouseState", mrb->object_class);
-
+  
+  // ruby can't make new ones, only Input can
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 
   mrb_define_method(mrb, rclass, "position", mrb_me_position, ARGS_NONE());

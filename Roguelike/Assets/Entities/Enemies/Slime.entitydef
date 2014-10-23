@@ -28,7 +28,6 @@
               "Enemies/Slime/Slime1.png",
               "Enemies/Slime/Slime2.png",
               "Enemies/Slime/Slime3.png",
-              "Enemies/Slime/Slime4.png",
             ]
           },
           "SpriteComponent": {

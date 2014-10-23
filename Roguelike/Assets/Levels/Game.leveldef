@@ -109,7 +109,16 @@
       "archetype": "Enemies/Derpaderp",
       "components": {
         "PositionComponent": {
-          "position": [20, 20]
+          "position": [35, 35]
+        }
+      }
+    },
+    {
+      "name": "TheSlime",
+      "archetype": "Enemies/Slime",
+      "components": {
+        "PositionComponent": {
+          "position": [15, 15]
         }
       }
     }

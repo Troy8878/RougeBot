@@ -30,6 +30,13 @@ class DefenseComponent < ComponentBase
     total_dmg = damage - @armor
     @health -= (damage - @armor)
 
+    # Notify that the health has changed
+    self.owner.raise_event :health_changed, { 
+      kind: :damage,
+      amount: -total_dmg,
+      new_value: @health
+    }
+
     if @health <= 0
       notify_death
       self.owner.zombify!

@@ -97,6 +97,14 @@
       }
     },
     {
+      "name": "EnemySpawner",
+      "components": {
+        "BasicEnemySpawnerComponent": {
+          "num_enemies": 50
+        }
+      }
+    },
+    {
       "name": "Pancake",
       "archetype": "Player",
     },
@@ -104,13 +112,5 @@
       "name": "TileCursor",
       "archetype": "TileCursor"
     },
-    {
-      "name": "EnemySpawner",
-      "components": {
-        "BasicEnemySpawnerComponent": {
-          "num_enemies": 10
-        }
-      }
-    }
   ]
 }

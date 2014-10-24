@@ -25,4 +25,32 @@
     "health": 110,
     "max_health": 110
   },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "HealthDisplay",
+        "components": {
+          "TransformComponent": {
+            "position": [0, -0.8, 0],
+            "scale": [1.5, 0.375, 1],
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/300:75"]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          },
+          "TextComponent": {
+            "texts": ["Health 110"],
+
+            "text_color": "Black",
+
+            "font": "Segoe UI",
+            "font_size": 40,
+          },
+          "PlayerHealthComponent": {},
+        }
+      }
+    ]
+  }
 }

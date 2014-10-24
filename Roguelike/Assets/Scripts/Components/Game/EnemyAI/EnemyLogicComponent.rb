@@ -21,6 +21,8 @@ class EnemyLogicComponent < ComponentBase
     actor_init(MapItem::ELLIPSE, "Red")
     actor_minimap_update
 
+    actor_moved
+
     remove_event :update
   end
 

@@ -10,6 +10,7 @@
 #include "LevelDef.h"
 #include "Input.h"
 #include "RenderSet.h"
+#include "Button.h"
 
 #include "mruby/debug.h"
 #include "mruby/variable.h"
@@ -31,8 +32,9 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
   _gameInst = this;
 
   globalEventDispatcher.AddListener(this);
-  globalEventDispatcher.AddListener(&levelEventProxy);
+  globalEventDispatcher.AddListener(&ButtonManager::Instance);
   globalEventDispatcher.AddListener(&Input::Instance);
+  globalEventDispatcher.AddListener(&levelEventProxy);
 }
 
 // ----------------------------------------------------------------------------

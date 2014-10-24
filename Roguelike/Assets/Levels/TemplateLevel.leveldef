@@ -1,0 +1,60 @@
+{
+  "name": "NAME ME!",
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
+        },
+        {
+          "name": "TranslucentLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "TranslucentLayer",
+              "layer": 2
+            }
+          }
+        },
+        {
+          "name": "HUDLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "HUDLayer",
+              "layer": 5000
+            }
+          }
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "scale": [0.3, 0.3, 0.3, 1],
+              "position": [0, 0, 1]
+            }
+          },
+          "children": [
+          ]
+        }
+      ]
+    }
+  ]
+}

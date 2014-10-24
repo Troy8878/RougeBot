@@ -22,8 +22,8 @@
   },
   "AttackComponent": {},
   "DefenseComponent": {
-    "health": 110,
-    "max_health": 110
+    "health": 250,
+    "max_health": 250
   },
   "ChildHierarchy": {
     "children": [
@@ -41,7 +41,7 @@
             "render_target": "TranslucentLayer"
           },
           "TextComponent": {
-            "texts": ["Health 110"],
+            "texts": ["Health 250"],
 
             "text_color": "Black",
 

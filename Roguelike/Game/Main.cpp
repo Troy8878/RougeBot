@@ -14,6 +14,8 @@ static void CreateConsole()
   freopen_s(&file, "CONOUT$", "wt", stdout);
   freopen_s(&file, "CONOUT$", "wt", stderr);
   freopen_s(&file, "CONIN$", "rt", stdin);
+
+  std::ios::sync_with_stdio();
 }
 
 Roguelike game("Game 200 Project", GetModuleHandle(NULL));

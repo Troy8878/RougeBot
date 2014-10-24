@@ -1,4 +1,4 @@
-/*********************************
+﻿/*********************************
 * MrbInput.cpp
 * Connor Hilarides
 * Created 2014/10/21
@@ -52,7 +52,7 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   mrb_me_data_type.struct_name = "MouseState";
 
   rclass = mrb_define_class(mrb, "MouseState", mrb->object_class);
-  
+
   // ruby can't make new ones, only Input can
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 

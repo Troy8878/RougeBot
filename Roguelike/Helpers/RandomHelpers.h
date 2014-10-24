@@ -626,12 +626,12 @@ public:
 
 // ----------------------------------------------------------------------------
 
-#define RUN_ONCE(...) do {             \
+#define RUN_ONCE(...) {             \
   static bool ___runonce_init = false; \
   if (!___runonce_init)                \
   {                                    \
     (__VA_ARGS__); ___runonce_init = true;     \
-  } } while (0)
+  } }
 
 // ----------------------------------------------------------------------------
 
@@ -678,6 +678,21 @@ template <typename T>
 array_iterator_t<const T> const_array_iterator(const T *a, size_t c)
 {
   return array_iterator_t<const T>(a, c);
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename Cont, typename Iter, typename Key>
+bool map_get_check(const Cont& container, Iter& iter, Key& key)
+{
+  auto it = container.find(key);
+  if (it != container.end())
+  {
+    iter = it;
+    return true;
+  }
+
+  return false;
 }
 
 // ----------------------------------------------------------------------------

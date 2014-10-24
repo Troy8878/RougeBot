@@ -26,103 +26,12 @@
 
 namespace memvect 
 {
-#define MEMVECT_BASICS \
-  using namespace ruby;\
-  ruby_engine engine{mrb};\
-  static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");\
-  auto ptr_v = mrb_iv_get(mrb, self, ptr_sym);\
-  math::Vector *vect = (math::Vector *) engine.unwrap_native_ptr(ptr_v)
-
-#define MEMVECT_GETFUN(v) \
-  static mrb_value get_ ## v (mrb_state *mrb, mrb_value self) \
-  { \
-    MEMVECT_BASICS; \
-    return mrb_float_value(mrb, vect->v); \
-  }
-
-#define MEMVECT_SETFUN(v) \
-  static mrb_value set_ ## v (mrb_state *mrb, mrb_value self) \
-  { \
-    MEMVECT_BASICS; \
-    mrb_float newv; \
-    mrb_get_args(mrb, "f", &newv); \
-    return mrb_float_value(mrb, vect->v = (float) newv); \
-  }
-
-  MEMVECT_GETFUN(x);
-  MEMVECT_SETFUN(x);
-
-  MEMVECT_GETFUN(y);
-  MEMVECT_SETFUN(y);
-
-  MEMVECT_GETFUN(z);
-  MEMVECT_SETFUN(z);
-
-  MEMVECT_GETFUN(w);
-  MEMVECT_SETFUN(w);
-
-#undef MEMVECT_BASICS
-#undef MEMVECT_GETFUN
-#undef MEMVECT_SETFUN
-
-  static mrb_value init(mrb_state *mrb, mrb_value self)
-  {
-    mrb_value vect_ptr_v;
-    mrb_get_args(mrb, "o", &vect_ptr_v);
-
-    static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");
-    mrb_iv_set(mrb, self, ptr_sym, vect_ptr_v);
-
-    return mrb_nil_value();
-  }
-
   static mrb_value dup(mrb_state *mrb, mrb_value self)
   {
     auto vclass = mrb_class_get(mrb, "Vector");
     static mrb_sym vnew = mrb_intern_cstr(mrb, "new");
     return mrb_funcall_argv(mrb, mrb_obj_value(vclass), vnew, 1, &self);
   }
-}
-
-static ruby::ruby_class memvect2dclass;
-
-static ruby::ruby_class create_memory_vector_class(mrb_state *mrb)
-{
-  ruby::ruby_engine mrb_inst{mrb};
-
-  auto rclass2D = mrb_inst.define_class("MemoryVector2D");
-  auto rclass = mrb_inst.define_class("MemoryVector", rclass2D);
-  
-  rclass2D.define_method("initialize", memvect::init, ARGS_REQ(1));
-  rclass.define_method("initialize", memvect::init, ARGS_REQ(1));
-  rclass.define_method("dup", memvect::dup, ARGS_NONE());
-
-  rclass2D.define_method("x", memvect::get_x, ARGS_NONE());
-  rclass2D.define_method("y", memvect::get_y, ARGS_NONE());
-  rclass.define_method("z", memvect::get_z, ARGS_NONE());
-  rclass.define_method("w", memvect::get_w, ARGS_NONE());
-
-  rclass2D.define_method("x=", memvect::set_x, ARGS_REQ(1));
-  rclass2D.define_method("y=", memvect::set_y, ARGS_REQ(1));
-  rclass.define_method("z=", memvect::set_z, ARGS_REQ(1));
-  rclass.define_method("w=", memvect::set_w, ARGS_REQ(1));
-
-  memvect2dclass = rclass2D;
-  return rclass;
-}
-
-mrb_value ruby::wrap_memory_vector(math::Vector *vect)
-{
-  static auto rclass = mrb_inst->get_class("MemoryVector");
-
-  auto ptr = mrb_inst->wrap_native_ptr(vect);
-  return rclass.new_inst(ptr);
-}
-
-mrb_value ruby::wrap_memory_vector(math::Vector2D *vect)
-{
-  auto ptr = mrb_inst->wrap_native_ptr(vect);
-  return memvect2dclass.new_inst(ptr);
 }
 
 #pragma endregion
@@ -134,6 +43,7 @@ mrb_value ruby::wrap_memory_vector(math::Vector2D *vect)
 // ----------------------------------------------------------------------------
 
 mrb_data_type ruby::mrb_vector_type;
+mrb_data_type ruby::mrb_mvector_type;
 
 // ----------------------------------------------------------------------------
 
@@ -156,16 +66,6 @@ namespace vect
     {
       auto oldv = (math::Vector *) 
         mrb_data_get_ptr(mrb, first, &mrb_vector_type);
-
-      x = oldv->x;
-      y = oldv->y;
-      z = oldv->z;
-      w = oldv->w;
-    }
-    else if (mrb_obj_class(mrb, first) == mrb_class_get(mrb, "MemoryVector"))
-    {
-      static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");
-      auto oldv = (math::Vector *) mrb_cptr(mrb_iv_get(mrb, first, ptr_sym));
 
       x = oldv->x;
       y = oldv->y;
@@ -452,6 +352,9 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
 {
   ruby::mrb_vector_type.dfree = vect::free;
   ruby::mrb_vector_type.struct_name = "math::Vector";
+  
+  ruby::mrb_mvector_type.dfree = ruby::data_nop_delete;
+  ruby::mrb_mvector_type.struct_name = "math::Vector";
 
   auto vclass = mrb_define_class(mrb, "Vector", mrb->object_class);
   
@@ -487,8 +390,6 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "===", vect::op_eql, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "eql?", vect::op_eql, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "near?", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
-
-  create_memory_vector_class(mrb);
 }
 
 #pragma endregion
@@ -506,6 +407,15 @@ math::Vector& ruby::get_ruby_vector(mrb_value value)
 {
   auto ptr = mrb_data_get_ptr(*mrb_inst, value, &mrb_vector_type);
   return *(math::Vector *) ptr;
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby::wrap_memory_vector(math::Vector *vect)
+{
+  static auto rclass = mrb_inst->get_class("Vector");
+  auto data = mrb_data_object_alloc(*mrb_inst, rclass, vect, &mrb_mvector_type);
+  return mrb_obj_value(data);
 }
 
 // ----------------------------------------------------------------------------

@@ -219,3 +219,11 @@ class Array
     self.replace(self.sort(&block))
   end
 end
+
+##
+# Array can get random entries
+class Array
+  def random_entry
+    self[Random.int_range(0, length)]
+  end
+end

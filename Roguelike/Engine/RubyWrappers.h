@@ -17,11 +17,11 @@ namespace ruby
 // ----------------------------------------------------------------------------
 
   mrb_value wrap_memory_vector(math::Vector *vect);
-  mrb_value wrap_memory_vector(math::Vector2D *vect);
 
 // ----------------------------------------------------------------------------
 
   extern mrb_data_type mrb_vector_type;
+  extern mrb_data_type mrb_mvector_type;
 
   mrb_value create_new_vector(const math::Vector& v = {});
   math::Vector& get_ruby_vector(mrb_value value);

@@ -86,6 +86,7 @@ void Entity::RemoveComponent(const std::string& name)
   for (auto& event : _events)
   {
     event.second.erase(comp);
+    this->event_list_invalidated = true;
   }
 
   ComponentManager::Instance.ReleaseComponent(comp);
@@ -871,6 +872,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("components", rb_ent_components, ARGS_NONE());
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
   rclass.define_method("add_component", rb_ent_add_component, ARGS_REQ(2));
+  rclass.define_method("remove_component", rb_ent_remove_component, ARGS_REQ(1));
   
   rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
   rclass.define_method("children", rb_ent_children, ARGS_NONE());

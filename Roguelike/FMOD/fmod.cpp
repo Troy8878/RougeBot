@@ -69,7 +69,7 @@ void SoundClass::CheckResult(bool isOkay)
 
 /* Here be the sound class itself! */
 
-SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD_MODE custom, std::vector<ExInfo> Infos)
+SoundClass::Sound::Sound(const char* name, SoundClass& Sys, SOUND_TYPE type, FMOD_MODE custom, std::vector<ExInfo> Infos)
 {
   FMOD_MODE mode;
   FMOD_CREATESOUNDEXINFO ex = { 0 };
@@ -205,25 +205,28 @@ SoundClass::Sound::Sound(const char* name, SoundClass Sys, SOUND_TYPE type, FMOD
   FMODresult = Sys.SoundSystem->createSound(name, mode, &ex, &sound);
   CheckResult(FMODresult == FMOD_OK);
 
+  // Save the Sys for later
+  this->Sys = &Sys;
+
   // chan is set when we play the sound (that's when a channel is alocated)
 }
 
-SoundClass::Sound SoundClass::Sound::CreateSound(const char* name, SoundClass Sys, std::vector<ExInfo> Infos)
+SoundClass::Sound *SoundClass::Sound::CreateSound(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos)
 {
   // Just a quick wrapper for easy SFX construction
-  return Sound(name, Sys, SOUND_TYPE::SFX, 0, Infos);
+  return new Sound(name, Sys, SOUND_TYPE::SFX, 0, Infos);
 }
 
-SoundClass::Sound SoundClass::Sound::CreateMusic(const char* name, SoundClass Sys, std::vector<ExInfo> Infos)
+SoundClass::Sound *SoundClass::Sound::CreateMusic(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos)
 {
   // Just a quick wrapper for easy music construction
-  return Sound(name, Sys, SOUND_TYPE::MUSIC, 0, Infos);
+  return new Sound(name, Sys, SOUND_TYPE::MUSIC, 0, Infos);
 }
 
-SoundClass::Sound SoundClass::Sound::CreateCustom(const char* name, SoundClass Sys, FMOD_MODE custom, std::vector<ExInfo> Infos)
+SoundClass::Sound *SoundClass::Sound::CreateCustom(const char* name, SoundClass& Sys, FMOD_MODE custom, std::vector<ExInfo> Infos)
 {
   // In case we need easy construction for something other than standard SFX or music
-  return Sound(name, Sys, SOUND_TYPE::NONE, custom, Infos);
+  return new Sound(name, Sys, SOUND_TYPE::NONE, custom, Infos);
 }
 
 std::vector<SoundClass::Sound::ExInfo> SoundClass::Sound::GetExInfo() const

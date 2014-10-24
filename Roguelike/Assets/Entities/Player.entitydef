@@ -22,7 +22,7 @@
   },
   "AttackComponent": {},
   "DefenseComponent": {
-    "health": 50,
-    "max_health": 50
+    "health": 110,
+    "max_health": 110
   },
 }

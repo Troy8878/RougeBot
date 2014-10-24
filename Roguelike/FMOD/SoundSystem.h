@@ -103,11 +103,11 @@ public:
       INFO u_info;  // Regarded as having no info until type is set to something other than none
     };
 
-    Sound(const char* name, SoundClass Sys, SOUND_TYPE type = SOUND_TYPE::NONE, FMOD_MODE custom = 0, std::vector<ExInfo> Infos = {});  // type = MUSIC (0) for looping or SFX (1) for non-looping.  Use the custom constructors instead!
+    Sound(const char* name, SoundClass& Sys, SOUND_TYPE type = SOUND_TYPE::NONE, FMOD_MODE custom = 0, std::vector<ExInfo> Infos = {});  // type = MUSIC (0) for looping or SFX (1) for non-looping.  Use the custom constructors instead!
     ~Sound();
-    Sound CreateSound(const char* name, SoundClass Sys, std::vector<ExInfo> Infos = {});  // See the EXTRA_INFO in SoundSystem.h if there is extra info.
-    Sound CreateMusic(const char* name, SoundClass Sys, std::vector<ExInfo> Infos = {});  // See the EXTRA_INFO in SoundSystem.h if there is extra info.
-    Sound CreateCustom(const char* name, SoundClass Sys, FMOD_MODE custom, std::vector<ExInfo> Infos = {});  // For if the sound isn't supposed to just loop or play once.
+    static Sound *CreateSound(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos = {});  // See the EXTRA_INFO in SoundSystem.h if there is extra info.
+    static Sound *CreateMusic(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos = {});  // See the EXTRA_INFO in SoundSystem.h if there is extra info.
+    static Sound *CreateCustom(const char* name, SoundClass& Sys, FMOD_MODE custom, std::vector<ExInfo> Infos = {});  // For if the sound isn't supposed to just loop or play once.
     std::vector<ExInfo> GetExInfo() const;
     void Play();
     bool IsPlaying();

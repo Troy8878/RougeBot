@@ -22,11 +22,6 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
-  BLOCKED_BY_UNKNOWN = 0
-  BLOCKED_BY_ACTOR = 1
-  BLOCKED_BY_WALL = 2
-  BLOCKED_BY_COOLDOWN = 3
-
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -129,55 +124,6 @@ class PlayerControllerComponent < ComponentBase
     else
       @cursor.children.first.sprite_component.texture_index = 0
     end
-  end
-
-  def can_move?(xo, yo)
-    @blocked_reason = -1
-
-    if @logic_cooldown > 0
-      @logic_cooldown -= GameTime.dt
-      @blocked_reason = BLOCKED_BY_COOLDOWN
-      return false
-    end
-
-    if xo != 0 and yo != 0
-      @blocked_reason = BLOCKED_BY_UNKNOWN
-      return false # unless can_move?(xo, 0) && can_move?(0, yo)
-    end
-
-    if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
-      @blocked_reason = BLOCKED_BY_UNKNOWN
-      return false
-    end
-
-    room = current_floor
-
-    # false if the move animation isn't done
-    real_pos = @transform.position.dup
-    real_pos.y = real_pos.z
-    real_pos.z = @pos.z
-    real_pos.w = 0
-
-    @blocked_reason = BLOCKED_BY_UNKNOWN
-    return false unless @pos.near? real_pos, 0.2
-
-    x = (@pos.x + 0.5).to_i + xo
-    y = (@pos.y + 0.5).to_i + yo
-
-    @blocked_reason = BLOCKED_BY_UNKNOWN
-    return false if x < 0 || x >= room[0].count
-    return false if y < 0 || y >= room.count
-
-    tile = room[room.count - 1 - y][x]
-    @move_tile = tile
-
-    res = !tile.actor?
-    @blocked_reason = BLOCKED_BY_ACTOR
-    return res unless res
-
-    res = !tile.solid?
-    @blocked_reason = BLOCKED_BY_WALL
-    return res
   end
 
   def mouse_move(e)

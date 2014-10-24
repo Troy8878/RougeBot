@@ -105,20 +105,10 @@
       "archetype": "TileCursor"
     },
     {
-      "name": "TheDerp",
-      "archetype": "Enemies/Derpaderp",
+      "name": "EnemySpawner",
       "components": {
-        "PositionComponent": {
-          "position": [35, 35]
-        }
-      }
-    },
-    {
-      "name": "TheSlime",
-      "archetype": "Enemies/Slime",
-      "components": {
-        "PositionComponent": {
-          "position": [15, 15]
+        "BasicEnemySpawnerComponent": {
+          "num_enemies": 10
         }
       }
     }

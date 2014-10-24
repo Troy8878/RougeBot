@@ -49,7 +49,7 @@ class DefenseComponent < ComponentBase
       }
     )
 
-    message = StatusMessage.new("👻👻", 2, "Cyan")
+    message = StatusMessage.new("👻", 2, "Cyan")
     message.delete_owner!
     message.display transient
 

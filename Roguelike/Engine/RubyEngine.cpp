@@ -10,6 +10,8 @@
 #include "RubyInterop.h"
 #include "Game.h"
 
+#include <cstdlib>
+
 #include "mruby/string.h"
 #include "mruby/data.h"
 #include "mruby/class.h"
@@ -254,7 +256,7 @@ void ruby_engine::log_and_clear_error()
     int result = MessageBox(NULL, full_message.c_str(), "Ruby Error", MB_ICONERROR | MB_YESNO);
 
     if (result == IDNO)
-      exit(1);
+      _exit(1);
   }
 
   std::cerr << pfg;

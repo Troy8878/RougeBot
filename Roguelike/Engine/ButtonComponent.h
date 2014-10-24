@@ -26,7 +26,7 @@ public:
   void OnProbe(Events::EventMessage& e);
 
   RenderSet *RenderTarget;
-  math::Vector2D Size;
+  math::Vector Size;
 
   mrb_value GetRubyWrapper() override;
 

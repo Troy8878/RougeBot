@@ -60,6 +60,8 @@ class EnemyLogicComponent < ComponentBase
   end
 
   def move(dx, dy)
+    return unless can_move? dx, dy
+
     @position.x += dx
     @position.y += dy
 

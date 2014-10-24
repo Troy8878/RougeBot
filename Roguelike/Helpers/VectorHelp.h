@@ -31,6 +31,11 @@ namespace math
     {
     }
 
+    inline Vector(const XMFLOAT4A& v)
+      : XMFLOAT4A(v)
+    {
+    }
+
     inline XMVECTOR XM_CALLCONV get() const { return XMLoadFloat4A(this); }
     inline Vector& XM_CALLCONV operator=(FXMVECTOR v1)
     {

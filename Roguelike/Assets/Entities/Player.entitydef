@@ -21,7 +21,9 @@
   "PositionComponent": {
     "mode": "linear"
   },
-  "AttackComponent": {},
+  "AttackComponent": {
+    "damage": [100, 100]
+  },
   "DefenseComponent": {
     "health": 250,
     "max_health": 250

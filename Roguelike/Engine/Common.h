@@ -34,6 +34,8 @@
 #include <cstdint>
 #include <unordered_set>
 #include <iomanip>
+#include <queue>
+#include <forward_list>
 
 #include "Helpers\FixedWindows.h"
 #include "Helpers\UseDirectX.h"

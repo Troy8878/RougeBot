@@ -5,7 +5,6 @@
  *********************************/
 
 #include "Common.h"
-#include "Engine/HttpClient.h"
 
 static void CreateConsole()
 {

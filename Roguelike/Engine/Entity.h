@@ -8,6 +8,7 @@
 
 #include "Common.h"
 #include "EventHandlers.h"
+#include "Actions.h"
 
 // ----------------------------------------------------------------------------
 
@@ -240,11 +241,26 @@ private:
   entity_id _id;
   bool event_list_invalidated = false;
 
+  void OnUpdate(float dt);
+
   static entity_id CreateEntityId();
   static ruby::ruby_class GetWrapperRClass();
 
   friend static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self);
   friend static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self);
+
+  #pragma endregion
+
+  #pragma region Actions
+
+public:
+  ActionManager& GetActionGroup();
+  ActionManager& GetActionSequence(mrb_sym id);
+  ActionManager& GetActionSequence(const char *name);
+
+private:
+  ActionGroup _actionGroup;
+  std::unordered_map<mrb_sym, ActionSequence> _actionSequences;
 
   #pragma endregion
 

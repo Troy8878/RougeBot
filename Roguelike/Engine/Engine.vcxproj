@@ -88,6 +88,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actions.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera.h" />
@@ -134,6 +135,7 @@
     <None Include="Common.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actions.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera.cpp" />

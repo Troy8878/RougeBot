@@ -16,8 +16,8 @@ class AttackComponent < ComponentBase
   def initialize(data)
     super data
 
-    @attack = 0
-    @damage = [2,4]
+    @attack = data.fetch("attack", 0)
+    @damage = data.fetch("damage", [2,4])
   end
 
   def equip_weapon

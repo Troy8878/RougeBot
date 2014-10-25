@@ -171,6 +171,13 @@ void Entity::LocalEvent(Events::EventMessage& e)
   {
     ApplyParentTransforms();
   }
+
+  DEF_EVENT_ID(update);
+  if (e.EventId == update)
+  {
+    auto& time = GetGame()->Time;
+    OnUpdate(float(time.Dt));
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -1046,6 +1053,38 @@ void Entity::ApplyParentTransforms()
   {
     Transform = LocalTransform;
   }
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::OnUpdate(float dt)
+{
+  _actionGroup.Update(dt);
+  for (auto& pair : _actionSequences)
+  {
+    pair.second.Update(dt);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+ActionManager& Entity::GetActionGroup()
+{
+  return _actionGroup;
+}
+
+// ----------------------------------------------------------------------------
+
+ActionManager& Entity::GetActionSequence(mrb_sym id)
+{
+  return _actionSequences[id];
+}
+
+// ----------------------------------------------------------------------------
+
+ActionManager& Entity::GetActionSequence(const char *name)
+{
+  return GetActionSequence(mrb_intern_cstr(*mrb_inst, name));
 }
 
 // ----------------------------------------------------------------------------

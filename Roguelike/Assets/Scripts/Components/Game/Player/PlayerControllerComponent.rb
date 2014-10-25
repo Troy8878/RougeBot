@@ -32,7 +32,7 @@ class PlayerControllerComponent < ComponentBase
     @logic_initialized = false
     @logic_cooldown = 0
 
-    self.register_event :player_move, :on_move
+    self.register_event :move, :on_move
     self.register_event :update, :first_update
 
     # Double-click should do it in either case

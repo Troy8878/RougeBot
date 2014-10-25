@@ -17,6 +17,7 @@
     "frame_time": 0.3
   },
   "PlayerControllerComponent": {},
+
   "PositionComponent": {
     "mode": "linear"
   },
@@ -25,6 +26,9 @@
     "health": 250,
     "max_health": 250
   },
+
+  "KeybindingComponent": {},
+
   "ChildHierarchy": {
     "children": [
       {

@@ -18,7 +18,7 @@ class FloorGeneratorComponent < ComponentBase
   end
 
   def first_update(e)
-    ent = find_entity("Pancake")
+    ent = find_entity("Player")
 
     # Set the movement target
     pos = ent.position_component

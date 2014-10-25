@@ -97,9 +97,6 @@ void MapComponent::OnUpdate(Events::EventMessage&)
     _floor_comp = _floor->GetComponent<RubyComponent>("FloorGeneratorComponent")->GetRubyWrapper();
     _map_obj = mrb_funcall_argv(mrb, _floor_comp, mrb_intern_lit(mrb, "floor"), 0, nullptr);
 
-    auto *player = GetGame()->CurrentLevel->RootEntity->FindEntity("Pancake");
-    _player_controller = player->GetComponent<RubyComponent>("PlayerControllerComponent")->GetRubyWrapper();
-
     // Initialize explored vector.
     mrb_int rows = ruby::enumerable_length(mrb, _map_obj);
     _explored.resize((size_t) rows);

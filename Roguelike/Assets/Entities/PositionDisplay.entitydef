@@ -11,7 +11,7 @@
     "render_target": "HUDLayer"
   },
   "PositionDisplayComponent": {
-    "target_name": "Pancake",
+    "target_name": "Player",
     "font": "Comic Sans MS",
     "font_size": 60
   }

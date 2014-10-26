@@ -46,6 +46,9 @@ public:
   template <typename T>
   void Destroy(T *item)
   {
+    if (!item)
+      return;
+
     item->~T();
     Free(item);
   }

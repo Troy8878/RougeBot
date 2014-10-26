@@ -320,6 +320,9 @@
     <ClCompile Include="Actions.cpp">
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
+    <ClCompile Include="MrbActions.cpp">
+      <Filter>Source Files\Arch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

@@ -23,6 +23,7 @@ static entity_id next_ent_id = 0;
 
 // ----------------------------------------------------------------------------
 
+static BucketAllocator sequenceAllocator = BucketAllocator(sizeof(ActionSequence));
 static std::list<Entity *> death_row;
 
 // ----------------------------------------------------------------------------
@@ -46,6 +47,11 @@ Entity::~Entity()
   for (auto& pair : _components)
   {
     ComponentManager::Instance.ReleaseComponent(pair.second);
+  }
+
+  for (auto& pair : _actionSequences)
+  {
+    sequenceAllocator.Destroy(pair.second);
   }
 
   UnregisterNamehash();
@@ -237,13 +243,23 @@ void Entity::RemoveEvent(Component *component, event_id id)
 
 void Entity::RecalculateEventCounts()
 {
+  DEF_EVENT_ID(update);
+  DEF_EVENT_ID(draw);
+
   _eventCounts.clear();
 
+  // Every entity handles these events for themselves,
+  // regardless of what components they have.
+  _eventCounts[update] = 1;
+  _eventCounts[draw] = 1;
+
+  // Tally up the component handlers
   for (auto& event : _events)
   {
     _eventCounts[event.first] += event.second.size();
   }
 
+  // Tally the children's results
   for (auto child : children)
   {
     for (auto& count : child->_eventCounts)
@@ -252,6 +268,7 @@ void Entity::RecalculateEventCounts()
     }
   }
 
+  // Have the parent do the same
   if (Parent)
     Parent->RecalculateEventCounts();
 }
@@ -849,6 +866,25 @@ static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_action_group(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  return mrb_actions_wrap(mrb, &entity->GetActionGroup());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_action_sequence(mrb_state *mrb, mrb_value self)
+{
+  mrb_sym id;
+  mrb_get_args(mrb, "n", &id);
+
+  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  return mrb_actions_wrap(mrb, &entity->GetActionSequence(id));
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value rb_ent_zombify(mrb_state *mrb, mrb_value self)
 {
   auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
@@ -895,6 +931,10 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("local_event", rb_ent_local_event, ARGS_REQ(1) | ARGS_OPT(1));
   rclass.define_method("raise_event", rb_ent_raise_event, ARGS_REQ(1) | ARGS_OPT(1));
   rclass.define_method("sink_event", rb_ent_sink_event, ARGS_REQ(1) | ARGS_OPT(1));
+
+  // Actions
+  rclass.define_method("action_group", rb_ent_action_group, ARGS_NONE());
+  rclass.define_method("action_sequence", rb_ent_action_sequence, ARGS_REQ(1));
 
   // RAWR I'M A ZOMBIE!
   rclass.define_method("zombify!", rb_ent_zombify, ARGS_NONE());
@@ -1062,7 +1102,7 @@ void Entity::OnUpdate(float dt)
   _actionGroup.Update(dt);
   for (auto& pair : _actionSequences)
   {
-    pair.second.Update(dt);
+    pair.second->Update(dt);
   }
 }
 
@@ -1077,7 +1117,13 @@ ActionManager& Entity::GetActionGroup()
 
 ActionManager& Entity::GetActionSequence(mrb_sym id)
 {
-  return _actionSequences[id];
+  auto seq = _actionSequences[id];
+  if (!seq)
+  {
+    _actionSequences[id] = seq = sequenceAllocator.Create<ActionSequence>();
+  }
+
+  return *seq;
 }
 
 // ----------------------------------------------------------------------------

@@ -10,6 +10,13 @@
 
 // ----------------------------------------------------------------------------
 
+class ActionManager;
+
+mrb_value mrb_actions_wrap(mrb_state *mrb, ActionManager *manager);
+ActionManager *mrb_actions_unwrap(mrb_state *mrb, mrb_value manager);
+
+// ----------------------------------------------------------------------------
+
 class Action
 {
 public:

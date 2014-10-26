@@ -260,7 +260,7 @@ public:
 
 private:
   ActionGroup _actionGroup;
-  std::unordered_map<mrb_sym, ActionSequence> _actionSequences;
+  std::unordered_map<mrb_sym, ActionSequence *> _actionSequences;
 
   #pragma endregion
 

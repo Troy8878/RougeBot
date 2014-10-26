@@ -48,6 +48,7 @@ extern "C"
   void mrb_mruby_events_init(mrb_state *mrb);
   void mrb_mruby_http_init(mrb_state *mrb);
   void mrb_mruby_file_init(mrb_state *mrb);
+  void mrb_mruby_actions_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -107,6 +108,9 @@ extern "C"
     
     // Http is nice
     mrb_mruby_http_init(mrb);
+
+    // Gogo action sequences!
+    mrb_mruby_actions_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

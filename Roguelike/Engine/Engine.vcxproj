@@ -164,6 +164,7 @@
     <ClCompile Include="LevelDef.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelBuilder.cpp" />
+    <ClCompile Include="MrbActions.cpp" />
     <ClCompile Include="MrbHttpClient.cpp" />
     <ClCompile Include="MrbInput.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />

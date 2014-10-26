@@ -28,6 +28,9 @@ ActionGroup::~ActionGroup()
 
 void ActionGroup::Update(float dt)
 {
+  if (_actions.empty())
+    return;
+
   for (auto it = _actions.begin(); it != _actions.end();)
   {
     auto *action = *it;
@@ -70,9 +73,12 @@ ActionSequence::~ActionSequence()
 
 void ActionSequence::Update(float dt)
 {
+  if (_actions.empty())
+    return;
+
   auto *action = _actions.front();
 
-  if (!action->Update(dt))
+  if (action->Update(dt) == false)
   {
     delete action;
     _actions.pop();
@@ -102,7 +108,7 @@ DelayAction::DelayAction(double time)
 bool DelayAction::Update(float dt)
 {
   _time -= dt;
-  return _time <= 0;
+  return _time > 0;
 }
 
 #pragma endregion

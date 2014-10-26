@@ -95,4 +95,17 @@ class String
   end
 end
 
+module NativeEnumerable
+  def each(&block)
+    i = 0
+    while i < count
+      elem = self[i]
+      block.call elem
+      i += 1
+    end
+    self
+  end
+end
+
+
 

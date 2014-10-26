@@ -29,6 +29,8 @@ class AttackComponent < ComponentBase
   end
 
   def do_attack(target)
+    return if target == owner
+
     # We need to come up with a roll value. WHAT ARE WE ROLLING
     att = Random.die_roll 20 + @attack
     dmg = Random.int_range_inc *@damage

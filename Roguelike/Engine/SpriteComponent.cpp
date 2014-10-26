@@ -21,7 +21,7 @@ SpriteComponentFactory SpriteComponent::factory;
 
 // Constructor if several Textures/Sprites are needed (animated)
 SpriteComponent::SpriteComponent(Shader *shader, RenderSet *set)
-  : renderTarget(set), _TextureIndex(0)
+  : renderTarget(set), _TextureIndex(0), _Visible(true)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;

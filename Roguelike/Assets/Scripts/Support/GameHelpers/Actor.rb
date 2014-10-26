@@ -32,6 +32,7 @@ module Actor
   def actor_minimap_update
     @actor_map_item.x = actor_position.x
     @actor_map_item.y = actor_position.y
+    actor_minimap_refresh
   end
 
   def actor_minimap_refresh
@@ -40,6 +41,7 @@ module Actor
 
   def actor_minimap_delete
     @actor_minimap.map_component.delete_item @actor_map_item
+    actor_minimap_refresh
   end
 
   def actor_zombified(e)

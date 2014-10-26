@@ -63,8 +63,6 @@ class PlayerControllerComponent < ComponentBase
     if @logic_initialized
       Event.raise_event :logic_update, self.owner
     end
-    
-    actor_minimap_refresh
   end
 
   def on_move(e)

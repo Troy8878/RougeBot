@@ -100,7 +100,7 @@
       "name": "EnemySpawner",
       "components": {
         "BasicEnemySpawnerComponent": {
-          "num_enemies": 500
+          "num_enemies": 100
         }
       }
     },

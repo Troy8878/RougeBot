@@ -122,8 +122,9 @@ void MapComponent::OnUpdate(Events::EventMessage&)
 
 void MapComponent::OnMapUpdate(Events::EventMessage&)
 {
-  _drawing.Validate();
-  DrawMap();
+  _drawing.timestamp = DrawingResources::clock::from_time_t(0);
+  //_drawing.Validate();
+  //DrawMap();
 }
 
 // ----------------------------------------------------------------------------

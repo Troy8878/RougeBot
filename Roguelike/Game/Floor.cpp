@@ -12,12 +12,15 @@
 
 static std::random_device RNG;
 
-std::uniform_int_distribution<int> random(1, 100);
+#define MRB_HASH_GET(name) mrb_hash_get(mrb, options, mrb_symbol_value(mrb_intern_lit(mrb, name)))
 
+#pragma region Old Generator
+
+std::uniform_int_distribution<int> cave_random(1, 100);
 
 // ----------------------------------------------------------------------------
 
-void Floor::InitFloor(void)
+void CaveGenerator::InitFloor(void)
 {
   Fills = 1;
   OldMap.clear();
@@ -35,7 +38,7 @@ void Floor::InitFloor(void)
 
       Map[x][y] = 0;
 
-      if (random(RNG) < AliveChance)
+      if (cave_random(RNG) < AliveChance)
       {
         OldMap[x][y] = 1;
       }
@@ -50,7 +53,7 @@ void Floor::InitFloor(void)
 
 // ----------------------------------------------------------------------------
 
-void Floor::PrintFloor(void)
+void CaveGenerator::PrintFloor(void)
 {
   for (int x = 0; x < Width; ++x)
   {
@@ -73,7 +76,7 @@ void Floor::PrintFloor(void)
 
 // ----------------------------------------------------------------------------
 
-void Floor::PrintFlood(void)
+void CaveGenerator::PrintFlood(void)
 {
   for (int x = 0; x < Width; ++x)
   {
@@ -93,7 +96,7 @@ void Floor::PrintFlood(void)
 
 // ----------------------------------------------------------------------------
 
-int Floor::CountNeighbors(int x, int y)
+int CaveGenerator::CountNeighbors(int x, int y)
 {
 
   int alive = 0;
@@ -123,7 +126,7 @@ int Floor::CountNeighbors(int x, int y)
 
 // ----------------------------------------------------------------------------
 
-void Floor::DoStep()
+void CaveGenerator::DoStep()
 {
 
   for (int x = 0; x < Width; ++x)
@@ -165,7 +168,7 @@ void Floor::DoStep()
 
 // ----------------------------------------------------------------------------
 
-void Floor::FloodFill(int x, int y, int target, short replacement)
+void CaveGenerator::FloodFill(int x, int y, int target, short replacement)
 {
   if (x >= Width && y >= Height && y < 0 && x < 0)
   {
@@ -203,7 +206,7 @@ void Floor::FloodFill(int x, int y, int target, short replacement)
 
 // ----------------------------------------------------------------------------
 
-void Floor::RemoveAll(int target)
+void CaveGenerator::RemoveAll(int target)
 {
   for (int i = 0; i < Width; ++i)
   {
@@ -219,7 +222,7 @@ void Floor::RemoveAll(int target)
 
 // ----------------------------------------------------------------------------
 
-void Floor::CarveFloor(void)
+void CaveGenerator::CarveFloor(void)
 {
   for (int i = 0; i < Width; ++i)
   {
@@ -270,7 +273,7 @@ void Floor::CarveFloor(void)
 
 // ----------------------------------------------------------------------------
 
-void Floor::PlaceItem(void)
+void CaveGenerator::PlaceItem(void)
 {
   for (int x = 0; x < Width; ++x)
   {
@@ -290,7 +293,7 @@ void Floor::PlaceItem(void)
 
 // ----------------------------------------------------------------------------
 
-void Floor::ChoosePlayerStart(void)
+void CaveGenerator::ChoosePlayerStart(void)
 { 
   std::uniform_int_distribution<int> randomx(0, Width - 1); 
   std::uniform_int_distribution<int> randomy(0, Height - 1); 
@@ -305,7 +308,7 @@ void Floor::ChoosePlayerStart(void)
 
 // ----------------------------------------------------------------------------
 
-void Floor::GenerateFloor(void)
+void CaveGenerator::GenerateFloor(void)
 {
 
   for (int i = 0; i < Steps; ++i)
@@ -321,47 +324,14 @@ void Floor::GenerateFloor(void)
 
 // ----------------------------------------------------------------------------
 
-#define MRB_HASH_GET(name) mrb_hash_get(mrb, options, mrb_symbol_value(mrb_intern_lit(mrb, name)))
+#pragma endregion
 
 static mrb_value mrb_floor_generate(mrb_state *mrb, mrb_value)
 {
-  mrb_value options = mrb_nil_value();
-  mrb_get_args(mrb, "|H", &options);
+  mrb_value options;
+  mrb_get_args(mrb, "H", &options);
   
-  if (mrb_nil_p(options))
-    options = mrb_hash_new(mrb);
-
-  Floor f;
-
-  mrb_value rwidth = MRB_HASH_GET("width");
-  mrb_value rheight = MRB_HASH_GET("height");
-  if (mrb_fixnum_p(rwidth))
-    f.Width = (int) mrb_fixnum(rwidth);
-  if (mrb_fixnum_p(rheight))
-    f.Height = (int) mrb_fixnum(rheight);
-
-  f.InitFloor();
-  f.GenerateFloor();
-
-  // Push the floor into a 2D ruby array
-  mrb_value rf = mrb_ary_new(mrb);
-  for (size_t y = 0; y < f.Height; ++y)
-  {
-    mrb_value row = mrb_ary_new(mrb);
-    for (size_t x = 0; x < f.Width; ++x)
-    {
-      mrb_ary_push(mrb, row, mrb_fixnum_value(f.Map[x][y]));
-    }
-    mrb_ary_push(mrb, rf, row);
-  }
-
-  // Return values
-  mrb_value items = mrb_ary_new(mrb);
-  mrb_ary_push(mrb, items, rf);
-  mrb_ary_push(mrb, items, mrb_fixnum_value(f.PlayerX));
-  mrb_ary_push(mrb, items, mrb_fixnum_value(f.PlayerY));
-
-  return items;
+  return RoomGenerator().Generate(mrb, options);
 }
 
 // ----------------------------------------------------------------------------

@@ -43,9 +43,7 @@ class FloorGeneratorComponent < ComponentBase
   def generate_room
     @floor = Map.new
     @floor.generate(
-      width: ROOM_SIZE, height: ROOM_SIZE, 
-      birth: 1, death: 3,
-      steps: rand(:int, 10, 20)
+      width: ROOM_SIZE, height: ROOM_SIZE
     )
 
     build_model do |builder|

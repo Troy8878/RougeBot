@@ -5,6 +5,7 @@
  *********************************/
 
 #include "Common.h"
+#include "GamePropertyInterop\PropertyViewer.h"
 
 static void CreateConsole()
 {
@@ -20,8 +21,7 @@ static void CreateConsole()
 Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 extern "C" int IsAvxSupported();
-
-INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
+extern "C" void GameRunGame()
 {
   performance::register_guard glperf("The Game");
   
@@ -30,9 +30,16 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
+  //OpenPropertyViewer();
+
   game.Run();
 
   // I don't even know, but this stops it from crashing at exit
   Sleep(100);
+}
+
+INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
+{
+  GameRunGame();
   return 0;
 }

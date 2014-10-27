@@ -18,7 +18,7 @@ module Enemy
 
     # If we didn't find one randomly, screw it and search the level
     floor.each do |row|
-      floor.each do |tile|
+      row.each do |tile|
         return tile unless tile.solid? || tile.actor?
       end
     end

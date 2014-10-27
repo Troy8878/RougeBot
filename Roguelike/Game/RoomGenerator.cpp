@@ -9,11 +9,56 @@
 
 // ----------------------------------------------------------------------------
 
+#define EMPTY_VALUE 0
+#define WALL_VALUE 1
+#define UNCHECKED_VALUE -2
+#define INVALID_VALUE -1
+
 static std::random_device rng;
 static mrb_int rand_int(mrb_int min, mrb_int max)
 {
   std::uniform_int_distribution<mrb_int> dist(min, max);
   return dist(rng);
+}
+
+// ----------------------------------------------------------------------------
+
+auto RoomGenerator::GEN_RECT::RandomSubrect(double) -> GEN_RECT
+{
+  size_t height = bottom - top;
+  size_t width = right - left;
+  size_t rand_width, rand_height;
+
+  rand_width = (size_t) rand_int((mrb_int)(width / 4.0f), (mrb_int)(width / 1.5));
+  rand_height = (size_t) rand_int((mrb_int)(height / 4.0f), (mrb_int)(height / 1.5));
+
+  std::uniform_int_distribution<size_t> xdist(0, width - 1 - rand_width);
+  std::uniform_int_distribution<size_t> ydist(0, height - 1 - rand_height);
+
+  size_t x = left + xdist(rng);
+  size_t y = top + ydist(rng);
+
+  GEN_RECT new_rect;
+  new_rect.left = x;
+  new_rect.right = x + rand_width;
+  new_rect.top = y;
+  new_rect.bottom = y + rand_height;
+
+  return new_rect;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename TileAtFunc>
+void RoomGenerator::GEN_RECT::CarveMap(TileAtFunc&& TileAt)
+{
+  for (size_t y = top; y <= bottom; ++y)
+  {
+    for (size_t x = left; x <= right; ++x)
+    {
+      TileAt(x, y) = UNCHECKED_VALUE;
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -65,7 +110,7 @@ mrb_value RoomGenerator::Generate(mrb_state *mrb, mrb_value options)
   else
   {
     WidthMin = (mrb_int) (log(Width) * 2);
-    WidthMax = (mrb_int) (log2(Width) * 2);
+    WidthMax = (mrb_int) (log2(Width) * 3);
   }
   
   // Get the range for room heights (or default it)
@@ -83,7 +128,7 @@ mrb_value RoomGenerator::Generate(mrb_state *mrb, mrb_value options)
   else
   {
     HeightMin = (mrb_int) (log(Height) * 2);
-    HeightMax = (mrb_int) (log2(Height) * 2);
+    HeightMax = (mrb_int) (log2(Height) * 2.5f);
   }
 
   #pragma endregion
@@ -96,7 +141,7 @@ mrb_value RoomGenerator::Generate(mrb_state *mrb, mrb_value options)
   for (auto& tile : array_iterator(Map, MapTiles))
   {
     // Start by filling in the map
-    tile = 1;
+    tile = WALL_VALUE;
   }
 
   MakeMap();
@@ -122,6 +167,8 @@ mrb_value RoomGenerator::Generate(mrb_state *mrb, mrb_value options)
   mrb_ary_push(mrb, return_params, map);
   mrb_ary_push(mrb, return_params, mrb_fixnum_value(PlayerX));
   mrb_ary_push(mrb, return_params, mrb_fixnum_value(PlayerY));
+
+  delete[] Map;
 
   return return_params;
 
@@ -157,9 +204,9 @@ void RoomGenerator::MakeMap()
   }
 
   MakeVertHalls();
-  
-  RandomizeItems();
   RandomizePlayer();
+  FillUnaccessable();
+  RandomizeItems();
 }
 
 // ----------------------------------------------------------------------------
@@ -191,13 +238,21 @@ void RoomGenerator::MakeRow(const GEN_RECT rect)
 
 void RoomGenerator::MakeRoom(GEN_RECT rect)
 {
-  // For now, just carve out an inner area
-  for (size_t y = rect.top + 2; y < rect.bottom - 2; ++y)
+  GEN_RECT inner_rect = rect;
+  inner_rect.left++;
+  inner_rect.right--;
+  inner_rect.top++;
+  inner_rect.bottom--;
+
+  mrb_int num_rects = rand_int(2, 4);
+  double area = 0.5 / num_rects;
+  for (mrb_int i = 0; i < num_rects; ++i)
   {
-    for (size_t x = rect.left + 2; x < rect.right - 2; ++x)
+    auto subrect = inner_rect.RandomSubrect(area);
+    subrect.CarveMap([this](size_t x, size_t y) -> mrb_int&
     {
-      TileAt(x, y) = 0;
-    }
+      return this->TileAt(x, y);
+    });
   }
 }
 
@@ -234,14 +289,19 @@ bool RoomGenerator::MakeHorizHall(size_t y)
 {
   size_t width = size_t(Width);
 
+  auto check_tile = [this, y](size_t x) -> bool
+  {
+    return TileAt(x, y) == WALL_VALUE && TileAt(x, y + 1) == WALL_VALUE;
+  };
+
   size_t left = 0;
-  while (left < width && TileAt(left, y) == 1)
+  while (left < width && check_tile(left) == 1)
     left++;
   if (left == width)
     return false;
 
   size_t right = width - 1;
-  while (right > 0 && TileAt(right, y) == 1)
+  while (right > 0 && check_tile(right) == 1)
     right--;
   if (right == 0)
     return false;
@@ -249,7 +309,8 @@ bool RoomGenerator::MakeHorizHall(size_t y)
   // Carve out the hallway. May add some variations later on
   for (size_t x = left; x <= right; ++x)
   {
-    TileAt(x, y) = 0;
+    TileAt(x, y) = UNCHECKED_VALUE;
+    TileAt(x, y + 1) = UNCHECKED_VALUE;
   }
 
   return true;
@@ -262,13 +323,13 @@ bool RoomGenerator::MakeVertHall(size_t x)
   size_t height = size_t(Height);
 
   size_t top = 0;
-  while (top < height && TileAt(x, top) == 1)
+  while (top < height && TileAt(x, top) == WALL_VALUE)
     top++;
   if (top == height)
     return false;
 
   size_t bottom = height - 1;
-  while (bottom > 0 && TileAt(x, bottom) == 1)
+  while (bottom > 0 && TileAt(x, bottom) == WALL_VALUE)
     bottom--;
   if (bottom == 0)
     return false;
@@ -276,7 +337,9 @@ bool RoomGenerator::MakeVertHall(size_t x)
   // Carve out the hallway
   for (size_t y = top; y <= bottom; ++y)
   {
-    TileAt(x, y) = 0;
+    TileAt(x, y) = UNCHECKED_VALUE;
+
+    // make random little bubbles
   }
 
   return true;
@@ -294,7 +357,7 @@ void RoomGenerator::RandomizePlayer()
     PlayerX = rand_int(0, Width - 1);
     PlayerY = rand_int(0, Height - 1);
 
-  } while (TileAt(PlayerX, Height - 1 - PlayerY) != 0 && ++i < max_jumps);
+  } while (TileAt(PlayerX, Height - 1 - PlayerY) != UNCHECKED_VALUE && ++i < max_jumps);
 
   // Find a position manually if jumping failed
   if (i == max_jumps)
@@ -302,7 +365,7 @@ void RoomGenerator::RandomizePlayer()
     size_t i;
     for (i = 0; i < MapTiles; ++i)
     {
-      if (Map[i] == 0)
+      if (Map[i] == UNCHECKED_VALUE)
       {
         PlayerX = i % Width;
         PlayerY = i / Width;
@@ -313,6 +376,45 @@ void RoomGenerator::RandomizePlayer()
     // Dafuq, must be a broken map;
     if (i == MapTiles)
       MapBroken = true;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename Func>
+static void FloodFill(mrb_int x, mrb_int y, mrb_int oldv, mrb_int newv, Func&& TileAt)
+{
+  auto& pixel = TileAt(x, y);
+  if (pixel == oldv)
+  {
+    pixel = newv;
+    FloodFill(x + 1, y, oldv, newv, TileAt);
+    FloodFill(x - 1, y, oldv, newv, TileAt);
+    FloodFill(x, y + 1, oldv, newv, TileAt);
+    FloodFill(x, y - 1, oldv, newv, TileAt);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void RoomGenerator::FillUnaccessable()
+{
+  mrb_int deadpixel = INVALID_VALUE;
+  FloodFill(PlayerX, Height - 1 - PlayerY, 
+            UNCHECKED_VALUE, EMPTY_VALUE,
+  [&](mrb_int x, mrb_int y) -> mrb_int&
+  {
+    if (x < 0 || y < 0 || x >= Width || y >= Height)
+      return deadpixel;
+
+    return TileAt(x, y);
+  });
+
+  // Purge inaccessible tiles
+  for (auto& tile : array_iterator(Map, MapTiles))
+  {
+    if (tile == UNCHECKED_VALUE)
+      tile = WALL_VALUE;
   }
 }
 

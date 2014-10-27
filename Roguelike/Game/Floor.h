@@ -63,6 +63,14 @@ private:
   struct GEN_RECT
   {
     size_t left, top, right, bottom;
+    PROPERTY(get = _Area) size_t area;
+
+    GEN_RECT RandomSubrect(double approxarea);
+
+    template <typename TileAtFunc>
+    void CarveMap(TileAtFunc&& TileAt);
+
+    size_t _Area() const { return (right - left) * (bottom - top); }
   };
 
   mrb_int Width;
@@ -93,6 +101,8 @@ private:
 
   bool MakeHorizHall(size_t y);
   bool MakeVertHall(size_t x);
+
+  void FillUnaccessable();
 
   void RandomizePlayer();
   void RandomizeItems();

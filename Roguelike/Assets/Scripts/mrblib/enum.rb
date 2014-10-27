@@ -409,7 +409,7 @@ module Enumerable
   end
 
   def combinations
-    raise "Block missing" unless block_given?
+    return to_enum :combinations unless block_given?
 
     self.each do |y|
       self.each do |x|

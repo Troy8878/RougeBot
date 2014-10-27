@@ -905,7 +905,6 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   rclass = ruby_engine::global_engine->define_class("GameEntity");
 
-  // TODO: Create class
   rclass.define_method("initialize", rb_ent_initialize, ARGS_REQ(1));
   rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
 

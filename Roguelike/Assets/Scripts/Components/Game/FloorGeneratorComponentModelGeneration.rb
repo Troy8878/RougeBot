@@ -14,7 +14,7 @@ class FloorGeneratorComponent < ComponentBase
   EMPTY_VALUE = 0
   WALL_VALUE = 1
 
-  ROOM_SIZE = 50
+  ROOM_SIZE = 75
   C_L = -0.5
   C_R = 0.5
   W_T = 0

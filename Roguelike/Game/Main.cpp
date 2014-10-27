@@ -5,7 +5,6 @@
  *********************************/
 
 #include "Common.h"
-#include "GamePropertyInterop\PropertyViewer.h"
 
 static void CreateConsole()
 {

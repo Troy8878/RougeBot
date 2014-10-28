@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include <cpprest/http_server.h>
-
 // ----------------------------------------------------------------------------
 
 class PropertyServer
@@ -17,12 +15,7 @@ public:
   ~PropertyServer();
 
 private:
-  web::http::experimental::listener::http_listener listener;
 
-  void handle_get(web::http::http_request request);
-  void handle_put(web::http::http_request request);
-
-  void entity_get(web::http::http_request request);
 };
 
 // ----------------------------------------------------------------------------

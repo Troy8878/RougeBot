@@ -100,6 +100,8 @@ public:
 #endif
   }
 
+  PROPERTY(get = _GetComponents) const std::unordered_map<std::string, Component *>& Components;
+
   #pragma endregion
 
   #pragma region Events
@@ -228,6 +230,12 @@ protected:
   std::unordered_map<event_id, event_registrations> _events;
 
   std::unordered_map<event_id, size_t> _eventCounts;
+
+public:
+  auto _GetComponents() -> const std::remove_reference<decltype(_components)>::type&
+  {
+    return _components;
+  }
 
   #pragma endregion
 

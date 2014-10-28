@@ -5,6 +5,7 @@
  *********************************/
 
 #include "Common.h"
+#include "PropertyAPI/PropertyServer.h"
 
 static void CreateConsole()
 {
@@ -29,11 +30,8 @@ extern "C" void GameRunGame()
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
-  //OpenPropertyViewer();
-
   game.Run();
 
-  // I don't even know, but this stops it from crashing at exit
   Sleep(100);
 }
 

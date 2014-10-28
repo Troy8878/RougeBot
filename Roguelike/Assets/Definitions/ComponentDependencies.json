@@ -1,5 +1,4 @@
 {
-  "TransformComponent": [],
   "SpriteComponent": ["TransformComponent", "TextureComponent"],
   "SpinnyThingComponent": ["TransformComponent"],
   "AnimatedComponent": ["SpriteComponent"],

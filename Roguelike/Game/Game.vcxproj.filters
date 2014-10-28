@@ -28,6 +28,7 @@
     <None Include="..\shaders\ShaderCommons.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\shaders\BasicPixelShader.hlsl">

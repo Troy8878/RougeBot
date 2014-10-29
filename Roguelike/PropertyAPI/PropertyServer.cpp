@@ -12,11 +12,19 @@
 
 // ----------------------------------------------------------------------------
 
+#define STATIC_HANDLER_URL L"http://localhost:5431/game/"
+#define ENTITY_HANDLER_URL (STATIC_HANDLER_URL L"api/entity")
+#define GLOBAL_HANDLER_URL (STATIC_HANDLER_URL L"api/game")
+
+// ----------------------------------------------------------------------------
+
 struct PropertyServerInternal
 {
-  HANDLE staticQueue;
-  HANDLE entityQueue;
-  HANDLE globalQueue;
+  HANDLE staticQueue = nullptr;
+  HANDLE entityQueue = nullptr;
+  HANDLE globalQueue = nullptr;
+
+  COMPLEX_TYPE_IN_PRIMITIVE(std::thread, requestThread);
 };
 
 // ----------------------------------------------------------------------------
@@ -32,23 +40,46 @@ static inline void CheckHTTPResult(DWORD res)
 static void InitializeServer(PropertyServerInternal& data);
 static void CloseServer(PropertyServerInternal& data);
 
+// ----------------------------------------------------------------------------
+
 static void RegisterStaticHandler(PropertyServerInternal& data);
 static void RegisterEntityHandler(PropertyServerInternal& data);
 static void RegisterGlobalHandler(PropertyServerInternal& data);
+
+static void CloseStaticHandler(PropertyServerInternal& data);
+static void CloseEntityHandler(PropertyServerInternal& data);
+static void CloseGlobalHandler(PropertyServerInternal& data);
+
+// ----------------------------------------------------------------------------
+
+static void RecieveRequests(PropertyServerInternal& data);
 
 // ----------------------------------------------------------------------------
 
 PropertyServer::PropertyServer()
   : data(new PropertyServerInternal)
 {
-  InitializeServer(*data);
+  try
+  {
+    InitializeServer(*data);
+  }
+  catch (...)
+  {
+    CloseServer(*data);
+    delete data;
+    data = nullptr;
+    throw;
+  }
 }
 
 // ----------------------------------------------------------------------------
 
 PropertyServer::~PropertyServer()
 {
-  CloseServer(*data);
+  data->requestThread.~thread();
+
+  if (data)
+    CloseServer(*data);
   delete data;
 }
 
@@ -69,13 +100,18 @@ static void InitializeServer(PropertyServerInternal& data)
   RegisterStaticHandler(data);
   RegisterEntityHandler(data);
   RegisterGlobalHandler(data);
+
+  new (&data.requestThread) std::thread(std::bind(RecieveRequests, data));
+  data.requestThread.detach();
 }
 
 // ----------------------------------------------------------------------------
 
 static void CloseServer(PropertyServerInternal& data)
 {
-  (data);
+  CloseGlobalHandler(data);
+  CloseEntityHandler(data);
+  CloseStaticHandler(data);
 }
 
 // ----------------------------------------------------------------------------
@@ -87,8 +123,21 @@ static void RegisterStaticHandler(PropertyServerInternal& data)
   res = HttpCreateHttpHandle(&data.staticQueue, 0);
   CheckHTTPResult(res);
 
-  res = HttpAddUrl(data.staticQueue, L"http://localhost:7523/", nullptr);
+  res = HttpAddUrl(data.staticQueue, STATIC_HANDLER_URL, nullptr);
   CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseStaticHandler(PropertyServerInternal& data)
+{
+  if (!data.staticQueue)
+    return;
+
+  HttpRemoveUrl(data.staticQueue, STATIC_HANDLER_URL);
+  CloseHandle(data.staticQueue);
+
+  data.staticQueue = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -100,8 +149,21 @@ static void RegisterEntityHandler(PropertyServerInternal& data)
   res = HttpCreateHttpHandle(&data.entityQueue, 0);
   CheckHTTPResult(res);
 
-  res = HttpAddUrl(data.entityQueue, L"http://localhost:7523/api/entity/", nullptr);
+  res = HttpAddUrl(data.entityQueue, ENTITY_HANDLER_URL, nullptr);
   CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseEntityHandler(PropertyServerInternal& data)
+{
+  if (!data.entityQueue)
+    return;
+
+  HttpRemoveUrl(data.entityQueue, ENTITY_HANDLER_URL);
+  CloseHandle(data.entityQueue);
+
+  data.entityQueue = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -113,8 +175,28 @@ static void RegisterGlobalHandler(PropertyServerInternal& data)
   res = HttpCreateHttpHandle(&data.globalQueue, 0);
   CheckHTTPResult(res);
 
-  res = HttpAddUrl(data.globalQueue, L"http://localhost:7523/api/game/", nullptr);
+  res = HttpAddUrl(data.globalQueue, GLOBAL_HANDLER_URL, nullptr);
   CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseGlobalHandler(PropertyServerInternal& data)
+{
+  if (!data.globalQueue)
+    return;
+
+  HttpRemoveUrl(data.globalQueue, GLOBAL_HANDLER_URL);
+  CloseHandle(data.globalQueue);
+
+  data.globalQueue = nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+static void RecieveRequests(PropertyServerInternal& data)
+{
+  (data);
 }
 
 // ----------------------------------------------------------------------------

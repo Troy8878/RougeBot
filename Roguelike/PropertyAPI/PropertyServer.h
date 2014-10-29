@@ -24,7 +24,7 @@ public:
   NO_COPY_CONSTRUCTOR(PropertyServer);
 
 private:
-  PropertyServerInternal * const data;
+  PropertyServerInternal * data;
 };
 
 // ----------------------------------------------------------------------------

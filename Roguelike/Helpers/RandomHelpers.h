@@ -449,8 +449,10 @@ void variadic_push_array(T array[], size_t index,
 
 // ----------------------------------------------------------------------------
 
-#define SYNC_PROPERTY(type, name)
-  
+#define COMPLEX_TYPE_IN_PRIMITIVE(type, name) \
+  __declspec(align(8)) byte __data_##name [sizeof(type)]; \
+  inline type & __DataGet_##name () { return *reinterpret_cast<type *>(__data_##name); } \
+  PROPERTY(get = __DataGet_##name) type & name
 
 // ----------------------------------------------------------------------------
 

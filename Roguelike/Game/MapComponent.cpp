@@ -372,7 +372,7 @@ void MapItem::Release()
 static void mrb_mapcomponent_init(mrb_state *mrb)
 {
   // Initialize the MapComponent data type.
-  mrb_mapcomponent_data_type.dfree = mrb_mapcomponent_free;
+  mrb_mapcomponent_data_type.dfree = ruby::data_nop_delete;
   mrb_mapcomponent_data_type.struct_name = "MapComponent";
 
   // Initialize the MapItem data type.

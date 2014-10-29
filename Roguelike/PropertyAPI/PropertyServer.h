@@ -6,6 +6,12 @@
 
 #pragma once
 
+#include "Engine/Common.h"
+
+// ----------------------------------------------------------------------------
+
+struct PropertyServerInternal;
+
 // ----------------------------------------------------------------------------
 
 class PropertyServer
@@ -14,8 +20,11 @@ public:
   PropertyServer();
   ~PropertyServer();
 
-private:
+  NO_ASSIGNMENT_OPERATOR(PropertyServer);
+  NO_COPY_CONSTRUCTOR(PropertyServer);
 
+private:
+  PropertyServerInternal * const data;
 };
 
 // ----------------------------------------------------------------------------

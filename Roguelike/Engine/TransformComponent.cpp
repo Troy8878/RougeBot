@@ -1,6 +1,6 @@
 /*********************************
  * TransformComponent.cpp
- * Jake Robsahm
+ * Jake Robsahm, Enrique Rodriguez
  * Created 2014/08/22
  *********************************/
 
@@ -22,6 +22,12 @@ TransformComponent::TransformComponent(
     Scale(scale)
 {
 }
+
+// ----------------------------------------------------------------------------
+
+static void mrb_transform_free(mrb_state *, void *) {}
+
+static mrb_data_type mrb_transformcomp_data_type;
 
 // ----------------------------------------------------------------------------
 
@@ -156,8 +162,8 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 
 static TransformComponent *get_rb_tc_wrapper(mrb_state *mrb, mrb_value self)
 {
-  auto tc_wrapper = ruby::read_native_ptr<TransformComponent>(mrb, self);
-  return tc_wrapper;
+  //auto tc_wrapper = ruby::read_native_ptr<TransformComponent>(mrb, self);
+  return (TransformComponent *)mrb_data_get_ptr(mrb, self, &mrb_transformcomp_data_type);
 }
 
 static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)
@@ -235,38 +241,79 @@ static mrb_value rb_transform_set_static(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static void mrb_transformcomponent_init(mrb_state *mrb, RClass *module, RClass *base)
+{
+  mrb_transformcomp_data_type.dfree = mrb_transform_free;
+  mrb_transformcomp_data_type.struct_name = "TransformComponent";
+
+  auto transform = mrb_define_class_under(mrb, module, "TransformComponent", base);
+
+  mrb_define_method(mrb, transform, "initialize", rb_transform_initialize, ARGS_REQ(1));
+
+  mrb_define_method(mrb, transform, "position", rb_transform_position, ARGS_NONE());
+  mrb_define_method(mrb, transform, "position=", rb_transform_position_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, transform, "rotation", rb_transform_rotation, ARGS_NONE());
+  mrb_define_method(mrb, transform, "rotation=", rb_transform_rotation_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, transform, "scale", rb_transform_scale, ARGS_NONE());
+  mrb_define_method(mrb, transform, "scale=", rb_transform_scale_set, ARGS_REQ(1));
+
+  mrb_define_method(mrb, transform, "static", rb_transform_get_static, ARGS_NONE());
+  mrb_define_method(mrb, transform, "static=", rb_transform_set_static, ARGS_REQ(1));
+
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_transformcomponent_new(mrb_state *mrb, TransformComponent *comp)
+{
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_class_get_under(mrb, rmod, "TransformComponent");
+  
+  auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_transformcomp_data_type);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value TransformComponent::GetRubyWrapper()
 {
+  RUN_ONCE(mrb_transformcomponent_init(*mrb_inst, GetComponentRModule(), GetComponentRClass()));
+  return mrb_transformcomponent_new(*mrb_inst, this);
+
+
+  /*
   THREAD_EXCLUSIVE_SCOPE;
 
-  static bool init = false;
+
   static ruby::ruby_class comp_class;
-  
-  if (!init)
+
+
   {
-    auto comp_mod = GetComponentRModule();
-    auto comp_base = GetComponentRClass();
-    comp_class = comp_mod.define_class("TransformComponent", comp_base);
+  auto comp_mod = GetComponentRModule();
+  comp_class = comp_mod.define_class("TransformComponent", GetComponentRClass());
 
-    comp_class.define_method("initialize", rb_transform_initialize, ARGS_REQ(1));
+  mrb_define_method(mrb, transform, "initialize", rb_transform_initialize, ARGS_REQ(1));
 
-    comp_class.define_method("position", rb_transform_position, ARGS_NONE());
-    comp_class.define_method("position=", rb_transform_position_set, ARGS_REQ(1));
-    
-    comp_class.define_method("rotation", rb_transform_rotation, ARGS_NONE());
-    comp_class.define_method("rotation=", rb_transform_rotation_set, ARGS_REQ(1));
+  mrb_define_method(mrb, transform, "position", rb_transform_position, ARGS_NONE());
+  mrb_define_method(mrb, transform, "position=", rb_transform_position_set, ARGS_REQ(1));
 
-    comp_class.define_method("scale", rb_transform_scale, ARGS_NONE());
-    comp_class.define_method("scale=", rb_transform_scale_set, ARGS_REQ(1));
+  mrb_define_method(mrb, transform, "rotation", rb_transform_rotation, ARGS_NONE());
+  mrb_define_method(mrb, transform, "rotation=", rb_transform_rotation_set, ARGS_REQ(1));
 
-    comp_class.define_method("static", rb_transform_get_static, ARGS_NONE());
-    comp_class.define_method("static=", rb_transform_set_static, ARGS_REQ(1));
+  mrb_define_method(mrb, transform, "scale", rb_transform_scale, ARGS_NONE());
+  mrb_define_method(mrb, transform, "scale=", rb_transform_scale_set, ARGS_REQ(1));
 
-    init = true;
+  mrb_define_method(mrb, transform, "static", rb_transform_get_static, ARGS_NONE());
+  mrb_define_method(mrb, transform, "static=", rb_transform_set_static, ARGS_REQ(1));
+
+
   }
 
   auto compwrap = mrb_inst->wrap_native_ptr(this);
   return comp_class.new_inst(compwrap).silent_reset();
+  */
 }
 
 // ----------------------------------------------------------------------------

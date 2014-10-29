@@ -1,6 +1,6 @@
 /*********************************
  * SpriteComponent.cpp
- * Jake Robsahm
+ * Jake Robsahm, Leonardo Saikali
  * Created 2014/08/19
  *********************************/
 
@@ -110,6 +110,67 @@ Component *SpriteComponentFactory::CreateObject(
 
 // ----------------------------------------------------------------------------
 
+
+static RClass *cbase;
+
+static mrb_data_type mrb_spritecomp_data_type;
+
+static mrb_value mrb_spritecomp_new(mrb_state *mrb, SpriteComponent *comp);
+static void mrb_spritecomp_free(mrb_state *, void *) {}
+
+static mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_get_visible(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self);
+
+
+// ----------------------------------------------------------------------------
+
+static void mrb_spritecomp_gem_init(mrb_state *mrb)
+{
+  mrb_spritecomp_data_type.dfree = mrb_spritecomp_free;
+  mrb_spritecomp_data_type.struct_name = "SpriteComponent";
+
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_define_class_under(mrb, rmod, "SpriteComponent", cbase);
+
+  mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
+
+  mrb_define_method(mrb, rclass, "initialize", rb_sprite_initialize, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "texture_index", rb_sprite_get_textureindex, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "texture_index=", rb_sprite_set_textureindex, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "texture_count", rb_sprite_get_texturecount, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "visible", rb_sprite_get_visible, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "visible=", rb_sprite_set_visible, ARGS_REQ(1));
+}
+
+
+// ----------------------------------------------------------------------------
+
+mrb_value SpriteComponent::GetRubyWrapper()
+{
+  
+  RUN_ONCE(cbase = Component::GetComponentRClass(),
+    mrb_spritecomp_gem_init(*mrb_inst));
+
+  return mrb_spritecomp_new(*mrb_inst, this);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_spritecomp_new(mrb_state *mrb, SpriteComponent *comp)
+{
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_class_get_under(mrb, rmod, "SpriteComponent");
+
+  auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_spritecomp_data_type);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
 // Constrctor for ruby Components::SpriteComponent
 mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 {
@@ -125,7 +186,7 @@ mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 
 SpriteComponent *rb_help_getSpriteComponent(mrb_state *mrb, mrb_value self)
 {
-  return ruby::read_native_ptr<SpriteComponent>(mrb, self);
+  return (SpriteComponent *)mrb_data_get_ptr(mrb, self, &mrb_spritecomp_data_type);
 }
 
 // ----------------------------------------------------------------------------
@@ -133,7 +194,7 @@ SpriteComponent *rb_help_getSpriteComponent(mrb_state *mrb, mrb_value self)
 mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self)
 {
   auto sprite = rb_help_getSpriteComponent(mrb, self);
-  
+
   return mrb_fixnum_value(sprite->TextureIndex);
 }
 
@@ -142,7 +203,7 @@ mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self)
 mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self)
 {
   auto sprite = rb_help_getSpriteComponent(mrb, self);
-  
+
   mrb_int newIndex;
   mrb_get_args(mrb, "i", &newIndex);
 
@@ -155,7 +216,7 @@ mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self)
 mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
 {
   auto sprite = rb_help_getSpriteComponent(mrb, self);
-  
+
   return mrb_fixnum_value(sprite->TextureCount);
 }
 
@@ -181,30 +242,3 @@ mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self)
 }
 
 // ----------------------------------------------------------------------------
-
-mrb_value SpriteComponent::GetRubyWrapper()
-{
-  THREAD_EXCLUSIVE_SCOPE;
-
-  static bool initialized = false;
-  static ruby::ruby_class component;
-
-  if (!initialized)
-  {
-    auto module = GetComponentRModule();
-    auto base_class = GetComponentRClass();
-    component = module.define_class("SpriteComponent", base_class);
-
-    component.define_method("initialize", rb_sprite_initialize, ARGS_REQ(1));
-    component.define_method("texture_index", rb_sprite_get_textureindex, ARGS_NONE());
-    component.define_method("texture_index=", rb_sprite_set_textureindex, ARGS_REQ(1));
-    component.define_method("texture_count", rb_sprite_get_texturecount, ARGS_NONE());
-    component.define_method("visible", rb_sprite_get_visible, ARGS_NONE());
-    component.define_method("visible=", rb_sprite_set_visible, ARGS_REQ(1));
-
-    initialized = true;
-  }
-
-  auto compwrap = ruby::ruby_engine::global_engine->wrap_native_ptr(this);
-  return component.new_inst(compwrap).silent_reset();
-}

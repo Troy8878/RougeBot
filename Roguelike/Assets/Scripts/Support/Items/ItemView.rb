@@ -5,46 +5,51 @@
 #######################
 
 class ItemView
-  attr_reader :texture, :color, :decorations
+  attr_reader :texture, :color, :decorations, :owner
 
-  def initialize(data)
+  def initialize(data, owner = nil)
+    @owner = owner
+
     if data.nil?
       # Set defaults
       @texture = nil
       @color = "White"
       @decorations = []
-
     elsif data.is_a? ItemView
       # Copy values
+      @owner = data.owner
       @texture = data.texture
       @color = data.color
       @decorations = data.decorations.map do |dec|
         dec.dup
       end
-
     else
       # Load from JSON
       @texture = data["texture"]
       @color = data.fetch("color", "White")
       @decorations = data["decorations"].map do |dec_data|
-
+        ItemDecoration.new dec_data
       end
-
     end
   end
 
-  def load_textures
-    raise "I can't load textures yet from ruby, sorry :("
-  end
-
   def create_entity
-    entity = Entity.create_entity archetype: "ItemView"
-    entity.texture_component.textures = self.load_textures
-    entity.sprite_component.tint = @color
+    entity = GameEntity.create_entity archetype: "Items/ItemView"
+    entity.text_component.texts = [owner.name]
 
-    self.construct_decorations entity
+    #entity.sprite_component.tint = @color
+    #self.load_textures entity
+    #self.construct_decorations entity
 
     entity
+  end
+
+  def load_textures(entity)
+    # TODO
+  end
+
+  def construct_decorations(entity)
+    # TODO
   end
 
   def dup

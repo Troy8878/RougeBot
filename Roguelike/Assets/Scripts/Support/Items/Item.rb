@@ -26,11 +26,10 @@ class Item
     else
       @name = data.fetch("name", "Default")
       @value = data.fetch("value", 0).to_f
-      @view = ItemView.new(data["view"])
+      @view = ItemView.new(data["view"], self)
     end
     # Makes sure you aren't equipping a base item you naughty girl
     @equip_slot = :invalid
-
   end
 
   def clone

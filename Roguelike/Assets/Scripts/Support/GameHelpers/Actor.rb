@@ -21,8 +21,6 @@ module Actor
   def actor_init(shape, color)
     actor_minimap_create shape, color
 
-    puts "Actor owner: #{self.owner.inspect}"
-
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
 

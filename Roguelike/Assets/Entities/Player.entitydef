@@ -29,6 +29,8 @@
     "max_health": 250
   },
 
+  "InventoryComponent": {},
+
   "KeybindingComponent": {},
 
   "ChildHierarchy": {

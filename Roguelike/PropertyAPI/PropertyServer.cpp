@@ -544,7 +544,7 @@ static DWORD DisplayEntity(RequestQueue& queue, Entity *entity,
     {
       auto query = narrow(pRequest->CookedUrl.pQueryString);
       mrb_value eval_str = mrb_str_new(mrb, query.c_str(), query.size());
-      auto res = mrb_funcall_argv(mrb, mrb_obj_value(mrb->kernel_module), 
+      auto res = mrb_funcall_argv(mrb, mrb_obj_value(mrb->kernel_module),
                                   mrb_intern_lit(mrb, "eval"), 1, &eval_str);
       auto res_str = mrb_str_to_stdstring(res);
 

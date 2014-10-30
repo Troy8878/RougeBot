@@ -13,23 +13,39 @@
 class InventoryComponent < ComponentBase
   attr_reader :inventory
 
+  dependency "PlayerControllerComponent"
+
   def initialize(data)
     super data
 
     if self.owner.player_controller_component
       @inventory = PLAYER_INVENTORY
+      @inventory.initialize
+
+      seq = owner.action_sequence :add_items
+      5.times do
+        seq.delay 0.5
+        seq.once { give_random_weapon 10 }
+      end
+
     else
       @inventory = Inventory.new
     end
     
-    @inventory.on_change { self.do_update }
+    @inventory.on_change {|*a| self.do_update(*a) }
   end
 
-  def do_update
+  def give_random_weapon(level)
+    @inventory.pickup ItemGenerate.generate_weapon({}, 10)
+  end
 
+  def do_update(*args)
+    owner.local_event :inventory_update, args
   end
 
   def finalize
     @inventory.clear_callback
   end
+
+  register_component "InventoryComponent"
 end

@@ -1,4 +1,119 @@
 {
   "TransformComponent": {},
-  
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "HotbarBG",
+        "archetype": "HUD/HotbarBG"
+      },
+      {
+        "name": "Hotbar0",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [-4, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 0
+          }
+        }
+      },
+      {
+        "name": "Hotbar1",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [-3, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 1
+          }
+        }
+      },
+      {
+        "name": "Hotbar2",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [-2, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 2
+          }
+        }
+      },
+      {
+        "name": "Hotbar3",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [-1, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 3
+          }
+        }
+      },
+      {
+        "name": "Hotbar4",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 4
+          }
+        }
+      },
+      {
+        "name": "Hotbar5",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [1, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 5
+          }
+        }
+      },
+      {
+        "name": "Hotbar6",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [2, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 6
+          }
+        }
+      },
+      {
+        "name": "Hotbar7",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [3, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 7
+          }
+        }
+      },
+      {
+        "name": "Hotbar8",
+        "archetype": "HUD/HotbarSlot",
+        "components": {
+          "TransformComponent": {
+            "position": [4, 0, 0]
+          },
+          "HotbarComponent": {
+            "slot": 8
+          }
+        }
+      }
+    ]
+  }
 }

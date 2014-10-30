@@ -1,0 +1,11 @@
+{
+  "TransformComponent": {
+    "scale": [9.2, 1.1, 1]
+  },
+  "TextureComponent": {
+    "textures": ["HUD/HotbarBG.png"]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer"
+  },
+}

@@ -9,6 +9,7 @@ class HotbarComponent < ComponentBase
     super data
 
     @target_name = data["target_name"]
+    @inv_slot = data["slot"].to_i
 
     register_event :update, :first_update
   end
@@ -20,8 +21,27 @@ class HotbarComponent < ComponentBase
     @target.proxy_event :inventory_update, self, :on_update
   end
 
-  def on_update(inv)
+  def remove_item
+    holder = self.owner.local_find "ChildHolder"
+    return if holder.children.empty?
+    
+    holder.remove_child holder.children.last
+  end
 
+  def display_item(item)
+    return if item.nil?
+
+    holder = self.owner.local_find "ChildHolder"
+    holder.add_child item.view.create_entity
+  end
+
+  def on_update(args)
+    return unless args.length == 3
+    return unless args[0] == :slot
+    return unless args[1] == @inv_slot
+
+    remove_item
+    display_item args[2]
   end
 
   register_component "HotbarComponent"

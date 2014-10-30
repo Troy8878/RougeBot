@@ -138,13 +138,25 @@ mrb_value RoomGenerator::Generate(mrb_state *mrb, mrb_value options)
   // I can't afford to raise any more exceptions after here so all params are optional
   MapTiles = size_t(Width * Height);
   Map = new mrb_int[MapTiles];
-  for (auto& tile : array_iterator(Map, MapTiles))
-  {
-    // Start by filling in the map
-    tile = WALL_VALUE;
-  }
 
-  MakeMap();
+  for(;;)
+  {
+    try
+    {
+      for (auto& tile : array_iterator(Map, MapTiles))
+      {
+        // Start by filling in the map
+        tile = WALL_VALUE;
+      }
+  
+      MakeMap();
+
+      break;
+    }
+    catch (FloorDoOverException&)
+    {
+    }
+  }
 
   #pragma endregion
 
@@ -207,6 +219,8 @@ void RoomGenerator::MakeMap()
   RandomizePlayer();
   FillUnaccessable();
   RandomizeItems();
+
+  VerifyMap();
 }
 
 // ----------------------------------------------------------------------------
@@ -423,6 +437,21 @@ void RoomGenerator::FillUnaccessable()
 void RoomGenerator::RandomizeItems()
 {
   // TODO
+}
+
+// ----------------------------------------------------------------------------
+
+void RoomGenerator::VerifyMap()
+{
+  size_t floor_count = 0;
+  for (auto tile : array_iterator(Map, MapTiles))
+  {
+    if (tile == EMPTY_VALUE)
+      ++floor_count;
+  }
+
+  if (floor_count < MapTiles/4)
+    throw FloorDoOverException();
 }
 
 // ----------------------------------------------------------------------------

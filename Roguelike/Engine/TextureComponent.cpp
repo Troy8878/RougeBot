@@ -58,6 +58,8 @@ void TextureComponent::AddTexture(json::value Textureef)
 
 void TextureComponent::RemoveTexture(size_t index)
 {
+  if (index >= textures.size())
+    return;
   textures.erase(textures.begin() + index);
 }
 
@@ -116,6 +118,8 @@ static mrb_value mrb_texture_new(mrb_state *mrb, TextureComponent *comp);
 static void mrb_texture_free(mrb_state *, void *) {}
 
 static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_add(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_remove(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -144,6 +148,9 @@ static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base)
       TextureComponent, &mrb_texturecomp_dt,
       size_t, &TextureComponent::_GetTextureCount>,
     MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, texture, "add", mrb_texture_add, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, texture, "remove", mrb_texture_remove, MRB_ARGS_REQ(1));
     
   mrb_define_alias(mrb, texture, "size", "length");
   mrb_define_alias(mrb, texture, "count", "length");
@@ -170,9 +177,79 @@ static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self)
   mrb_int index;
   mrb_get_args(mrb, "i", &index);
 
-  auto& comp = *(TextureComponent *) mrb_data_get_ptr(mrb, self, &mrb_texturecomp_dt);
+  auto& comp = *ruby::data_get<TextureComponent>(mrb, self);
 
   return comp.Textures[(size_t) index].RubyWrapper;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_add(mrb_state *mrb, mrb_value self)
+{
+  auto& comp = *ruby::data_get<TextureComponent>(mrb, self);
+
+  mrb_value data;
+  mrb_get_args(mrb, "o", &data);
+
+  try
+  {
+    auto json = ruby::ruby_engine{mrb}.value_to_json(data);
+    comp.AddTexture(json);
+
+    return mrb_fixnum_value((mrb_int) comp.TextureCount - 1);
+  }
+  catch (std::exception& ex)
+  {
+    mrb_raise(mrb, E_RUNTIME_ERROR, ex.what());
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_remove(mrb_state *mrb, mrb_value self)
+{
+  auto& comp = *ruby::data_get<TextureComponent>(mrb, self);
+
+  mrb_value item;
+  mrb_get_args(mrb, "o", &item);
+
+  if (mrb_fixnum_p(item))
+  {
+    size_t index = (size_t) mrb_fixnum(item);
+    if (index >= comp.TextureCount)
+      return mrb_false_value();
+    
+    comp.RemoveTexture(index);
+    return mrb_true_value();
+  }
+  else if (mrb_string_p(item))
+  {
+    auto name = mrb_str_to_stdstring(item);
+    auto& textures = comp.Textures;
+    auto it = std::find_if(
+      textures.begin(), textures.end(),
+      [&name](const Texture2D& tex)
+      {
+        return tex.Name == name;
+      });
+
+    if (it != textures.end())
+    {
+      size_t index = std::distance(textures.begin(), it);
+      comp.RemoveTexture(index);
+      return mrb_true_value();
+    }
+    else
+    {
+      return mrb_false_value();
+    }
+  }
+  else
+  {
+    mrb_raise(mrb, E_TYPE_ERROR,
+              "TextureComponent#remove must take "
+              "either a Fixnum(index) or String(name)");
+  }
 }
 
 // ----------------------------------------------------------------------------

@@ -54,9 +54,10 @@ void SpriteComponent::Draw()
     return;
 
   auto transform = Owner->Transform.get();
-  
-  if (_texture)
-    UnitSquare->texture = _texture->Textures[TextureIndex];
+  auto& textures = _texture->Textures;
+
+  if (_texture && TextureCount)
+    UnitSquare->texture = textures[TextureIndex % TextureCount];
   else
     UnitSquare->texture = Texture2D();
   

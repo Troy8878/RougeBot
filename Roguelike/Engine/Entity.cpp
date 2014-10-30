@@ -194,6 +194,48 @@ void Entity::LocalEvent(Events::EventMessage& e)
     auto& time = GetGame()->Time;
     OnUpdate(float(time.Dt));
   }
+
+  auto it = proxies.find(e.EventId);
+  if (it != proxies.end())
+  {
+    static Entity *processed[1024];
+    size_t process_count = 0;
+
+    auto& proxy = it->second.maps;
+
+    if (proxies.size() > 1024)
+      throw basic_exception("I can't process more than 1024 proxies on a single entity");
+
+    proxies_invalidated = false;
+    bool was_invalidated = false;
+
+    for (auto it = proxy.begin(); it != proxy.end(); ++it)
+    {
+      if (was_invalidated)
+      {
+        auto begin = processed;
+        auto end = processed + process_count;
+        if (std::find(begin, end, it->first) != end)
+        {
+          continue;
+        }
+      }
+
+      it->second(e);
+      processed[process_count++] = it->first;
+
+      if (proxies_invalidated)
+      {
+        proxies_invalidated = false;
+        was_invalidated = true;
+
+        if (proxy.size() == 0)
+          break;
+
+        it = proxy.begin();
+      }
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -251,6 +293,26 @@ void Entity::RemoveEvent(Component *component, event_id id)
 
 // ----------------------------------------------------------------------------
 
+void Entity::AddProxy(Entity *entity, event_id id, EventProxyList::Func func)
+{
+  proxies[id].maps[entity] = func;
+}
+
+// ----------------------------------------------------------------------------
+
+void Entity::RemoveProxy(Entity *entity, event_id id)
+{
+  auto& proxy = proxies[id];
+  proxy.maps.erase(entity);
+  
+  if (proxy.maps.empty())
+  {
+    proxies.erase(id);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 void Entity::RecalculateEventCounts()
 {
   DEF_EVENT_ID(update);
@@ -267,6 +329,12 @@ void Entity::RecalculateEventCounts()
   for (auto& event : _events)
   {
     _eventCounts[event.first] += event.second.size();
+  }
+
+  // Tally up the proxies
+  for (auto& proxy : proxies)
+  {
+    _eventCounts[proxy.first] += proxy.second.maps.size();
   }
 
   // Tally the children's results
@@ -579,6 +647,52 @@ static mrb_value rb_ent_remove_component(mrb_state *mrb, mrb_value self)
 
   auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
   entity->RemoveComponent(name);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_proxy_event(mrb_state *mrb, mrb_value self)
+{
+  mrb_sym event;
+  mrb_value target;
+  mrb_sym target_sym;
+  mrb_get_args(mrb, "non", &event, &target, &target_sym);
+
+  Entity *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  mrb_value targetOwner = mrb_funcall(mrb, target, "owner", 0);
+  Entity *targetEnt = ruby::read_native_ptr<Entity>(mrb, targetOwner);
+
+  entity->AddProxy(targetEnt, event,
+  [mrb, target, target_sym](Events::EventMessage& e)
+  {
+    mrb_value edata = mrb_nil_value();
+    if (e.Data)
+    {
+      edata = e.Data->GetRubyWrapper();
+    }
+
+    mrb_funcall_argv(mrb, target, target_sym, 1, &edata);
+    mrb_inst->log_and_clear_error();
+  });
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_remove_proxy(mrb_state *mrb, mrb_value self)
+{
+  mrb_sym event;
+  mrb_value target;
+  mrb_get_args(mrb, "no", &event, &target);
+
+  Entity *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  mrb_value targetOwner = mrb_funcall(mrb, target, "owner", 0);
+  Entity *targetEnt = ruby::read_native_ptr<Entity>(mrb, targetOwner);
+
+  entity->RemoveProxy(targetEnt, event);
 
   return mrb_nil_value();
 }
@@ -924,11 +1038,17 @@ ruby::ruby_class Entity::GetWrapperRClass()
   rclass.define_method("id", rb_ent_id, ARGS_NONE());
   rclass.define_method("name", rb_ent_name, ARGS_NONE());
   
+  // Components
   rclass.define_method("components", rb_ent_components, ARGS_NONE());
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
   rclass.define_method("add_component", rb_ent_add_component, ARGS_REQ(2));
   rclass.define_method("remove_component", rb_ent_remove_component, ARGS_REQ(1));
+
+  // Proxies
+  rclass.define_method("proxy_event", rb_ent_proxy_event, ARGS_REQ(3));
+  rclass.define_method("remove_event", rb_ent_remove_proxy, ARGS_REQ(2));
   
+  // Children
   rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
   rclass.define_method("children", rb_ent_children, ARGS_NONE());
   rclass.define_method("add_child", rb_ent_add_child, ARGS_REQ(1));
@@ -1172,12 +1292,14 @@ void Entity::Zombify()
   }
 
   _events.clear();
-  this->RecalculateEventCounts();
+  proxies.clear();
 
   death_row.push_front(this);
 
   while (!children.empty())
     children.front()->Zombify();
+
+  this->RecalculateEventCounts();
 
   if (Parent)
     Parent->RemoveChild(this);

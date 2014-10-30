@@ -20,6 +20,18 @@ typedef uint64_t entity_id;
 
 const entity_id UNASSIGNED_ENTITY_ID = std::numeric_limits<entity_id>::max();
 
+// ----------------------------------------------------------------------------
+
+class Entity;
+
+struct EventProxyList
+{
+  typedef std::function<void(Events::EventMessage&)> Func;
+  std::unordered_map<Entity *, Func> maps;
+};
+
+// ----------------------------------------------------------------------------
+
 class Entity : public Events::EventReciever
 {
   #pragma region Typedefs
@@ -134,6 +146,9 @@ public:
   */
   void RemoveEvent(Component *component, event_id id);
 
+  void AddProxy(Entity *entity, event_id id, EventProxyList::Func func);
+  void RemoveProxy(Entity *entity, event_id id);
+
   /**
     Helper for adding member functions of properly inheriting components
   */
@@ -144,6 +159,10 @@ public:
   }
 
   void RecalculateEventCounts();
+
+private:
+  std::unordered_map<event_id, EventProxyList> proxies;
+  bool proxies_invalidated;
 
   #pragma endregion
 

@@ -360,6 +360,34 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  template <typename T>
+  T *data_get(mrb_state *mrb, mrb_value value)
+  {
+    const char *correctName = typeid(T).name();
+
+    if (value.tt != MRB_TT_DATA)
+    {
+      auto badName = mrb_class_name(mrb, mrb_obj_class(mrb, value));
+      mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
+                 mrb_str_new_cstr(mrb, badName), 
+                 mrb_str_new_cstr(mrb, correctName));
+    }
+
+    RData *data = (RData *) value.value.p;
+    const char *realName = data->type->struct_name;
+
+    if (strcmp(realName, correctName) != 0)
+    {
+      mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
+                 mrb_str_new_cstr(mrb, realName), 
+                 mrb_str_new_cstr(mrb, correctName));
+    }
+
+    return (T *) data->data;
+  }
+
+// ----------------------------------------------------------------------------
+
   template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
   mrb_value data_getter_access_integer(mrb_state *mrb, mrb_value self)
   {

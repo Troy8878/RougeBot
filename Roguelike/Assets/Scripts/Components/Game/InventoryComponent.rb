@@ -21,6 +21,15 @@ class InventoryComponent < ComponentBase
     else
       @inventory = Inventory.new
     end
+    
+    @inventory.on_change { self.do_update }
   end
 
+  def do_update
+
+  end
+
+  def finalize
+    @inventory.clear_callback
+  end
 end

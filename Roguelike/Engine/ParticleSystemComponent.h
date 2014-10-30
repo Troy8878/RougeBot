@@ -1,6 +1,6 @@
 /*********************************
  * ParticleSystemComponent.h
- * Connor Hilarides
+ * Connor Hilarides, Enrique Rodriguez
  * Created 2014/09/30
  *********************************/
 
@@ -11,6 +11,14 @@
 #include "ParticleSystem.h"
 #include "RenderSet.h"
 
+struct Ranges
+{
+  float Xmin;
+  float Xmax;
+  float Ymin;
+  float Ymax;
+};
+
 // ----------------------------------------------------------------------------
 
 class ParticleSystemComponentFactory;
@@ -20,7 +28,8 @@ class ParticleSystemComponentFactory;
 class ParticleSystemComponent : public Component, public Drawable
 {
 public:
-  ParticleSystemComponent(size_t maxParticles, RenderSet *target);
+  ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges& scale, Ranges& rotation,
+                          Ranges& velocity, Ranges& rotVel, float rate);
   ~ParticleSystemComponent();
 
   void Initialize(Entity *owner, const std::string& name) override;
@@ -33,9 +42,21 @@ public:
 
   static ParticleSystemComponentFactory factory;
 
+  float GetScale(int index);
+  float GetRotation(int index);
+  float GetVelocity(int index);
+  float GetRotationVelocity(int index);
+  void SetScale(float Xmin, float Xmax, float Ymin, float Ymax);
+  void SetRotation(float Xmin, float Xmax, float Ymin, float Ymax);
+  void SetVelocity(float Xmin, float Xmax, float Ymin, float Ymax);
+  void SetRotationVelocity(float Xmin, float Xmax, float Ymin, float Ymax);
+
 private:
   ParticleSystem system;
   RenderSet *renderTarget = nullptr;
+
+  struct Ranges scaleRange, rotationRange, velocityRange, rotVelRange;
+  float ParticleRate;
 
   static Model *GetUnitSquare();
 };
@@ -52,6 +73,9 @@ public:
 
 private:
   BucketAllocator allocator;
+
+  Ranges ParseRanges(json::value jv);
+  float ParseFloat(json::value jv);
 };
 
 // ----------------------------------------------------------------------------

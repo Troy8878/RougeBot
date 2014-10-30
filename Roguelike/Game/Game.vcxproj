@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props" Condition="Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -45,7 +44,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <NuGetPackageImportStamp>aea77746</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>6a3ab951</NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -63,7 +62,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PropertyAPI.lib;FMOD.lib;fmod64_vc.lib;json.lib;EnginePancake.lib;Helpers.lib;ResourceReader.lib;mruby.lib;d3d11.lib;dxguid.lib;DXGI.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PropertyAPI.lib;FMOD.lib;fmod64_vc.lib;json.lib;EnginePancake.lib;Helpers.lib;ResourceReader.lib;mruby.lib;d3d11.lib;Httpapi.lib;dxguid.lib;DXGI.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -94,7 +93,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PropertyAPI.lib;FMOD.lib;fmod64_vc.lib;json.lib;EnginePancake.lib;Helpers.lib;ResourceReader.lib;mruby.lib;d3d11.lib;dxguid.lib;DXGI.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PropertyAPI.lib;FMOD.lib;fmod64_vc.lib;json.lib;EnginePancake.lib;Helpers.lib;ResourceReader.lib;mruby.lib;d3d11.lib;Httpapi.lib;dxguid.lib;DXGI.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>$(SolutionDir)x64\Release\;$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -108,7 +107,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\shaders\ShaderCommons.hlsli" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\shaders\BasicPixelShader.hlsl">
@@ -165,14 +163,5 @@
     <Text Include="Known Events.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets" Condition="Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props'))" />
-    <Error Condition="!Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

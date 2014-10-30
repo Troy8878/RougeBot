@@ -149,10 +149,6 @@ void MapComponent::DrawMap()
 
   // Create a reference to the Ruby Engine
   mrb_state *mrb = *mrb_inst;
-  // Get the room values from the ruby code.
-  static mrb_sym ary_len = mrb_intern_lit(mrb, "length");
-  static mrb_sym ary_at = mrb_intern_lit(mrb, "[]");
-
   mrb_int len = ruby::enumerable_length(mrb, _map_obj);
 
   // How many pixels per block of the map. We make it a bit bigger to include the edges.
@@ -376,7 +372,7 @@ void MapItem::Release()
 static void mrb_mapcomponent_init(mrb_state *mrb)
 {
   // Initialize the MapComponent data type.
-  mrb_mapcomponent_data_type.dfree = mrb_mapcomponent_free;
+  mrb_mapcomponent_data_type.dfree = ruby::data_nop_delete;
   mrb_mapcomponent_data_type.struct_name = "MapComponent";
 
   // Initialize the MapItem data type.

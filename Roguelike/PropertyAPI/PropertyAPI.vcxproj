@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props" Condition="Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -40,7 +39,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <NuGetPackageImportStamp>a87b54a7</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>537d459f</NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -71,23 +70,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="PropertyServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertyServer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets" Condition="Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.props'))" />
-    <Error Condition="!Exists('..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cpprestsdk.2.2.0\build\native\cpprestsdk.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

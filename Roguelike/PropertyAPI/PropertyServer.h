@@ -6,7 +6,11 @@
 
 #pragma once
 
-#include <cpprest/http_server.h>
+#include "Engine/Common.h"
+
+// ----------------------------------------------------------------------------
+
+struct PropertyServerInternal;
 
 // ----------------------------------------------------------------------------
 
@@ -16,13 +20,11 @@ public:
   PropertyServer();
   ~PropertyServer();
 
+  NO_ASSIGNMENT_OPERATOR(PropertyServer);
+  NO_COPY_CONSTRUCTOR(PropertyServer);
+
 private:
-  web::http::experimental::listener::http_listener listener;
-
-  void handle_get(web::http::http_request request);
-  void handle_put(web::http::http_request request);
-
-  void entity_get(web::http::http_request request);
+  PropertyServerInternal * data;
 };
 
 // ----------------------------------------------------------------------------

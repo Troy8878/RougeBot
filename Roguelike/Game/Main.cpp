@@ -7,6 +7,9 @@
 #include "Common.h"
 #include "PropertyAPI/PropertyServer.h"
 
+// Change this to 1 for a production build
+#define PRODUCTION 0
+
 static void CreateConsole()
 {
   AllocConsole();
@@ -25,10 +28,16 @@ extern "C" void GameRunGame()
 {
   performance::register_guard glperf("The Game");
   
+  #if !PRODUCTION
   CreateConsole();
+  #endif
 
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
+
+  #if !PRODUCTION
+  PropertyServer debug_server;
+  #endif
 
   game.Run();
 

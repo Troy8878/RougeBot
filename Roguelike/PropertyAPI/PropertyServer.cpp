@@ -8,121 +8,195 @@
 #include "Engine/Common.h"
 #include "Engine/Level.h"
 
-using namespace web::http;
-using namespace web::http::experimental;
+#include <http.h>
+
+// ----------------------------------------------------------------------------
+
+#define STATIC_HANDLER_URL L"http://localhost:5431/game/"
+#define ENTITY_HANDLER_URL (STATIC_HANDLER_URL L"api/entity")
+#define GLOBAL_HANDLER_URL (STATIC_HANDLER_URL L"api/game")
+
+// ----------------------------------------------------------------------------
+
+struct PropertyServerInternal
+{
+  HANDLE staticQueue = nullptr;
+  HANDLE entityQueue = nullptr;
+  HANDLE globalQueue = nullptr;
+
+  COMPLEX_TYPE_IN_PRIMITIVE(std::thread, requestThread);
+};
+
+// ----------------------------------------------------------------------------
+
+static inline void CheckHTTPResult(DWORD res)
+{
+  auto hr = HRESULT_FROM_WIN32(res);
+  CheckHRESULT(hr);
+}
+
+// ----------------------------------------------------------------------------
+
+static void InitializeServer(PropertyServerInternal& data);
+static void CloseServer(PropertyServerInternal& data);
+
+// ----------------------------------------------------------------------------
+
+static void RegisterStaticHandler(PropertyServerInternal& data);
+static void RegisterEntityHandler(PropertyServerInternal& data);
+static void RegisterGlobalHandler(PropertyServerInternal& data);
+
+static void CloseStaticHandler(PropertyServerInternal& data);
+static void CloseEntityHandler(PropertyServerInternal& data);
+static void CloseGlobalHandler(PropertyServerInternal& data);
+
+// ----------------------------------------------------------------------------
+
+static void RecieveRequests(PropertyServerInternal& data);
 
 // ----------------------------------------------------------------------------
 
 PropertyServer::PropertyServer()
+  : data(new PropertyServerInternal)
 {
-  listener = listener::http_listener(U("http://localhost:5431/"));
-
-  using namespace std::placeholders;
-
-  listener.support(methods::GET, std::bind(&PropertyServer::handle_get, this, _1));
-  listener.support(methods::PUT, std::bind(&PropertyServer::handle_put, this, _1));
-
-  listener.open().then([]()
+  try
   {
-    std::cout << "Listener opened!";
-  });
+    InitializeServer(*data);
+  }
+  catch (...)
+  {
+    CloseServer(*data);
+    delete data;
+    data = nullptr;
+    throw;
+  }
 }
 
 // ----------------------------------------------------------------------------
 
 PropertyServer::~PropertyServer()
 {
-  listener.close();
+  data->requestThread.~thread();
+
+  if (data)
+    CloseServer(*data);
+  delete data;
 }
 
 // ----------------------------------------------------------------------------
 
-void PropertyServer::handle_get(http_request request)
+static void InitializeServer(PropertyServerInternal& data)
 {
-  auto path = request.request_uri().path();
-  if (path.find_first_of(L"/entity/") == 0)
+  DWORD res;
+
+  static bool httpIsInit = false;
+  if (!httpIsInit)
   {
-    entity_get(request);
+    res = HttpInitialize(HTTPAPI_VERSION_2, HTTP_INITIALIZE_SERVER, nullptr);
+    CheckHTTPResult(res);
+    httpIsInit = true;
   }
-  else
-  {
-    http_response response(status_codes::OK);
-    response.set_body(":O");
-    request.reply(response);
-  }
+
+  RegisterStaticHandler(data);
+  RegisterEntityHandler(data);
+  RegisterGlobalHandler(data);
+
+  new (&data.requestThread) std::thread(std::bind(RecieveRequests, data));
+  data.requestThread.detach();
 }
 
 // ----------------------------------------------------------------------------
 
-void PropertyServer::handle_put(http_request request)
+static void CloseServer(PropertyServerInternal& data)
 {
-  request.reply(status_codes::OK, U("Hello, World!"));
+  CloseGlobalHandler(data);
+  CloseEntityHandler(data);
+  CloseStaticHandler(data);
 }
 
 // ----------------------------------------------------------------------------
 
-void PropertyServer::entity_get(http_request request)
+static void RegisterStaticHandler(PropertyServerInternal& data)
 {
-  auto uri = request.request_uri();
-  auto path = narrow(uri.path());
-  auto path_parts = split(path, '/');
-  path_parts.erase(path_parts.begin());
+  DWORD res;
 
-  if (path_parts.size() < 3)
-  {
-    request.reply(status_codes::NotFound);
+  res = HttpCreateHttpHandle(&data.staticQueue, 0);
+  CheckHTTPResult(res);
+
+  res = HttpAddUrl(data.staticQueue, STATIC_HANDLER_URL, nullptr);
+  CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseStaticHandler(PropertyServerInternal& data)
+{
+  if (!data.staticQueue)
     return;
-  }
-  
-  json::value data = json::value::object();
-  Entity *entity = nullptr;
-  if (path_parts[1] == "id")
-  {
-    entity_id id = std::stoull(path_parts[2]);
-    entity = GetGame()->CurrentLevel->RootEntity->FindEntity(id);
-  }
-  else if (path_parts[1] == "name")
-  {
-    entity = GetGame()->CurrentLevel->RootEntity->FindEntity(path_parts[2]);
-  }
-  
-  if (!entity)
-  {
-    request.reply(status_codes::NotFound);
+
+  HttpRemoveUrl(data.staticQueue, STATIC_HANDLER_URL);
+  CloseHandle(data.staticQueue);
+
+  data.staticQueue = nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+static void RegisterEntityHandler(PropertyServerInternal& data)
+{
+  DWORD res;
+
+  res = HttpCreateHttpHandle(&data.entityQueue, 0);
+  CheckHTTPResult(res);
+
+  res = HttpAddUrl(data.entityQueue, ENTITY_HANDLER_URL, nullptr);
+  CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseEntityHandler(PropertyServerInternal& data)
+{
+  if (!data.entityQueue)
     return;
-  }
 
-  data["id"] = json::value::number((long double) entity->Id);
-  data["name"] = json::value::string(entity->Name);
+  HttpRemoveUrl(data.entityQueue, ENTITY_HANDLER_URL);
+  CloseHandle(data.entityQueue);
 
-  auto component_list = json::value::array();
-  auto& comp_list = component_list.as_array();
-  for (auto& pair : entity->Components)
-  {
-    comp_list.push_back(json::value::string(pair.first));
-  }
-  data["components"] = component_list;
+  data.entityQueue = nullptr;
+}
 
-  auto children_list = json::value::array();
-  auto& child_list = children_list.as_array();
-  for (auto *child : entity->Children)
-  {
-    child_list.push_back(json::value::number((long double) child->Id));
-  }
-  data["children"] = children_list;
+// ----------------------------------------------------------------------------
 
-#ifdef _DEBUG
-  std::ostringstream oss;
-  data.pretty_print(oss);
-  auto res_str = oss.str();
-#else
-  auto res_str = data.serialize();
-#endif
+static void RegisterGlobalHandler(PropertyServerInternal& data)
+{
+  DWORD res;
 
-  auto stream = concurrency::streams::bytestream::open_istream(res_str);
-  http_response response(status_codes::OK);
-  response.set_body(stream, L"application/json");
-  request.reply(response);
+  res = HttpCreateHttpHandle(&data.globalQueue, 0);
+  CheckHTTPResult(res);
+
+  res = HttpAddUrl(data.globalQueue, GLOBAL_HANDLER_URL, nullptr);
+  CheckHTTPResult(res);
+}
+
+// ----------------------------------------------------------------------------
+
+static void CloseGlobalHandler(PropertyServerInternal& data)
+{
+  if (!data.globalQueue)
+    return;
+
+  HttpRemoveUrl(data.globalQueue, GLOBAL_HANDLER_URL);
+  CloseHandle(data.globalQueue);
+
+  data.globalQueue = nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+static void RecieveRequests(PropertyServerInternal& data)
+{
+  (data);
 }
 
 // ----------------------------------------------------------------------------

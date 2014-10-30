@@ -1,6 +1,6 @@
 #########################
 # EnemyLogicComponent.rb
-# Jake Robsahm
+# Jake Robsahm, Enrique Rodriguez
 # Created 2014/10/20
 #########################
 
@@ -48,15 +48,47 @@ class EnemyLogicComponent < ComponentBase
 
     if ax > ay
       if dx > 0
-        move -1, 0
+        if can_move?(-1, 0)
+          move -1, 0
+        elsif ay
+          if dy > 0
+            move 0, -1
+          else
+            move 0, 1
+          end
+        end
       else
-        move 1, 0
+        if can_move?(1, 0)
+          move 1, 0
+        elsif ay
+          if dy > 0
+            move 0, -1
+          else
+            move 0, 1
+          end
+        end
       end
     else
       if dy > 0
-        move 0, -1
+        if can_move?(0, -1)
+          move 0, -1
+        elsif ax
+          if dx > 0
+            move -1, 0
+          else
+            move 1, 0
+          end
+        end
       else
-        move 0, 1
+        if can_move?(0, 1)
+          move 0, 1
+        elsif ax
+          if dx > 0
+            move -1, 0
+          else
+            move 1, 0
+          end
+        end
       end
     end
   end

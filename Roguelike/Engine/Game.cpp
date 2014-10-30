@@ -176,6 +176,12 @@ void Game::Run()
   }
   catch (const std::exception& ex)
   {
+    if (&ex == nullptr)
+    {
+      MessageBox(NULL, "There is no hope, an exception is null...", NULL, MB_ICONERROR);
+      _exit(-1);
+    }
+
     std::string message = "A fatal exception occurred: ";
     message += ex.what();
 

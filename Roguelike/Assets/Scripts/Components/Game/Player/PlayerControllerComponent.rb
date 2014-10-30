@@ -33,6 +33,7 @@ class PlayerControllerComponent < ComponentBase
     @logic_cooldown = 0
 
     self.register_event :move, :on_move
+    self.register_event :fire, :fire
     self.register_event :update, :first_update
 
     # Double-click should do it in either case
@@ -60,8 +61,17 @@ class PlayerControllerComponent < ComponentBase
       actor_moved
     end
 
-    if @logic_initialized
-      Event.raise_event :logic_update, self.owner
+    yield_to_enemies
+  end
+
+  def yield_to_enemies
+    seq = self.owner.action_sequence :delay_logic
+    seq.delay(0.1)
+    seq.delay(0) # ensure at _minimum_ 2 frames go by
+    seq.once do
+      if @logic_initialized
+        Event.raise_event :logic_update, self.owner
+      end
     end
   end
 
@@ -69,6 +79,40 @@ class PlayerControllerComponent < ComponentBase
     set_kb_mode
     move *e
   end
+
+  # Stuffs Troy added for ranged combat
+
+  def fire(e)
+    return if @logic_cooldown > 0
+
+    x = e[0]
+    y = e[1]
+
+    unless can_fire? x, y
+      return if @blocked_reason != BLOCKED_BY_ACTOR # KEEP THIS!!! We always want to be able to shoot (enemy) actors!
+    end
+
+    # We actually don't just want to deal damage if an actor is hit.  Fireable weapons can have affects other than base damage
+
+    find_entity(0).create_child(
+      archetype: "PlayerProjectiles/Bomb",          # We'll need to make this the wielded ranged weapon once wielding is implemented
+      components: {
+        "PositionComponent" => {
+          "position" => [@pos.x, @pos.y]
+        },
+        "PlayerProjectileLogicComponent" => {
+          "direc" => [x, y]
+        }
+      }
+    )
+    
+    @logic_cooldown = 0.5
+
+    actor_moved
+    yield_to_enemies
+  end
+
+  # End of stuffs
 
   def mouse_down(e)
     @cursor ||= find_entity("TileCursor")

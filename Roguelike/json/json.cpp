@@ -537,7 +537,14 @@ namespace json
   
   #pragma region Parse
 
-  #define PARSE_ERROR(msg) throw jintex(msg, input.tellg())
+  #define PARSE_ERROR(msg) ThrowParseError(msg, input)
+
+  template <typename Msg, typename Input>
+  inline void ThrowParseError(Msg&& msg, Input& input)
+  {
+    auto loc = input.tellg();
+    throw jintex(msg, loc);
+  }
 
   value value::parse(const std::string& str_input)
   {

@@ -9,5 +9,6 @@
   "FloorGeneratorComponent": ["CustomModelComponent"],
   "EnemyLogicComponent": ["PositionComponent", "AttackComponent"],
   "TextComponent": ["TextureComponent"],
-  "StatusMessageComponent": ["TransformComponent"]
+  "StatusMessageComponent": ["TransformComponent"],
+  "PlayerProjectileLogicComponent": ["TransformComponent", "PositionComponent", "AttackComponent"]
 }

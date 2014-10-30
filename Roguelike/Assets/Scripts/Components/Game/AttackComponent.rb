@@ -11,7 +11,8 @@
 # damage - the range of damage an object can do
 ################################################################
 class AttackComponent < ComponentBase
-  attr_accessor :attack, :damage
+  attr_accessor :attack
+  attr_reader :damage
 
   def initialize(data)
     super data
@@ -53,6 +54,15 @@ class AttackComponent < ComponentBase
     when :hit
       Event.raise_event :attack_hit, event_data
     end
+  end
+
+  def damage=(value)
+    old = @damage
+    @damage = value
+    self.owner.raise_event :damage_changed, {
+      old: old,
+      value: @damage
+    }
   end
 
   register_component "AttackComponent"

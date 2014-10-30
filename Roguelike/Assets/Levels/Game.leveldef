@@ -75,7 +75,7 @@
                   "position": [1.4, 0.8]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/5200:5200"]
+                  "textures": ["SPECIAL/SURFACE/770:770"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
@@ -101,7 +101,7 @@
       "name": "EnemySpawner",
       "components": {
         "BasicEnemySpawnerComponent": {
-          "num_enemies": 100
+          "num_enemies": 40
         }
       }
     },

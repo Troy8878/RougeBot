@@ -9,13 +9,15 @@ class PlayerHealthComponent < ComponentBase
     super data
 
     register_event :health_changed, :on_change
+    register_event :damage_changed, :on_change
   end
 
   def on_change(e)
-    health = e[:new_value]
+    health = owner.parent.defense_component.health
+    dmg = owner.parent.attack_component.damage
 
     text = self.owner.text_component
-    text.texts = ["Health: #{health.to_i}"]
+    text.texts = ["Health: #{health.to_i}\nDamage: #{dmg}"]
   end
 
   register_component "PlayerHealthComponent"

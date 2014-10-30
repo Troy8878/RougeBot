@@ -3,8 +3,8 @@
     "rotation": [1.5707, 0, 0],
   },
   "DefenseComponent": {
-    "health": 10,
-    "max_health": 10
+    "health": 25,
+    "max_health": 25
   },
   "AttackComponent": {},
   

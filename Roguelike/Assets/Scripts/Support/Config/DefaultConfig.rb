@@ -53,11 +53,12 @@ Config.load_defaults do
   Config.bind_key "Game", Keys::M, "minimap_toggle"
 
   ######################
-  # Temp Inventory
+  # Hotbar quick equip
 
-  Config.bind_action "set_weapon_1", { down: [:equip_weapon, 0] }
-
-  Config.bind_key "Player", Keys::N1, "set_weapon_1"
+  (1..9).each do |i|
+    Config.bind_action "hotbar_equip_#{i}", { down: [:quick_equip, i - 1] }
+    Config.bind_key "Hotbar", Keys::N0 + i, "hotbar_equip_#{i}"
+  end
 
   ######################
 

@@ -280,6 +280,9 @@ public:
   // Deletes all entities on Death Row (in the death_row vector)
   static void ExecuteZombies();
 
+private:
+  bool zombified = false;
+
   #pragma endregion
 
 };

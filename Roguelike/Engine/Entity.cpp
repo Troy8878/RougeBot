@@ -44,14 +44,20 @@ Entity::~Entity()
 {
   DestroyChildren();
 
-  for (auto& pair : _components)
+  if (!_components.empty())
   {
-    ComponentManager::Instance.ReleaseComponent(pair.second);
+    for (auto& pair : _components)
+    {
+      ComponentManager::Instance.ReleaseComponent(pair.second);
+    }
   }
 
-  for (auto& pair : _actionSequences)
+  if (!_actionSequences.empty())
   {
-    sequenceAllocator.Destroy(pair.second);
+    for (auto& pair : _actionSequences)
+    {
+      sequenceAllocator.Destroy(pair.second);
+    }
   }
 
   UnregisterNamehash();
@@ -132,12 +138,12 @@ void Entity::LocalEvent(Events::EventMessage& e)
   bool invalidation_occurred = false;
   event_list_invalidated = false;
 
-  auto& handlers = _events[e.EventId];
+  auto *handlers = &_events[e.EventId];
 
   static std::vector<Component *> handled_for;
 
   // Execute all of the handlers on the components
-  for (auto it = handlers.begin(); it != handlers.end(); ++it)
+  for (auto it = handlers->begin(); it != handlers->end(); ++it)
   {
     if (invalidation_occurred)
     {
@@ -159,11 +165,15 @@ void Entity::LocalEvent(Events::EventMessage& e)
     if (event_list_invalidated)
     {
       invalidation_occurred = true;
-
-      it = handlers.begin();
       event_list_invalidated = false;
 
-      if (it == handlers.end())
+      if (_events.find(e.EventId) == _events.end())
+        break;
+
+      handlers = &_events[e.EventId];
+      it = handlers->begin();
+
+      if (it == handlers->end())
         break;
     }
 
@@ -457,6 +467,9 @@ void Entity::SearchEntities(std::vector<Entity *>& results,
 
 void Entity::DestroyChildren()
 {
+  if (children.empty())
+    return;
+
   for (auto child : children)
   {
     EntityFactory::DestroyEntity(child);
@@ -1141,6 +1154,11 @@ void Entity::Zombify()
     mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
     "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
     "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
+  if (zombified)
+    return;
+
+  zombified = true;
 
   // Zombified event
   {

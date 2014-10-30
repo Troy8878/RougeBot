@@ -12,7 +12,7 @@
 #################################################################
 
 class Item
-  attr_reader :name, :rarity, :equip_slot
+  attr_reader :name, :value, :equip_slot
 
   # Data to determine what the item looks like
   attr_reader :view
@@ -21,11 +21,11 @@ class Item
     #Either copy an existing item or create one from JSON
     if data.is_a? Item
       @name = data.name.dup
-      @rarity = data.rarity.dup
+      @value = data.value.dup
       @view = data.view.dup
     else
       @name = data.fetch("name", "Default")
-      @rarity = data.fetch("rarity", 0).to_f
+      @value = data.fetch("value", 0).to_f
       @view = ItemView.new(data["view"])
     end
     # Makes sure you aren't equipping a base item you naughty girl

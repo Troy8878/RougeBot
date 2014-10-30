@@ -20,7 +20,7 @@ end
 WEAPONS = []
 
 class Weapon < Item
-  attr_reader :attack, :damage
+  attr_reader :attack, :damage, :durability
 
 
   def initialize(data)
@@ -29,6 +29,7 @@ class Weapon < Item
     if data.is_a? Weapon
       @attack = data.attack
       @damage = data.damage
+      @durability = data.durability
     else
       @attack = data.fetch("attack", 1).to_f
       # Extract the damage. This is harder than it sounds.
@@ -38,6 +39,9 @@ class Weapon < Item
         range = range[0..1].map{|s| s.to_i }
       end
       @damage = range
+      @durability = data.fetch("durability", 1).to_f
+
+      @equip_slot = :weapon
     end
 
     def equip_slot

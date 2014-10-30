@@ -93,6 +93,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actions.h" />
+    <ClInclude Include="AIBehaviour.h" />
+    <ClInclude Include="AStarPathfinding.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera.h" />

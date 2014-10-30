@@ -9,6 +9,7 @@
 #include "FixedWindows.h"
 #include "StackTrace.h"
 #include <unordered_map>
+#include <functional>
 #include <chrono>
 #include "json/json.h"
 
@@ -695,6 +696,28 @@ bool map_get_check(const Cont& container, Iter& iter, Key& key)
   }
 
   return false;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename PredRet, typename Cont>
+std::vector<PredRet> map_to_vector(
+  const Cont& cont, std::function<PredRet(decltype(*cont.cbegin()))> pred)
+{
+  std::vector<PredRet> items;
+  for (auto& item : cont)
+  {
+    items.push_back(pred(item));
+  }
+  return items;
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename Cont>
+auto pop_front(Cont& cont) -> decltype(cont.erase(cont.begin()))
+{
+  return cont.erase(cont.begin());
 }
 
 // ----------------------------------------------------------------------------

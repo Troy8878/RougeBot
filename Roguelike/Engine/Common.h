@@ -36,6 +36,7 @@
 #include <iomanip>
 #include <queue>
 #include <forward_list>
+#include <unordered_set>
 
 #include "Helpers\FixedWindows.h"
 #include "Helpers\UseDirectX.h"

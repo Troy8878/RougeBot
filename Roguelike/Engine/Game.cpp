@@ -48,6 +48,8 @@ Game::~Game()
 
 void Game::Run()
 {
+  GameLock.enter();
+
   _running = true;
 
   _respack = new Respack::ResourcePack(initSettings.assetPack, initSettings.assetFolder);
@@ -71,6 +73,23 @@ void Game::Run()
       performance::register_guard glperf("Game Loop");
 
       _graphicsDevice->ProcessMessages();
+      
+      // Provide a window for other threads to do things to the engine
+      {
+        static size_t frames_without_unlock = 0;
+        if (_gameTime.CurrFrameTime < 1.0/60 || frames_without_unlock > 10)
+        {
+          GameLock.leave();
+          Sleep(0);
+          GameLock.enter();
+
+          frames_without_unlock = 0;
+        }
+        else
+        {
+          frames_without_unlock++;
+        }
+      }
 
       // Update
       _gameTime.Update();

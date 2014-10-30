@@ -75,6 +75,8 @@ public:
   PROPERTY(get = __getRespack) Respack::ResourcePack& Respack;
   PROPERTY(get = __getCurrLevel) Level *CurrentLevel;
 
+  critical_section GameLock;
+
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
   GameTime _gameTime;

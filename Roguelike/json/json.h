@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <sstream>
 
 namespace json
 {
@@ -148,7 +149,7 @@ namespace json
       {
         auto& ary = as_array();
         if (ary.size() <= index)
-          ary.resize(index);
+          ary.resize(index + 1);
 
         return ary[index];
       }
@@ -189,6 +190,13 @@ namespace json
       void serialize(std::ostream& out) const;
 
       void pretty_print(std::ostream& out, unsigned indent = 0) const;
+
+      std::string pretty_print() const
+      {
+        std::ostringstream out;
+        pretty_print(out);
+        return out.str();
+      }
 
     private:
       mutable bool _pretty_print = false;

@@ -24,7 +24,7 @@ static void CreateConsole()
 Roguelike game("Game 200 Project", GetModuleHandle(NULL));
 
 extern "C" int IsAvxSupported();
-extern "C" void GameRunGame()
+extern "C" __declspec(noreturn) void GameRunGame()
 {
   performance::register_guard glperf("The Game");
   
@@ -40,12 +40,10 @@ extern "C" void GameRunGame()
   #endif
 
   game.Run();
-
-  Sleep(100);
+  _exit(0);
 }
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
   GameRunGame();
-  return 0;
 }

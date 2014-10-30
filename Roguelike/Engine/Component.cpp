@@ -141,6 +141,13 @@ static void RegisterComponents()
   name = parts[parts.size() - 1];
 
   RegisterStaticComponent<Component>(name);
+  auto& deps = GetComponentDependencies();
+  auto& depList = deps[name];
+  
+  for (auto& dep : Component::AdditionalDependencies())
+  {
+    depList.push_back(dep);
+  }
 }
 
 template <typename Component1, typename Component2, typename... Components>

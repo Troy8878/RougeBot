@@ -175,11 +175,29 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
   mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "component_name"), comp_name_v);
 
   auto factory = new RubyComponentFactory(comp_class);
-  std::string comp_name = mrb_string_value_cstr(mrb, &comp_name_v);
+  std::string comp_name = mrb_str_to_stdstring(comp_name_v);
 
   ComponentRegistration registration{typeid(RubyComponent), comp_name, 
                                      factory, factory->Allocator};
   ComponentManager::Instance.RegisterComponent(registration);
+
+  #pragma region Load additional dependencies
+
+  auto cbase = mrb_obj_value(mrb_class_get(mrb, "ComponentBase"));
+  auto flush_deps = mrb_intern_lit(mrb, "flush_dependencies");
+  mrb_value deps = mrb_funcall_argv(mrb, cbase, flush_deps, 0, nullptr);
+  mrb_int dep_len = mrb_ary_len(mrb, deps);
+
+  auto& dependencies = GetComponentDependencies();
+  auto& depList = dependencies[comp_name];
+
+  for (mrb_int i = 0; i < dep_len; ++i)
+  {
+    mrb_value dep = mrb_ary_entry(deps, i);
+    depList.push_back(mrb_str_to_stdstring(dep));
+  }
+
+  #pragma endregion
 
   auto prevfg = console::fg_color();
   std::cout << console::fg::green

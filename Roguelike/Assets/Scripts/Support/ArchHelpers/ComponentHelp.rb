@@ -21,3 +21,17 @@ class GameEntity
   end
 end
 
+class ComponentBase
+  @@component_dependencies = []
+
+  def self.dependency(*deps)
+    @@component_dependencies += deps
+  end
+
+  def self.flush_dependencies
+    ary = @@component_dependencies
+    @@component_dependencies = []
+    ary
+  end
+end
+

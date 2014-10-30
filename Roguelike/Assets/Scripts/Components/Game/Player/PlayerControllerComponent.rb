@@ -18,6 +18,7 @@ PLAYER_INVENTORY = Inventory.new
 class PlayerControllerComponent < ComponentBase
   include Actor
 
+  dependency "TransformComponent", "PositionComponent"
   attr_reader :pos
 
   MIN_MOVE_TIME = 0.2

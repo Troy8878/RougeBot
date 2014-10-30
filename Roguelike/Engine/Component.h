@@ -33,6 +33,11 @@ public:
     return ruby::ruby_value{};
   }
 
+  static std::vector<std::string> AdditionalDependencies()
+  {
+    return std::vector<std::string>{};
+  }
+
 protected:
   static ruby::ruby_module GetComponentRModule();
   static ruby::ruby_class GetComponentRClass();

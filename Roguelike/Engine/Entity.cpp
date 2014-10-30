@@ -960,9 +960,12 @@ static BucketAllocator entityAllocator{sizeof(Entity)};
 
 // ----------------------------------------------------------------------------
 
-static std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependencies()
+std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependencies()
 {
   static std::unordered_map<std::string, std::vector<std::string>> items;
+  static bool init = false;
+  if (init)
+    return items;
 
   auto jlist = ParseJsonAsset("Definitions", "ComponentDependencies.json");
   for (auto& pair : jlist.as_object())
@@ -970,6 +973,7 @@ static std::unordered_map<std::string, std::vector<std::string>>& GetComponentDe
     items[pair.first] = pair.second.as_array_of<json::value::string_t>();
   }
 
+  init = true;
   return items;
 }
 
@@ -980,7 +984,7 @@ static std::unordered_map<std::string, std::vector<std::string>>& GetComponentDe
 */
 static bool component_depends_on(const std::string& a, const std::string& b)
 {
-  static auto& dependencies = GetComponentDependencies();
+  auto& dependencies = GetComponentDependencies();
   auto deps = dependencies.find(b);
   if (deps == dependencies.end())
     return false;

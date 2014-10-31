@@ -108,6 +108,8 @@ class PlayerControllerComponent < ComponentBase
     )
     
     @logic_cooldown = 0.5
+    seq = self.owner.action_sequence :wait_after_firing
+    seq.delay(0.1)
 
     actor_moved
     yield_to_enemies

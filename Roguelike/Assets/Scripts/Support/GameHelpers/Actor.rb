@@ -132,6 +132,55 @@ module Actor
     return res
   end
 
+  def can_move_more_than_one?(xo, yo)
+    @blocked_reason = -1
+
+    if !@logic_cooldown.nil? && @logic_cooldown > 0
+      @logic_cooldown -= GameTime.dt
+      @blocked_reason = BLOCKED_BY_COOLDOWN
+      return false
+    end
+
+    if xo != 0 and yo != 0
+      @blocked_reason = BLOCKED_BY_UNKNOWN
+      return false # unless can_move?(xo, 0) && can_move?(0, yo)
+    end
+
+    if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
+      @blocked_reason = BLOCKED_BY_UNKNOWN
+      return false
+    end
+
+    room = current_floor
+
+    # false if the move animation isn't done
+    real_pos = @actor_transform.position.dup
+    real_pos.y = real_pos.z
+    real_pos.z = @actor_position.z
+    real_pos.w = 0
+
+    x = (@actor_position.x + 0.5).to_i + xo
+    y = (@actor_position.y + 0.5).to_i + yo
+
+    @blocked_reason = BLOCKED_BY_UNKNOWN
+    return false if x < 0 || x >= room[0].count
+    return false if y < 0 || y >= room.count
+
+    tile = room[room.count - 1 - y][x]
+    @move_tile = tile
+
+    res = !tile.actor?
+    @blocked_reason = BLOCKED_BY_ACTOR
+    return res unless res
+
+    res = !tile.solid?
+    @blocked_reason = BLOCKED_BY_WALL
+    return res
+
+    @blocked_reason = BLOCKED_BY_UNKNOWN
+    return false unless @actor_position.near? real_pos, 0.2
+  end
+
   def can_fire?(xo, yo) # Very much the same as can_move right now.  can_move will change, this won't
     @blocked_reason = -1
 

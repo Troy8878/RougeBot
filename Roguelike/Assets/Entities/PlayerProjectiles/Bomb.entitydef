@@ -3,8 +3,8 @@
     "rotation": [1.5707, 0, 0],
   },
   "AttackComponent": {
-    "attack": 900, 
-    "damage": [900,901]
+    "attack": 0, 
+    "damage": [11,16]
   },
   
   "DefenseComponent": {

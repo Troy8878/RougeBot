@@ -20,11 +20,14 @@ class InventoryComponent < ComponentBase
       @inventory = PLAYER_INVENTORY
       @inventory.initialize
 
+      level = 1
+
       seq = owner.action_sequence :add_items
       seq.delay 1.5
-      5.times do
+      8.times do
         seq.delay 0.5
-        seq.once { give_random_weapon 2 }
+        seq.once { give_random_weapon 5 }
+        level += 2
       end
     else
       @inventory = Inventory.new

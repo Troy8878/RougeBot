@@ -2,9 +2,6 @@
   "name": "Game",
   "components": {
     "GameQuitCancelerComponent": {},
-    "TransformComponent": {
-      "scale": [1,1,1,1]
-    }
   },
   "entities": [
     {
@@ -53,8 +50,7 @@
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.3, 0.3, 0.3, 1],
-              "position": [0, 0, 1]
+              "position": [0, 0, 3.5]
             }
           },
           "children": [

@@ -12,6 +12,7 @@
 #include "TransformComponent.h"
 #include "mruby/variable.h"
 #include "json/json.h"
+#include "RubyWrappers.h"
 
 // ----------------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ SpriteComponent::SpriteComponent(Shader *shader, RenderSet *set)
 {
   UnitSquare = GetSpriteModel();
   ModelShader = shader;
+  Tint = math::Vector{1,1,1,1};
 }
 
 // ----------------------------------------------------------------------------
@@ -62,6 +64,7 @@ void SpriteComponent::Draw()
     UnitSquare->texture = Texture2D();
   
   UnitSquare->shader = ModelShader;
+  UnitSquare->tint = Tint;
   UnitSquare->Draw(transform);
 }
 
@@ -76,7 +79,52 @@ Model *SpriteComponent::GetSpriteModel()
   if (unitSquare)
     return unitSquare;
 
-  unitSquare = Shapes::MakeRectangle(GetGame()->GameDevice->Device, {1, 1});
+  const UINT segments = 64;
+  const UINT vertex_count = segments * segments;
+  const UINT index_count = (segments - 1) * (segments - 1) * 6;
+
+  TexturedVertex vertices[vertex_count];
+  UINT indices[index_count];
+
+  for (UINT y = 0; y < segments; ++y)
+  {
+    for (UINT x = 0; x < segments; ++x)
+    {
+      auto xprog = x * (1.0f / (segments - 1));
+      auto yprog = y * (1.0f / (segments - 1));
+
+      auto& vertex = vertices[y * segments + x];
+      vertex.position.x = -0.5f + xprog;
+      vertex.position.y = 0.5f - yprog;
+      vertex.texture.x = xprog;
+      vertex.texture.y = yprog;
+      vertex.color = math::Vector{1,1,1,1};
+    }
+  }
+
+  for (UINT y = 0; y < segments - 1; ++y)
+  {
+    for (UINT x = 0; x < segments - 1; ++x)
+    {
+      UINT base = (y * (segments - 1) + x) * 6;
+
+      UINT vtl = (  y  ) * segments + (  x  );
+      UINT vtr = (  y  ) * segments + (x + 1);
+      UINT vbl = (y + 1) * segments + (  x  );
+      UINT vbr = (y + 1) * segments + (x + 1);
+
+      (vtl, vtr, vbl, vbr);
+
+      indices[base + 0] = vtl;
+      indices[base + 1] = vbl;
+      indices[base + 2] = vbr;
+      indices[base + 3] = vtl;
+      indices[base + 4] = vbr;
+      indices[base + 5] = vtr;
+    }
+  }
+
+  unitSquare = new Model(GetGame()->GameDevice->Device, vertices, indices);
   return unitSquare;
 }
 
@@ -125,7 +173,8 @@ static mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_get_visible(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self);
-
+static mrb_value rb_sprite_get_tint(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_set_tint(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -145,6 +194,9 @@ static void mrb_spritecomp_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, rclass, "texture_count", rb_sprite_get_texturecount, ARGS_NONE());
   mrb_define_method(mrb, rclass, "visible", rb_sprite_get_visible, ARGS_NONE());
   mrb_define_method(mrb, rclass, "visible=", rb_sprite_set_visible, ARGS_REQ(1));
+  mrb_define_method(mrb, rclass, "tint", rb_sprite_get_tint, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "tint=", rb_sprite_set_tint, ARGS_REQ(1));
+
 }
 
 
@@ -238,6 +290,27 @@ mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self)
   auto sprite = rb_help_getSpriteComponent(mrb, self);
 
   sprite->Visible = !!value;
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_sprite_get_tint(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  return ruby::wrap_memory_vector(&sprite->Tint);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_sprite_set_tint(mrb_state *mrb, mrb_value self)
+{
+  mrb_value value;
+  mrb_get_args(mrb, "o", &value);
+  auto sprite = rb_help_getSpriteComponent(mrb, self);
+
+  sprite->Tint = ruby::get_ruby_vector(value);
 
   return mrb_nil_value();
 }

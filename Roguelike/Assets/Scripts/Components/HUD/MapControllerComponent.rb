@@ -38,7 +38,7 @@ class MapControllerComponent < ComponentBase
 
   def maximize
     # We move the map to the center, and scale it.
-    @transform.position = Vector.zero
+    @transform.position = Vector.new(0, 0, -0.1)
     @transform.scale = Vector.scalar(2)
     # We need to record that the map is now maximized.
     @maximized = true

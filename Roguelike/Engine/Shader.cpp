@@ -272,8 +272,62 @@ Shader *Shader::LoadShader(
 
 // ----------------------------------------------------------------------------
 
+static ID3D11Buffer *CreateTimeResource()
+{
+  D3D11_BUFFER_DESC desc;
+  desc.Usage = D3D11_USAGE_DYNAMIC;
+  desc.ByteWidth = sizeof(float) * 4;
+  desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+  desc.MiscFlags = 0;
+  desc.StructureByteStride = 0;
+
+  ID3D11Buffer *buffer;
+
+  HRESULT hr = GetGame()->GameDevice->Device->
+    CreateBuffer(&desc, nullptr, &buffer);
+  CHECK_HRESULT(hr);
+
+  return buffer;
+}
+
+// ----------------------------------------------------------------------------
+
+static void UpdateTime(ID3D11Buffer *buffer)
+{
+  static auto& time = GetGame()->Time;
+  static auto LastUpdated = time.Frame - 1;
+
+  if (LastUpdated >= time.Frame)
+    return;
+
+  LastUpdated = time.Frame;
+
+  D3D11_MAPPED_SUBRESOURCE map;
+  HRESULT hr;
+
+  auto& context = GetGame()->GameDevice->DeviceContext;
+  hr = context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
+  CHECK_HRESULT(hr);
+
+  auto runtime = 
+    time.RunningTime.count() * 
+    GameTime::clock::period::num / 
+    static_cast<long double>(GameTime::clock::period::den);
+
+  float& resTime = *static_cast<float *>(map.pData);
+  resTime = (float) runtime;
+
+  context->Unmap(buffer, 0);
+}
+
+// ----------------------------------------------------------------------------
+
 void Shader::Draw(unsigned indexCount)
 {
+  static auto *timeRes = CreateTimeResource();
+  UpdateTime(timeRes);
+
   using namespace DirectX;
   auto *context = device->DeviceContext;
   HRESULT result;
@@ -291,7 +345,13 @@ void Shader::Draw(unsigned indexCount)
 
   context->Unmap(cameraBuffer, 0);
 
-  context->VSSetConstantBuffers(0, 1, &cameraBuffer);
+  ID3D11Buffer *buffers[] =
+  {
+    cameraBuffer,
+    timeRes
+  };
+
+  context->VSSetConstantBuffers(0, ARRAYSIZE(buffers), buffers);
   context->IASetInputLayout(vertexLayout);
   context->VSSetShader(vertexShader, nullptr, 0);
   context->PSSetShader(pixelShader, nullptr, 0);

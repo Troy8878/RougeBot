@@ -54,10 +54,11 @@ class PlayerControllerComponent < ComponentBase
 
     if @blocked_reason == BLOCKED_BY_ACTOR
       self.owner.attack_component.do_attack @move_tile.actor
-      @logic_cooldown += 0.5
+      @logic_cooldown = 0.5
     else
       @pos.x += x
       @pos.y += y
+      @logic_cooldown = 0.2
 
       actor_moved
     end

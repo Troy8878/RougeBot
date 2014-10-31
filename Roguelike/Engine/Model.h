@@ -26,6 +26,18 @@ struct BasicVertex final
 
 struct TexturedVertex final
 {
+  inline TexturedVertex()
+    : position(0, 0, 0, 0), color(1, 1, 1, 1), texture(0, 0)
+  {
+  }
+
+  inline TexturedVertex(const math::Vector& pos,
+                        const math::Vector& color = {},
+                        const math::Vector2D& tex = {})
+    : position(pos), color(color), texture(tex)
+  {
+  }
+
   math::Vector position;
   math::Vector color;
   math::Vector2D texture;
@@ -58,7 +70,7 @@ public:
   
   Shader *shader;
   Texture2D texture;
-  math::Vector tint = {1, 1, 1, 0.75};
+  math::Vector tint = {1, 1, 1, 1};
 
   ID3D11Buffer *GetVB() { return _vertexBuffer; }
   ID3D11Buffer *GetIB() { return _indexBuffer; }

@@ -41,21 +41,43 @@ class PlayerProjectileLogicComponent < ComponentBase
   def on_update(e)
     return unless actor_init?
 
-    for loop in 1..@speed # Need to wait until 1st movement is done to check again!
       @logic_cooldown = nil
+
+      # First check the current tile
+
+    if true == false # Will need to change to a check for units in the current tile that isn't the player or projectiles
+      self.owner.zombify!
+      return
+    elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
+      # We have to move into the enemy we're attacking
+      move
+      self.owner.attack_component.do_attack @move_tile.actor
+      #seq = self.owner.action_sequence :zombification
+      #seq.delay(0.15)
+      #seq.once do
+      self.owner.zombify!
+      #end
+      return
+    elsif @blocked_reason == BLOCKED_BY_COOLDOWN
+      puts "Code Error"
+      return
+    elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
+      move
+    end
+
+    # Now to check for movement!
+
+    for loop in 1..@speed # Need to wait until 1st movement is done to check again!
       if(@speed == 1)
         resolution = can_move? *@direc
       else
         resolution = can_move_more_than_one? *@direc
       end
-      puts "X: #{@position.x} Y: #{@position.y}"
-      puts resolution.to_s
 
       if resolution == false
         if @blocked_reason == BLOCKED_BY_WALL # Add a delay:  Don't delete until reaching the last locale that isn't a wall.
                                               # Do this via  (delay until translation = @position)
           self.owner.zombify!
-          puts "Ate a Wall"
           return
         elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
           # We have to move into the enemy we're attacking
@@ -66,10 +88,9 @@ class PlayerProjectileLogicComponent < ComponentBase
           #seq.once do
           self.owner.zombify!
           #end
-          puts "Ate a Derpski"
           return
         elsif @blocked_reason == BLOCKED_BY_COOLDOWN
-          puts "Ate a Code Error"
+          puts "Code Error"
           return
         elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
           move
@@ -88,7 +109,6 @@ class PlayerProjectileLogicComponent < ComponentBase
   def move
     @position.x += @direc.at(0)
     @position.y += @direc.at(1)
-    puts "Moved"
 
     actor_minimap_update
   end

@@ -4,17 +4,23 @@
 * Created 2014/09/26
 *********************************/
 
-/******************************************************************************/
-
 #include "SoundSystem.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 
+// ----------------------------------------------------------------------------
+
 /* Here be the SoundClass that manages the playing of sounds! */
 
 SoundClass::SoundClass()
+{
+}
+
+// ----------------------------------------------------------------------------
+
+void SoundClass::Initialize()
 {
   // Create our system
   FMODresult = FMOD::System_Create(&SoundSystem);
@@ -45,17 +51,23 @@ SoundClass::SoundClass()
   CheckResult(FMODresult == FMOD_OK);
 }
 
+// ----------------------------------------------------------------------------
+
 SoundClass::~SoundClass()
 {
   FMODresult = SoundSystem->release();
   CheckResult(FMODresult == FMOD_OK);
 }
 
+// ----------------------------------------------------------------------------
+
 void SoundClass::Update()
 {
   FMODresult = SoundSystem->update();
   CheckResult(FMODresult == FMOD_OK);
 }
+
+// ----------------------------------------------------------------------------
 
 void SoundClass::CheckResult(bool isOkay)
 {
@@ -66,6 +78,8 @@ void SoundClass::CheckResult(bool isOkay)
     throw basic_exception("FMOD init error.");
   }
 }
+
+// ----------------------------------------------------------------------------
 
 /* Here be the sound class itself! */
 
@@ -216,11 +230,15 @@ SoundClass::Sound::Sound(const char* name, SoundClass& Sys, SOUND_TYPE type, FMO
   // chan is set when we play the sound (that's when a channel is alocated)
 }
 
+// ----------------------------------------------------------------------------
+
 SoundClass::Sound *SoundClass::Sound::CreateSound(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos)
 {
   // Just a quick wrapper for easy SFX construction
   return new Sound(name, Sys, SOUND_TYPE::SFX, 0, Infos);
 }
+
+// ----------------------------------------------------------------------------
 
 SoundClass::Sound *SoundClass::Sound::CreateMusic(const char* name, SoundClass& Sys, std::vector<ExInfo> Infos)
 {
@@ -228,11 +246,15 @@ SoundClass::Sound *SoundClass::Sound::CreateMusic(const char* name, SoundClass& 
   return new Sound(name, Sys, SOUND_TYPE::MUSIC, 0, Infos);
 }
 
+// ----------------------------------------------------------------------------
+
 SoundClass::Sound *SoundClass::Sound::CreateCustom(const char* name, SoundClass& Sys, FMOD_MODE custom, std::vector<ExInfo> Infos)
 {
   // In case we need easy construction for something other than standard SFX or music
   return new Sound(name, Sys, SOUND_TYPE::NONE, custom, Infos);
 }
+
+// ----------------------------------------------------------------------------
 
 std::vector<SoundClass::Sound::ExInfo> SoundClass::Sound::GetExInfo() const
 {
@@ -240,11 +262,15 @@ std::vector<SoundClass::Sound::ExInfo> SoundClass::Sound::GetExInfo() const
   return Infos;
 }
 
+// ----------------------------------------------------------------------------
+
 void SoundClass::Sound::Play()
 {
   FMODresult = Sys->SoundSystem->playSound(sound, 0, false, &chan);
   CheckResult(FMODresult == FMOD_OK);
 }
+
+// ----------------------------------------------------------------------------
 
 bool SoundClass::Sound::IsPlaying()
 {
@@ -254,17 +280,23 @@ bool SoundClass::Sound::IsPlaying()
   return answer;
 }
 
+// ----------------------------------------------------------------------------
+
 void SoundClass::Sound::Pause()
 {
   FMODresult = chan->setPaused(true);
   CheckResult(FMODresult == FMOD_OK);
 }
 
+// ----------------------------------------------------------------------------
+
 void SoundClass::Sound::Unpause()
 {
   FMODresult = chan->setPaused(false);
   CheckResult(FMODresult == FMOD_OK);
 }
+
+// ----------------------------------------------------------------------------
 
 bool SoundClass::Sound::IsPaused()
 {
@@ -274,12 +306,16 @@ bool SoundClass::Sound::IsPaused()
   return answer;
 }
 
+// ----------------------------------------------------------------------------
+
 void SoundClass::Sound::Stop()
 {
   // Stopping is by channel, not by sound (the channel is what plays, while the sound is what the channel is playing!)
   FMODresult = chan->stop();
   CheckResult(FMODresult == FMOD_OK);
 }
+
+// ----------------------------------------------------------------------------
 
 int SoundClass::Sound::GetCurrentChan()
 {
@@ -289,11 +325,15 @@ int SoundClass::Sound::GetCurrentChan()
   return answer;
 }
 
+// ----------------------------------------------------------------------------
+
 SoundClass::Sound::~Sound()
 {
   FMODresult = sound->release();
   CheckResult(FMODresult == FMOD_OK);
 }
+
+// ----------------------------------------------------------------------------
 
 void SoundClass::Sound::CheckResult(bool isOkay)
 {
@@ -303,3 +343,5 @@ void SoundClass::Sound::CheckResult(bool isOkay)
     throw basic_exception("FMOD init error.");
   }
 }
+
+// ----------------------------------------------------------------------------

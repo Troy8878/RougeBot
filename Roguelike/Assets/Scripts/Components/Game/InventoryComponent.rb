@@ -13,21 +13,19 @@
 class InventoryComponent < ComponentBase
   attr_reader :inventory
 
-  dependency "PlayerControllerComponent"
-
   def initialize(data)
     super data
 
-    if self.owner.player_controller_component
+    if data["is_player"] == true
       @inventory = PLAYER_INVENTORY
       @inventory.initialize
 
       seq = owner.action_sequence :add_items
+      seq.delay 1.5
       5.times do
         seq.delay 0.5
         seq.once { give_random_weapon 2 }
       end
-
     else
       @inventory = Inventory.new
     end

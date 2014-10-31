@@ -58,6 +58,7 @@ public:
   
   Shader *shader;
   Texture2D texture;
+  math::Vector tint = {1, 1, 1, 0.75};
 
   ID3D11Buffer *GetVB() { return _vertexBuffer; }
   ID3D11Buffer *GetIB() { return _indexBuffer; }

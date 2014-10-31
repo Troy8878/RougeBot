@@ -29,7 +29,9 @@
     "max_health": 250
   },
 
-  "InventoryComponent": {},
+  "InventoryComponent": {
+    "is_player": true
+  },
 
   "KeybindingComponent": {},
 

@@ -46,24 +46,25 @@ class PlayerProjectileLogicComponent < ComponentBase
       # First check the current tile
 
     if true == false # Will need to change to a check for units in the current tile that isn't the player or projectiles
-      self.owner.zombify!
-      return
-    elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
-      # We have to move into the enemy we're attacking
-      move
-      self.owner.attack_component.do_attack @move_tile.actor
-      #seq = self.owner.action_sequence :zombification
-      #seq.delay(0.15)
-      #seq.once do
-      self.owner.zombify!
-      #end
-      return
-    elsif @blocked_reason == BLOCKED_BY_COOLDOWN
-      puts "Code Error"
-      return
-    elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
-      move
-    end
+      if @blocked_reason == BLOCKED_BY_WALL
+        self.owner.zombify!
+        return
+      elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
+        # We have to move into the enemy we're attacking
+        move
+        self.owner.attack_component.do_attack @move_tile.actor
+        #seq = self.owner.action_sequence :zombification
+        #seq.delay(0.15)
+        #seq.once do
+        self.owner.zombify!
+        #end
+        return
+      elsif @blocked_reason == BLOCKED_BY_COOLDOWN
+        puts "Code Error"
+        return
+      elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
+        move
+      end
 
     # Now to check for movement!
 

@@ -70,6 +70,7 @@ public:
   
   Shader *shader;
   Texture2D texture;
+  Texture2D tintTexture;
   math::Vector tint = {1, 1, 1, 1};
 
   ID3D11Buffer *GetVB() { return _vertexBuffer; }

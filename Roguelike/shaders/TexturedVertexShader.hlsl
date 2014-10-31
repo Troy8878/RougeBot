@@ -22,13 +22,18 @@ TexturedPixelInputType main(TexturedVertexInputType input)
   
   // Object to World space
   output.position = mul(output.position, worldMatrix);
+
   // World to Camera Space
   output.position = mul(output.position, viewMatrix);
+
   // Do some funky shakey shit
-  output.position.z += sin(output.position.x / 2 + time * 2) / 3;
+  float sval = sin(output.position.x / 2 + time * 0.5) / 25;
+  output.position.z += sval * distance(output.position.z, 3.5);
+
   // Light thingy
   float dist = (distance(output.position.xy, float2(0, 0)) + 1.9) / 2;
   output.color.xyz *= 1 / dist;
+
   // Camera to Projection space
   output.position = mul(output.position, projectionMatrix);
 

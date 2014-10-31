@@ -30,28 +30,9 @@ void TextureComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void TextureComponent::AddTexture(json::value Textureef)
+void TextureComponent::AddTexture(json::value definition)
 {
-  static std::unordered_map<std::string, Texture2D(*)(json::value)> constructors =
-  {
-    {"texture", TextureComponent::ConstructTexture},
-    {"zipped", TextureComponent::ConstructZipped}
-  };
-
-  if (Textureef.is(json::json_type::jobject))
-  {
-    auto& obj = Textureef.as_object();
-
-    assert(obj.size() == 1); // THERE CAN ONLY BE ONE!!1!
-    auto& pair = *obj.begin();
-
-    textures.push_back(constructors[pair.first](pair.second));
-  }
-  else // A single string must mean a single texture
-  {
-    assert(Textureef.is(json::json_type::jstring));
-    textures.push_back(ConstructTexture(Textureef));
-  }
+  textures.push_back(Texture2D::LoadTextureDefinition(definition));
 }
 
 // ----------------------------------------------------------------------------
@@ -61,23 +42,6 @@ void TextureComponent::RemoveTexture(size_t index)
   if (index >= textures.size())
     return;
   textures.erase(textures.begin() + index);
-}
-
-// ----------------------------------------------------------------------------
-
-Texture2D TextureComponent::ConstructTexture(json::value definition)
-{
-  return TextureManager::Instance.LoadTexture(definition.as_string());
-}
-
-// ----------------------------------------------------------------------------
-
-Texture2D TextureComponent::ConstructZipped(json::value definition)
-{
-  assert(definition.is_array_of<json::value::string_t>());
-
-  TextureZip zip(definition.as_array_of<json::value::string_t>());
-  return Texture2D::FromTextureZip(zip);
 }
 
 // ----------------------------------------------------------------------------

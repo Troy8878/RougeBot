@@ -16,6 +16,10 @@ class TextureZip;
 
 // ----------------------------------------------------------------------------
 
+mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
+
+// ----------------------------------------------------------------------------
+
 class Texture2D
 {
 public:
@@ -47,9 +51,14 @@ public:
   PROPERTY(get = GetHeight) size_t Height;
 
   PROPERTY(get = GetRubyWrapper) mrb_value RubyWrapper;
+  
+  static Texture2D LoadTextureDefinition(json::value definition);
 
 private:
   struct TextureResource;
+
+  static Texture2D ConstructTexture(json::value definition);
+  static Texture2D ConstructZipped(json::value definition);
   
   explicit Texture2D(const std::shared_ptr<TextureResource>& resource);
   Texture2D(ID3D11Device *device, const std::string& asset);
@@ -98,6 +107,8 @@ private:
   };
 
   std::shared_ptr<TextureResource> _res;
+
+  friend mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
 
 public:
   ID3D11ShaderResourceView * const & _GetShaderRes() const { return _res->resource; };

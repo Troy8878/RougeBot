@@ -37,6 +37,7 @@ public:
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
   IRW_PROPERTY(size_t, TextureIndex);
   IRW_PROPERTY(math::Vector, Tint);
+  IRW_PROPERTY(Texture2D, TintTexture);
 
   IRW_PROPERTY(bool, Visible);
 

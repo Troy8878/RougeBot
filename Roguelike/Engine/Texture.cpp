@@ -333,34 +333,73 @@ Texture2D Texture2D::FromTextureZip(TextureZip& zip)
 
 // ----------------------------------------------------------------------------
 
+Texture2D Texture2D::LoadTextureDefinition(json::value definition)
+{
+  static std::unordered_map<std::string, Texture2D(*)(json::value)> constructors =
+  {
+    {"texture", Texture2D::ConstructTexture},
+    {"zipped", Texture2D::ConstructZipped}
+  };
+
+  if (definition.is(json::json_type::jobject))
+  {
+    auto& obj = definition.as_object();
+
+    assert(obj.size() == 1); // THERE CAN ONLY BE ONE!!1!
+    auto& pair = *obj.begin();
+
+    return constructors[pair.first](pair.second);
+  }
+  else // A single string must mean a single texture
+  {
+    assert(definition.is(json::json_type::jstring));
+    return ConstructTexture(definition);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+Texture2D Texture2D::ConstructTexture(json::value definition)
+{
+  return TextureManager::Instance.LoadTexture(definition.as_string());
+}
+
+// ----------------------------------------------------------------------------
+
+Texture2D Texture2D::ConstructZipped(json::value definition)
+{
+  assert(definition.is_array_of<json::value::string_t>());
+
+  TextureZip zip(definition.as_array_of<json::value::string_t>());
+  return Texture2D::FromTextureZip(zip);
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_data_type mrb_texture_2d_dt;
 
-static void mrb_texture_gem_init(mrb_state *mrb);
+mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
 
-static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
-
-static mrb_value mrb_texture_name(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_texture_(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
 mrb_value Texture2D::GetRubyWrapper() const
 {
-  RUN_ONCE(mrb_texture_gem_init(*mrb_inst));
   return mrb_texture_init(*mrb_inst, *this);
 }
 
 // ----------------------------------------------------------------------------
 
-static void mrb_texture_gem_init(mrb_state *mrb)
+extern "C" void mrb_mruby_texture_init(mrb_state *mrb)
 {
   mrb_texture_2d_dt.dfree = ruby::data_scalar_delete<Texture2D>;
   mrb_texture_2d_dt.struct_name = typeid(Texture2D).name();
 
   auto tex = mrb_define_class(mrb, "Texture", mrb->object_class);
+  
+  mrb_define_class_method(mrb, tex, "new", mrb_texture_load, ARGS_REQ(1));
+  mrb_define_class_method(mrb, tex, "load", mrb_texture_load, ARGS_REQ(1));
   
   mrb_func_t get_name =
     ruby::data_getter_access_string<
@@ -384,13 +423,31 @@ static void mrb_texture_gem_init(mrb_state *mrb)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex)
+mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex)
 {
   static auto tex_c = mrb_class_get(mrb, "Texture");
 
-  auto pTex = new Texture2D(tex);
+  Texture2D *pTex;
+  if (tex._res)
+    pTex = new Texture2D(tex);
+  else
+    pTex = new Texture2D(Texture2D::GetNullTexture());
+
   auto obj = mrb_data_object_alloc(mrb, tex_c, pTex, &mrb_texture_2d_dt);
   return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value)
+{
+  mrb_value opts;
+  mrb_get_args(mrb, "o", &opts);
+
+  auto jopts = mrb_inst->value_to_json(opts);
+  auto tex = Texture2D::LoadTextureDefinition(jopts);
+
+  return tex.RubyWrapper;
 }
 
 // ----------------------------------------------------------------------------

@@ -62,4 +62,7 @@ Config.load_defaults do
 
   ######################
 
+  Config.bind_action "pancakification", { down: [:pancakification] }
+  Config.bind_key "Game", Keys::PAUSE, "pancakification"
+
 end

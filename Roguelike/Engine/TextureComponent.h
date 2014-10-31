@@ -25,7 +25,7 @@ public:
   PROPERTY(get = _GetTextures) const std::vector<Texture2D>& Textures;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
 
-  void AddTexture(json::value Textureef);
+  void AddTexture(json::value definition);
   void RemoveTexture(size_t index);
 
   mrb_value GetRubyWrapper() override;
@@ -34,9 +34,6 @@ public:
 
 private:
   std::vector<Texture2D> textures;
-
-  static Texture2D ConstructTexture(json::value definition);
-  static Texture2D ConstructZipped(json::value definition);
 
 public:
   const std::vector<Texture2D>& _GetTextures() const { return textures; }

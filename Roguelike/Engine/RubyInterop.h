@@ -402,8 +402,11 @@ namespace ruby
   mrb_value data_getter_access_string(mrb_state *mrb, mrb_value self)
   {
     // Sorry, I couldn't resist trying them out (the emoji)
-    auto& obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
-    std::string val = static_cast<std::string>((obj.*MFP)());
+    auto obj = (T *) mrb_data_get_ptr(mrb, self, DT);
+    if (obj == nullptr)
+      return mrb_str_new(mrb, "", 0);
+
+    std::string val = static_cast<std::string>((obj->*MFP)());
     return mrb_str_new(mrb, val.c_str(), val.size());
   }
 

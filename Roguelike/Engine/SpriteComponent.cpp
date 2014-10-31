@@ -62,9 +62,10 @@ void SpriteComponent::Draw()
     UnitSquare->texture = textures[TextureIndex % TextureCount];
   else
     UnitSquare->texture = Texture2D();
-  
+
   UnitSquare->shader = ModelShader;
   UnitSquare->tint = Tint;
+  UnitSquare->tintTexture = TintTexture;
   UnitSquare->Draw(transform);
 }
 
@@ -175,13 +176,15 @@ static mrb_value rb_sprite_get_visible(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_get_tint(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_set_tint(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_get_tint_tex(mrb_state *mrb, mrb_value self);
+static mrb_value rb_sprite_set_tint_tex(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
 static void mrb_spritecomp_gem_init(mrb_state *mrb)
 {
   mrb_spritecomp_data_type.dfree = mrb_spritecomp_free;
-  mrb_spritecomp_data_type.struct_name = "SpriteComponent";
+  mrb_spritecomp_data_type.struct_name = typeid(SpriteComponent).name();
 
   auto rmod = mrb_module_get(mrb, "Components");
   auto rclass = mrb_define_class_under(mrb, rmod, "SpriteComponent", cbase);
@@ -196,7 +199,8 @@ static void mrb_spritecomp_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, rclass, "visible=", rb_sprite_set_visible, ARGS_REQ(1));
   mrb_define_method(mrb, rclass, "tint", rb_sprite_get_tint, ARGS_NONE());
   mrb_define_method(mrb, rclass, "tint=", rb_sprite_set_tint, ARGS_REQ(1));
-
+  mrb_define_method(mrb, rclass, "tint_texture", rb_sprite_get_tint_tex, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "tint_texture=", rb_sprite_set_tint_tex, ARGS_REQ(1));
 }
 
 
@@ -204,7 +208,6 @@ static void mrb_spritecomp_gem_init(mrb_state *mrb)
 
 mrb_value SpriteComponent::GetRubyWrapper()
 {
-  
   RUN_ONCE(cbase = Component::GetComponentRClass(),
     mrb_spritecomp_gem_init(*mrb_inst));
 
@@ -237,16 +240,9 @@ mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-SpriteComponent *rb_help_getSpriteComponent(mrb_state *mrb, mrb_value self)
-{
-  return (SpriteComponent *)mrb_data_get_ptr(mrb, self, &mrb_spritecomp_data_type);
-}
-
-// ----------------------------------------------------------------------------
-
 mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self)
 {
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
   return mrb_fixnum_value(sprite->TextureIndex);
 }
@@ -255,7 +251,7 @@ mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self)
 
 mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self)
 {
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
   mrb_int newIndex;
   mrb_get_args(mrb, "i", &newIndex);
@@ -268,7 +264,7 @@ mrb_value rb_sprite_set_textureindex(mrb_state *mrb, mrb_value self)
 
 mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
 {
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
   return mrb_fixnum_value(sprite->TextureCount);
 }
@@ -277,7 +273,7 @@ mrb_value rb_sprite_get_texturecount(mrb_state *mrb, mrb_value self)
 
 mrb_value rb_sprite_get_visible(mrb_state *mrb, mrb_value self)
 {
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
   return mrb_bool_value(sprite->Visible);
 }
 
@@ -287,7 +283,7 @@ mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self)
 {
   mrb_bool value;
   mrb_get_args(mrb, "b", &value);
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
   sprite->Visible = !!value;
 
@@ -298,7 +294,7 @@ mrb_value rb_sprite_set_visible(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_sprite_get_tint(mrb_state *mrb, mrb_value self)
 {
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
   return ruby::wrap_memory_vector(&sprite->Tint);
 }
 
@@ -308,9 +304,32 @@ static mrb_value rb_sprite_set_tint(mrb_state *mrb, mrb_value self)
 {
   mrb_value value;
   mrb_get_args(mrb, "o", &value);
-  auto sprite = rb_help_getSpriteComponent(mrb, self);
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
   sprite->Tint = ruby::get_ruby_vector(value);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_sprite_get_tint_tex(mrb_state *mrb, mrb_value self)
+{
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
+  return sprite->TintTexture.RubyWrapper;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_sprite_set_tint_tex(mrb_state *mrb, mrb_value self)
+{
+  mrb_value param;
+  mrb_get_args(mrb, "o", &param);
+  
+  auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
+  auto tex = *ruby::data_get<Texture2D>(mrb, param);
+
+  sprite->TintTexture = tex;
 
   return mrb_nil_value();
 }

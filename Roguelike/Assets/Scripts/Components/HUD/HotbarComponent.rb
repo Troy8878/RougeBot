@@ -18,7 +18,11 @@ class HotbarComponent < ComponentBase
   def first_update(e)
     remove_event :update
 
-    deselect_slot
+    if @inv_slot == 0
+      select_slot
+    else
+      deselect_slot
+    end
 
     @target = find_entity(@target_name)
     @target.proxy_event :inventory_update, self, :on_update
@@ -57,6 +61,10 @@ class HotbarComponent < ComponentBase
 
     remove_item
     display_item args[2]
+
+    if @is_selected
+      quick_equip @inv_slot
+    end
   end
 
   def quick_equip(slot)

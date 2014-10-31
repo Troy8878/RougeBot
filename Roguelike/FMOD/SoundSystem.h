@@ -16,6 +16,7 @@ class SoundClass
 
 public:
   SoundClass();
+  void Initialize();
   ~SoundClass();
   void Update();
 
@@ -132,7 +133,7 @@ private:
   void CheckResult(bool isOkay);
   FMOD::System *SoundSystem;
   FMOD_RESULT FMODresult;
-  FMOD_SPEAKERMODE speakermode;
+  FMOD_SPEAKERMODE speakermode = FMOD_SPEAKERMODE_DEFAULT;
   unsigned int version;
   int hertz = 44100;
 };

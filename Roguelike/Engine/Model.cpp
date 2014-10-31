@@ -64,8 +64,48 @@ Model::Model(ID3D11Device *device,
 
 // ----------------------------------------------------------------------------
 
+static ID3D11Buffer *CreateTintResource()
+{
+  D3D11_BUFFER_DESC desc;
+  desc.Usage = D3D11_USAGE_DYNAMIC;
+  desc.ByteWidth = sizeof(math::Vector);
+  desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+  desc.MiscFlags = 0;
+  desc.StructureByteStride = 0;
+
+  ID3D11Buffer *buffer;
+
+  HRESULT hr = GetGame()->GameDevice->Device->
+    CreateBuffer(&desc, nullptr, &buffer);
+  CHECK_HRESULT(hr);
+
+  return buffer;
+}
+
+// ----------------------------------------------------------------------------
+
+static void UpdateTint(ID3D11Buffer *buffer, const math::Vector& tint)
+{
+  D3D11_MAPPED_SUBRESOURCE map;
+  HRESULT hr;
+
+  auto& context = GetGame()->GameDevice->DeviceContext;
+  hr = context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
+  CHECK_HRESULT(hr);
+
+  math::Vector *resVect = static_cast<math::Vector *>(map.pData);
+  *resVect = tint;
+
+  context->Unmap(buffer, 0);
+}
+
+// ----------------------------------------------------------------------------
+
 void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
+  static auto *tintRes = CreateTintResource();
+
   shader->camera->worldMatrix = worldTransform;
 
   unsigned offset = 0;
@@ -74,6 +114,9 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
   context->IASetVertexBuffers(0, 1, &_vertexBuffer, &_stride, &offset);
   context->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, offset);
   context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+  UpdateTint(tintRes, tint);
+  context->PSSetConstantBuffers(0, 1, &tintRes);
 
   static auto nulltex = Texture2D::GetNullTexture();
 

@@ -73,7 +73,7 @@ public:
   void OnKey(Events::EventMessage& msg)
   {
     auto& e = *msg.GetData<KeyStateEvent>();
-    if (e.state->virtual_key == VK_ESCAPE)
+    if (e.state->virtual_key == VK_F11)
     {
       sound->Play();
     }

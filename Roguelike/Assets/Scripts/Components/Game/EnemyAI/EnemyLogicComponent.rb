@@ -93,11 +93,23 @@ class EnemyLogicComponent < ComponentBase
     end
   end
 
+  def resolve_player_projectiles?(x, y)
+      if(@move_tile.actor != nil)
+        if(@move_tile.actor.name == "Bomb" || @move_tile.actor.name == "Mine" || @move_tile.actor.name == "Arrow") # We'l actually want a list of sorts at some point
+          @move_tile.actor.owner.attack_component.do_attack self
+        end
+      end
+  end
+
   def move(dx, dy)
     return unless can_move? dx, dy
 
+    resolve_player_projectiles?(dx, dy)
+
     @position.x += dx
     @position.y += dy
+
+    #resolve_player_projectiles_past?(dx, dy)
 
     actor_moved
   end

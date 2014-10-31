@@ -18,12 +18,20 @@ class PlayerProjectileLogicComponent < ComponentBase
     @direc = data.fetch("direc", [0, 0])
     @speed = data.fetch("speed", 0)
 
+    # 0 speed just means it doesn't move.
+    #This can be achieved by disabling direc instead since speed is used in the collision logic
+
+    if @speed == 0
+      @speed = 1
+      @direc = [0, 0]
+    end
+
     register_event :logic_update, :on_update
     register_event :update, :first_update
   end
 
   def first_update(e)
-    actor_init(MapItem::ELLIPSE, "Peru, 0.7") # A colour that in fact does not appear on country-Peru's flag
+    actor_init(MapItem::ELLIPSE, "Peru, 0.75") # A colour that in fact does not appear on country-Peru's flag
     actor_minimap_update
     ghost_actor!
 
@@ -33,35 +41,51 @@ class PlayerProjectileLogicComponent < ComponentBase
   def on_update(e)
     return unless actor_init?
 
-    for loop in 1..@speed
+    for loop in 1..@speed # Need to wait until 1st movement is done to check again!
       @logic_cooldown = nil
-      resolution = can_move? *@direc
+      if(@speed == 1)
+        resolution = can_move? *@direc
+      else
+        resolution = can_move_more_than_one? *@direc
+      end
+      puts "X: #{@position.x} Y: #{@position.y}"
       puts resolution.to_s
-      calc_x = @position.x += @direc.at(0)
-      calc_y = @position.y += @direc.at(1)
-      puts "#{calc_x}, #{calc_y}"
 
       if resolution == false
-        if @blocked_reason == BLOCKED_BY_WALL || @blocked_reason == BLOCKED_BY_UNKNOWN
+        if @blocked_reason == BLOCKED_BY_WALL # Add a delay:  Don't delete until reaching the last locale that isn't a wall.
+                                              # Do this via  (delay until translation = @position)
           self.owner.zombify!
-          puts @blocked_reason.to_s
+          puts "Ate a Wall"
           return
         elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
+          # We have to move into the enemy we're attacking
+          move
           self.owner.attack_component.do_attack @move_tile.actor
+          #seq = self.owner.action_sequence :zombification
+          #seq.delay(0.15)
+          #seq.once do
           self.owner.zombify!
-          puts @blocked_reason.to_s
+          #end
+          puts "Ate a Derpski"
           return
+        elsif @blocked_reason == BLOCKED_BY_COOLDOWN
+          puts "Ate a Code Error"
+          return
+        elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
+          move
         end
       else
         move
+
       end
     end
 
     actor_moved
+    resolution = nil
+
   end
 
   def move
-
     @position.x += @direc.at(0)
     @position.y += @direc.at(1)
     puts "Moved"

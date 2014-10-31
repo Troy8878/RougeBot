@@ -32,19 +32,19 @@ Config.load_defaults do
   Config.bind_action "fire_left",       { held: [:fire, [-1,  0]] }
   Config.bind_action "fire_down",       { held: [:fire, [ 0, -1]] }
   Config.bind_action "fire_right",      { held: [:fire, [ 1,  0]] }
-  Config.bind_action "fire_up-left",    { held: [:fire, [-1,  1]] }
-  Config.bind_action "fire_up-right",   { held: [:fire, [ 1,  1]] }
-  Config.bind_action "fire_down-left",  { held: [:fire, [-1, -1]] }
-  Config.bind_action "fire_down-right", { held: [:fire, [ 1, -1]] }
+  Config.bind_action "fire_ul",         { held: [:fire, [-1,  1]] }
+  Config.bind_action "fire_ur",         { held: [:fire, [ 1,  1]] }
+  Config.bind_action "fire_dl",         { held: [:fire, [-1, -1]] }
+  Config.bind_action "fire_dr",         { held: [:fire, [ 1, -1]] }
 
   Config.bind_key "Player", [Keys::NUMPAD8], "fire_up"
   Config.bind_key "Player", [Keys::NUMPAD4], "fire_left"
   Config.bind_key "Player", [Keys::NUMPAD2], "fire_down"
   Config.bind_key "Player", [Keys::NUMPAD6], "fire_right"
-  Config.bind_key "Player", [Keys::NUMPAD1], "fire_up-left"
-  Config.bind_key "Player", [Keys::NUMPAD3], "fire_up-right"
-  Config.bind_key "Player", [Keys::NUMPAD7], "fire_down-left"
-  Config.bind_key "Player", [Keys::NUMPAD9], "fire_down-right"
+  Config.bind_key "Player", [Keys::NUMPAD1], "fire_ul"
+  Config.bind_key "Player", [Keys::NUMPAD3], "fire_ur"
+  Config.bind_key "Player", [Keys::NUMPAD7], "fire_dl"
+  Config.bind_key "Player", [Keys::NUMPAD9], "fire_dr"
 
   ######################
   # Minimap

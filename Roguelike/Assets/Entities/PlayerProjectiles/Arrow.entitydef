@@ -4,7 +4,7 @@
   },
   "AttackComponent": {
     "attack": 0, 
-    "damage": [11,16]
+    "damage": [8,12]
   },
   
   "DefenseComponent": {
@@ -18,7 +18,7 @@
 
   "PlayerProjectileLogicComponent": {
     "direc": [0, 0],
-    "speed": 1
+    "speed": 3
   },
 
   "ChildHierarchy": {

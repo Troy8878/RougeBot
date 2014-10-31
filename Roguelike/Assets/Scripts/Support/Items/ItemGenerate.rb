@@ -11,42 +11,92 @@ module ItemGenerate
     data["durability"] ||= 20
     data["value"] ||= 10
 
-    data["name"] = set_weapon_type(data, itemLevel)
+    data["name"] = set_weapon_type(data)
     data["name"] = set_weapon_stats(data, itemLevel)
-
-    Weapon.new data
-  end
-
-  def self.set_weapon_type(data, itemLevel)
-    name = ""
-
-    result = Random.die_roll 100
-
-    if result > 80
-      data["damage"][0] = 10
-      data["damage"][1] = 15
-      name = "Halberd"
-    elsif result > 60
-      data["damage"][0] = 8
-      data["damage"][1] = 10
-      name = "Spear"
-    elsif result > 40
-      data["damage"][0] = 6
-      data["damage"][1] = 12
-      name = "Sword"
-    else
-      data["damage"][0] = 5
-      data["damage"][1] = 8
-      name = "Dagger"
-    end
 
     if (data["damage"][1] < data["damage"][0])
       data["damage"][1] = data["damage"][0]
     end
 
     data["value"] = data["value"] * itemLevel
-    data["damage"][0] = data["damage"][0] * (itemLevel)
-    data["damage"][1] = data["damage"][1] * (itemLevel)
+
+    data["damage"][0] = data["damage"][0] * itemLevel
+    data["damage"][1] = data["damage"][1] * itemLevel
+
+    Weapon.new data
+  end
+
+  def self.set_weapon_type(data)
+    name = ""
+
+    result = Random.die_roll 100
+
+    if result > 90
+      data["damage"][0] = 8
+      data["damage"][1] = 13
+      name = "Halberd"
+    elsif result > 80
+      data["damage"][0] = 7
+      data["damage"][1] = 10
+      name = "Spear"
+    elsif result > 70
+      data["damage"][0] = 5
+      data["damage"][1] = 8
+      name = "Pitchfork"
+    elsif result > 60
+      data["damage"][0] = 4
+      data["damage"][1] = 7
+      data["durability"] += 10
+      name = "Quaterstaff"
+    elsif result > 50
+      data["damage"][0] = 5
+      data["damage"][1] = 10
+      name = "Saber"
+    elsif result > 40
+      data["damage"][0] = 5
+      data["damage"][1] = 9
+      data["durability"] += 5
+      name = "Hammer"
+    elsif result > 30
+      data["damage"][0] = 6
+      data["damage"][1] = 11
+      data["durability"] -= 5
+      name = "Axe"
+    elsif result > 20
+      data["damage"][0] = 9
+      data["damage"][1] = 14
+      data["durability"] -= 5
+      name = "Chainsaw"
+    elsif result > 10
+      data["damage"][0] = 3
+      data["damage"][1] = 4
+      data["durability"] -= 10
+      name = "Manual Drill"
+    #elsif result > 40
+    #  data["damage"][0] = 6
+    #  data["damage"][1] = 12
+    #  data["durability"] -= 10
+    #  name = "Diesel Drill"
+    #elsif result > 40
+    #  data["damage"][0] = 6
+    #  data["damage"][1] = 12
+    #  data["durability"] -= 10
+    #  name = "Steam Drill"
+    #elsif result > 40
+    #  data["damage"][0] = 6
+    #  data["damage"][1] = 12
+    #  data["durability"] -= 10
+    #  name = "Atomic Drill"
+    #elsif result > 40
+    #  data["damage"][0] = 33
+    #  data["damage"][1] = 39
+    #  data["durability"] -= 30
+    #  name = "Plasmic Drill"
+    else
+      data["damage"][0] = 4
+      data["damage"][1] = 9
+      name = "Dagger"
+    end
 
     return name
   end
@@ -56,7 +106,8 @@ module ItemGenerate
     name = data["name"]
 
     #Get Material
-    result = Random.die_roll 100
+    result = Random.die_roll 50
+    result += (itemLevel * 5)
 
     if result > 99
       name = "Diamond " + name
@@ -64,47 +115,52 @@ module ItemGenerate
       data["damage"][0] = data["damage"][0] + 4
       data["damage"][1] = data["damage"][1] + 4
       data["value"] = data["value"] + 10
-    elsif result > 90
+    elsif result > 80
       name = "Steel " + name
       data["durability"] = data["durability"] + 5
       data["damage"][0] = data["damage"][0] + 2
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] + 5
     elsif result > 70
-      name = "Iron " + name
-    elsif result > 50
       name = "Lead " + name
       data["damage"][0] = data["damage"][0] - 3
       data["damage"][1] = data["damage"][1] + 4
-    elsif result > 30
+    elsif result > 60
       name = "Asbestos " + name
       data["durability"] = data["durability"] - 5
-      data["damage"][0] = data["damage"][0] + 1
-      data["damage"][1] = data["damage"][1] - 1
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] - 5
-    elsif result > 20
-      name = "Plastic " + name
+    elsif result > 50
+      name = "Obsidian " + name
       data["durability"] = data["durability"] + 10
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] - 2
+    elsif result > 40
+      name = "Plastic " + name
+      data["durability"] = data["durability"] + 20
       data["damage"][0] = data["damage"][0] - 3
       data["damage"][1] = data["damage"][1] - 4
-    elsif result > 10
+    elsif result > 30
+      name = "Iron " + name
+    elsif result > 20
       name = "Wooden " + name
       data["durability"] = data["durability"] - 10
       data["damage"][0] = data["damage"][0] - 2
       data["damage"][1] = data["damage"][1] - 3
       data["value"] = data["value"] - 10
-    #elsif result > 10
-    #  name = "Brick " + name
-    #  data["durability"] = data["durability"] - 0
-    #  data["damage"][0] = data["damage"][0] + 0
-    #  data["damage"][1] = data["damage"][1] - 0
-    #  data["value"] = data["value"] - 20
-    #elsif result > 5
-    #  name = "Gelatin " + name
-    # data["durability"] = data["durability"] - 20
-    #  data["damage"][0] = data["damage"][0] - 10
-    #  data["damage"][1] = data["damage"][1] - 10
-    #  data["value"] = data["value"] - 30
+    elsif result > 10
+      name = "Brick " + name
+      data["durability"] = data["durability"] - 0
+      data["damage"][0] = data["damage"][0] + 0
+      data["damage"][1] = data["damage"][1] - 0
+      data["value"] = data["value"] - 20
+    elsif result > 5
+      name = "Gelatin " + name
+      data["durability"] = data["durability"] - 20
+      data["damage"][0] = data["damage"][0] - 10
+      data["damage"][1] = data["damage"][1] - 10
+      data["value"] = data["value"] - 30
     else
       name = "The Alleged " + name
       data["durability"] = 0
@@ -116,7 +172,8 @@ module ItemGenerate
 
 
     #Get Attribute
-    result = Random.die_roll 100
+    result = Random.die_roll 50
+    result += (itemLevel * 5)
     
     if result > 90
       name = "Sturdy " + name
@@ -140,13 +197,24 @@ module ItemGenerate
       name = "Dull " + name
       data["damage"][1] = data["damage"][1] - 2
       data["value"] = data["value"] -2
+    elsif result > 35
+      name = "Laser-Guided " + name
+      data["damage"][0] = data["damage"][0] + 1
+      data["damage"][1] = data["damage"][1] + 1
+      data["value"] = data["value"] + 3
+    elsif result > 30
+      name = "Torrented " + name
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] - 1
+      data["value"] = data["value"] = 0
     else
       name = name
     end
 
 
     #Get Element
-    result = Random.die_roll 100
+    result = Random.die_roll 50
+    result += (itemLevel * 5)
 
     if result > 95
       name = name + " of Radioactivity"

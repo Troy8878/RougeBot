@@ -22,6 +22,9 @@
 #include "mruby/value.h"
 #include "mruby/class.h"
 
+#include "FMOD/SoundManager.h"
+#include "Engine/Input.h"
+
 // ----------------------------------------------------------------------------
 
 class Roguelike : public Game
@@ -35,6 +38,8 @@ public:
     initSettings.assetFolder = L"./Assets";
     initSettings.vsync = true;
   }
+
+  ManagedSound sound;
 
   void OnInit() override
   {
@@ -55,9 +60,23 @@ public:
     static EventId updateEvent("update");
     SetHandler(updateEvent, &Roguelike::OnUpdate);
 
+    static EventId keyEvent("key_down");
+    SetHandler(keyEvent, &Roguelike::OnKey);
+
     static EventId resizeEvent("window_resize");
 
     Event::GlobalDispatcher->AddListener(_console);
+
+    sound = SoundManager::Instance.Load(json::value::string("SFX/Derp"));
+  }
+
+  void OnKey(Events::EventMessage& msg)
+  {
+    auto& e = *msg.GetData<KeyStateEvent>();
+    if (e.state->virtual_key == VK_F12)
+    {
+      sound->Play();
+    }
   }
 
   void InitShaders()

@@ -200,10 +200,15 @@ SoundClass::Sound::Sound(const char* name, SoundClass& Sys, SOUND_TYPE type, FMO
         break;
       }
     }
-  }
 
-  FMODresult = Sys.SoundSystem->createSound(name, mode, &ex, &sound);
-  CheckResult(FMODresult == FMOD_OK);
+    FMODresult = Sys.SoundSystem->createSound(name, mode, &ex, &sound);
+    CheckResult(FMODresult == FMOD_OK);
+  }
+  else
+  {
+    FMODresult = Sys.SoundSystem->createSound(name, mode, 0, &sound);
+    CheckResult(FMODresult == FMOD_OK);
+  } 
 
   // Save the Sys for later
   this->Sys = &Sys;

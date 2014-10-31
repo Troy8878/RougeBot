@@ -70,9 +70,9 @@ public:
 
     enum class SOUND_TYPE
     {
-      NONE,
-      MUSIC,
-      SFX  // AKA sound effects, but let's not confuse that term with every other term in here with the word "sound" in it
+      NONE = FMOD_DEFAULT,
+      MUSIC = FMOD_LOOP_NORMAL,
+      SFX = FMOD_LOOP_OFF // AKA sound effects, but let's not confuse that term with every other term in here with the word "sound" in it
     };
 
     struct ExInfo
@@ -80,7 +80,7 @@ public:
 
       union INFO
       {
-        int exInfoInt;
+        int exInfoInt = 0;
         unsigned int exInfoU_Int;
         int *exInfoIP;
         void *exInfoVP;

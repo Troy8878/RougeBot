@@ -60,23 +60,9 @@ public:
     static EventId updateEvent("update");
     SetHandler(updateEvent, &Roguelike::OnUpdate);
 
-    static EventId keyEvent("key_down");
-    SetHandler(keyEvent, &Roguelike::OnKey);
-
     static EventId resizeEvent("window_resize");
 
     Event::GlobalDispatcher->AddListener(_console);
-
-    sound = SoundManager::Instance.Load(json::value::string("SFX/Derp"));
-  }
-
-  void OnKey(Events::EventMessage& msg)
-  {
-    auto& e = *msg.GetData<KeyStateEvent>();
-    if (e.state->virtual_key == VK_F11)
-    {
-      sound->Play();
-    }
   }
 
   void InitShaders()

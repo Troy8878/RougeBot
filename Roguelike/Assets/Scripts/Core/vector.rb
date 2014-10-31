@@ -5,10 +5,14 @@
 #######################
 
 class Vector
-  alias :r :x
-  alias :g :y
-  alias :b :z
-  alias :a :w
+  alias r x
+  alias g y
+  alias b z
+  alias a w
+  alias r= x=
+  alias g= y=
+  alias b= z=
+  alias a= w=
 
   def self.zero; Vector.new(0, 0, 0, 0); end
   def self.origin; Vector.new(0, 0, 0, 1); end

@@ -120,10 +120,22 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
   static auto nulltex = Texture2D::GetNullTexture();
 
+  ID3D11ShaderResourceView * Textures[2] =
+  {
+    nulltex.ShaderRes,
+    nulltex.ShaderRes
+  };
+
   if (texture && !shader->device->WireframeDraw)
-    context->PSSetShaderResources(0, 1, &texture.ShaderRes);
-  else
-    context->PSSetShaderResources(0, 1, &nulltex.ShaderRes);
+  {
+    Textures[0] = texture.ShaderRes;
+    if (tintTexture)
+    {
+      Textures[1] = tintTexture.ShaderRes;
+    }
+  }
+
+  context->PSSetShaderResources(0, ARRAYSIZE(Textures), Textures);
 
   shader->Draw(_indexCount);
 }

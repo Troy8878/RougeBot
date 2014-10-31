@@ -1,5 +1,5 @@
 /*********************************
- * LevelDef.cp
+ * LevelDef.cpp
  * Connor Hilarides
  * Created 2014/08/31
  *********************************/

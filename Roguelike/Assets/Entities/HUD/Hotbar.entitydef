@@ -1,5 +1,6 @@
 {
   "TransformComponent": {},
+  "KeybindingComponent": {},
   "ChildHierarchy": {
     "children": [
       {

@@ -19,6 +19,20 @@
             "position": [0, 0, -0.1]
           }
         }
+      },
+      {
+        "name": "SelectedIndicator",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
+          "TextureComponent": {
+            "textures": ["HUD/TileCursor.png"]
+          },
+          "SpriteComponent": {
+            "render_target": "HUDLayer"
+          }
+        }
       }
     ]
   }

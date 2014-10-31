@@ -25,7 +25,7 @@ class InventoryComponent < ComponentBase
       seq = owner.action_sequence :add_items
       5.times do
         seq.delay 0.5
-        seq.once { give_random_weapon 10 }
+        seq.once { give_random_weapon 2 }
       end
 
     else
@@ -36,7 +36,7 @@ class InventoryComponent < ComponentBase
   end
 
   def give_random_weapon(level)
-    @inventory.pickup ItemGenerate.generate_weapon({}, 10)
+    @inventory.pickup ItemGenerate.generate_weapon({}, level)
   end
 
   def do_update(*args)

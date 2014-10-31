@@ -124,6 +124,8 @@ public:
     auto& time = e.GetData<UpdateEvent>()->gameTime;
     float dt = (float) time.Dt;
 
+
+
     UpdateTitleFPS(dt);
   }
 

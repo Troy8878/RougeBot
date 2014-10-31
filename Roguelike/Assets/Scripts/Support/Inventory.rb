@@ -33,6 +33,10 @@ class Inventory
     return false
   end
 
+  def [](index)
+    @inventory[index]
+  end
+
   # Function to add items to the inventory.
   def pickup(item)
     # Scan over the array for the first open slot

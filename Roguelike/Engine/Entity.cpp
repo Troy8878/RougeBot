@@ -1,6 +1,6 @@
 /*********************************
  * Entity.cpp
- * Jake Robsahm, Connor Hilarides
+ * Jake Robsahm, Connor Hilarides, Leonardo Saikali
  * Created 2014/08/11
  *********************************/
 
@@ -546,33 +546,25 @@ void Entity::DestroyChildren()
 
 // ----------------------------------------------------------------------------
 
-mrb_value Entity::GetRubyWrapper()
-{
-  auto mrb = ruby::ruby_engine::global_engine;
-  auto rclass = GetWrapperRClass();
-  auto wrapper = rclass.new_inst(mrb->wrap_native_ptr(this)).silent_reset();
-  mrb->log_and_clear_error();
-  
-  return wrapper;
-}
+mrb_data_type rb_ent_dt;
 
 // ----------------------------------------------------------------------------
 
-static mrb_value rb_ent_initialize(mrb_state *mrb, mrb_value self)
+mrb_value Entity::GetRubyWrapper()
 {
-  mrb_value ent_ptr_v;
-  mrb_get_args(mrb, "o", &ent_ptr_v);
+  mrb_state *mrb = *mrb_inst;
 
-  ruby::save_native_ptr(mrb, self, mrb_cptr(ent_ptr_v));
-
-  return mrb_nil_value();
+  auto rclass = GetWrapperRClass();
+  auto data = mrb_data_object_alloc(mrb, rclass, this, &rb_ent_dt);
+  
+  return mrb_obj_value(data);
 }
 
 // ----------------------------------------------------------------------------
 
 static mrb_value rb_ent_id(mrb_state *mrb, mrb_value self)
 {
-  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto entity = ruby::data_get<Entity>(mrb, self);
   return mrb_fixnum_value((mrb_int) entity->Id);
 }
 
@@ -580,7 +572,7 @@ static mrb_value rb_ent_id(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_name(mrb_state *mrb, mrb_value self)
 {
-  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto entity = ruby::data_get<Entity>(mrb, self);
   return mrb_str_new_cstr(mrb, entity->Name.c_str());
 }
 
@@ -595,7 +587,7 @@ static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 
   std::string comp_name = mrb_string_value_cstr(mrb, &comp_name_v);
 
-  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *entity = ruby::data_get<Entity>(mrb, self);
   auto *comp = entity->GetComponent(comp_name);
   return comp ? comp->GetRubyWrapper() : mrb_nil_value();
 }
@@ -625,7 +617,7 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
     data[item.first] = item.second;
   }
 
-  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *entity = ruby::data_get<Entity>(mrb, self);
 
   try
   {
@@ -645,7 +637,7 @@ static mrb_value rb_ent_remove_component(mrb_state *mrb, mrb_value self)
   const char *name;
   mrb_get_args(mrb, "z", &name);
 
-  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *entity = ruby::data_get<Entity>(mrb, self);
   entity->RemoveComponent(name);
 
   return mrb_nil_value();
@@ -660,9 +652,9 @@ static mrb_value rb_ent_proxy_event(mrb_state *mrb, mrb_value self)
   mrb_sym target_sym;
   mrb_get_args(mrb, "non", &event, &target, &target_sym);
 
-  Entity *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  Entity *entity = ruby::data_get<Entity>(mrb, self);
   mrb_value targetOwner = mrb_funcall(mrb, target, "owner", 0);
-  Entity *targetEnt = ruby::read_native_ptr<Entity>(mrb, targetOwner);
+  Entity *targetEnt = ruby::data_get<Entity>(mrb, targetOwner);
 
   entity->AddProxy(targetEnt, event,
   [mrb, target, target_sym](Events::EventMessage& e)
@@ -688,9 +680,9 @@ static mrb_value rb_ent_remove_proxy(mrb_state *mrb, mrb_value self)
   mrb_value target;
   mrb_get_args(mrb, "no", &event, &target);
 
-  Entity *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  Entity *entity = ruby::data_get<Entity>(mrb, self);
   mrb_value targetOwner = mrb_funcall(mrb, target, "owner", 0);
-  Entity *targetEnt = ruby::read_native_ptr<Entity>(mrb, targetOwner);
+  Entity *targetEnt = ruby::data_get<Entity>(mrb, targetOwner);
 
   entity->RemoveProxy(targetEnt, event);
 
@@ -704,7 +696,7 @@ static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
   mrb_value identifier;
   mrb_get_args(mrb, "o", &identifier);
   
-  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto parent = ruby::data_get<Entity>(mrb, self);
   if (mrb_string_p(identifier))
   {
     auto entity = parent->FindEntity(mrb_str_to_stdstring(identifier));
@@ -734,7 +726,7 @@ static mrb_value rb_ent_find_local(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "S", &identifier);
 
   auto id = mrb_str_to_stdstring(identifier);
-  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto entity = ruby::data_get<Entity>(mrb, self);
 
   auto result = entity->LocalFind(id);
   if (result)
@@ -753,7 +745,7 @@ static mrb_value rb_ent_search_entities(mrb_state *mrb, mrb_value self)
 
   std::vector<Entity *> resvect;
 
-  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto parent = ruby::data_get<Entity>(mrb, self);
   
   if (mrb_string_p(pattern))
   {
@@ -777,7 +769,7 @@ static mrb_value rb_ent_search_entities(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_children(mrb_state *mrb, mrb_value self)
 {
-  auto parent = ruby::read_native_ptr<Entity>(mrb, self);
+  auto parent = ruby::data_get<Entity>(mrb, self);
   auto results = mrb_ary_new(mrb);
   for (auto child : parent->Children)
   {
@@ -790,7 +782,7 @@ static mrb_value rb_ent_children(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self)
 {
-  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto entity = ruby::data_get<Entity>(mrb, self);
   auto results = mrb_hash_new(mrb);
   for (auto& component : entity->_components)
   {
@@ -810,7 +802,7 @@ static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self)
 {
-  auto entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto entity = ruby::data_get<Entity>(mrb, self);
   std::ostringstream inspection;
 
   // Begin
@@ -855,8 +847,8 @@ static mrb_value rb_ent_add_child(mrb_state *mrb, mrb_value self)
   if (mrb_obj_class(mrb, child_v) != mrb_class_get(mrb, "GameEntity"))
     mrb_raise(mrb, mrb->eException_class, "Expected param to be GameEntity");
 
-  auto *parent = ruby::read_native_ptr<Entity>(mrb, self);
-  auto *child = ruby::read_native_ptr<Entity>(mrb, child_v);
+  auto *parent = ruby::data_get<Entity>(mrb, self);
+  auto *child = ruby::data_get<Entity>(mrb, child_v);
 
   parent->AddChild(child);
 
@@ -873,8 +865,8 @@ static mrb_value rb_ent_remove_child(mrb_state *mrb, mrb_value self)
   if (mrb_obj_class(mrb, child_v) != mrb_class_get(mrb, "GameEntity"))
     mrb_raise(mrb, mrb->eException_class, "Expected param to be GameEntity");
   
-  auto *parent = ruby::read_native_ptr<Entity>(mrb, self);
-  auto *child = ruby::read_native_ptr<Entity>(mrb, child_v);
+  auto *parent = ruby::data_get<Entity>(mrb, self);
+  auto *child = ruby::data_get<Entity>(mrb, child_v);
 
   parent->RemoveChild(child);
 
@@ -931,7 +923,7 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 
 static mrb_value rb_ent_parent(mrb_state *mrb, mrb_value self)
 {
-  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto *entity = ruby::data_get<Entity>(mrb, self);
   auto *parent = entity->Parent;
 
   return parent ? parent->RubyWrapper : mrb_nil_value();
@@ -944,8 +936,8 @@ static mrb_value rb_ent_parent_set(mrb_state *mrb, mrb_value self)
   mrb_value parent_v;
   mrb_get_args(mrb, "o", &parent_v);
 
-  auto *entity = ruby::read_native_ptr<Entity>(mrb, self);
-  auto *parent = ruby::read_native_ptr<Entity>(mrb, parent_v);
+  auto *entity = ruby::data_get<Entity>(mrb, self);
+  auto *parent = ruby::data_get<Entity>(mrb, parent_v);
 
   parent->AddChild(entity);
   return parent_v;
@@ -955,7 +947,7 @@ static mrb_value rb_ent_parent_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_local_event(mrb_state *mrb, mrb_value self)
 {
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
 
   mrb_sym event_id;
   mrb_value event_data = mrb_nil_value();
@@ -974,7 +966,7 @@ static mrb_value rb_ent_local_event(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_raise_event(mrb_state *mrb, mrb_value self)
 {
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
 
   mrb_sym event_id;
   mrb_value event_data = mrb_nil_value();
@@ -993,7 +985,7 @@ static mrb_value rb_ent_raise_event(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
 {
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
 
   mrb_sym event_id;
   mrb_value event_data = mrb_nil_value();
@@ -1012,7 +1004,7 @@ static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_action_group(mrb_state *mrb, mrb_value self)
 {
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
   return mrb_actions_wrap(mrb, &entity->GetActionGroup());
 }
 
@@ -1023,7 +1015,7 @@ static mrb_value rb_ent_action_sequence(mrb_state *mrb, mrb_value self)
   mrb_sym id;
   mrb_get_args(mrb, "n", &id);
 
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
   return mrb_actions_wrap(mrb, &entity->GetActionSequence(id));
 }
 
@@ -1031,7 +1023,7 @@ static mrb_value rb_ent_action_sequence(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_zombify(mrb_state *mrb, mrb_value self)
 {
-  auto * const entity = ruby::read_native_ptr<Entity>(mrb, self);
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
   entity->Zombify();
   return mrb_nil_value();
 }
@@ -1047,9 +1039,12 @@ ruby::ruby_class Entity::GetWrapperRClass()
   if (init)
     return rclass;
 
-  rclass = ruby_engine::global_engine->define_class("GameEntity");
+  rb_ent_dt.struct_name = typeid(Entity).name();
+  rb_ent_dt.dfree = ruby::data_nop_delete;
 
-  rclass.define_method("initialize", rb_ent_initialize, ARGS_REQ(1));
+  rclass = ruby_engine::global_engine->define_class("GameEntity");
+  rclass.define_class_method("new", mrb_nop, ARGS_ANY());
+
   rclass.define_method("inspect", rb_ent_inspect, ARGS_NONE());
 
   rclass.define_method("id", rb_ent_id, ARGS_NONE());

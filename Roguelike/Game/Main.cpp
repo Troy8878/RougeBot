@@ -21,7 +21,7 @@ static void CreateConsole()
   std::ios::sync_with_stdio();
 }
 
-Roguelike game("Game 200 Project", GetModuleHandle(NULL));
+Roguelike game("Roguebot", GetModuleHandle(NULL));
 
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()

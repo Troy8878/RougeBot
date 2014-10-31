@@ -86,12 +86,17 @@ module ItemGenerate
     #  data["damage"][0] = 6
     #  data["damage"][1] = 12
     #  data["durability"] -= 10
+    #  name = "Electric Drill"
+    #elsif result > 40
+    #  data["damage"][0] = 6
+    #  data["damage"][1] = 12
+    #  data["durability"] -= 10
     #  name = "Atomic Drill"
     #elsif result > 40
     #  data["damage"][0] = 33
     #  data["damage"][1] = 39
     #  data["durability"] -= 30
-    #  name = "Plasmic Drill"
+    #  name = "Plasma Drill"
     else
       data["damage"][0] = 4
       data["damage"][1] = 9
@@ -106,61 +111,127 @@ module ItemGenerate
     name = data["name"]
 
     #Get Material
-    result = Random.die_roll 50
-    result += (itemLevel * 5)
+    result = Random.die_roll 100
+    #result += (itemLevel * 5)
 
     if result > 99
+      name = "Antimatter " + name
+      data["durability"] = data["durability"] - 15
+      data["damage"][0] = data["damage"][0] + 6
+      data["damage"][1] = data["damage"][1] + 6
+      data["value"] = data["value"] + 15
+      # Should be of the Explosive element
+    elsif result > 96
       name = "Diamond " + name
       data["durability"] = data["durability"] + 20
       data["damage"][0] = data["damage"][0] + 4
       data["damage"][1] = data["damage"][1] + 4
-      data["value"] = data["value"] + 10
+      data["value"] = data["value"] + 20
+      # Should be of the Physical element
+    elsif result > 90
+      name = "Plasmic " + name
+      data["durability"] = data["durability"] - 5
+      data["damage"][0] = data["damage"][0] + 3
+      data["damage"][1] = data["damage"][1] + 6
+      # Should be of the Flaming element
     elsif result > 80
       name = "Steel " + name
       data["durability"] = data["durability"] + 5
       data["damage"][0] = data["damage"][0] + 2
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] + 5
+      # Should be of the Physical element
+    elsif result > 75
+      name = "Magma " + name
+      data["durability"] = data["durability"] - 10
+      data["damage"][1] = data["damage"][1] + 4
+      # Should be of the Flaming element
     elsif result > 70
       name = "Lead " + name
       data["damage"][0] = data["damage"][0] - 3
       data["damage"][1] = data["damage"][1] + 4
+      # Should be of the Physical element
+    elsif result > 65
+      name = "Embroidered " + name
+      data["damage"][0] = data["damage"][0] + 1
+      data["damage"][1] = data["damage"][1] + 1
+      data["value"] = data["value"] + 10
+      # Should be of the Physical element
     elsif result > 60
       name = "Asbestos " + name
       data["durability"] = data["durability"] - 5
       data["damage"][0] = data["damage"][0] - 1
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] - 5
-    elsif result > 50
+      # Should be of the Physical element
+    elsif result > 55
+      name = "Anbaricum " + name
+      data["damage"][1] = data["damage"][1] + 2
+      # Should be of the Zapping element
+    elsif result > 53
+      name = "Gold " + name
+      data["durability"] = data["durability"] - 10
+      data["damage"][0] = data["damage"][0] - 2
+      data["damage"][1] = data["damage"][1] - 3
+      data["value"] = data["value"] + 20
+      # Should be of the Physical element
+    elsif result > 48
       name = "Obsidian " + name
       data["durability"] = data["durability"] + 10
       data["damage"][0] = data["damage"][0] - 1
       data["damage"][1] = data["damage"][1] - 2
+      # Should be of the Physical element
+    elsif result > 44
+      name = "Frozen " + name
+      data["durability"] = data["durability"] - 5
+      data["damage"][0] = data["damage"][0] - 1
+      # Should be of the Freezing & Physical elements
     elsif result > 40
+      name = "Iron " + name
+      # Should be of the Physical element
+    elsif result > 35
+      name = "Uranium " + name
+      data["durability"] = data["durability"] - 10
+      data["damage"][0] = data["damage"][0] - 2
+      data["damage"][1] = data["damage"][1] + 1
+      # Should be of the Radioactive & Physical elements
+    elsif result > 30
       name = "Plastic " + name
       data["durability"] = data["durability"] + 20
       data["damage"][0] = data["damage"][0] - 3
       data["damage"][1] = data["damage"][1] - 4
-    elsif result > 30
-      name = "Iron " + name
+      # Should be of the Physical element
+    elsif result > 29
+      name = "Plastic Explosive " + name
+      data["damage"][1] = data["damage"][1] - 1
+      # Should be of the Explosive element
+    elsif result > 26
+      name = "Mahogany " + name
+      data["durability"] = data["durability"] - 10
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] - 3
+      data["value"] = data["value"] + 10
     elsif result > 20
       name = "Wooden " + name
       data["durability"] = data["durability"] - 10
       data["damage"][0] = data["damage"][0] - 2
       data["damage"][1] = data["damage"][1] - 3
       data["value"] = data["value"] - 10
+      # Should be of the Physical element
     elsif result > 10
       name = "Brick " + name
       data["durability"] = data["durability"] - 0
       data["damage"][0] = data["damage"][0] + 0
       data["damage"][1] = data["damage"][1] - 0
       data["value"] = data["value"] - 20
+      # Should be of the Physical element
     elsif result > 5
       name = "Gelatin " + name
       data["durability"] = data["durability"] - 20
       data["damage"][0] = data["damage"][0] - 10
       data["damage"][1] = data["damage"][1] - 10
       data["value"] = data["value"] - 30
+      # Should be of the Radioactive element
     else
       name = "The Alleged " + name
       data["durability"] = 0
@@ -172,10 +243,16 @@ module ItemGenerate
 
 
     #Get Attribute
-    result = Random.die_roll 50
-    result += (itemLevel * 5)
+    result = Random.die_roll 100
+    #result += (itemLevel * 5)
     
-    if result > 90
+    if result > 99
+      name = "Great " + name
+      data["durability"] = data["durability"] + 15
+      data["damage"][0] = data["damage"][0] + 2
+      data["damage"][1] = data["damage"][1] + 2
+      data["value"] = data["value"] + 2
+    elsif result > 90
       name = "Sturdy " + name
       data["durability"] = data["durability"] + 10
       data["value"] = data["value"] + 2
@@ -213,8 +290,8 @@ module ItemGenerate
 
 
     #Get Element
-    result = Random.die_roll 50
-    result += (itemLevel * 5)
+    result = Random.die_roll 100
+    #result += (itemLevel * 5)
 
     if result > 95
       name = name + " of Radioactivity"

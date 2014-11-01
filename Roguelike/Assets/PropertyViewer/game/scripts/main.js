@@ -1,5 +1,22 @@
 /// <reference path="_references.ts" />
 
+var currentEntity;
+
+function makeEntityButton(parent, label, id, destroyOld) {
+    var button = document.createElement('button');
+    button.textContent = label;
+
+    $(button).click(function (e) {
+        destroyOld();
+        Entity.loadFromId(id, function (entity) {
+            currentEntity = entity;
+            entity.buildView($('#droot').get(0));
+        });
+    });
+
+    parent.appendChild(button);
+}
+
 var ValueView = (function () {
     function ValueView() {
     }
@@ -67,6 +84,7 @@ var Entity = (function () {
     Entity.prototype.copyFrom = function (data) {
         this.id = data.id;
         this.name = data.name;
+        this.parent = data.parent;
         this.components = data.components;
         this.children = data.children;
     };
@@ -79,9 +97,29 @@ var Entity = (function () {
         });
     };
 
+    Entity.prototype.createButtons = function () {
+        var _this = this;
+        var buttons = document.createElement('div');
+
+        var refreshButton = document.createElement('button');
+        refreshButton.textContent = "Refresh";
+        $(refreshButton).click(function (e) {
+            _this.refresh();
+        });
+        buttons.appendChild(refreshButton);
+
+        if (this.id != 0) {
+            makeEntityButton(buttons, "View Parent", this.parent.id, this.destroy);
+        }
+
+        this.rootNode.appendChild(buttons);
+    };
+
     Entity.prototype.buildView = function (parent) {
         this.rootNode = document.createElement('div');
         this.rootNode.classList.add("entity");
+
+        this.createButtons();
 
         this.viewers.id = new ValueView().build(this.rootNode).label("ID");
         this.viewers.name = new ValueView().build(this.rootNode).label("Name");
@@ -97,10 +135,12 @@ var Entity = (function () {
         this.viewers.name.value(this.name);
         this.viewers.components.value(this.components.join(", "));
     };
+
+    Entity.prototype.destroy = function () {
+        this.rootNode.parentElement.removeChild(this.rootNode);
+    };
     return Entity;
 })();
-
-var currentEntity;
 
 $(document).ready(function () {
     Entity.loadFromId(0, function (entity) {

@@ -702,6 +702,12 @@ static DWORD DisplayEntity(RequestQueue& queue, Entity *entity,
       )}
     });
 
+    if (entity->Parent)
+    {
+      jdata["id"] = json::value::number((long double) entity->Parent->Id);
+      jdata["name"] = json::value::string(entity->Parent->Name);
+    }
+
     ResponseData data;
     data.contentType = "application/json";
     return ReplyToRequest(queue, data, jdata);

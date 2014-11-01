@@ -22,6 +22,9 @@ namespace Respack
   {
     void Release();
 
+    bool Exists();
+    bool IsFileBased(fs::path *path = nullptr);
+
     size_t GetSize();
     byte *GetData();
     TempFile GetTempFile();

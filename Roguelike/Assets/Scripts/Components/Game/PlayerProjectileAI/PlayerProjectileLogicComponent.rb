@@ -65,6 +65,7 @@ class PlayerProjectileLogicComponent < ComponentBase
       elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
         move
       end
+    end
 
     # Now to check for movement!
 

@@ -21,6 +21,9 @@ if /i "%1"=="cleanbuild" (
   msbuild /m /target:Clean;Rebuild /property:Configuration=Release
   goto rungame
 )
+if /i "%1"=="typescript" (
+  
+)
 
 :rungame
 start x64\Release\Game.exe

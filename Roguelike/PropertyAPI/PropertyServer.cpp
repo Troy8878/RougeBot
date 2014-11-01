@@ -125,6 +125,9 @@ static DWORD RecieveStatic(RequestQueue& queue);
 static DWORD RecieveEntity(RequestQueue& queue);
 static DWORD RecieveGlobal(RequestQueue& queue);
 
+static DWORD ReplyNotFound(RequestQueue& queue);
+static DWORD ReplyInternalError(RequestQueue& queue);
+
 // ----------------------------------------------------------------------------
 
 struct ResponseData
@@ -134,14 +137,19 @@ struct ResponseData
   PCSTR contentType = "text/plain";
 };
 
+// ----------------------------------------------------------------------------
+
 inline void SetKnownHeader(HTTP_RESPONSE& resp, HTTP_HEADER_ID id, PCSTR value)
 {
   resp.Headers.KnownHeaders[id].pRawValue = value;
   resp.Headers.KnownHeaders[id].RawValueLength = (USHORT) strlen(value);
 }
 
+// ----------------------------------------------------------------------------
+
+template <typename HeaderFunc>
 static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data, 
-                            const void *buffer, ULONG bufferSize)
+                            const void *buffer, ULONG bufferSize, HeaderFunc&& setHeaders)
 {
   DWORD bytesSent;
 
@@ -152,6 +160,7 @@ static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data,
   response.ReasonLength = (USHORT) strlen(data.reason);
 
   SetKnownHeader(response, HttpHeaderContentType, data.contentType);
+  setHeaders(response);
 
   HTTP_DATA_CHUNK chunk;
   chunk.DataChunkType = HttpDataChunkFromMemory;
@@ -174,6 +183,58 @@ static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data,
     nullptr);
 }
 
+// ----------------------------------------------------------------------------
+
+static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data, 
+                            const void *buffer, ULONG bufferSize)
+{
+  return ReplyToRequest(queue, data, buffer, bufferSize, [](HTTP_RESPONSE&){});
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename HeaderFunc>
+static DWORD ReplyToRequestFile(RequestQueue& queue, const ResponseData& data, 
+                                HANDLE file, HeaderFunc&& setHeaders)
+{
+  DWORD bytesSent;
+
+  HTTP_RESPONSE response;
+  ZeroMemory(&response, sizeof(response));
+  response.StatusCode = data.code;
+  response.pReason = data.reason;
+  response.ReasonLength = (USHORT) strlen(data.reason);
+
+  SetKnownHeader(response, HttpHeaderContentType, data.contentType);
+  setHeaders(response);
+
+  LARGE_INTEGER fileSize;
+  GetFileSizeEx(file, &fileSize);
+
+  HTTP_DATA_CHUNK chunk;
+  chunk.DataChunkType = HttpDataChunkFromFileHandle;
+  chunk.FromFileHandle.FileHandle = file;
+  chunk.FromFileHandle.ByteRange.StartingOffset.QuadPart = 0;
+  chunk.FromFileHandle.ByteRange.Length.QuadPart = (ULONGLONG) fileSize.QuadPart;
+
+  response.EntityChunkCount = 1;
+  response.pEntityChunks = &chunk;
+
+  return HttpSendHttpResponse(
+    queue,
+    queue.reqId,
+    0,
+    &response,
+    nullptr,
+    &bytesSent,
+    nullptr,
+    0,
+    nullptr,
+    nullptr);
+}
+
+// ----------------------------------------------------------------------------
+
 template <typename It>
 static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data, It begin, const It& end)
 {
@@ -187,10 +248,115 @@ static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data, It be
   ReplyToRequest(queue, data, databuffer.data(), databuffer.size() * sizeof(*begin));
 }
 
+// ----------------------------------------------------------------------------
+
 static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data, json::value value)
 {
   auto reply = value.pretty_print();
   return ReplyToRequest(queue, data, reply.c_str(), (ULONG) reply.size());
+}
+
+// ----------------------------------------------------------------------------
+
+std::string GetMimeType(const char *extension)
+{
+  static const char * const defaultType = "application/octet-stream";
+
+  LSTATUS res;
+  HKEY extClass;
+  res = RegOpenKeyExA(HKEY_CLASSES_ROOT, extension, 0, KEY_READ, &extClass);
+  if (res != ERROR_SUCCESS)
+    return defaultType;
+
+  BYTE value[128];
+  DWORD dataSize = sizeof(value);
+  
+  DWORD dataType;
+  res = RegQueryValueExA(extClass, "Content Type", 0, &dataType, value, &dataSize);
+
+  RegCloseKey(extClass);
+  if (res != ERROR_SUCCESS || dataType != REG_SZ)
+    return defaultType;
+
+  return (char *)value;
+}
+
+// ----------------------------------------------------------------------------
+
+static DWORD ReplyAsset(RequestQueue& queue, std::string asset)
+{
+  // Open up the container just once
+  static auto *container = GetGame()->Respack["PropertyViewer"];
+
+  // Trim a slash at the beginning (It's almost certainly there, but may not be)
+  if (asset.size() && asset[0] == '/')
+    asset = asset.substr(1);
+
+  // Get the resource
+  auto *resource = container->GetResource(asset);
+  RELEASE_AFTER_SCOPE(resource);
+
+  // Oopsies
+  if (!resource->Exists())
+    return ReplyNotFound(queue);
+
+  // Figure out the file extension
+  size_t lastDot = asset.find_last_of('.');
+  std::string extension;
+  if (lastDot != asset.npos)
+    extension = asset.substr(lastDot);
+  else
+    extension = ".txt";
+
+  auto mimeType = GetMimeType(extension.c_str());
+
+  ResponseData data;
+  data.contentType = mimeType.c_str();
+
+  fs::path filePath;
+  if (resource->IsFileBased(&filePath))
+  {
+    HANDLE file = CreateFile(filePath.file_string().c_str(),
+                             GENERIC_READ,
+                             FILE_SHARE_WRITE,
+                             nullptr,
+                             OPEN_EXISTING,
+                             FILE_ATTRIBUTE_NORMAL,
+                             nullptr);
+    if (file == INVALID_HANDLE_VALUE)
+      return ReplyInternalError(queue);
+
+    auto res = ReplyToRequestFile(queue, data, (HANDLE) file, [](HTTP_RESPONSE&){});
+    CloseHandle(file);
+    return res;
+  }
+  else
+  {
+    auto rdata = resource->GetData();
+    auto rdata_len = resource->GetSize();
+    return ReplyToRequest(queue, data, rdata, (ULONG) rdata_len);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+static DWORD ReplyRedirect(RequestQueue& queue, 
+                           const std::string& destination, bool perma)
+{
+  ResponseData data;
+  data.code = perma? 301 : 307;
+  data.reason = perma? "Moved Permanently" : "Temporary Redirect";
+
+  // {"redirect":"#{destination}"}
+  std::string body = R"({"redirect":")" + destination + R"("})";
+
+  return ReplyToRequest(
+    queue, data, body.c_str(), (ULONG) body.size(),
+    [&destination](HTTP_RESPONSE& response)
+    {
+      SetKnownHeader(response, HttpHeaderLocation, destination.c_str());
+    }
+  );
 }
 
 // ----------------------------------------------------------------------------
@@ -406,7 +572,18 @@ static DWORD ReplyNotFound(RequestQueue& queue)
   ResponseData data;
   data.code = 404;
   data.reason = "Not Found";
-  std::string reply = R"({"error": "Not Found :("})";
+  std::string reply = R"({"error": "Not Found"})";
+  return ReplyToRequest(queue, data, reply.c_str(), (ULONG) reply.size());
+}
+
+// ----------------------------------------------------------------------------
+
+static DWORD ReplyInternalError(RequestQueue& queue)
+{
+  ResponseData data;
+  data.code = 500;
+  data.reason = "Internal Server Error";
+  std::string reply = R"({"error": "Internal Server Error"})";
   return ReplyToRequest(queue, data, reply.c_str(), (ULONG) reply.size());
 }
 
@@ -421,10 +598,13 @@ static DWORD DisplayComponent(RequestQueue& queue, Component *component,
 
 static DWORD RecieveStatic(RequestQueue& queue)
 {
-  ResponseData data;
-  std::string reply = "Hello, World!";
+  PHTTP_REQUEST request = *queue.buffer;
+  std::string path = request->pRawUrl;
 
-  return ReplyToRequest(queue, data, reply.c_str(), (ULONG) reply.size());
+  if (path == "/game" || path == "/game/")
+    return ReplyRedirect(queue, "/game/index.html", true);
+  else
+    return ReplyAsset(queue, path);
 }
 
 // ----------------------------------------------------------------------------

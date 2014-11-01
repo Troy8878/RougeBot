@@ -1,15 +1,80 @@
 /// <reference path="_references.ts" />
 
+interface Viewable {
+    refresh(): void;
+    buildView(parent: HTMLElement): void;
+}
+
 interface EntityRef {
     id: Number;
     name: String;
 }
 
-class Entity implements EntityRef {
+class ValueView {
+    rootNode: HTMLElement;
+    labelNode: HTMLElement;
+    valueNode: HTMLElement;
+
+    build(parent: HTMLElement) {
+        this.rootNode = document.createElement('div');
+        this.rootNode.classList.add('property');
+
+        this.labelNode = document.createElement('div');
+        this.labelNode.classList.add('property-label');
+        this.rootNode.appendChild(this.labelNode);
+
+        this.valueNode = document.createElement('div');
+        this.valueNode.classList.add('property-value');
+        this.rootNode.appendChild(this.valueNode);
+
+        parent.appendChild(this.rootNode);
+        return this;
+    }
+
+    label(value: string) {
+        this.labelNode.textContent = value;
+        return this;
+    }
+
+    value(value: any) {
+        this.valueNode.textContent = value.toString();
+        return this;
+    }
+
+    destroy() {
+        this.rootNode.parentElement.removeChild(this.rootNode);
+        return this;
+    }
+}
+
+class ComponentView {
+    rootNode: HTMLElement;
+    properties: string[];
+    propertyViews: any;
+
+    build(parent: HTMLElement, properties: string[]) {
+        this.properties = properties;
+        this.rootNode = document.createElement('div');
+        this.rootNode.classList.add('component');
+
+        for (var property in properties) {
+            this.propertyViews[property] = new ValueView()
+                .build(this.rootNode)
+                .label(property);
+        }
+        
+        parent.appendChild(this.rootNode);
+    }
+}
+
+class Entity implements EntityRef, Viewable {
     id: number;
     name: string;
     components: string[];
     children: EntityRef[];
+
+    rootNode: HTMLElement;
+    viewers: any;
 
     static loadFromId(id: Number, callback: (entity: Entity) => void) {
         $.get('/game/api/entity/id/' + id, (data) => {
@@ -18,6 +83,7 @@ class Entity implements EntityRef {
     }
 
     constructor(jsonResponse: string) {
+        this.viewers = {};
         this.copyFrom(jsonResponse);
     }
 
@@ -31,12 +97,41 @@ class Entity implements EntityRef {
     refresh() {
         Entity.loadFromId(this.id, (entity) => {
             this.copyFrom(entity);
+            this.displayValues();
         });
+    }
+
+    buildView(parent: HTMLElement) {
+        this.rootNode = document.createElement('div');
+        this.rootNode.classList.add("entity");
+
+        this.viewers.id = new ValueView()
+            .build(this.rootNode)
+            .label("ID");
+        this.viewers.name = new ValueView()
+            .build(this.rootNode)
+            .label("Name");
+        this.viewers.components = new ValueView()
+            .build(this.rootNode)
+            .label("Components");
+
+        parent.appendChild(this.rootNode);
+
+        this.displayValues();
+    }
+
+    displayValues() {
+        this.viewers.id.value(this.id);
+        this.viewers.name.value(this.name);
+        this.viewers.components.value(this.components.join(", "));
     }
 }
 
+var currentEntity: Entity;
+
 $(document).ready(() => {
     Entity.loadFromId(0, (entity) => {
-        $('#droot').text(JSON.stringify(entity));
+        currentEntity = entity;
+        entity.buildView($('#droot').get(0));
     });
 });

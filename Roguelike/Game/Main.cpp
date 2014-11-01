@@ -7,9 +7,6 @@
 #include "Common.h"
 #include "PropertyAPI/PropertyServer.h"
 
-// Change this to 1 for a production build
-#define PRODUCTION 0
-
 static void CreateConsole()
 {
   AllocConsole();

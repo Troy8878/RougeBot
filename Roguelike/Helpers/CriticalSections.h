@@ -21,6 +21,8 @@ public:
   void enter();
   void leave();
 
+  CRITICAL_SECTION *handle();
+
   class guard
   {
   public:

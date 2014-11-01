@@ -8,7 +8,7 @@
 
 critical_section::critical_section()
 {
-  InitializeCriticalSection(&_section);
+  InitializeCriticalSectionEx(&_section, 0, CRITICAL_SECTION_NO_DEBUG_INFO);
 }
 
 critical_section::~critical_section()
@@ -24,6 +24,11 @@ void critical_section::enter()
 void critical_section::leave()
 {
   LeaveCriticalSection(&_section);
+}
+
+CRITICAL_SECTION *critical_section::handle()
+{
+  return &_section;
 }
 
 critical_section::guard::guard(critical_section& crit)

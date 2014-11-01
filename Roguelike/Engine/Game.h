@@ -6,6 +6,9 @@
 
 #pragma once
 
+// Change this to 1 for a production build
+#define PRODUCTION 0
+
 #include "Common.h"
 
 #include "GraphicsDevice.h"

@@ -539,6 +539,8 @@ static void RecieveRequests(RequestQueue& queue)
 
     if (result == NO_ERROR)
     {
+      critical_section::guard lock(GetGame()->GameLock);
+
       queue.reqId = pRequest->RequestId;
       result = queue();
 
@@ -611,8 +613,6 @@ static DWORD RecieveStatic(RequestQueue& queue)
 
 static DWORD RecieveEntity(RequestQueue& queue)
 {
-  critical_section::guard lock(GetGame()->GameLock);
-
   PHTTP_REQUEST pRequest = *queue.buffer;
   std::string path = narrow(pRequest->CookedUrl.pAbsPath);
   UrlParts pathParts = split(path, '/');

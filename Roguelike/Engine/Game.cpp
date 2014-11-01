@@ -28,6 +28,8 @@ Game *GetGame()
 Game::Game(const std::string& title, HINSTANCE hInstance)
   : BasicClassEventReciever(this), _title(title), _hInstance(hInstance)
 {
+  GameLock.enter();
+
   Events::Event::GlobalDispatcher = &globalEventDispatcher;
   _gameInst = this;
 
@@ -48,8 +50,6 @@ Game::~Game()
 
 void Game::Run()
 {
-  GameLock.enter();
-
   _running = true;
 
   _respack = new Respack::ResourcePack(initSettings.assetPack, initSettings.assetFolder);
@@ -75,22 +75,15 @@ void Game::Run()
 
       _graphicsDevice->ProcessMessages();
       
+      #if !PRODUCTION
       // Provide a window for other threads to do things to the engine
+      // This will never need to happen in "Production" builds
       {
-        static size_t frames_without_unlock = 0;
-        if (_gameTime.CurrFrameTime < 1.0/60 || frames_without_unlock > 10)
-        {
           GameLock.leave();
-          Sleep(0);
+          Sleep(1);
           GameLock.enter();
-
-          frames_without_unlock = 0;
-        }
-        else
-        {
-          frames_without_unlock++;
-        }
       }
+      #endif
 
       // Update
       _gameTime.Update();

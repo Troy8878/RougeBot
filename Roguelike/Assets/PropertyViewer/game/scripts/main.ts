@@ -10,8 +10,6 @@ interface EntityRef {
     name: string;
 }
 
-var currentEntity: Entity;
-
 function makeEntityButton(parent: HTMLElement, label: string,
                           id: number, destroyOld: () => void) {
     var button = document.createElement('button');
@@ -20,7 +18,6 @@ function makeEntityButton(parent: HTMLElement, label: string,
     $(button).click((e) => {
         destroyOld();
         Entity.loadFromId(id, (entity) => {
-            currentEntity = entity;
             entity.buildView($('#droot').get(0));
         });
     });
@@ -75,7 +72,9 @@ class ComponentView {
         this.rootNode = document.createElement('div');
         this.rootNode.classList.add('component');
 
-        for (var property in properties) {
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
+
             this.propertyViews[property] = new ValueView()
                 .build(this.rootNode)
                 .label(property);
@@ -93,6 +92,7 @@ class Entity implements EntityRef, Viewable {
     children: EntityRef[];
     
     rootNode: HTMLElement;
+    childrenNode: HTMLElement;
     viewers: any;
     
     static loadFromId(id: Number, callback: (entity: Entity) => void) {
@@ -115,6 +115,10 @@ class Entity implements EntityRef, Viewable {
     }
     
     refresh() {
+        this.rootNode.removeChild(this.childrenNode);
+        this.childrenNode = document.createElement('div');
+        this.rootNode.appendChild(this.childrenNode);
+
         Entity.loadFromId(this.id, (entity) => {
             this.copyFrom(entity);
             this.displayValues();
@@ -134,7 +138,7 @@ class Entity implements EntityRef, Viewable {
         if (this.id != 0) {
             makeEntityButton(
                 buttons, "View Parent",
-                this.parent.id, this.destroy);
+                this.parent.id, () => this.destroy());
         }
 
         this.rootNode.appendChild(buttons);
@@ -156,6 +160,9 @@ class Entity implements EntityRef, Viewable {
             .build(this.rootNode)
             .label("Components");
 
+        this.childrenNode = document.createElement('div');
+        this.rootNode.appendChild(this.childrenNode);
+
         parent.appendChild(this.rootNode);
 
         this.displayValues();
@@ -165,6 +172,14 @@ class Entity implements EntityRef, Viewable {
         this.viewers.id.value(this.id);
         this.viewers.name.value(this.name);
         this.viewers.components.value(this.components.join(", "));
+
+        for (var i = 0; i < this.children.length; ++i) {
+            var child = this.children[i];
+            makeEntityButton(
+                this.childrenNode,
+                "ID: " + child.id + ", Name: " + child.name,
+                child.id, () => this.destroy());
+        }
     }
 
     destroy() {
@@ -174,7 +189,6 @@ class Entity implements EntityRef, Viewable {
 
 $(document).ready(() => {
     Entity.loadFromId(0, (entity) => {
-        currentEntity = entity;
         entity.buildView($('#droot').get(0));
     });
 });

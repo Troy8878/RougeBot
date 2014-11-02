@@ -1,7 +1,5 @@
 /// <reference path="_references.ts" />
 
-var currentEntity;
-
 function makeEntityButton(parent, label, id, destroyOld) {
     var button = document.createElement('button');
     button.textContent = label;
@@ -9,7 +7,6 @@ function makeEntityButton(parent, label, id, destroyOld) {
     $(button).click(function (e) {
         destroyOld();
         Entity.loadFromId(id, function (entity) {
-            currentEntity = entity;
             entity.buildView($('#droot').get(0));
         });
     });
@@ -61,7 +58,9 @@ var ComponentView = (function () {
         this.rootNode = document.createElement('div');
         this.rootNode.classList.add('component');
 
-        for (var property in properties) {
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
+
             this.propertyViews[property] = new ValueView().build(this.rootNode).label(property);
         }
 
@@ -91,6 +90,10 @@ var Entity = (function () {
 
     Entity.prototype.refresh = function () {
         var _this = this;
+        this.rootNode.removeChild(this.childrenNode);
+        this.childrenNode = document.createElement('div');
+        this.rootNode.appendChild(this.childrenNode);
+
         Entity.loadFromId(this.id, function (entity) {
             _this.copyFrom(entity);
             _this.displayValues();
@@ -109,7 +112,9 @@ var Entity = (function () {
         buttons.appendChild(refreshButton);
 
         if (this.id != 0) {
-            makeEntityButton(buttons, "View Parent", this.parent.id, this.destroy);
+            makeEntityButton(buttons, "View Parent", this.parent.id, function () {
+                return _this.destroy();
+            });
         }
 
         this.rootNode.appendChild(buttons);
@@ -125,15 +130,26 @@ var Entity = (function () {
         this.viewers.name = new ValueView().build(this.rootNode).label("Name");
         this.viewers.components = new ValueView().build(this.rootNode).label("Components");
 
+        this.childrenNode = document.createElement('div');
+        this.rootNode.appendChild(this.childrenNode);
+
         parent.appendChild(this.rootNode);
 
         this.displayValues();
     };
 
     Entity.prototype.displayValues = function () {
+        var _this = this;
         this.viewers.id.value(this.id);
         this.viewers.name.value(this.name);
         this.viewers.components.value(this.components.join(", "));
+
+        for (var i = 0; i < this.children.length; ++i) {
+            var child = this.children[i];
+            makeEntityButton(this.childrenNode, "ID: " + child.id + ", Name: " + child.name, child.id, function () {
+                return _this.destroy();
+            });
+        }
     };
 
     Entity.prototype.destroy = function () {
@@ -144,7 +160,6 @@ var Entity = (function () {
 
 $(document).ready(function () {
     Entity.loadFromId(0, function (entity) {
-        currentEntity = entity;
         entity.buildView($('#droot').get(0));
     });
 });

@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------
 
-#define STATIC_HANDLER_URL L"http://localhost:5431/game/"
+#define STATIC_HANDLER_URL L"http://localhost:5430/game/"
 #define ENTITY_HANDLER_URL (STATIC_HANDLER_URL L"api/entity")
 #define GLOBAL_HANDLER_URL (STATIC_HANDLER_URL L"api/game")
 
@@ -160,6 +160,8 @@ static DWORD ReplyToRequest(RequestQueue& queue, const ResponseData& data,
   response.ReasonLength = (USHORT) strlen(data.reason);
 
   SetKnownHeader(response, HttpHeaderContentType, data.contentType);
+  SetKnownHeader(response, HttpHeaderCacheControl, "no-cache");
+  SetKnownHeader(response, HttpHeaderExpires, "-1");
   setHeaders(response);
 
   HTTP_DATA_CHUNK chunk;
@@ -204,8 +206,10 @@ static DWORD ReplyToRequestFile(RequestQueue& queue, const ResponseData& data,
   response.StatusCode = data.code;
   response.pReason = data.reason;
   response.ReasonLength = (USHORT) strlen(data.reason);
-
+  
   SetKnownHeader(response, HttpHeaderContentType, data.contentType);
+  SetKnownHeader(response, HttpHeaderCacheControl, "no-cache");
+  SetKnownHeader(response, HttpHeaderExpires, "-1");
   setHeaders(response);
 
   LARGE_INTEGER fileSize;
@@ -704,8 +708,9 @@ static DWORD DisplayEntity(RequestQueue& queue, Entity *entity,
 
     if (entity->Parent)
     {
-      jdata["id"] = json::value::number((long double) entity->Parent->Id);
-      jdata["name"] = json::value::string(entity->Parent->Name);
+      jdata["parent"] = json::value::object();
+      jdata["parent"]["id"] = json::value::number((long double) entity->Parent->Id);
+      jdata["parent"]["name"] = json::value::string(entity->Parent->Name);
     }
 
     ResponseData data;

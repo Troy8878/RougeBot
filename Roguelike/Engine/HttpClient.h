@@ -127,6 +127,9 @@ public:
   HttpUri();
   HttpUri(const std::string& uri);
 
+  static std::string Encode(const std::string& str);
+  static std::string Decode(const std::string& str);
+
   static HttpUri Parse(std::string uri);
   std::string Build() const;
   std::string BuildPath() const;

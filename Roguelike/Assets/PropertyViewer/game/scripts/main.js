@@ -51,20 +51,91 @@ var ValueView = (function () {
 })();
 
 var ComponentView = (function () {
-    function ComponentView() {
+    function ComponentView(owner, name) {
+        this.owner = owner;
+        this.name = name;
+        this.visible = false;
+        this.loaded = false;
+        this.rootNode = null;
+        this.dataNode = null;
+        this.expandButton = null;
     }
-    ComponentView.prototype.build = function (parent, properties) {
-        this.properties = properties;
+    ComponentView.prototype.makeComponentBar = function () {
+        var _this = this;
+        var componentBar = document.createElement('div');
+        componentBar.classList.add('component-header');
+
+        var name = document.createElement('span');
+        name.textContent = this.name;
+        componentBar.appendChild(name);
+
+        this.expandButton = document.createElement('button');
+        this.expandButton.textContent = "+";
+        componentBar.appendChild(this.expandButton);
+
+        $(this.expandButton).click(function (e) {
+            _this.toggleView();
+        });
+
+        return componentBar;
+    };
+
+    ComponentView.prototype.build = function (parent) {
         this.rootNode = document.createElement('div');
         this.rootNode.classList.add('component');
 
-        for (var i = 0; i < properties.length; ++i) {
-            var property = properties[i];
+        this.rootNode.appendChild(this.makeComponentBar());
 
-            this.propertyViews[property] = new ValueView().build(this.rootNode).label(property);
-        }
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('component-body');
+        $(this.dataNode).hide();
+        this.rootNode.appendChild(this.dataNode);
 
         parent.appendChild(this.rootNode);
+    };
+
+    ComponentView.prototype.loadData = function () {
+        // TODO: Load the component data
+    };
+
+    ComponentView.prototype.showLoading = function () {
+        var loading = document.createElement('span');
+        loading.textContent = "Loading...";
+
+        this.dataNode.appendChild(loading);
+    };
+
+    ComponentView.prototype.show = function () {
+        if (this.visible)
+            return;
+
+        this.visible = true;
+        $(this.dataNode).show();
+        this.expandButton.textContent = "-";
+
+        if (this.loaded) {
+            return;
+        }
+
+        this.loaded = true;
+        this.showLoading();
+        this.loadData();
+    };
+
+    ComponentView.prototype.hide = function () {
+        if (!this.visible)
+            return;
+
+        this.visible = false;
+        this.expandButton.textContent = "+";
+        $(this.dataNode).hide();
+    };
+
+    ComponentView.prototype.toggleView = function () {
+        if (this.visible)
+            this.hide();
+        else
+            this.show();
     };
     return ComponentView;
 })();
@@ -90,6 +161,10 @@ var Entity = (function () {
 
     Entity.prototype.refresh = function () {
         var _this = this;
+        this.rootNode.removeChild(this.componentsNode);
+        this.componentsNode = document.createElement('div');
+        this.rootNode.appendChild(this.componentsNode);
+
         this.rootNode.removeChild(this.childrenNode);
         this.childrenNode = document.createElement('div');
         this.rootNode.appendChild(this.childrenNode);
@@ -130,6 +205,9 @@ var Entity = (function () {
         this.viewers.name = new ValueView().build(this.rootNode).label("Name");
         this.viewers.components = new ValueView().build(this.rootNode).label("Components");
 
+        this.componentsNode = document.createElement('div');
+        this.rootNode.appendChild(this.componentsNode);
+
         this.childrenNode = document.createElement('div');
         this.rootNode.appendChild(this.childrenNode);
 
@@ -143,6 +221,11 @@ var Entity = (function () {
         this.viewers.id.value(this.id);
         this.viewers.name.value(this.name);
         this.viewers.components.value(this.components.join(", "));
+
+        for (var i = 0; i < this.components.length; ++i) {
+            var component = this.components[i];
+            new ComponentView(this, component).build(this.componentsNode);
+        }
 
         for (var i = 0; i < this.children.length; ++i) {
             var child = this.children[i];

@@ -22,6 +22,56 @@ HttpUri::HttpUri(const std::string& uri)
 
 // ----------------------------------------------------------------------------
 
+std::string HttpUri::Encode(const std::string& str)
+{
+  static std::locale loc;
+  std::ostringstream buf;
+  buf.fill(0);
+  buf << std::hex;
+
+  for (auto c : str)
+  {
+    if (std::isalnum(c, loc))
+      buf << c;
+    else
+      buf << '%' << std::setw(2) << int(c);
+  }
+
+  return buf.str();
+}
+
+// ----------------------------------------------------------------------------
+
+std::string HttpUri::Decode(const std::string& str)
+{
+  std::ostringstream buf;
+
+  const size_t size = str.size();
+  for (size_t i = 0; i < size; ++i)
+  {
+    const auto& c = str[i];
+
+    if (c == '%')
+    {
+      if (i + 2 >= size)
+        break;
+
+      auto val = std::stoul(str.substr(i + 1, 2));
+      buf << char(val);
+
+      i += 2;
+    }
+    else
+    {
+      buf << c;
+    }
+  }
+
+  return buf.str();
+}
+
+// ----------------------------------------------------------------------------
+
 HttpUri HttpUri::Parse(std::string uri)
 {
   try

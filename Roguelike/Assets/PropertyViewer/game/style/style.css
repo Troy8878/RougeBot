@@ -9,6 +9,19 @@
   margin: 1px;
   width: 100%; }
 
+.component-header {
+  width: 100%;
+  min-height: 30px; }
+  .component-header button {
+    margin: 2px;
+    float: right;
+    vertical-align: center; }
+
+.component-body {
+  border: 1px solid black;
+  margin: 5px;
+  width: 95%; }
+
 .property {
   border: 1px solid black;
   margin: 1px;

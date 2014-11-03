@@ -252,15 +252,19 @@ static void mrb_transformcomponent_init(mrb_state *mrb, RClass *module, RClass *
 
   mrb_define_method(mrb, transform, "position", rb_transform_position, ARGS_NONE());
   mrb_define_method(mrb, transform, "position=", rb_transform_position_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "position", "vector");
 
   mrb_define_method(mrb, transform, "rotation", rb_transform_rotation, ARGS_NONE());
   mrb_define_method(mrb, transform, "rotation=", rb_transform_rotation_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "rotation", "vector");
 
   mrb_define_method(mrb, transform, "scale", rb_transform_scale, ARGS_NONE());
   mrb_define_method(mrb, transform, "scale=", rb_transform_scale_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "scale", "vector");
 
   mrb_define_method(mrb, transform, "static", rb_transform_get_static, ARGS_NONE());
   mrb_define_method(mrb, transform, "static=", rb_transform_set_static, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "static", "bool", true);
 }
 
 // ----------------------------------------------------------------------------

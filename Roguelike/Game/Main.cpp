@@ -29,6 +29,20 @@ extern "C" __declspec(noreturn) void GameRunGame()
   CreateConsole();
   #endif
 
+  #if !defined(AVX_BUILD) && PRODUCTION
+  if (IsAvxSupported())
+  {
+    if (fs::exists(fs::path("Game_AVX.exe")))
+    {
+      CreateProcessW(L"Game_AVX.exe", nullptr,
+                     nullptr, nullptr, FALSE,
+                     0, nullptr, nullptr,
+                     nullptr, nullptr);
+      _exit(0);
+    }
+  }
+  #endif
+
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
@@ -42,5 +56,6 @@ extern "C" __declspec(noreturn) void GameRunGame()
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
+
   GameRunGame();
 }

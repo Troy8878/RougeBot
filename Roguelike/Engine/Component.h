@@ -147,7 +147,7 @@ void RegisterStaticComponent(const std::string& name,
 // ----------------------------------------------------------------------------
 
 inline void comp_add_property(mrb_state *mrb, RClass *cls, mrb_sym id,
-                              mrb_sym type, bool can_set)
+                              mrb_sym type, bool can_set = false)
 {
   static const mrb_sym add_property = mrb_intern_lit(mrb, "property");
   const mrb_value values[] =
@@ -160,8 +160,8 @@ inline void comp_add_property(mrb_state *mrb, RClass *cls, mrb_sym id,
 }
 
 template <size_t id_size, size_t type_size>
-inline void comp_add_property(mrb_state *mrb, RClass *cls, char(&id)[id_size],
-                              char(&type)[type_size], bool can_set)
+inline void comp_add_property(mrb_state *mrb, RClass *cls, const char(&id)[id_size],
+                              const char(&type)[type_size], bool can_set = false)
 {
   mrb_sym id_sym = mrb_intern(mrb, id, id_size);
   mrb_sym type_sym = mrb_intern(mrb, type, type_size);

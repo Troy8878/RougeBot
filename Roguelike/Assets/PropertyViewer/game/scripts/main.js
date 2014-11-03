@@ -7,7 +7,7 @@ function makeEntityButton(parent, label, id, destroyOld) {
     $(button).click(function (e) {
         destroyOld();
         Entity.loadFromId(id, function (entity) {
-            entity.buildView($('#droot').get(0));
+            entity.build($('#droot').get(0));
         });
     });
 
@@ -59,6 +59,7 @@ var ComponentView = (function () {
         this.rootNode = null;
         this.dataNode = null;
         this.expandButton = null;
+        this.contentNode = null;
     }
     ComponentView.prototype.makeComponentBar = function () {
         var _this = this;
@@ -96,6 +97,14 @@ var ComponentView = (function () {
 
     ComponentView.prototype.loadData = function () {
         // TODO: Load the component data
+    };
+
+    ComponentView.prototype.refresh = function () {
+        this.dataNode.removeChild(this.contentNode);
+        this.loadData();
+    };
+
+    ComponentView.prototype.displayValues = function () {
     };
 
     ComponentView.prototype.showLoading = function () {
@@ -195,7 +204,7 @@ var Entity = (function () {
         this.rootNode.appendChild(buttons);
     };
 
-    Entity.prototype.buildView = function (parent) {
+    Entity.prototype.build = function (parent) {
         this.rootNode = document.createElement('div');
         this.rootNode.classList.add("entity");
 
@@ -203,7 +212,6 @@ var Entity = (function () {
 
         this.viewers.id = new ValueView().build(this.rootNode).label("ID");
         this.viewers.name = new ValueView().build(this.rootNode).label("Name");
-        this.viewers.components = new ValueView().build(this.rootNode).label("Components");
 
         this.componentsNode = document.createElement('div');
         this.rootNode.appendChild(this.componentsNode);
@@ -220,7 +228,6 @@ var Entity = (function () {
         var _this = this;
         this.viewers.id.value(this.id);
         this.viewers.name.value(this.name);
-        this.viewers.components.value(this.components.join(", "));
 
         for (var i = 0; i < this.components.length; ++i) {
             var component = this.components[i];
@@ -243,6 +250,6 @@ var Entity = (function () {
 
 $(document).ready(function () {
     Entity.loadFromId(0, function (entity) {
-        entity.buildView($('#droot').get(0));
+        entity.build($('#droot').get(0));
     });
 });

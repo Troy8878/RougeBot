@@ -5,7 +5,7 @@
 #######################
 
 module MetaProperties
-  class Property
+  class MetaProperty
     attr_reader :id, :type
 
     def initialize(id, type, can_set)
@@ -30,13 +30,22 @@ module MetaProperties
   attr_reader :properties
 
   def property(id, type, can_set)
-    @properties ||= {}
+    @properties ||= []
 
-    property = Property.new(id, type, can_set)
-    @properties[id] = property
+    property = MetaProperty.new(id, type, can_set)
+    @properties << property
   end
 end
 
 class Class
   include MetaProperties
+end
+
+##
+# Give vector some properties
+class Vector
+  property :x, :float, true
+  property :y, :float, true
+  property :z, :float, true
+  property :w, :float, true
 end

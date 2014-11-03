@@ -70,6 +70,9 @@ split(const std::basic_string<Elem>& str, Delim&& delim)
 
     if (next != str.npos)
       pos = str.find_first_not_of(delim, next);
+
+    if (pos == str.npos)
+      return items;
   }
 
   items.push_back(str.substr(pos));

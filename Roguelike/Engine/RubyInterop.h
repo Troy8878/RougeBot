@@ -454,6 +454,82 @@ namespace ruby
 
 // ----------------------------------------------------------------------------
 
+  struct mrb_ary_iter
+  {
+    mrb_ary_iter(mrb_state *mrb, mrb_value ary)
+      : mrb(mrb), ary(ary)
+    {
+    }
+
+    mrb_state *mrb;
+    mrb_value ary;
+
+    struct iterator
+    {
+      iterator(mrb_value ary, mrb_int pos)
+        : ary(ary), pos(pos)
+      {
+      }
+
+      bool operator==(const iterator& rhs) const
+      {
+        return pos == rhs.pos;
+      }
+
+      bool operator!=(const iterator& rhs) const
+      {
+        return pos != rhs.pos;
+      }
+
+      mrb_value operator*() const
+      {
+        return mrb_ary_entry(ary, pos);
+      }
+
+      iterator& operator++()
+      {
+        ++pos;
+        return *this;
+      }
+
+      iterator& operator--()
+      {
+        --pos;
+        return *this;
+      }
+
+      mrb_value ary;
+      mrb_int pos;
+    };
+
+    iterator begin()
+    {
+      return iterator(ary, 0);
+    }
+
+    iterator end()
+    {
+      return iterator(ary, mrb_ary_len(mrb, ary));
+    }
+
+    iterator rbegin()
+    {
+      return iterator(ary, mrb_ary_len(mrb, ary) - 1);
+    }
+
+    iterator rend()
+    {
+      return iterator(ary, -1);
+    }
+  };
+
+  inline mrb_ary_iter array_each(mrb_state *mrb, mrb_value ary)
+  {
+    return mrb_ary_iter(mrb, ary);
+  }
+
+// ----------------------------------------------------------------------------
+
   extern mrb_data_type mrb_dt_native_ptr;
 
 // ----------------------------------------------------------------------------

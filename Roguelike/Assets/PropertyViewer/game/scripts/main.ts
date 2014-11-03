@@ -239,9 +239,6 @@ class Entity implements EntityRef, Viewable {
         this.viewers.name = new ValueView()
             .build(this.rootNode)
             .label("Name");
-        this.viewers.components = new ValueView()
-            .build(this.rootNode)
-            .label("Components");
 
         this.componentsNode = document.createElement('div');
         this.rootNode.appendChild(this.componentsNode);
@@ -257,7 +254,6 @@ class Entity implements EntityRef, Viewable {
     displayValues() {
         this.viewers.id.value(this.id);
         this.viewers.name.value(this.name);
-        this.viewers.components.value(this.components.join(", "));
 
         for (var i = 0; i < this.components.length; ++i) {
             var component = this.components[i];

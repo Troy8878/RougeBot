@@ -7,6 +7,7 @@
 #include "PropertyServer.h"
 #include "Engine/Common.h"
 #include "Engine/Level.h"
+#include "Engine/RubyWrappers.h"
 
 #include <http.h>
 
@@ -546,7 +547,30 @@ static void RecieveRequests(RequestQueue& queue)
       critical_section::guard lock(GetGame()->GameLock);
 
       queue.reqId = pRequest->RequestId;
-      result = queue();
+
+      try
+      {
+        result = queue();
+      }
+      catch (basic_exception& ex)
+      {
+        std::ostringstream buf;
+        buf << ex.what();
+        ex.print_trace(buf);
+        std::string text = buf.str();
+
+        ResponseData data;
+        data.code = 500;
+        result = ReplyToRequest(queue, data, text.c_str(), (ULONG) text.size());
+      }
+      catch (std::exception& ex)
+      {
+        std::string text = ex.what();
+
+        ResponseData data;
+        data.code = 500;
+        result = ReplyToRequest(queue, data, text.c_str(), (ULONG) text.size());
+      }
 
       if (result != NO_ERROR)
         break;
@@ -644,7 +668,7 @@ static DWORD RecieveEntity(RequestQueue& queue)
     auto entityId = std::stoull(pathParts[1]);
     entity = GetGame()->CurrentLevel->RootEntity->FindEntity(entityId);
   }
-  else if (pathParts[1] == "name")
+  else if (pathParts[0] == "name")
   {
     entity = GetGame()->CurrentLevel->RootEntity->FindEntity(pathParts[1]);
   }
@@ -749,52 +773,129 @@ static DWORD DisplayEntity(RequestQueue& queue, Entity *entity,
 
 // ----------------------------------------------------------------------------
 
-static std::unordered_set<mrb_sym> ListMethods(mrb_value val)
+struct MetaProperty;
+static std::vector<MetaProperty> GetProperties(mrb_state *mrb, mrb_value obj);
+struct MetaProperty
 {
-  static mrb_state *mrb = *mrb_inst;
-  if (val.tt != MRB_TT_CLASS)
+  MetaProperty(mrb_state *mrb, mrb_value prop)
+    : mrb(mrb), prop(prop), id(-1), type(-1), can_set((bool)-1)
   {
-    val = mrb_obj_value(mrb_obj_class(mrb, val));
+    static mrb_sym get_id = mrb_intern_lit(mrb, "id");
+    static mrb_sym get_type = mrb_intern_lit(mrb, "type");
+    static mrb_sym get_can_set = mrb_intern_lit(mrb, "can_set?");
+
+    id = mrb_symbol(mrb_funcall_argv(mrb, prop, get_id, 0, nullptr));
+    type = mrb_symbol(mrb_funcall_argv(mrb, prop, get_type, 0, nullptr));
+    can_set = !!mrb_bool(mrb_funcall_argv(mrb, prop, get_can_set, 0, nullptr));
+
+    id_name = mrb_sym2name(mrb, id);
+    type_name = mrb_sym2name(mrb, type);
   }
 
-  mrb_value ary = mrb_funcall_argv(mrb, val, mrb_intern_lit(mrb, "instance_methods"), 0, nullptr);
-  mrb_int len = mrb_ary_len(mrb, ary);
+  mrb_state *mrb;
+  mrb_value prop;
+  mrb_sym id;
+  mrb_sym type;
+  bool can_set;
 
-  std::unordered_set<mrb_sym> methods;
+  const char *id_name;
+  const char *type_name;
 
-  for (mrb_int i = 0; i < len; ++i)
+  operator json::value() const
   {
-    methods.insert(mrb_symbol(mrb_ary_entry(ary, i)));
+    return json::value::object(
+    {
+      {"id", json::value::string(mrb_sym2name(mrb, id))},
+      {"type", json::value::string(mrb_sym2name(mrb, type))},
+      {"can_set", json::value::boolean(can_set)}
+    });
   }
 
-  return methods;
+  mrb_value get_value(mrb_value obj) const
+  {
+    static mrb_sym s_get = mrb_intern_lit(mrb, "get");
+    return mrb_funcall_argv(mrb, prop, s_get, 1, &obj);
+  }
+
+  json::value display(mrb_value obj) const
+  {
+    static mrb_sym t_bool = mrb_intern_lit(mrb, "bool");
+    static mrb_sym t_float = mrb_intern_lit(mrb, "float");
+    static mrb_sym t_vector = mrb_intern_lit(mrb, "vector");
+    static mrb_sym t_color = mrb_intern_lit(mrb, "color");
+
+    mrb_value value = get_value(obj);
+
+    if (type == t_bool)
+    {
+      return json::value::object(
+      {
+        {"type", json::value::string("bool")},
+        {"value", json::value::boolean(!!mrb_bool(value))}
+      });
+    }
+    else if (type == t_float)
+    {
+      return json::value::object(
+      {
+        {"type", json::value::string("float")},
+        {"value", json::value::number(mrb_float(value))}
+      });
+    }
+    else if (type == t_vector || type == t_color)
+    {
+      auto& vect = ruby::get_ruby_vector(value);
+
+      return json::value::object(
+      {
+        {"type", json::value::string(mrb_sym2name(mrb, type))},
+        {"x", json::value::number(vect.x)},
+        {"y", json::value::number(vect.y)},
+        {"z", json::value::number(vect.z)},
+        {"w", json::value::number(vect.w)},
+      });
+    }
+    else
+    {
+      auto props = GetProperties(mrb, value);
+
+      return json::value::object(
+      {
+        {"type", json::value::string("object")},
+        {"properties", json::value::array(
+          map_to_vector<json::value>(props,
+          [](const MetaProperty& prop) -> json::value
+          {
+            return prop;
+          })
+        )}
+      });
+    }
+  }
+};
+
+// ----------------------------------------------------------------------------
+
+static std::vector<MetaProperty> GetProperties(mrb_state *mrb, mrb_value obj)
+{
+  std::vector<MetaProperty> props;
+
+  static mrb_sym get_properties = mrb_intern_lit(mrb, "properties");
+  auto sclass = mrb_obj_value(mrb_obj_class(mrb, obj));
+  mrb_value ary = mrb_funcall_argv(mrb, sclass, get_properties, 0, nullptr);
+
+  for (auto prop : ruby::array_each(mrb, ary))
+  {
+    props.push_back(MetaProperty(mrb, prop));
+  }
+
+  return props;
 }
 
 // ----------------------------------------------------------------------------
 
-static std::unordered_set<mrb_sym>& ObjectMethods()
-{
-  static mrb_state *mrb = *mrb_inst;
-  static std::unordered_set<mrb_sym> methods = ListMethods(mrb_obj_value(mrb->object_class));
-  return methods;
-}
-
-// ----------------------------------------------------------------------------
-
-static std::unordered_set<mrb_sym> GetOwnMethods(mrb_value val)
-{
-  static auto& object_methods = ObjectMethods();
-  auto self_methods = ListMethods(val);
-  
-  for (auto method : object_methods)
-  {
-    auto it = self_methods.find(method);
-    if (it != self_methods.end())
-      self_methods.erase(it);
-  }
-
-  return self_methods;
-}
+static DWORD DisplayGetProperty(RequestQueue& queue, mrb_value obj, UrlParts& remainingPath);
+static DWORD DisplaySetProperty(RequestQueue& queue, mrb_value obj, UrlParts& remainingPath);
 
 // ----------------------------------------------------------------------------
 
@@ -802,27 +903,21 @@ static DWORD DisplayComponent(RequestQueue& queue, Component *component,
                               UrlParts& remainingPath)
 {
   static mrb_state *mrb = *mrb_inst;
+  ruby::ruby_gc_guard guard(mrb);
+
+  auto wrapper = component->GetRubyWrapper();
 
   if (remainingPath.empty())
   {
-    auto wrapper = component->GetRubyWrapper();
-    auto all_methods = ListMethods(wrapper);
-    auto methods = GetOwnMethods(wrapper);
-  
+    auto props = GetProperties(mrb, wrapper);
+
     json::value jdata = json::value::object(
     {
-      {"all_methods", json::value::array(
-        map_to_vector<json::value>(all_methods,
-        [](mrb_sym mid)
+      {"properties", json::value::array(
+        map_to_vector<json::value>(props,
+        [](const MetaProperty& prop) -> json::value
         {
-          return json::value::string(mrb_sym2name(mrb, mid));
-        })
-      )},
-      {"methods", json::value::array(
-        map_to_vector<json::value>(methods,
-        [](mrb_sym mid)
-        {
-          return json::value::string(mrb_sym2name(mrb, mid));
+          return prop;
         })
       )}
     });
@@ -831,8 +926,72 @@ static DWORD DisplayComponent(RequestQueue& queue, Component *component,
     data.contentType = "application/json";
     return ReplyToRequest(queue, data, jdata);
   }
+  else if (remainingPath[0] == "get")
+  {
+    pop_front(remainingPath);
+    return DisplayGetProperty(queue, wrapper, remainingPath);
+  }
+  else if (remainingPath[0] == "set")
+  {
+    pop_front(remainingPath);
+    return DisplaySetProperty(queue, wrapper, remainingPath);
+  }
   
   return ReplyNotFound(queue);
+}
+
+// ----------------------------------------------------------------------------
+
+static DWORD DisplayGetProperty(RequestQueue& queue, mrb_value obj, UrlParts& remainingPath)
+{
+  static mrb_state * const mrb = *mrb_inst;
+
+  if (remainingPath.empty())
+    return ReplyNotFound(queue);
+
+  const auto props = GetProperties(mrb, obj);
+  const auto propName = remainingPath.front();
+  pop_front(remainingPath);
+  
+  auto propIt = std::find_if(props.begin(), props.end(),
+  [&propName](const MetaProperty& prop)
+  {
+    return propName == prop.id_name;
+  });
+
+  if (propIt == props.end())
+  {
+    return ReplyNotFound(queue);
+  }
+
+  const MetaProperty prop = *propIt;
+  
+  if (remainingPath.empty())
+  {
+    ResponseData data;
+    data.contentType = "application/json";
+    return ReplyToRequest(queue, data, prop.display(obj));
+  }
+  else if (remainingPath[0] == "get")
+  {
+    pop_front(remainingPath);
+    return DisplayGetProperty(queue, prop.get_value(obj), remainingPath);
+  }
+  else if (remainingPath[0] == "set")
+  {
+    pop_front(remainingPath);
+    return DisplaySetProperty(queue, prop.get_value(obj), remainingPath);
+  }
+
+  return ReplyNotFound(queue);
+}
+
+// ----------------------------------------------------------------------------
+
+static DWORD DisplaySetProperty(RequestQueue& queue, mrb_value obj, UrlParts& remainingPath)
+{
+  (obj, remainingPath);
+  return ReplyNotFound(queue);;
 }
 
 // ----------------------------------------------------------------------------

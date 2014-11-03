@@ -313,7 +313,8 @@ namespace json
     }
     else
     {
-      assert(is(type));
+      if (!is(type))
+        throw basic_exception("Invalid JSON type");
     }
   }
 

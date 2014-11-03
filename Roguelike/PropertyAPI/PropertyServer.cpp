@@ -8,6 +8,7 @@
 #include "Engine/Common.h"
 #include "Engine/Level.h"
 #include "Engine/RubyWrappers.h"
+#include "Engine/HttpClient.h"
 
 #include <http.h>
 
@@ -817,12 +818,21 @@ struct MetaProperty
     return mrb_funcall_argv(mrb, prop, s_get, 1, &obj);
   }
 
+  void set_value(mrb_value obj, mrb_value value)
+  {
+    static mrb_sym s_set = mrb_intern_lit(mrb, "set");
+    const mrb_value params[] = { obj, value };
+    mrb_funcall_argv(mrb, prop, s_set, 2, params);
+  }
+
   json::value display(mrb_value obj) const
   {
-    static mrb_sym t_bool = mrb_intern_lit(mrb, "bool");
-    static mrb_sym t_float = mrb_intern_lit(mrb, "float");
-    static mrb_sym t_vector = mrb_intern_lit(mrb, "vector");
-    static mrb_sym t_color = mrb_intern_lit(mrb, "color");
+    static const mrb_sym t_bool = mrb_intern_lit(mrb, "bool");
+    static const mrb_sym t_float = mrb_intern_lit(mrb, "float");
+    static const mrb_sym t_int = mrb_intern_lit(mrb, "int");
+    static const mrb_sym t_string = mrb_intern_lit(mrb, "string");
+    static const mrb_sym t_vector = mrb_intern_lit(mrb, "vector");
+    static const mrb_sym t_color = mrb_intern_lit(mrb, "color");
 
     mrb_value value = get_value(obj);
 
@@ -840,6 +850,22 @@ struct MetaProperty
       {
         {"type", json::value::string("float")},
         {"value", json::value::number(mrb_float(value))}
+      });
+    }
+    else if (type == t_int)
+    {
+      return json::value::object(
+      {
+        {"type", json::value::string("int")},
+        {"value", json::value::number((long double)mrb_fixnum(value))}
+      });
+    }
+    else if (type == t_float)
+    {
+      return json::value::object(
+      {
+        {"type", json::value::string("string")},
+        {"value", json::value::string(mrb_str_to_stdstring(value))}
       });
     }
     else if (type == t_vector || type == t_color)
@@ -871,6 +897,54 @@ struct MetaProperty
         )}
       });
     }
+  }
+
+  bool read_in(mrb_value obj, json::value data)
+  {
+    static const mrb_sym t_bool = mrb_intern_lit(mrb, "bool");
+    static const mrb_sym t_float = mrb_intern_lit(mrb, "float");
+    static const mrb_sym t_int = mrb_intern_lit(mrb, "int");
+    static const mrb_sym t_string = mrb_intern_lit(mrb, "string");
+    static const mrb_sym t_vector = mrb_intern_lit(mrb, "vector");
+    static const mrb_sym t_color = mrb_intern_lit(mrb, "color");
+
+    mrb_value value = get_value(obj);
+
+    if (type == t_bool)
+    {
+      if (data["type"].as_string() != "bool")
+        return false;
+
+      set_value(obj, mrb_bool_value(data["value"].as_bool()));
+      return true;
+    }
+    else if (type == t_float)
+    {
+      if (data["type"].as_string() != "float")
+        return false;
+
+      set_value(obj, mrb_float_value(mrb, (mrb_float)data["value"].as_number()));
+      return true;
+    }
+    else if (type == t_int)
+    {
+      if (data["type"].as_string() != "int")
+        return false;
+
+      set_value(obj, mrb_fixnum_value((mrb_int)data["value"].as_number()));
+      return true;
+    }
+    else if (type == t_string)
+    {
+      if (data["type"].as_string() != "string")
+        return false;
+
+      auto& str = data["value"].as_string();
+      set_value(obj, mrb_str_new(mrb, str.c_str(), str.size()));
+      return true;
+    }
+
+    return false;
   }
 };
 
@@ -990,8 +1064,43 @@ static DWORD DisplayGetProperty(RequestQueue& queue, mrb_value obj, UrlParts& re
 
 static DWORD DisplaySetProperty(RequestQueue& queue, mrb_value obj, UrlParts& remainingPath)
 {
-  (obj, remainingPath);
-  return ReplyNotFound(queue);;
+  static mrb_state * const mrb = *mrb_inst;
+
+  if (remainingPath.empty())
+    return ReplyNotFound(queue);
+
+  const auto props = GetProperties(mrb, obj);
+  const auto propName = remainingPath.front();
+  pop_front(remainingPath);
+  
+  auto propIt = std::find_if(props.begin(), props.end(),
+  [&propName](const MetaProperty& prop)
+  {
+    return propName == prop.id_name;
+  });
+
+  if (propIt == props.end())
+  {
+    return ReplyNotFound(queue);
+  }
+
+  MetaProperty prop = *propIt;
+  
+  if (remainingPath.size() == 1)
+  {
+    auto input = json::value::parse(HttpUri::Decode(remainingPath[1]));
+
+    auto response = json::value::object(
+    {
+      {"success", json::value::boolean(prop.read_in(obj, input))}
+    });
+
+    ResponseData data;
+    data.contentType = "application/json";
+    return ReplyToRequest(queue, data, response);
+  }
+
+  return ReplyNotFound(queue);
 }
 
 // ----------------------------------------------------------------------------

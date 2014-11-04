@@ -32,14 +32,11 @@ class PositionComponent < ComponentBase
 
   def jump(dt)
     @tpos.x = @position.x
-    @tpos.z = @position.y
+    @tpos.y = @position.y
   end
 
   def linear(dt)
-    real_pos = @tpos.dup
-    real_pos.y = real_pos.z
-
-    diff = @position - real_pos
+    diff = @position - @tpos
     diff.z = 0
 
     amt = dt * @move_speed
@@ -47,21 +44,18 @@ class PositionComponent < ComponentBase
       diff.normalize!.mul amt
     end
 
-    @tpos.x = real_pos.x + diff.x
-    @tpos.z = real_pos.y + diff.y
+    @tpos.x += diff.x
+    @tpos.y += diff.y
   end
 
   def exponential(dt)
-    real_pos = @tpos.dup
-    real_pos.y = real_pos.z
-
-    diff = @position - real_pos
+    diff = @position - @tpos
     diff.z = 0
 
     diff.mul(dt * 50 / @move_speed)
 
-    @tpos.x = real_pos.x + diff.x
-    @tpos.z = real_pos.y + diff.y
+    @tpos.x += diff.x
+    @tpos.y += diff.y
   end
 
   register_component "PositionComponent"

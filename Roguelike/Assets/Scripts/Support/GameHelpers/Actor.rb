@@ -106,7 +106,6 @@ module Actor
 
     # false if the move animation isn't done
     real_pos = @actor_transform.position.dup
-    real_pos.y = real_pos.z
     real_pos.z = @actor_position.z
     real_pos.w = 0
 

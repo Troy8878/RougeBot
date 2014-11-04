@@ -32,7 +32,7 @@ TexturedPixelInputType main(TexturedVertexInputType input)
 
   // Light thingy
   float dist = (distance(output.position.xy, float2(0, 0)) + 1.9) / 2;
-  output.color.xyz *= 1 / dist;
+  output.color.xyz *= 1.2 / dist;
 
   // Camera to Projection space
   output.position = mul(output.position, projectionMatrix);

@@ -197,7 +197,7 @@ static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value se
   auto cam = ruby::read_native_ptr<ICamera>(mrb, self);
   XMVECTOR point_v = ruby::get_ruby_vector(point);
   XMVECTOR origin_v = g_XMZero;
-  XMVECTOR normal_v = g_XMIdentityR1;
+  XMVECTOR normal_v = g_XMIdentityR2;
 
   if (!mrb_nil_p(plane_origin))
     origin_v = ruby::get_ruby_vector(plane_origin);

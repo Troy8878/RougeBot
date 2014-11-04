@@ -45,3 +45,25 @@ private:
 };
 
 // ----------------------------------------------------------------------------
+
+class TilemapBuilder
+{
+public:
+  TilemapBuilder(size_t zipSize);
+  ~TilemapBuilder();
+
+  void AddTile(mrb_int x, mrb_int y, UINT texture);
+
+  Model *CreateModel();
+
+  static void InitializeRubyModule(mrb_state *mrb);
+
+private:
+  size_t zipSize;
+  std::vector<TexturedVertex> vertices;
+  std::vector<UINT> indices;
+
+  GraphicsDevice *graphics;
+};
+
+// ----------------------------------------------------------------------------

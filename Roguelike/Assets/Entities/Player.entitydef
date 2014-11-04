@@ -1,6 +1,6 @@
 {
   "TransformComponent": {
-    "rotation": [1.5707, 0, 0],
+    "rotation": [0, 0, 0],
     "position": [1, 0.25, 1],
     "scale": [0.8, 0.8, 0.8]
   },
@@ -42,10 +42,10 @@
         "components": {
           "TransformComponent": {
             "position": [0, -0.8, 0],
-            "scale": [1.5, 0.5, 1],
+            "scale": [2, 0.5, 1],
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/300:100"]
+            "textures": ["SPECIAL/SURFACE/400:100"]
           },
           "SpriteComponent": {
             "render_target": "TranslucentLayer"

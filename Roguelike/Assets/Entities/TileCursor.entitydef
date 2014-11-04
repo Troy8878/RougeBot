@@ -1,6 +1,6 @@
 {
   "TransformComponent": {
-    "rotation": [1.57079633, 0, 0]
+    "rotation": [0, 0, 0]
   },
   "HUD::TileCursorComponent": {
     "camera": "TranslucentLayer"

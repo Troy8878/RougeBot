@@ -1,6 +1,6 @@
 /// <reference path="_references.ts" />
 function isalnum(c) {
-    return /^[0-9a-z]$/.test(c);
+    return /^[0-9a-z]$/i.test(c);
 }
 
 function encodeStr(data) {
@@ -109,7 +109,7 @@ var BoolView = (function () {
         var _this = this;
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('boolview');
+        this.dataNode.classList.add('bool-view');
 
         var label = document.createElement('div');
         label.classList.add("boolview-label");
@@ -169,10 +169,10 @@ var FloatView = (function () {
         var _this = this;
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('float-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -204,12 +204,9 @@ var FloatView = (function () {
     };
 
     FloatView.prototype.upload = function () {
-        var _this = this;
         var data = JSON.stringify({ type: "float", value: this.data.value });
         var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
-        $.get(path, function () {
-            _this.refresh();
-        });
+        $.get(path);
     };
 
     FloatView.prototype.getBasePath = function () {
@@ -231,10 +228,10 @@ var IntView = (function () {
         var _this = this;
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('int-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -266,12 +263,9 @@ var IntView = (function () {
     };
 
     IntView.prototype.upload = function () {
-        var _this = this;
         var data = JSON.stringify({ type: "int", value: this.data.value });
         var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
-        $.get(path, function () {
-            _this.refresh();
-        });
+        $.get(path);
     };
 
     IntView.prototype.getBasePath = function () {
@@ -293,10 +287,10 @@ var StringView = (function () {
         var _this = this;
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('string-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -342,6 +336,45 @@ var StringView = (function () {
     return StringView;
 })();
 
+var VectorView = (function () {
+    function VectorView(owner, property) {
+        this.owner = owner;
+        this.property = property;
+        this.x = new FloatView(this, { id: "x", type: "float", can_set: true });
+        this.y = new FloatView(this, { id: "y", type: "float", can_set: true });
+        this.z = new FloatView(this, { id: "z", type: "float", can_set: true });
+        this.w = new FloatView(this, { id: "w", type: "float", can_set: true });
+    }
+    VectorView.prototype.build = function (parent) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('vector-view');
+        parent.appendChild(this.dataNode);
+
+        var label = document.createElement('div');
+        label.classList.add('property-label');
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.x.build(this.dataNode);
+        this.y.build(this.dataNode);
+        this.z.build(this.dataNode);
+        this.w.build(this.dataNode);
+    };
+
+    VectorView.prototype.refresh = function () {
+        this.x.refresh();
+        this.y.refresh();
+        this.z.refresh();
+        this.w.refresh();
+    };
+
+    VectorView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    };
+    return VectorView;
+})();
+
 function makePropertyView(owner, property) {
     switch (property.type) {
         case "bool":
@@ -352,6 +385,10 @@ function makePropertyView(owner, property) {
             return new IntView(owner, property);
         case "string":
             return new StringView(owner, property);
+        case "vector":
+            return new VectorView(owner, property);
+        case "color":
+            return new VectorView(owner, property);
     }
 
     return new UnimplView();

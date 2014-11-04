@@ -27,7 +27,7 @@ module HUD
       position = @camera.screen_to_world(@mouse_pos)
 
       position.x = Math.round(position.x)
-      position.z = Math.round(position.z)
+      position.y = Math.round(position.y)
 
       @transform.position = position
     end

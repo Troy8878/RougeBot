@@ -39,4 +39,12 @@
   text-align: right;
   width: 75%; }
 
+.vector-view .property {
+  display: inline-block;
+  width: auto;
+  max-width: 140px; }
+  .vector-view .property .property-label {
+    display: inline-block;
+    width: auto; }
+
 /*# sourceMappingURL=style.css.map */

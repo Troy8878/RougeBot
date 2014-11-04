@@ -1,7 +1,7 @@
 /// <reference path="_references.ts" />
 
 function isalnum(c: string) {
-    return /^[0-9a-z]$/.test(c);
+    return /^[0-9a-z]$/i.test(c);
 }
 
 function encodeStr(data: string) {
@@ -143,7 +143,7 @@ class BoolView implements Viewable {
     build(parent: HTMLElement) {
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('boolview');
+        this.dataNode.classList.add('bool-view');
 
         var label = document.createElement('div');
         label.classList.add("boolview-label");
@@ -202,10 +202,10 @@ class FloatView implements Viewable {
     build(parent: HTMLElement) {
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('float-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -238,9 +238,7 @@ class FloatView implements Viewable {
     upload() {
         var data = JSON.stringify({ type: "float", value: this.data.value });
         var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
-        $.get(path, () => {
-            this.refresh();
-        });
+        $.get(path);
     }
 
     getBasePath() {
@@ -263,10 +261,10 @@ class IntView implements Viewable {
     build(parent: HTMLElement) {
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('int-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -299,9 +297,7 @@ class IntView implements Viewable {
     upload() {
         var data = JSON.stringify({ type: "int", value: this.data.value });
         var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
-        $.get(path, () => {
-            this.refresh();
-        });
+        $.get(path);
     }
 
     getBasePath() {
@@ -324,10 +320,10 @@ class StringView implements Viewable {
     build(parent: HTMLElement) {
         this.dataNode = document.createElement('div');
         this.dataNode.classList.add('property');
-        this.dataNode.classList.add('floatview');
+        this.dataNode.classList.add('string-view');
 
         var label = document.createElement('div');
-        label.classList.add("floatview-label");
+        label.classList.add("property-label");
         label.textContent = this.property.id;
         this.dataNode.appendChild(label);
 
@@ -372,14 +368,42 @@ class StringView implements Viewable {
 }
 
 class VectorView implements Viewable {
+
+    dataNode: HTMLElement;
+    x: FloatView;
+    y: FloatView;
+    z: FloatView;
+    w: FloatView;
+
     constructor(public owner: Viewable, public property: Property) {
+        this.x = new FloatView(this, { id: "x", type: "float", can_set: true });
+        this.y = new FloatView(this, { id: "y", type: "float", can_set: true });
+        this.z = new FloatView(this, { id: "z", type: "float", can_set: true });
+        this.w = new FloatView(this, { id: "w", type: "float", can_set: true });
     }
 
     build(parent: HTMLElement) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('vector-view');
+        parent.appendChild(this.dataNode);
+
+        var label = document.createElement('div');
+        label.classList.add('property-label');
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.x.build(this.dataNode);
+        this.y.build(this.dataNode);
+        this.z.build(this.dataNode);
+        this.w.build(this.dataNode);
     }
 
     refresh() {
-
+        this.x.refresh();
+        this.y.refresh();
+        this.z.refresh();
+        this.w.refresh();
     }
 
     getBasePath() {
@@ -397,6 +421,10 @@ function makePropertyView(owner: Viewable, property: Property): Viewable {
             return new IntView(owner, property);
         case "string":
             return new StringView(owner, property);
+        case "vector":
+            return new VectorView(owner, property);
+        case "color":
+            return new VectorView(owner, property); // TODO: Make a real color view
     }
 
     return new UnimplView();

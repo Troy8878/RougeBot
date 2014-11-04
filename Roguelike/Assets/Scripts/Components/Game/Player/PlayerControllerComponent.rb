@@ -68,7 +68,7 @@ class PlayerControllerComponent < ComponentBase
 
   def yield_to_enemies
     seq = self.owner.action_sequence :delay_logic
-    seq.delay(0.1)
+    seq.delay(0.05)
     seq.delay(0) # ensure at _minimum_ 2 frames go by
     seq.once do
       if @logic_initialized
@@ -123,7 +123,7 @@ class PlayerControllerComponent < ComponentBase
     @curpos ||= @cursor.transform_component.position
 
     dx = Math.round(@curpos.x - @pos.x)
-    dy = Math.round(@curpos.z - @pos.y)
+    dy = Math.round(@curpos.y - @pos.y)
 
     move dx, dy
   end
@@ -151,7 +151,7 @@ class PlayerControllerComponent < ComponentBase
     xbounce = Math.sin((pos.x % 1) * Math::PI) / 6
     zbounce = Math.sin((pos.z % 1) * Math::PI) / 6
 
-    pos.y = 0.25 + xbounce + zbounce
+    pos.z = -(0.25 + xbounce + zbounce)
     @camera.transform_component.position.z = 
       @camz + (xbounce + zbounce) / @transform.scale.z
 
@@ -163,9 +163,9 @@ class PlayerControllerComponent < ComponentBase
 
     curpos = @cursor.transform_component.position
     dx = Math.round(curpos.x - @pos.x)
-    dz = Math.round(curpos.z - @pos.y)
+    dy = Math.round(curpos.y - @pos.y)
 
-    if !can_move?(dx, dz)
+    if !can_move?(dx, dy)
       @cursor.children.first.sprite_component.texture_index = 1
     else
       @cursor.children.first.sprite_component.texture_index = 0

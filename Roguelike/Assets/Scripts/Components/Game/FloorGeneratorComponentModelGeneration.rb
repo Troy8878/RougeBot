@@ -4,40 +4,16 @@
 # Created 2014/09/09
 #######################
 
-def current_floor
-  FloorGeneratorComponent.instance.floor
-end
-
 class FloorGeneratorComponent < ComponentBase
-  include ModelBuilder
+  include TilemapBuilder
 
   EMPTY_VALUE = 0
   WALL_VALUE = 1
-
   ROOM_SIZE = 75
-  C_L = -0.5
-  C_R = 0.5
-  W_T = 0
-  W_B = 0
+  TEXTURE_COUNT = 3
 
-  WHITE = Vector.new(1, 1, 1, 1)
-
-  TE = 0.001
-
-  CEIL_TL  = Vector.new(0, 0       )
-  CEIL_TR  = Vector.new(1, 0       )
-  CEIL_BR  = Vector.new(1, 1/3 - TE)
-  CEIL_BL  = Vector.new(0, 1/3 - TE)
-
-  WALL_TL  = Vector.new(0, 1/3 + TE)
-  WALL_TR  = Vector.new(1, 1/3 + TE)
-  WALL_BR  = Vector.new(1, 1/2 - TE)
-  WALL_BL  = Vector.new(0, 1/2 - TE)
-
-  FLOOR_TL = Vector.new(0, 2/3 + TE)
-  FLOOR_TR = Vector.new(1, 2/3 + TE)
-  FLOOR_BR = Vector.new(1, 1       )
-  FLOOR_BL = Vector.new(0, 1       )
+  TEX_WALL = 0
+  TEX_FLOOR = 2
 
   private
   def generate_room
@@ -46,94 +22,21 @@ class FloorGeneratorComponent < ComponentBase
       width: ROOM_SIZE, height: ROOM_SIZE
     )
 
-    build_model do |builder|
+    build_model(TEXTURE_COUNT) do |builder|
       (-7..(ROOM_SIZE + 6)).combinations do |y, x|
         if y < 0 || x < 0 || y >= ROOM_SIZE || x >= ROOM_SIZE
-          add_ceil(builder, x, y)
+          builder.add_tile(x, y, TEX_WALL)
           next
         end
 
         v = room_get(x, y)
         if v == WALL_VALUE
-          add_ceil(builder, x, y)
+          builder.add_tile(x, y, TEX_WALL)
         else
-          add_floor(builder, x, y)
-
-          if room_get(x - 1, y) == WALL_VALUE
-            add_west_wall(builder, x, y)
-          end
-          if room_get(x + 1, y) == WALL_VALUE
-            add_east_wall(builder, x, y)
-          end
-          if room_get(x, y - 1) == WALL_VALUE
-            add_north_wall(builder, x, y)
-          end
-          if room_get(x, y + 1) == WALL_VALUE
-            add_south_wall(builder, x, y)
-          end
+          builder.add_tile(x, y, TEX_FLOOR)
         end
       end
     end
-  end
-
-  private
-  def add_ceil(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, CEIL_TL),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, CEIL_TR),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, CEIL_BR),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, CEIL_BL)
-    )
-  end
-
-  private
-  def add_floor(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, FLOOR_TL),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, FLOOR_TR),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, FLOOR_BR),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, FLOOR_BL)
-    )
-  end
-
-  private
-  def add_west_wall(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, WALL_TL),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, WALL_TR),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, WALL_BR),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, WALL_BL)
-    )
-  end
-
-  private
-  def add_east_wall(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, WALL_TL),
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, WALL_TR),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, WALL_BR),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, WALL_BL)
-    )
-  end
-
-  private
-  def add_north_wall(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_L, 1), WHITE, WALL_TL),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_L, 1), WHITE, WALL_TR),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_L, 1), WHITE, WALL_BR),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_L, 1), WHITE, WALL_BL)
-    )
-  end
-
-  private
-  def add_south_wall(builder, x, y)
-    builder.add_quad(
-      Vertex.new(Vector.new(x + C_R, W_T, y + C_R, 1), WHITE, WALL_TL),
-      Vertex.new(Vector.new(x + C_L, W_T, y + C_R, 1), WHITE, WALL_TR),
-      Vertex.new(Vector.new(x + C_L, W_B, y + C_R, 1), WHITE, WALL_BR),
-      Vertex.new(Vector.new(x + C_R, W_B, y + C_R, 1), WHITE, WALL_BL)
-    )
   end
 
   private

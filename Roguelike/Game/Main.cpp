@@ -24,23 +24,22 @@ extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()
 {
   performance::register_guard glperf("The Game");
-  
-  #if !PRODUCTION
-  CreateConsole();
-  #endif
 
   #if !defined(AVX_BUILD) && PRODUCTION
   if (IsAvxSupported())
   {
-    if (fs::exists(fs::path("Game_AVX.exe")))
-    {
-      CreateProcessW(L"Game_AVX.exe", nullptr,
-                     nullptr, nullptr, FALSE,
-                     0, nullptr, nullptr,
-                     nullptr, nullptr);
-      _exit(0);
-    }
+    STARTUPINFO info = {sizeof(info)};
+    PROCESS_INFORMATION procinfo;
+
+    CreateProcess(nullptr, "Game_AVX.exe", nullptr, nullptr,
+                  TRUE, 0, nullptr, nullptr, &info, &procinfo);
+
+    _exit(0);
   }
+  #endif
+  
+  #if !PRODUCTION
+  CreateConsole();
   #endif
 
   std::cout << console::fg::white;
@@ -56,6 +55,5 @@ extern "C" __declspec(noreturn) void GameRunGame()
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
-
   GameRunGame();
 }

@@ -125,6 +125,8 @@ void ModelBuilder::InitializeRubyModule(mrb_state *mrb)
   auto bclass = module.define_class("Builder");
   bclass.define_method("add_tri", mrb_builder_add_tri, ARGS_REQ(3));
   bclass.define_method("add_quad", mrb_builder_add_quad, ARGS_REQ(4));
+
+  TilemapBuilder::InitializeRubyModule(mrb);
 }
 
 // ----------------------------------------------------------------------------
@@ -214,6 +216,142 @@ static mrb_value mrb_builder_add_quad(mrb_state *mrb, mrb_value self)
   builder.AddQuad(vertices);
 
   return self;
+}
+
+// ----------------------------------------------------------------------------
+
+TilemapBuilder::TilemapBuilder(size_t zipSize)
+  : graphics(GetGame()->GameDevice), zipSize(zipSize)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+TilemapBuilder::~TilemapBuilder()
+{
+  if (vertices.size())
+    std::cerr << "[WARN] A TilemapBuilder was destroyed while it still "
+              << "had vertices. Wastin' time here :U" << std::endl;
+}
+
+// ----------------------------------------------------------------------------
+
+void TilemapBuilder::AddTile(mrb_int xo, mrb_int yo, UINT texture)
+{
+  UINT vertex_offset = assert_limits<UINT>(this->vertices.size());
+
+  const UINT segments = 8;
+
+  for (UINT y = 0; y < segments; ++y)
+  {
+    for (UINT x = 0; x < segments; ++x)
+    {
+      auto xprog = x * (1.0f / (segments - 1));
+      auto yprog = y * (1.0f / (segments - 1));
+
+      TexturedVertex vertex;
+      vertex.position.x = xo + -0.5f + xprog;
+      vertex.position.y = yo +  0.5f - yprog;
+      vertex.texture.x = xprog;
+      vertex.texture.y = (texture + yprog) / zipSize;
+      vertex.color = math::Vector{1,1,1,1};
+
+      vertices.push_back(vertex);
+    }
+  }
+
+  for (UINT y = 0; y < segments - 1; ++y)
+  {
+    for (UINT x = 0; x < segments - 1; ++x)
+    {
+      UINT vtl = (  y  ) * segments + (  x  );
+      UINT vtr = (  y  ) * segments + (x + 1);
+      UINT vbl = (y + 1) * segments + (  x  );
+      UINT vbr = (y + 1) * segments + (x + 1);
+
+      indices.push_back(vertex_offset + vtl);
+      indices.push_back(vertex_offset + vbl);
+      indices.push_back(vertex_offset + vbr);
+      indices.push_back(vertex_offset + vtl);
+      indices.push_back(vertex_offset + vbr);
+      indices.push_back(vertex_offset + vtr);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+Model *TilemapBuilder::CreateModel()
+{
+  auto model = new Model
+  {
+    graphics->Device, 
+    vertices.data(), (UINT) vertices.size(), 
+    indices.data(), (UINT) indices.size()
+  };
+
+  vertices.clear();
+  indices.clear();
+  
+  return model;
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_data_type tilemap_dt;
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_tilemap_build_model(mrb_state *mrb, mrb_value self)
+{
+  mrb_int zipSize;
+  mrb_value block;
+  mrb_get_args(mrb, "i&", &zipSize, &block);
+
+  auto bclass = mrb_class_get_under(mrb, mrb_module_get(mrb, "TilemapBuilder"), "Builder");
+
+  TilemapBuilder builder((size_t) zipSize);
+  auto param = mrb_data_object_alloc(mrb, bclass, &builder, &tilemap_dt);
+
+  mrb_yield(mrb, block, mrb_obj_value(param));
+
+  auto entity = ruby::data_get<Entity>(mrb, mrb_funcall_argv(mrb, self, mrb_intern_lit(mrb, "owner"), 0, nullptr));
+  auto modcomp = (CustomModelComponent *) entity->GetComponent("CustomModelComponent");
+
+  if (modcomp->CustomModel)
+    delete modcomp->CustomModel;
+
+  modcomp->CustomModel = builder.CreateModel();
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_tilemap_add_tile(mrb_state *mrb, mrb_value self)
+{
+  mrb_int xo, yo, tex;
+  mrb_get_args(mrb, "iii", &xo, &yo, &tex);
+
+  auto *tilemap = ruby::data_get<TilemapBuilder>(mrb, self);
+  tilemap->AddTile(xo, yo, assert_limits_mrb<UINT>(mrb, tex));
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+void TilemapBuilder::InitializeRubyModule(mrb_state *mrb)
+{
+  auto mod = mrb_define_module(mrb, "TilemapBuilder");
+  auto bclass = mrb_define_class_under(mrb, mod, "Builder", mrb->object_class);
+
+  mrb_define_method(mrb, mod, "build_model", mrb_tilemap_build_model, ARGS_REQ(1) | ARGS_BLOCK());
+
+  tilemap_dt.dfree = ruby::data_nop_delete;
+  tilemap_dt.struct_name = typeid(TilemapBuilder).name();
+
+  mrb_define_method(mrb, bclass, "add_tile", mrb_tilemap_add_tile, MRB_ARGS_REQ(3));
 }
 
 // ----------------------------------------------------------------------------

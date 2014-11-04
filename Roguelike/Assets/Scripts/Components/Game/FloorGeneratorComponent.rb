@@ -4,6 +4,10 @@
 # Created 2014/09/09
 #######################
 
+def current_floor
+  FloorGeneratorComponent.instance.floor
+end
+
 class FloorGeneratorComponent < ComponentBase
   attr_accessor :floor
 

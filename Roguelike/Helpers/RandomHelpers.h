@@ -11,7 +11,10 @@
 #include <unordered_map>
 #include <functional>
 #include <chrono>
+#include <limits>
 #include "json/json.h"
+#include "mruby/include/mruby.h"
+#include "mruby/include/mruby/string.h"
 
 // ----------------------------------------------------------------------------
 
@@ -721,6 +724,32 @@ template <typename Cont>
 auto pop_front(Cont& cont) -> decltype(cont.erase(cont.begin()))
 {
   return cont.erase(cont.begin());
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename T, typename U>
+T assert_limits(const U val)
+{
+  assert(val <= std::numeric_limits<T>::max() &&
+         val >= std::numeric_limits<T>::min());
+  return T(val);
+}
+
+// ----------------------------------------------------------------------------
+
+template <typename T>
+T assert_limits_mrb(mrb_state *mrb, const mrb_int val)
+{
+  if(!(val <= std::numeric_limits<T>::max()) ||
+     !(val >= std::numeric_limits<T>::min()))
+  {
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "Value %S is out of range for type %S",
+               mrb_obj_as_string(mrb, mrb_fixnum_value(val)),
+               mrb_str_new_cstr(mrb, typeid(T).name()));
+  }
+
+  return T(val);
 }
 
 // ----------------------------------------------------------------------------

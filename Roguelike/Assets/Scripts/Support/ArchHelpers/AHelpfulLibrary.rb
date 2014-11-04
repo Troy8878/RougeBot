@@ -107,5 +107,11 @@ module NativeEnumerable
   end
 end
 
-
+class Symbol
+  def to_proc
+    -> (a1, *args) do
+      a1.send self, *args
+    end
+  end
+end
 

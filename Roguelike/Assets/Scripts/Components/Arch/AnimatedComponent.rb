@@ -16,6 +16,10 @@
 class AnimatedComponent < ComponentBase
   attr_accessor :paused, :frame_time, :frame_range, :time
 
+  property :frame_time, :float, true
+  property :frame_range, :float_pair, true
+  property :paused, :bool, true
+
   def initialize(data)
     super data
 
@@ -27,6 +31,8 @@ class AnimatedComponent < ComponentBase
 
     self.register_event :update, :animate
   end
+
+  MAX_FRAME_SKIP = 10
 
   ##
   # :update event handler
@@ -40,9 +46,13 @@ class AnimatedComponent < ComponentBase
     @time += e.dt
 
     # increment frames. `while` in case FPS is lower than frame_time
+    skipped = -1
     while @time >= @frame_time
       @time -= @frame_time
       next_frame
+
+      skipped += 1
+      break if skipped >= MAX_FRAME_SKIP
     end
   end
 

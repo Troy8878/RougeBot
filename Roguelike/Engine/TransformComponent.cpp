@@ -50,6 +50,9 @@ void TransformComponent::OnUpdate(Events::EventMessage&)
 
 void TransformComponent::UpdateMatrix()
 {
+  if (this->Static)
+    return;
+
   using namespace DirectX;
 
   // Fix rotations so they don't fall prey to large number rounding errors
@@ -75,15 +78,15 @@ void TransformComponent::_SetIsStatic(bool value)
 
   _static = value;
 
-  static Events::EventId updateId("update");
+  DEF_EVENT_ID(draw);
   if (_static)
   {
     UpdateMatrix();
-    Owner->RemoveEvent(this, updateId);
+    Owner->RemoveEvent(this, draw);
   }
   else
   {
-    Owner->AddEvent(this, updateId, &TransformComponent::OnUpdate);
+    Owner->AddEvent(this, draw, &TransformComponent::OnUpdate);
   }
 }
 

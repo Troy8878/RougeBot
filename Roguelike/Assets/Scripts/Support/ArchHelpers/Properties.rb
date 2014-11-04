@@ -29,7 +29,7 @@ module MetaProperties
 
   attr_reader :properties
 
-  def property(id, type, can_set)
+  def property(id, type, can_set = false)
     @properties ||= []
 
     property = MetaProperty.new(id, type, can_set)

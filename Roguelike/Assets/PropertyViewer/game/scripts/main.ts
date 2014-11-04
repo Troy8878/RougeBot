@@ -1,8 +1,45 @@
 /// <reference path="_references.ts" />
 
+function isalnum(c: string) {
+    return /^[0-9a-z]$/.test(c);
+}
+
+function encodeStr(data: string) {
+    var out = "";
+    for (var i = 0; i < data.length; ++i) {
+        var c = data.charAt(i);
+        if (isalnum(c)) {
+            out += c;
+        } else {
+            var code = c.charCodeAt(0).toString(16);
+            if (code.length == 1)
+                code = "0" + code;
+
+            out += "%" + code;
+        }
+    }
+    return out;
+}
+
+function decodeStr(data: string) {
+    var out = "";
+    for (var i = 0; i < data.length; ++i) {
+        var c = data.charAt(i);
+        if (c == '%') {
+            var code = data.substr(i + 1, 2);
+            i += 2;
+            out += String.fromCharCode(parseInt(code, 16));
+        } else {
+            out += c;
+        }
+    }
+    return out;
+}
+
 interface Viewable {
     refresh(): void;
     build(parent: HTMLElement): void;
+    getBasePath(): string;
 }
 
 interface EntityRef {
@@ -11,7 +48,7 @@ interface EntityRef {
 }
 
 function makeEntityButton(parent: HTMLElement, label: string,
-                          id: number, destroyOld: () => void) {
+    id: number, destroyOld: () => void) {
     var button = document.createElement('button');
     button.textContent = label;
 
@@ -62,17 +99,327 @@ class ValueView {
     }
 }
 
-class ComponentView {
+interface Property {
+    id: string;
+    type: string;
+    can_set: boolean;
+}
+
+interface BoolProp {
+    type: string;
+    value: boolean;
+}
+
+interface NumProp {
+    type: string;
+    value: number;
+}
+
+interface StringProp {
+    type: string;
+    value: string;
+}
+
+class UnimplView implements Viewable {
+    build(parent: HTMLElement) {
+    }
+
+    refresh() {
+    }
+
+    getBasePath() {
+        return "";
+    }
+}
+
+class BoolView implements Viewable {
+    dataNode: HTMLElement;
+    checkbox: HTMLInputElement;
+    data: BoolProp;
+
+    constructor(public owner: Viewable, public property: Property) {
+    }
+
+    build(parent: HTMLElement) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('boolview');
+
+        var label = document.createElement('div');
+        label.classList.add("boolview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.checkbox = document.createElement('input');
+        this.checkbox.type = 'checkbox';
+        this.dataNode.appendChild(this.checkbox);
+
+        $(this.checkbox).change(() => {
+            this.data.value = this.checkbox.checked;
+            this.upload();
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    }
+
+    refresh() {
+        $.get(this.getBasePath(), (data: BoolProp) => {
+            this.data = data;
+            this.displayValues();
+        });
+    }
+
+    displayValues() {
+        this.checkbox.checked = this.data.value;
+    }
+
+    upload() {
+        var data = JSON.stringify({ type: "bool", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, () => {
+            this.refresh();
+        });
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    }
+
+    getSetPath() {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    }
+}
+
+class FloatView implements Viewable {
+    dataNode: HTMLElement;
+    textbox: HTMLInputElement;
+    data: NumProp;
+
+    constructor(public owner: Viewable, public property: Property) {
+    }
+
+    build(parent: HTMLElement) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(() => {
+            var newval = parseFloat(this.textbox.value);
+            if (!isNaN(newval)) {
+                this.data.value = newval;
+                this.upload();
+            }
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    }
+
+    refresh() {
+        $.get(this.getBasePath(), (data: NumProp) => {
+            this.data = data;
+            this.displayValues();
+        });
+    }
+
+    displayValues() {
+        this.textbox.value = this.data.value.toString();
+    }
+
+    upload() {
+        var data = JSON.stringify({ type: "float", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, () => {
+            this.refresh();
+        });
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    }
+
+    getSetPath() {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    }
+}
+
+class IntView implements Viewable {
+    dataNode: HTMLElement;
+    textbox: HTMLInputElement;
+    data: NumProp;
+
+    constructor(public owner: Viewable, public property: Property) {
+    }
+
+    build(parent: HTMLElement) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(() => {
+            var newval = parseInt(this.textbox.value);
+            if (!isNaN(newval)) {
+                this.data.value = newval;
+                this.upload();
+            }
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    }
+
+    refresh() {
+        $.get(this.getBasePath(), (data: NumProp) => {
+            this.data = data;
+            this.displayValues();
+        });
+    }
+
+    displayValues() {
+        this.textbox.value = this.data.value.toString();
+    }
+
+    upload() {
+        var data = JSON.stringify({ type: "int", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, () => {
+            this.refresh();
+        });
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    }
+
+    getSetPath() {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    }
+}
+
+class StringView implements Viewable {
+    dataNode: HTMLElement;
+    textbox: HTMLInputElement;
+    data: StringProp;
+
+    constructor(public owner: Viewable, public property: Property) {
+    }
+
+    build(parent: HTMLElement) {
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(() => {
+            this.data.value = this.textbox.value;
+            this.upload();
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    }
+
+    refresh() {
+        $.get(this.getBasePath(), (data: StringProp) => {
+            this.data = data;
+            this.displayValues();
+        });
+    }
+
+    displayValues() {
+        this.textbox.value = this.data.value;
+    }
+
+    upload() {
+        var data = JSON.stringify({ type: "string", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, () => {
+            //this.refresh();
+        });
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    }
+
+    getSetPath() {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    }
+}
+
+class VectorView implements Viewable {
+    constructor(public owner: Viewable, public property: Property) {
+    }
+
+    build(parent: HTMLElement) {
+    }
+
+    refresh() {
+
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    }
+}
+
+function makePropertyView(owner: Viewable, property: Property): Viewable {
+    switch (property.type) {
+        case "bool":
+            return new BoolView(owner, property);
+        case "float":
+            return new FloatView(owner, property);
+        case "int":
+            return new IntView(owner, property);
+        case "string":
+            return new StringView(owner, property);
+    }
+
+    return new UnimplView();
+}
+
+class ComponentView implements Viewable {
     visible: boolean = false;
     loaded: boolean = false;
     rootNode: HTMLElement = null;
     dataNode: HTMLElement = null;
     expandButton: HTMLElement = null;
-
     contentNode: HTMLElement = null;
+    loadingNode: HTMLElement = null;
+
+    properties: Property[];
+    propertyViews: Viewable[];
 
     constructor(public owner: Entity, public name: string) {
 
+    }
+
+    getBasePath() {
+        return this.owner.getBasePath() + "/component/" + this.name;
     }
 
     makeComponentBar(): HTMLElement {
@@ -108,8 +455,29 @@ class ComponentView {
         parent.appendChild(this.rootNode);
     }
 
+    buildViewers() {
+        this.propertyViews = [];
+        for (var i = 0; i < this.properties.length; ++i) {
+            var property = this.properties[i];
+            var viewer = makePropertyView(this, property);
+            viewer.build(this.contentNode);
+            this.propertyViews[i] = viewer;
+        }
+    }
+
     loadData() {
-        // TODO: Load the component data
+        $.get(this.getBasePath(), (data) => {
+            if (this.loadingNode != null) {
+                this.loadingNode.parentElement.removeChild(this.loadingNode);
+                this.loadingNode = null;
+            }
+
+            this.contentNode = document.createElement('div');
+            this.dataNode.appendChild(this.contentNode);
+
+            this.properties = data.properties;
+            this.buildViewers();
+        });
     }
 
     refresh() {
@@ -125,6 +493,7 @@ class ComponentView {
         var loading = document.createElement('span');
         loading.textContent = "Loading...";
 
+        this.loadingNode = loading;
         this.dataNode.appendChild(loading);
     }
 
@@ -168,12 +537,12 @@ class Entity implements EntityRef, Viewable {
     parent: EntityRef;
     components: string[];
     children: EntityRef[];
-    
+
     rootNode: HTMLElement;
     componentsNode: HTMLElement;
     childrenNode: HTMLElement;
     viewers: any;
-    
+
     static loadFromId(id: Number, callback: (entity: Entity) => void) {
         $.get('/game/api/entity/id/' + id, (data) => {
             callback(new Entity(data));
@@ -192,7 +561,7 @@ class Entity implements EntityRef, Viewable {
         this.components = data.components;
         this.children = data.children;
     }
-    
+
     refresh() {
         this.rootNode.removeChild(this.componentsNode);
         this.componentsNode = document.createElement('div');
@@ -206,6 +575,10 @@ class Entity implements EntityRef, Viewable {
             this.copyFrom(entity);
             this.displayValues();
         });
+    }
+
+    getBasePath() {
+        return "/game/api/entity/id/" + this.id;
     }
 
     createButtons() {

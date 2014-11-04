@@ -5,7 +5,10 @@
 #########################
 
 class PositionComponent < ComponentBase
-  attr_accessor :position
+  attr_accessor :position, :move_speed
+
+  property :position, :vector
+  property :move_speed, :float, true
 
   def initialize(data)
     super data

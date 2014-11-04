@@ -502,6 +502,14 @@ namespace ruby
       mrb_int pos;
     };
 
+    mrb_int size()
+    {
+      if (mrb_nil_p(ary))
+        return 0;
+
+      return mrb_ary_len(mrb, ary);
+    }
+
     iterator begin()
     {
       return iterator(ary, 0);
@@ -509,12 +517,12 @@ namespace ruby
 
     iterator end()
     {
-      return iterator(ary, mrb_ary_len(mrb, ary));
+      return iterator(ary, size());
     }
 
     iterator rbegin()
     {
-      return iterator(ary, mrb_ary_len(mrb, ary) - 1);
+      return iterator(ary, size() - 1);
     }
 
     iterator rend()

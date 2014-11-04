@@ -1,4 +1,39 @@
 /// <reference path="_references.ts" />
+function isalnum(c) {
+    return /^[0-9a-z]$/.test(c);
+}
+
+function encodeStr(data) {
+    var out = "";
+    for (var i = 0; i < data.length; ++i) {
+        var c = data.charAt(i);
+        if (isalnum(c)) {
+            out += c;
+        } else {
+            var code = c.charCodeAt(0).toString(16);
+            if (code.length == 1)
+                code = "0" + code;
+
+            out += "%" + code;
+        }
+    }
+    return out;
+}
+
+function decodeStr(data) {
+    var out = "";
+    for (var i = 0; i < data.length; ++i) {
+        var c = data.charAt(i);
+        if (c == '%') {
+            var code = data.substr(i + 1, 2);
+            i += 2;
+            out += String.fromCharCode(parseInt(code, 16));
+        } else {
+            out += c;
+        }
+    }
+    return out;
+}
 
 function makeEntityButton(parent, label, id, destroyOld) {
     var button = document.createElement('button');
@@ -50,6 +85,278 @@ var ValueView = (function () {
     return ValueView;
 })();
 
+var UnimplView = (function () {
+    function UnimplView() {
+    }
+    UnimplView.prototype.build = function (parent) {
+    };
+
+    UnimplView.prototype.refresh = function () {
+    };
+
+    UnimplView.prototype.getBasePath = function () {
+        return "";
+    };
+    return UnimplView;
+})();
+
+var BoolView = (function () {
+    function BoolView(owner, property) {
+        this.owner = owner;
+        this.property = property;
+    }
+    BoolView.prototype.build = function (parent) {
+        var _this = this;
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('boolview');
+
+        var label = document.createElement('div');
+        label.classList.add("boolview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.checkbox = document.createElement('input');
+        this.checkbox.type = 'checkbox';
+        this.dataNode.appendChild(this.checkbox);
+
+        $(this.checkbox).change(function () {
+            _this.data.value = _this.checkbox.checked;
+            _this.upload();
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    };
+
+    BoolView.prototype.refresh = function () {
+        var _this = this;
+        $.get(this.getBasePath(), function (data) {
+            _this.data = data;
+            _this.displayValues();
+        });
+    };
+
+    BoolView.prototype.displayValues = function () {
+        this.checkbox.checked = this.data.value;
+    };
+
+    BoolView.prototype.upload = function () {
+        var _this = this;
+        var data = JSON.stringify({ type: "bool", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, function () {
+            _this.refresh();
+        });
+    };
+
+    BoolView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    };
+
+    BoolView.prototype.getSetPath = function () {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    };
+    return BoolView;
+})();
+
+var FloatView = (function () {
+    function FloatView(owner, property) {
+        this.owner = owner;
+        this.property = property;
+    }
+    FloatView.prototype.build = function (parent) {
+        var _this = this;
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(function () {
+            var newval = parseFloat(_this.textbox.value);
+            if (!isNaN(newval)) {
+                _this.data.value = newval;
+                _this.upload();
+            }
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    };
+
+    FloatView.prototype.refresh = function () {
+        var _this = this;
+        $.get(this.getBasePath(), function (data) {
+            _this.data = data;
+            _this.displayValues();
+        });
+    };
+
+    FloatView.prototype.displayValues = function () {
+        this.textbox.value = this.data.value.toString();
+    };
+
+    FloatView.prototype.upload = function () {
+        var _this = this;
+        var data = JSON.stringify({ type: "float", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, function () {
+            _this.refresh();
+        });
+    };
+
+    FloatView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    };
+
+    FloatView.prototype.getSetPath = function () {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    };
+    return FloatView;
+})();
+
+var IntView = (function () {
+    function IntView(owner, property) {
+        this.owner = owner;
+        this.property = property;
+    }
+    IntView.prototype.build = function (parent) {
+        var _this = this;
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(function () {
+            var newval = parseInt(_this.textbox.value);
+            if (!isNaN(newval)) {
+                _this.data.value = newval;
+                _this.upload();
+            }
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    };
+
+    IntView.prototype.refresh = function () {
+        var _this = this;
+        $.get(this.getBasePath(), function (data) {
+            _this.data = data;
+            _this.displayValues();
+        });
+    };
+
+    IntView.prototype.displayValues = function () {
+        this.textbox.value = this.data.value.toString();
+    };
+
+    IntView.prototype.upload = function () {
+        var _this = this;
+        var data = JSON.stringify({ type: "int", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, function () {
+            _this.refresh();
+        });
+    };
+
+    IntView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    };
+
+    IntView.prototype.getSetPath = function () {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    };
+    return IntView;
+})();
+
+var StringView = (function () {
+    function StringView(owner, property) {
+        this.owner = owner;
+        this.property = property;
+    }
+    StringView.prototype.build = function (parent) {
+        var _this = this;
+        this.dataNode = document.createElement('div');
+        this.dataNode.classList.add('property');
+        this.dataNode.classList.add('floatview');
+
+        var label = document.createElement('div');
+        label.classList.add("floatview-label");
+        label.textContent = this.property.id;
+        this.dataNode.appendChild(label);
+
+        this.textbox = document.createElement('input');
+        this.textbox.type = 'text';
+        this.dataNode.appendChild(this.textbox);
+        $(this.textbox).keyup(function () {
+            _this.data.value = _this.textbox.value;
+            _this.upload();
+        });
+
+        parent.appendChild(this.dataNode);
+        this.refresh();
+    };
+
+    StringView.prototype.refresh = function () {
+        var _this = this;
+        $.get(this.getBasePath(), function (data) {
+            _this.data = data;
+            _this.displayValues();
+        });
+    };
+
+    StringView.prototype.displayValues = function () {
+        this.textbox.value = this.data.value;
+    };
+
+    StringView.prototype.upload = function () {
+        var data = JSON.stringify({ type: "string", value: this.data.value });
+        var path = this.getSetPath() + "/" + encodeStr(encodeStr(data));
+        $.get(path, function () {
+            //this.refresh();
+        });
+    };
+
+    StringView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/get/" + this.property.id;
+    };
+
+    StringView.prototype.getSetPath = function () {
+        return this.owner.getBasePath() + "/set/" + this.property.id;
+    };
+    return StringView;
+})();
+
+function makePropertyView(owner, property) {
+    switch (property.type) {
+        case "bool":
+            return new BoolView(owner, property);
+        case "float":
+            return new FloatView(owner, property);
+        case "int":
+            return new IntView(owner, property);
+        case "string":
+            return new StringView(owner, property);
+    }
+
+    return new UnimplView();
+}
+
 var ComponentView = (function () {
     function ComponentView(owner, name) {
         this.owner = owner;
@@ -60,7 +367,12 @@ var ComponentView = (function () {
         this.dataNode = null;
         this.expandButton = null;
         this.contentNode = null;
+        this.loadingNode = null;
     }
+    ComponentView.prototype.getBasePath = function () {
+        return this.owner.getBasePath() + "/component/" + this.name;
+    };
+
     ComponentView.prototype.makeComponentBar = function () {
         var _this = this;
         var componentBar = document.createElement('div');
@@ -95,8 +407,30 @@ var ComponentView = (function () {
         parent.appendChild(this.rootNode);
     };
 
+    ComponentView.prototype.buildViewers = function () {
+        this.propertyViews = [];
+        for (var i = 0; i < this.properties.length; ++i) {
+            var property = this.properties[i];
+            var viewer = makePropertyView(this, property);
+            viewer.build(this.contentNode);
+            this.propertyViews[i] = viewer;
+        }
+    };
+
     ComponentView.prototype.loadData = function () {
-        // TODO: Load the component data
+        var _this = this;
+        $.get(this.getBasePath(), function (data) {
+            if (_this.loadingNode != null) {
+                _this.loadingNode.parentElement.removeChild(_this.loadingNode);
+                _this.loadingNode = null;
+            }
+
+            _this.contentNode = document.createElement('div');
+            _this.dataNode.appendChild(_this.contentNode);
+
+            _this.properties = data.properties;
+            _this.buildViewers();
+        });
     };
 
     ComponentView.prototype.refresh = function () {
@@ -111,6 +445,7 @@ var ComponentView = (function () {
         var loading = document.createElement('span');
         loading.textContent = "Loading...";
 
+        this.loadingNode = loading;
         this.dataNode.appendChild(loading);
     };
 
@@ -182,6 +517,10 @@ var Entity = (function () {
             _this.copyFrom(entity);
             _this.displayValues();
         });
+    };
+
+    Entity.prototype.getBasePath = function () {
+        return "/game/api/entity/id/" + this.id;
     };
 
     Entity.prototype.createButtons = function () {

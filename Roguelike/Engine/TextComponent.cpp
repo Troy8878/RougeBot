@@ -306,14 +306,19 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
 
   mrb_define_method(mrb, rclass, "font", mrb_textcomp_font_get, ARGS_NONE());
   mrb_define_method(mrb, rclass, "font=", mrb_textcomp_font_set, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "font", "string", true);
 
   mrb_define_method(mrb, rclass, "font_size", mrb_textcomp_font_size_get, ARGS_NONE());
   mrb_define_method(mrb, rclass, "font_size=", mrb_textcomp_font_size_set, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "font_size", "float", true);
 
   mrb_define_method(mrb, rclass, "text_color", mrb_textcomp_text_color_get, ARGS_NONE());
   mrb_define_method(mrb, rclass, "text_color=", mrb_textcomp_text_color_set, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "text_color", "color");
+
   mrb_define_method(mrb, rclass, "bg_color", mrb_textcomp_bg_color_get, ARGS_NONE());
   mrb_define_method(mrb, rclass, "bg_color=", mrb_textcomp_bg_color_set, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "bg_color", "color");
 }
 
 // ----------------------------------------------------------------------------

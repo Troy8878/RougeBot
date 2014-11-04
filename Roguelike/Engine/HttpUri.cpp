@@ -56,7 +56,7 @@ std::string HttpUri::Decode(const std::string& str)
       if (i + 2 >= size)
         break;
 
-      auto val = std::stoul(str.substr(i + 1, 2));
+      auto val = std::stoul(str.substr(i + 1, 2), 0, 16);
       buf << char(val);
 
       i += 2;

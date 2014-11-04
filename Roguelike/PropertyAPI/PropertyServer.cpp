@@ -663,6 +663,12 @@ static DWORD RecieveEntity(RequestQueue& queue)
     return ReplyNotFound(queue);
   }
 
+  if (GetGame()->CurrentLevel == nullptr)
+    return ReplyNotFound(queue);
+
+  if (GetGame()->CurrentLevel->RootEntity == nullptr)
+    return ReplyNotFound(queue);
+
   Entity *entity = nullptr;
   if (pathParts[0] == "id")
   {
@@ -860,7 +866,7 @@ struct MetaProperty
         {"value", json::value::number((long double)mrb_fixnum(value))}
       });
     }
-    else if (type == t_float)
+    else if (type == t_string)
     {
       return json::value::object(
       {
@@ -907,8 +913,6 @@ struct MetaProperty
     static const mrb_sym t_string = mrb_intern_lit(mrb, "string");
     static const mrb_sym t_vector = mrb_intern_lit(mrb, "vector");
     static const mrb_sym t_color = mrb_intern_lit(mrb, "color");
-
-    mrb_value value = get_value(obj);
 
     if (type == t_bool)
     {
@@ -1086,21 +1090,20 @@ static DWORD DisplaySetProperty(RequestQueue& queue, mrb_value obj, UrlParts& re
 
   MetaProperty prop = *propIt;
   
-  if (remainingPath.size() == 1)
+  if (remainingPath.size() != 1)
+    return ReplyNotFound(queue);
+
+  auto indata = HttpUri::Decode(remainingPath[0]);
+  auto input = json::value::parse(indata);
+
+  auto response = json::value::object(
   {
-    auto input = json::value::parse(HttpUri::Decode(remainingPath[1]));
+    {"success", json::value::boolean(prop.read_in(obj, input))}
+  });
 
-    auto response = json::value::object(
-    {
-      {"success", json::value::boolean(prop.read_in(obj, input))}
-    });
-
-    ResponseData data;
-    data.contentType = "application/json";
-    return ReplyToRequest(queue, data, response);
-  }
-
-  return ReplyNotFound(queue);
+  ResponseData data;
+  data.contentType = "application/json";
+  return ReplyToRequest(queue, data, response);
 }
 
 // ----------------------------------------------------------------------------

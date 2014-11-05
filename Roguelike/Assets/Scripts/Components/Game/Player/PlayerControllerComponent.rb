@@ -149,11 +149,11 @@ class PlayerControllerComponent < ComponentBase
     pos = @transform.position
 
     xbounce = Math.sin((pos.x % 1) * Math::PI) / 6
-    zbounce = Math.sin((pos.z % 1) * Math::PI) / 6
+    ybounce = Math.sin((pos.y % 1) * Math::PI) / 6
 
-    pos.z = -(0.25 + xbounce + zbounce)
+    pos.z = -(0.25 + xbounce + ybounce)
     @camera.transform_component.position.z = 
-      @camz + (xbounce + zbounce) / @transform.scale.z
+      @camz + (xbounce + ybounce) / @transform.scale.z
 
     update_cursor_color
   end

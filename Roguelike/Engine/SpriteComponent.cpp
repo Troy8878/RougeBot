@@ -192,13 +192,20 @@ static void mrb_spritecomp_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
 
   mrb_define_method(mrb, rclass, "initialize", rb_sprite_initialize, ARGS_REQ(1));
+
+  mrb_define_method(mrb, rclass, "texture_count", rb_sprite_get_texturecount, ARGS_NONE());
   mrb_define_method(mrb, rclass, "texture_index", rb_sprite_get_textureindex, ARGS_NONE());
   mrb_define_method(mrb, rclass, "texture_index=", rb_sprite_set_textureindex, ARGS_REQ(1));
-  mrb_define_method(mrb, rclass, "texture_count", rb_sprite_get_texturecount, ARGS_NONE());
+  comp_add_property(mrb, rclass, "texture_index", "int", true);
+
   mrb_define_method(mrb, rclass, "visible", rb_sprite_get_visible, ARGS_NONE());
   mrb_define_method(mrb, rclass, "visible=", rb_sprite_set_visible, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "visible", "bool", true);
+
   mrb_define_method(mrb, rclass, "tint", rb_sprite_get_tint, ARGS_NONE());
   mrb_define_method(mrb, rclass, "tint=", rb_sprite_set_tint, ARGS_REQ(1));
+  comp_add_property(mrb, rclass, "tint", "color");
+
   mrb_define_method(mrb, rclass, "tint_texture", rb_sprite_get_tint_tex, ARGS_NONE());
   mrb_define_method(mrb, rclass, "tint_texture=", rb_sprite_set_tint_tex, ARGS_REQ(1));
 }

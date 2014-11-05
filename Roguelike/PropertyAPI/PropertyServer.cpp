@@ -950,6 +950,15 @@ struct MetaProperty
 
     return false;
   }
+
+  void on_access(mrb_value obj) const
+  {
+    static mrb_sym on_update = mrb_intern_lit(mrb, "on_update");
+    if (mrb_respond_to(mrb, obj, on_update))
+    {
+      mrb_funcall_argv(mrb, obj, on_update, 0, nullptr);
+    }
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -1048,17 +1057,23 @@ static DWORD DisplayGetProperty(RequestQueue& queue, mrb_value obj, UrlParts& re
   {
     ResponseData data;
     data.contentType = "application/json";
-    return ReplyToRequest(queue, data, prop.display(obj));
+    auto res = ReplyToRequest(queue, data, prop.display(obj));
+    prop.on_access(obj);
+    return res;
   }
   else if (remainingPath[0] == "get")
   {
     pop_front(remainingPath);
-    return DisplayGetProperty(queue, prop.get_value(obj), remainingPath);
+    auto res = DisplayGetProperty(queue, prop.get_value(obj), remainingPath);
+    prop.on_access(obj);
+    return res;
   }
   else if (remainingPath[0] == "set")
   {
     pop_front(remainingPath);
-    return DisplaySetProperty(queue, prop.get_value(obj), remainingPath);
+    auto res =  DisplaySetProperty(queue, prop.get_value(obj), remainingPath);
+    prop.on_access(obj);
+    return res;
   }
 
   return ReplyNotFound(queue);
@@ -1100,6 +1115,8 @@ static DWORD DisplaySetProperty(RequestQueue& queue, mrb_value obj, UrlParts& re
   {
     {"success", json::value::boolean(prop.read_in(obj, input))}
   });
+
+  prop.on_access(obj);
 
   ResponseData data;
   data.contentType = "application/json";

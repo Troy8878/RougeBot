@@ -14,14 +14,17 @@
 class DefenseComponent < ComponentBase
   include Actor
 
-  attr_accessor :health
+  attr_accessor :health, :armor
+
+  property :health, :int, true
+  property :armor, :float, true
 
   def initialize(data)
     super data
 
     @defense = 0.0
     @armor = 0
-    @health = data.fetch("health", 10)
+    @health = data.fetch("health", 10).to_i
   end
 
   def be_attacked(attack, damage)

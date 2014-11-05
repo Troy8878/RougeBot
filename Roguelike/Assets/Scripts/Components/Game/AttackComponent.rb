@@ -14,10 +14,12 @@ class AttackComponent < ComponentBase
   attr_accessor :attack
   attr_reader :damage
 
+  property :damage, :float_pair, true
+
   def initialize(data)
     super data
 
-    @attack = data.fetch("attack", 0)
+    @attack = data.fetch("attack", 0).to_f
     @damage = data.fetch("damage", [2,4])
   end
 

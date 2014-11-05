@@ -274,14 +274,15 @@ static mrb_data_type mrb_textcomp_data_type;
 static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp);
 static void mrb_textcomp_free(mrb_state *, void *) {}
 
-static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);//
-static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);//
+static mrb_value mrb_textcomp_on_update(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self);
@@ -292,12 +293,13 @@ static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self);
 static void mrb_textcomp_gem_init(mrb_state *mrb)
 {
   mrb_textcomp_data_type.dfree = mrb_textcomp_free;
-  mrb_textcomp_data_type.struct_name = "TextComponent";
+  mrb_textcomp_data_type.struct_name = typeid(TextComponent).name();
   
   auto rmod = mrb_module_get(mrb, "Components");
   auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
 
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
+  mrb_define_method(mrb, rclass, "on_update", mrb_textcomp_on_update, ARGS_ANY());
   
   mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
   mrb_define_method(mrb, rclass, "get_text_at", mrb_textcomp_get_text_at, ARGS_REQ(1));
@@ -344,11 +346,20 @@ static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_textcomp_on_update(mrb_state *mrb, mrb_value self)
+{
+  auto tcomp = ruby::data_get<TextComponent>(mrb, self);
+  tcomp->OnChanged();
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self)
 {
   mrb_value ary = mrb_ary_new(mrb);
   
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
 
   for (auto& text : *tcomp)
   {
@@ -364,8 +375,8 @@ static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self)
 {
   mrb_int index;
   mrb_get_args(mrb, "i", &index);
-
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto& text = tcomp->GetText((size_t) index);
 
   return mrb_str_new(mrb, text.c_str(), text.size());
@@ -379,7 +390,7 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
   mrb_value str;
   mrb_get_args(mrb, "iS", &index, &str);
   
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto text = mrb_str_to_stdstring(str);
 
   tcomp->SetText((size_t) index, text);
@@ -394,7 +405,7 @@ static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self)
   mrb_value ary;
   mrb_get_args(mrb, "A", &ary);
   
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->ClearText();
 
   mrb_int len = mrb_ary_len(mrb, ary);
@@ -410,7 +421,7 @@ static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self)
 {
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto font = narrow(tcomp->Font);
   
   return mrb_str_new(mrb, font.c_str(), font.size());
@@ -422,8 +433,8 @@ static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self)
 {
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
-
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->Font = widen(mrb_str_to_stdstring(str));
   
   return str;
@@ -445,8 +456,8 @@ static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
 {
   mrb_float size;
   mrb_get_args(mrb, "f", &size);
-
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->FontSize = (FLOAT) size;
   
   return mrb_float_value(mrb, size);
@@ -456,10 +467,8 @@ static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_textcomp_text_color_get(mrb_state *mrb, mrb_value self)
 {
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
-  auto color = tcomp->TextColor;
-
-  return ruby::create_new_vector(color);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
+  return ruby::wrap_memory_vector(&tcomp->TextColor);
 }
 
 // ----------------------------------------------------------------------------
@@ -478,8 +487,8 @@ static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self)
   {
     color = ruby::get_ruby_vector(rcolor);
   }
-
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->TextColor = color;
 
   return rcolor;
@@ -489,10 +498,8 @@ static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_textcomp_bg_color_get(mrb_state *mrb, mrb_value self)
 {
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
-  auto color = tcomp->BGColor;
-
-  return ruby::create_new_vector(color);
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
+  return ruby::wrap_memory_vector(&tcomp->BGColor);
 }
 
 // ----------------------------------------------------------------------------
@@ -511,8 +518,8 @@ static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self)
   {
     color = ruby::get_ruby_vector(rcolor);
   }
-
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  
+  auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->BGColor = color;
 
   return rcolor;

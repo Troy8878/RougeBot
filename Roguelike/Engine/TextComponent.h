@@ -23,8 +23,8 @@ public:
 
   void Initialize(Entity *owner, const std::string& name) override;
 
-  DRAWING_PROPERTY(D2D1::ColorF, TextColor, drawing.textColor);
-  DRAWING_PROPERTY(D2D1::ColorF, BGColor, drawing.bgColor);
+  DRAWING_PROPERTY(math::Vector, TextColor, drawing.textColor);
+  DRAWING_PROPERTY(math::Vector, BGColor, drawing.bgColor);
   DRAWING_PROPERTY(DWRITE_TEXT_ALIGNMENT, TextAlign, drawing.textAlign);
   DRAWING_PROPERTY(DWRITE_PARAGRAPH_ALIGNMENT, ParagraphAlign, drawing.paragAlign);
   DRAWING_PROPERTY(std::wstring, Font, drawing.font);
@@ -37,6 +37,7 @@ public:
   void PopulateTextureComponent(const D2D1_SIZE_F& size);
 
   void OnUpdate(Events::EventMessage&);
+  void OnChanged() { drawing.timestamp = clock::from_time_t(0); }
 
   mrb_value GetRubyWrapper() override;
 
@@ -50,8 +51,8 @@ private:
     clock::time_point timestamp = clock::from_time_t(0);
     
     std::vector<std::string> texts;
-    D2D1::ColorF textColor = D2D1::ColorF::Black;
-    D2D1::ColorF bgColor = D2D1::ColorF(D2D1::ColorF::White, 0.49f);
+    math::Vector textColor = D2D1::ColorF(D2D1::ColorF::Black);
+    math::Vector bgColor = D2D1::ColorF(D2D1::ColorF::White, 0.49f);
     TextureComponent *textures = nullptr;
 
     DWRITE_TEXT_ALIGNMENT textAlign = DWRITE_TEXT_ALIGNMENT_CENTER;
@@ -74,8 +75,6 @@ private:
     ~DrawingResources() { Release(); }
 
   } drawing;
-
-  void OnChanged() { drawing.timestamp = clock::from_time_t(0); }
 
 public:
   auto begin() const -> decltype(drawing.texts.cbegin()) { return drawing.texts.cbegin(); }

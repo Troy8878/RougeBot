@@ -141,7 +141,7 @@ void RegisterStaticComponent(const std::string& name,
 
 #define DRAWING_PROPERTY(type, name, var) \
   PROPERTY(get = _PropGet##name, put = _PropSet##name) type name; \
-  type _PropGet##name() { return var; } \
+  type& _PropGet##name() { return var; } \
   void _PropSet##name(type const& value) { var = value; OnChanged(); }
 
 // ----------------------------------------------------------------------------

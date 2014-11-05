@@ -759,20 +759,13 @@ static DWORD DisplayEntity(RequestQueue& queue, Entity *entity,
       return DisplayComponent(queue, component, remainingPath);
     }
   }
-  else if (remainingPath.size() == 1 && remainingPath[0] == "eval")
+  else if (remainingPath.size() == 1 && remainingPath[0] == "zombify")
   {
-    PHTTP_REQUEST pRequest = *queue.buffer;
-    if (pRequest->CookedUrl.pQueryString)
-    {
-      auto query = narrow(pRequest->CookedUrl.pQueryString);
-      mrb_value eval_str = mrb_str_new(mrb, query.c_str(), query.size());
-      auto res = mrb_funcall_argv(mrb, mrb_obj_value(mrb->kernel_module),
-                                  mrb_intern_lit(mrb, "eval"), 1, &eval_str);
-      auto res_str = mrb_str_to_stdstring(res);
+    entity->Zombify();
 
-      ResponseData data;
-      return ReplyToRequest(queue, data, res_str.c_str(), (ULONG) res_str.size());
-    }
+    ResponseData data;
+    std::string value = R"({"zombified":true})";
+    return ReplyToRequest(queue, data, value.c_str(), (ULONG)value.size());
   }
 
   return ReplyNotFound(queue);

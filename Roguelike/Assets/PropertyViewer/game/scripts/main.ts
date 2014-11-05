@@ -47,14 +47,35 @@ interface EntityRef {
     name: string;
 }
 
-function makeEntityButton(parent: HTMLElement, label: string,
+function makeEntityButton(
+    parent: HTMLElement, label: string,
     id: number, destroyOld: () => void) {
+
     var button = document.createElement('button');
     button.textContent = label;
 
     $(button).click((e) => {
         destroyOld();
         Entity.loadFromId(id, (entity) => {
+            entity.build($('#droot').get(0));
+        });
+    });
+
+    parent.appendChild(button);
+}
+
+function makeZombieButton(
+    parent: HTMLElement, label: string,
+    ent: Entity, destroyOld: () => void) {
+
+    var button = document.createElement('button');
+    button.textContent = label;
+
+    $(button).click((e) => {
+        $.get(ent.getBasePath() + "/zombify");
+
+        destroyOld();
+        Entity.loadFromId(ent.parent.id, (entity) => {
             entity.build($('#droot').get(0));
         });
     });
@@ -623,6 +644,9 @@ class Entity implements EntityRef, Viewable {
             makeEntityButton(
                 buttons, "View Parent",
                 this.parent.id, () => this.destroy());
+            makeZombieButton(
+                buttons, "Zombify!",
+                this, () => this.destroy());
         }
 
         this.rootNode.appendChild(buttons);

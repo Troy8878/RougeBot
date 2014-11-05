@@ -49,6 +49,22 @@ function makeEntityButton(parent, label, id, destroyOld) {
     parent.appendChild(button);
 }
 
+function makeZombieButton(parent, label, ent, destroyOld) {
+    var button = document.createElement('button');
+    button.textContent = label;
+
+    $(button).click(function (e) {
+        $.get(ent.getBasePath() + "/zombify");
+
+        destroyOld();
+        Entity.loadFromId(ent.parent.id, function (entity) {
+            entity.build($('#droot').get(0));
+        });
+    });
+
+    parent.appendChild(button);
+}
+
 var ValueView = (function () {
     function ValueView() {
     }
@@ -573,6 +589,9 @@ var Entity = (function () {
 
         if (this.id != 0) {
             makeEntityButton(buttons, "View Parent", this.parent.id, function () {
+                return _this.destroy();
+            });
+            makeZombieButton(buttons, "Zombify!", this, function () {
                 return _this.destroy();
             });
         }

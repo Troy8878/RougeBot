@@ -27,12 +27,13 @@ TexturedPixelInputType main(TexturedVertexInputType input)
   output.position = mul(output.position, viewMatrix);
 
   // Do some funky shakey shit
-  float sval = sin(output.position.x / 2 + time * 0.5) / 25;
+  float sval = sin(distance(output.position.xy, float2(0, 0)) * 2 - time / 2) / 25;
   output.position.z += sval * distance(output.position.z, 3.5);
 
   // Light thingy
   float dist = (distance(output.position.xy, float2(0, 0)) + 1.9) / 2;
   output.color.xyz *= 1.2 / dist;
+  //output.color.xyz *= float3(0.5, 0.5, 2); // blue
 
   // Camera to Projection space
   output.position = mul(output.position, projectionMatrix);

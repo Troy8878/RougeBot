@@ -22,6 +22,7 @@ private:
   struct Route
   {
 
+
   };
 
   const WorldSnapshot *world;

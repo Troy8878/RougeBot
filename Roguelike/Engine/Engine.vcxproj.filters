@@ -184,6 +184,9 @@
     <ClInclude Include="AStarPathfinding.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="AIRoaming.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">

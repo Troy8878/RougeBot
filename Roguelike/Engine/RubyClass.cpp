@@ -75,7 +75,7 @@ ruby_value ruby_class::new_inst_argv(ruby_value *values, mrb_int num)
   THREAD_EXCLUSIVE_SCOPE;
   static mrb_value items[128];
   for (int i = 0; i < num; ++i)
-    items[i] = values[i];
+    items[i] = *static_cast<mrb_value *>(&values[i]);
 
   return ruby_value{mrb_obj_new(*_engine, _class, num, items), _engine};
 }

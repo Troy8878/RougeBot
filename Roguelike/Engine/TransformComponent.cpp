@@ -16,8 +16,8 @@
 // ----------------------------------------------------------------------------
 
 TransformComponent::TransformComponent(
-  const math::Vector& position, const math::Vector& rotation, 
-  const math::Vector& scale)
+  const math::Vector &position, const math::Vector &rotation,
+  const math::Vector &scale)
   : Position(position), Rotation(rotation),
     Scale(scale)
 {
@@ -25,13 +25,15 @@ TransformComponent::TransformComponent(
 
 // ----------------------------------------------------------------------------
 
-static void mrb_transform_free(mrb_state *, void *) {}
+static void mrb_transform_free(mrb_state *, void *)
+{
+}
 
 static mrb_data_type mrb_transformcomp_data_type;
 
 // ----------------------------------------------------------------------------
 
-void TransformComponent::Initialize(Entity *owner, const std::string& name)
+void TransformComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -41,7 +43,7 @@ void TransformComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void TransformComponent::OnUpdate(Events::EventMessage&)
+void TransformComponent::OnUpdate(Events::EventMessage &)
 {
   UpdateMatrix();
 }
@@ -63,8 +65,8 @@ void TransformComponent::UpdateMatrix()
   // Scale, Rotate, and Translate
   // This brings it into V^[parent space]
   auto mat = XMMatrixScalingFromVector(Scale.get()) *
-             XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
-             XMMatrixTranslationFromVector(Position.get());
+    XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
+    XMMatrixTranslationFromVector(Position.get());
 
   Owner->LocalTransform = mat;
 }
@@ -104,7 +106,7 @@ TransformComponentFactory::TransformComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *TransformComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   math::Vector position, rotation, scale;
 
@@ -133,7 +135,7 @@ Component *TransformComponentFactory::CreateObject(
   if (scale.z == 0)
     scale.z = 1;
 
-  auto comp = new (memory) TransformComponent(position, rotation, scale);
+  auto comp = new(memory) TransformComponent(position, rotation, scale);
 
   return comp;
 }
@@ -146,7 +148,13 @@ math::Vector TransformComponentFactory::ParseVector(json::value jv)
   while (nums.size() < 4)
     nums.push_back(0);
 
-  return math::Vector{(float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3]};
+  return math::Vector
+  {
+    static_cast<float>(nums[0]),
+    static_cast<float>(nums[1]),
+    static_cast<float>(nums[2]),
+    static_cast<float>(nums[3])
+  };
 }
 
 // ----------------------------------------------------------------------------
@@ -166,7 +174,7 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 static TransformComponent *get_rb_tc_wrapper(mrb_state *mrb, mrb_value self)
 {
   //auto tc_wrapper = ruby::read_native_ptr<TransformComponent>(mrb, self);
-  return (TransformComponent *)mrb_data_get_ptr(mrb, self, &mrb_transformcomp_data_type);
+  return static_cast<TransformComponent *>(mrb_data_get_ptr(mrb, self, &mrb_transformcomp_data_type));
 }
 
 static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)
@@ -276,7 +284,7 @@ static mrb_value mrb_transformcomponent_new(mrb_state *mrb, TransformComponent *
 {
   auto rmod = mrb_module_get(mrb, "Components");
   auto rclass = mrb_class_get_under(mrb, rmod, "TransformComponent");
-  
+
   auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_transformcomp_data_type);
   return mrb_obj_value(obj);
 }

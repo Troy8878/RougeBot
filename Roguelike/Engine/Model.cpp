@@ -14,10 +14,10 @@ static BasicVertex *BasicVertexPtr;
 
 // ----------------------------------------------------------------------------
 
-Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount, 
+Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount,
              ID3D11Buffer *indexBuffer, UINT indexCount, UINT stride)
-             : _vertexBuffer(vertexBuffer), _vertexCount(vertexCount),
-               _indexBuffer(indexBuffer), _indexCount(indexCount), _stride(stride)
+  : _vertexBuffer(vertexBuffer), _vertexCount(vertexCount),
+    _indexBuffer(indexBuffer), _indexCount(indexCount), _stride(stride)
 {
 }
 
@@ -27,7 +27,7 @@ Model::Model(ID3D11Device *device,
              void *vertices, UINT vertexCount,
              UINT *indices, UINT indexCount,
              UINT stride)
-             : _vertexCount(vertexCount), _indexCount(indexCount), _stride(stride)
+  : _vertexCount(vertexCount), _indexCount(indexCount), _stride(stride)
 {
   D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
   D3D11_SUBRESOURCE_DATA vertexData, indexData;
@@ -77,7 +77,7 @@ static ID3D11Buffer *CreateTintResource()
   ID3D11Buffer *buffer;
 
   HRESULT hr = GetGame()->GameDevice->Device->
-    CreateBuffer(&desc, nullptr, &buffer);
+                        CreateBuffer(&desc, nullptr, &buffer);
   CHECK_HRESULT(hr);
 
   return buffer;
@@ -85,12 +85,12 @@ static ID3D11Buffer *CreateTintResource()
 
 // ----------------------------------------------------------------------------
 
-static void UpdateTint(ID3D11Buffer *buffer, const math::Vector& tint)
+static void UpdateTint(ID3D11Buffer *buffer, const math::Vector &tint)
 {
   D3D11_MAPPED_SUBRESOURCE map;
   HRESULT hr;
 
-  auto& context = GetGame()->GameDevice->DeviceContext;
+  auto &context = GetGame()->GameDevice->DeviceContext;
   hr = context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
   CHECK_HRESULT(hr);
 
@@ -120,11 +120,11 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
   static auto nulltex = Texture2D::GetNullTexture();
 
-  ID3D11ShaderResourceView * Textures[2] =
-  {
-    nulltex.ShaderRes,
-    nulltex.ShaderRes
-  };
+  ID3D11ShaderResourceView *Textures[2] =
+    {
+      nulltex.ShaderRes,
+      nulltex.ShaderRes
+    };
 
   if (texture && !shader->device->WireframeDraw)
   {
@@ -142,20 +142,19 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
 // ----------------------------------------------------------------------------
 
-bool operator==(const BasicVertex& v1, const BasicVertex& v2);
+bool operator==(const BasicVertex &v1, const BasicVertex &v2);
 
 // ----------------------------------------------------------------------------
 
-bool operator==(const TexturedVertex& v1, const TexturedVertex& v2)
+bool operator==(const TexturedVertex &v1, const TexturedVertex &v2)
 {
   using namespace DirectX;
 
   static const XMVECTOR epsilon = XMVectorSet(0.0001f, 0.0001f, 0.0001f, 0.0001f);
 
   return XMVector3NearEqual(v1.position, v2.position, epsilon) &&
-         XMVector3NearEqual(v1.color, v2.color, epsilon) &&
-         XMVector2NearEqual(v1.texture, v2.texture, epsilon);
+    XMVector3NearEqual(v1.color, v2.color, epsilon) &&
+    XMVector2NearEqual(v1.texture, v2.texture, epsilon);
 }
 
 // ----------------------------------------------------------------------------
-

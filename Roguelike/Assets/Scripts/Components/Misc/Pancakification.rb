@@ -1,14 +1,8 @@
 #######################
 # Pancakification.rb
-# Jake Robsahm
-# Created 2014/09/11
+# Connor Hilarides
+# Created 2014/10/01
 #######################
-
-#########################Class Details############################
-# A component that contains the inventory of the entity.
-#######################Property Details###########################
-# inventory - the inventory contained by the component.
-##################################################################
 
 class Pancakification < ComponentBase
   def initialize(data)

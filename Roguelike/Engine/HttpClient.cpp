@@ -32,14 +32,14 @@ HttpClient::HttpClient()
 
 HttpClientImpl::HttpClientImpl()
 {
-  handles.session = 
+  handles.session =
     WinHttpOpen(L"Pancake Engine/1.0",
                 WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
                 WINHTTP_NO_PROXY_NAME,
                 WINHTTP_NO_PROXY_BYPASS, 0);
 
   if (!handles.session)
-    HTTP_RAISEEX("Failed to initialize WinHTTP session");
+  HTTP_RAISEEX("Failed to initialize WinHTTP session");
 }
 
 // ----------------------------------------------------------------------------
@@ -51,13 +51,13 @@ HttpClientImpl::~HttpClientImpl()
 
 // ----------------------------------------------------------------------------
 
-HttpResult HttpClient::MakeRequest(const HttpRequest& request)
+HttpResult HttpClient::MakeRequest(const HttpRequest &request)
 {
   if (request.Body.impl->bodyType == HttpRequestBodyImpl::BODY_EMPTY)
   {
     return impl->PerformEmpty(request);
   }
-  else if (request.Body.impl->bodyType == HttpRequestBodyImpl::BODY_DATA)
+  if (request.Body.impl->bodyType == HttpRequestBodyImpl::BODY_DATA)
   {
     return impl->PerformBody(request);
   }
@@ -77,7 +77,7 @@ DWORD HttpClient::_GetTimeout()
   if (!WinHttpQueryOption(impl->handles.session,
                           WINHTTP_OPTION_CONNECT_TIMEOUT,
                           &timeout, &size))
-    HTTP_RAISEEX("Failed to get HTTP Timeout");
+  HTTP_RAISEEX("Failed to get HTTP Timeout");
   return timeout;
 }
 
@@ -88,7 +88,7 @@ void HttpClient::_SetTimeout(DWORD val)
   if (!WinHttpSetOption(impl->handles.session,
                         WINHTTP_OPTION_CONNECT_TIMEOUT,
                         &val, sizeof(DWORD)))
-    HTTP_RAISEEX("Failed to set HTTP Timeout");
+  HTTP_RAISEEX("Failed to set HTTP Timeout");
 }
 
 #pragma endregion
@@ -97,12 +97,12 @@ void HttpClient::_SetTimeout(DWORD val)
 
 #pragma region Requests
 
-void HttpClientImpl::AsyncWriteData(HttpClient client, 
-                                    HttpRequest request, 
+void HttpClientImpl::AsyncWriteData(HttpClient client,
+                                    HttpRequest request,
                                     HttpResult result)
 {
   auto res = result.impl;
-  
+
   HttpRequestBuffer buffer(res->handles.request);
   std::ostream stream(&buffer);
 
@@ -124,8 +124,8 @@ void HttpClientImpl::AsyncWriteData(HttpClient client,
   }
 }
 
-void HttpClientImpl::AsyncBeginRequest(HttpClient client, 
-                                       HttpRequest request, 
+void HttpClientImpl::AsyncBeginRequest(HttpClient client,
+                                       HttpRequest request,
                                        HttpResult result)
 {
   auto res = result.impl;
@@ -139,13 +139,13 @@ void HttpClientImpl::AsyncBeginRequest(HttpClient client,
   {
     auto def = defaultPorts.find(request.Uri.Scheme);
     if (def == defaultPorts.end())
-      throw string_exception("Unknown port for URI `" + 
-                             request.Uri.Build() +
-                             "`, please specify one.");
+      throw string_exception("Unknown port for URI `" +
+        request.Uri.Build() +
+        "`, please specify one.");
     port = (INTERNET_PORT) def->second;
   }
-  
-  auto& h = res->handles;
+
+  auto &h = res->handles;
 
   // Connect to the server
   h.server = WinHttpConnect(client.impl->handles.session, server.c_str(), port, 0);
@@ -155,14 +155,14 @@ void HttpClientImpl::AsyncBeginRequest(HttpClient client,
     res->HasFailed = true;
     return;
   }
-  
+
   std::vector<std::wstring> wide_accepts;
   auto accepts_set = request.Headers["Accept"];
 
   LPCWSTR *accepts = WINHTTP_DEFAULT_ACCEPT_TYPES;
   if (accepts_set.Count())
   {
-    for (auto& accept : accepts_set)
+    for (auto &accept : accepts_set)
       wide_accepts.push_back(widen(accept.Value));
 
     accepts = new LPCWSTR[wide_accepts.size() + 1];
@@ -175,10 +175,10 @@ void HttpClientImpl::AsyncBeginRequest(HttpClient client,
   auto wide_path = widen(request.Uri.BuildPath());
 
   h.request = WinHttpOpenRequest(h.server, HttpMethodString(request.Method),
-                                 wide_path.c_str(), nullptr, 
+                                 wide_path.c_str(), nullptr,
                                  WINHTTP_NO_REFERER, accepts,
-                                 request.Uri.Scheme == "https" 
-                                   ? WINHTTP_FLAG_SECURE 
+                                 request.Uri.Scheme == "https"
+                                   ? WINHTTP_FLAG_SECURE
                                    : 0);
   if (!h.request)
   {
@@ -191,11 +191,11 @@ void HttpClientImpl::AsyncBeginRequest(HttpClient client,
 
 // ----------------------------------------------------------------------------
 
-void HttpClientImpl::AsyncCompleteRequest(HttpClient client, 
+void HttpClientImpl::AsyncCompleteRequest(HttpClient client,
                                           HttpResult result)
 {
   auto res = result.impl;
-  auto& h = res->handles;
+  auto &h = res->handles;
 
   BOOL results = WinHttpReceiveResponse(h.request, nullptr);
   WCHAR *buffer = nullptr;
@@ -252,8 +252,8 @@ void HttpClientImpl::AsyncCompleteRequest(HttpClient client,
       temp[dwRead] = 0;
       buf << temp;
       delete[] temp;
-
-    } while (dwSize);
+    }
+    while (dwSize);
   }
 
   delete[] buffer;
@@ -272,12 +272,12 @@ void HttpClientImpl::AsyncCompleteRequest(HttpClient client,
 
 // ----------------------------------------------------------------------------
 
-void HttpClientImpl::AsyncPerformEmpty(HttpClient client, 
-                                       HttpRequest request, 
+void HttpClientImpl::AsyncPerformEmpty(HttpClient client,
+                                       HttpRequest request,
                                        HttpResult result)
 {
   auto res = result.impl;
-  auto& h = res->handles;
+  auto &h = res->handles;
 
   // Connect to the server and open the request
   AsyncBeginRequest(client, request, result);
@@ -304,12 +304,12 @@ void HttpClientImpl::AsyncPerformEmpty(HttpClient client,
 
 // ----------------------------------------------------------------------------
 
-void HttpClientImpl::AsyncPerformBody(HttpClient client, 
-                                      HttpRequest request, 
+void HttpClientImpl::AsyncPerformBody(HttpClient client,
+                                      HttpRequest request,
                                       HttpResult result)
 {
   auto res = result.impl;
-  auto& h = res->handles;
+  auto &h = res->handles;
 
   // I hate this, but it would be a mess to rework
   auto transfer = request.Headers["Transfer-Encoding"];
@@ -346,28 +346,28 @@ void HttpClientImpl::AsyncPerformBody(HttpClient client,
 
 // ----------------------------------------------------------------------------
 
-HttpResult HttpClientImpl::PerformEmpty(const HttpRequest& request)
+HttpResult HttpClientImpl::PerformEmpty(const HttpRequest &request)
 {
   HttpResult result(self_ref.lock());
 
   result.impl = std::make_shared<HttpResultImpl>();
   result.impl->Start(
-    std::bind(HttpClientImpl::AsyncPerformEmpty,
-              self_ref.lock(), request, result));
+    bind(AsyncPerformEmpty,
+         self_ref.lock(), request, result));
 
   return result;
 }
 
 // ----------------------------------------------------------------------------
 
-HttpResult HttpClientImpl::PerformBody(const HttpRequest& request)
+HttpResult HttpClientImpl::PerformBody(const HttpRequest &request)
 {
   HttpResult result(self_ref.lock());
 
   result.impl = std::make_shared<HttpResultImpl>();
   result.impl->Start(
-    std::bind(HttpClientImpl::AsyncPerformBody,
-              self_ref.lock(), request, result));
+    bind(AsyncPerformBody,
+         self_ref.lock(), request, result));
 
   return result;
 }

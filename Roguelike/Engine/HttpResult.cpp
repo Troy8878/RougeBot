@@ -35,7 +35,7 @@ int HttpResult::_GetStatusCode()
                       WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
                       nullptr, &status, &temp, nullptr);
 
-  return (int) status;
+  return static_cast<int>(status);
 }
 
 // ----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ size_t HttpResult::_GetContentLength()
                       WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
                       nullptr, &len, &temp, nullptr);
 
-  return (size_t) len;
+  return static_cast<size_t>(len);
 }
 
 // ----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ bool HttpResult::_HasFailed()
 
 // ----------------------------------------------------------------------------
 
-const std::string& HttpResult::_ErrorMsg()
+const std::string &HttpResult::_ErrorMsg()
 {
   return impl->FailMsg;
 }
@@ -134,7 +134,7 @@ void HttpResultStream::Reset()
 
 // ----------------------------------------------------------------------------
 
-std::istream& HttpResultStream::_GetStream()
+std::istream &HttpResultStream::_GetStream()
 {
   return impl->data;
 }

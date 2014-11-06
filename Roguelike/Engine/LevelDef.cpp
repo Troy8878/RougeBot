@@ -9,7 +9,7 @@
 
 // ----------------------------------------------------------------------------
 
-LevelDef::LevelDef(const std::string& asset)
+LevelDef::LevelDef(const std::string &asset)
 {
   deftree = ParseJsonAsset("Levels", asset + ".leveldef");
 }
@@ -21,7 +21,7 @@ void LevelDef::PopulateEntityChildren(Entity *parent, json::value::object_t enti
   static json::value defname = json::value::string("<UNNAMED>");
   static json::value noarch = json::value::string("NoArchetype");
 
-  auto& archetype = map_fetch(entitydef, "archetype", noarch).as_string();
+  auto &archetype = map_fetch(entitydef, "archetype", noarch).as_string();
   auto data = EntityFactoryDataFromJson(entitydef["components"]);
 
   auto entity = EntityFactory::CreateEntity(archetype, data);
@@ -34,35 +34,35 @@ void LevelDef::PopulateEntityChildren(Entity *parent, json::value::object_t enti
   if (childit != entitydef.end())
   {
     auto children = childit->second.as_array_of<json::value::object_t>();
-    for (auto& child : children)
+    for (auto &child : children)
     {
       PopulateEntityChildren(entity, child);
     }
   }
 }
 
-void LevelDef::Load(Level& level)
+void LevelDef::Load(Level &level)
 {
-  auto& leveldata = deftree.as_object();
+  auto &leveldata = deftree.as_object();
   level.Name = leveldata["name"].as_string();
-  
+
   static json::value emptyObject = json::value::object();
   auto data = EntityFactoryDataFromJson(map_fetch(leveldata, "components", emptyObject));
   level.RootEntity = EntityFactory::CreateEntity("LevelRoot", data, 0);
   level.RootEntity->Name = level.Name;
 
   auto entitydefs = leveldata["entities"].as_array_of<json::value::object_t>();
-  for (auto& entitydef : entitydefs)
+  for (auto &entitydef : entitydefs)
   {
     PopulateEntityChildren(level.RootEntity, entitydef);
   }
-  
+
   level.levelEvents.AddListener(level.RootEntity);
 }
 
 // ----------------------------------------------------------------------------
 
-async_task<Level *> LevelDef::LoadLevelAsync(const std::string& def)
+async_task<Level *> LevelDef::LoadLevelAsync(const std::string &def)
 {
   return run_async<Level *>(&Level::CreateLevel, def);
 }
@@ -75,12 +75,12 @@ entity_factory_data LevelDef::EntityFactoryDataFromJson(json::value jdata)
 
   if (jdata.is(json::json_type::jobject))
   {
-    auto& obj = jdata.as_object();
-    for (auto& pair : obj)
+    auto &obj = jdata.as_object();
+    for (auto &pair : obj)
     {
-      auto& datamap = data[pair.first];
+      auto &datamap = data[pair.first];
 
-      for (auto& compdata : pair.second.as_object())
+      for (auto &compdata : pair.second.as_object())
       {
         datamap[compdata.first] = compdata.second;
       }
@@ -91,4 +91,3 @@ entity_factory_data LevelDef::EntityFactoryDataFromJson(json::value jdata)
 }
 
 // ----------------------------------------------------------------------------
-

@@ -17,7 +17,7 @@ ParticleSystem::ParticleSystem(size_t maxParticles)
   particles = new Particle[particleCount];
   freeParticle = particles;
 
-  for (auto& particle : array_iterator(particles, particleCount))
+  for (auto &particle : array_iterator(particles, particleCount))
     particle.inUse = false;
 }
 
@@ -35,7 +35,7 @@ bool ParticleSystem::SpawnParticle(DirectX::FXMMATRIX initial, double life)
   if (activeParticles == particleCount)
     return false;
 
-  auto& particle = *freeParticle;
+  auto &particle = *freeParticle;
   particle.world = initial;
   particle.life = life;
   particle.inUse = true;
@@ -53,7 +53,7 @@ void ParticleSystem::Update(float dt)
 {
   using namespace DirectX;
 
-  XMMATRIX suffixTransform = 
+  XMMATRIX suffixTransform =
     XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationalVelocity * dt) *
     XMMatrixTranslationFromVector(particleTransform.absoluteVelocity * dt);
   XMMATRIX prefixTransform =
@@ -61,7 +61,7 @@ void ParticleSystem::Update(float dt)
     XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationRate * dt);
 
   size_t iterated = 0;
-  for (auto& particle : array_iterator(particles, particleCount))
+  for (auto &particle : array_iterator(particles, particleCount))
   {
     if (!particle.inUse)
       continue;
@@ -109,9 +109,9 @@ void ParticleSystem::Draw()
   using namespace DirectX;
   XMMATRIX view = XMMatrixTranspose(camera->viewMatrix);
   XMMATRIX proj = XMMatrixTranspose(camera->projectionMatrix);
-  
+
   size_t iterated = 0;
-  for (auto& particle : array_iterator(particles, particleCount))
+  for (auto &particle : array_iterator(particles, particleCount))
   {
     if (!particle.inUse)
       continue;
@@ -125,8 +125,8 @@ void ParticleSystem::Draw()
 
 // ----------------------------------------------------------------------------
 
-void ParticleSystem::DrawParticle(const Particle& particle, 
-                                  DirectX::CXMMATRIX view, 
+void ParticleSystem::DrawParticle(const Particle &particle,
+                                  DirectX::CXMMATRIX view,
                                   DirectX::CXMMATRIX proj)
 {
   using namespace DirectX;

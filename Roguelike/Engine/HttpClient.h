@@ -62,6 +62,7 @@ class HttpHeaderCollectionImpl;
   friend class HttpHeaderCollection;    \
   friend class HttpHeaderCollectionImpl \
 
+
 // ----------------------------------------------------------------------------
 
 template <typename T>
@@ -72,7 +73,7 @@ public:
     : IsSpecified(false)
   {
   }
-  
+
   template <typename Arg1, typename... Args>
   HttpOptional(Arg1 arg1, Args... args)
     : IsSpecified(true), Value(arg1, args...)
@@ -100,20 +101,20 @@ static inline const wchar_t *HttpMethodString(HttpMethod method)
 {
   switch (method)
   {
-    case HTTP_GET:
-      return L"GET";
-    case HTTP_HEAD:
-      return L"HEAD";
-    case HTTP_POST:
-      return L"POST";
-    case HTTP_PUT:
-      return L"PUT";
-    case HTTP_DELETE:
-      return L"DELETE";
-    case HTTP_OPTIONS:
-      return L"OPTIONS";
-    case HTTP_PATCH:
-      return L"PATCH";
+  case HTTP_GET:
+    return L"GET";
+  case HTTP_HEAD:
+    return L"HEAD";
+  case HTTP_POST:
+    return L"POST";
+  case HTTP_PUT:
+    return L"PUT";
+  case HTTP_DELETE:
+    return L"DELETE";
+  case HTTP_OPTIONS:
+    return L"OPTIONS";
+  case HTTP_PATCH:
+    return L"PATCH";
   }
 
   throw basic_exception("Unknown HTTP Method");
@@ -125,16 +126,16 @@ class HttpUri
 {
 public:
   HttpUri();
-  HttpUri(const std::string& uri);
+  HttpUri(const std::string &uri);
 
-  static std::string Encode(const std::string& str);
-  static std::string Decode(const std::string& str);
+  static std::string Encode(const std::string &str);
+  static std::string Decode(const std::string &str);
 
   static HttpUri Parse(std::string uri);
   std::string Build() const;
   std::string BuildPath() const;
 
-  #define URI_PROP(type, name) \
+#define URI_PROP(type, name) \
     bool _PropHas##name() const { return (_##name).IsSpecified; } \
     PROPERTY(get = _PropHas##name) bool Has##name; \
     void Remove##name() { (_##name).IsSpecified = false; } \
@@ -151,12 +152,12 @@ public:
   URI_PROP(std::string, Username);
   URI_PROP(std::string, Password);
   URI_PROP(std::string, Host);
-  URI_PROP(int,         Port);
+  URI_PROP(int, Port);
   URI_PROP(std::string, Path);
   URI_PROP(std::string, Query);
   URI_PROP(std::string, Fragment);
 
-  #undef URI_PROP
+#undef URI_PROP
 };
 
 // ----------------------------------------------------------------------------
@@ -165,11 +166,14 @@ class HttpClient
 {
 public:
   HttpClient();
-  HttpClient(HttpShared<HttpClientImpl> shared) : impl(shared) {}
+
+  HttpClient(HttpShared<HttpClientImpl> shared) : impl(shared)
+  {
+  }
 
   PROPERTY(get = _GetTimeout, put = _SetTimeout) DWORD Timeout;
 
-  HttpResult MakeRequest(const HttpRequest& request);
+  HttpResult MakeRequest(const HttpRequest &request);
 
 private:
   HttpShared<HttpClientImpl> impl;
@@ -185,10 +189,10 @@ public:
 class HttpRequest
 {
 public:
-  HttpRequest(const HttpUri& uri, HttpMethod method);
+  HttpRequest(const HttpUri &uri, HttpMethod method);
 
   PROPERTY(get = _GetMethod, put = _SetMethod) HttpMethod Method;
-  PROPERTY(get = _GetUri) HttpUri& Uri;
+  PROPERTY(get = _GetUri) HttpUri &Uri;
   PROPERTY(get = _GetBody) HttpRequestBody Body;
   PROPERTY(get = _GetHeaders) HttpHeaderCollection Headers;
 
@@ -200,8 +204,8 @@ public:
   HttpMethod _GetMethod() const;
   void _SetMethod(HttpMethod method);
 
-  HttpUri& _GetUri();
-  const HttpUri& _GetUri() const;
+  HttpUri &_GetUri();
+  const HttpUri &_GetUri() const;
   HttpRequestBody _GetBody() const;
   HttpHeaderCollection _GetHeaders() const;
 };
@@ -211,79 +215,81 @@ public:
 class HttpResult
 {
 public:
-  HttpResult(std::_Uninitialized) {}
+  HttpResult(std::_Uninitialized)
+  {
+  }
 
   PROPERTY(get = _HasHeaders)
-    /**
+  /**
       Checks whether enough of the HTTP data has
       been loaded to decipher the headers.
     */
-    bool HasHeaders;
+  bool HasHeaders;
 
   PROPERTY(get = _HasData)
-    /**
+  /**
       Checks whether Preload has finished on this
       HTTP result, if it had been initiated.
     */
-    bool HasData;
+  bool HasData;
 
   PROPERTY(get = _HasFailed)
-    bool HasFailed;
+  bool HasFailed;
 
   PROPERTY(get = _ErrorMsg)
-    const std::string& ErrorMessage;
+  const std::string &ErrorMessage;
 
 
   PROPERTY(get = _GetAsStream)
-    /**
+  /**
       Returns the HTTP data in a way such that it can be
       read with functions that work on std::istream&.
 
       This operation is constant time if the data has been
       loaded. It will take longer if the data is not loaded.
     */
-    HttpResultStream AsStream;
+  HttpResultStream AsStream;
 
   PROPERTY(get = _GetAsString)
-    /**
+  /**
       Returns the HTTP data as a string of UTF-8 encoded data.
       The result will be an empty string if there was an error.
 
       This operation is constant time if the data has been
       loaded. It will take longer if the data is not loaded.
     */
-    HttpShared<std::string> AsString;
+  HttpShared<std::string> AsString;
 
   PROPERTY(get = _GetAsJson)
-    /**
+  /**
       Returns the HTTP data already parsed into a JSON format.
       The result will be a jnull if the data is malformed.
 
       This operation is constant time if the data has been
       loaded. It will take longer if the data is not loaded.
     */
-    json::value AsJson;
+  json::value AsJson;
 
   PROPERTY(get = _GetHeaders)
-    /**
+  /**
       Gets the header colection.
       Behavior undocumented if HasHeaders is false.
     */
-    HttpHeaderCollection Headers;
+  HttpHeaderCollection Headers;
 
   PROPERTY(get = _GetStatusCode)
-    /**
+  /**
       Returns the web service status code.
       Behavior undocumented if HasHeaders is false.
     */
-    int StatusCode;
+  int StatusCode;
 
   PROPERTY(get = _GetContentLength)
-    /**
+  /**
       Returns the response content length.
       Behavior undocumented if HasHeaders is false.
     */
-    size_t ContentLength;
+  size_t ContentLength;
 
 private:
   HttpResult(HttpClient client);
@@ -297,7 +303,7 @@ public:
   bool _HasHeaders();
   bool _HasData();
   bool _HasFailed();
-  const std::string& _ErrorMsg();
+  const std::string &_ErrorMsg();
 
   HttpHeaderCollection _GetHeaders();
 
@@ -314,8 +320,12 @@ public:
 class HttpResultStream
 {
 public:
-  PROPERTY(get = _GetStream) std::istream& Stream;
-  inline operator std::istream&() { return Stream; }
+  PROPERTY(get = _GetStream) std::istream &Stream;
+
+  inline operator std::istream&()
+  {
+    return Stream;
+  }
 
   void Reset();
 
@@ -326,7 +336,7 @@ private:
   FRIEND_IMPLS;
 
 public:
-  std::istream& _GetStream();
+  std::istream &_GetStream();
 };
 
 // ----------------------------------------------------------------------------
@@ -334,14 +344,14 @@ public:
 class HttpRequestBody
 {
 public:
-  typedef std::function<void(std::ostream& out)> WriteFunc;
+  typedef std::function<void(std::ostream &out)> WriteFunc;
 
   void SetJson(json::value jvalue);
-  void SetString(const std::string& str);
+  void SetString(const std::string &str);
   void SetString(HttpShared<std::string> str);
-  void SetForm(const std::unordered_map<std::string, std::string>& data);
+  void SetForm(const std::unordered_map<std::string, std::string> &data);
 
-  void SetContentType(const std::string& type);
+  void SetContentType(const std::string &type);
 
   /**
     Delays writing data to a buffer.
@@ -351,7 +361,7 @@ public:
     The function may be called multiple times if redirects happen.
   */
   void WriteStream(WriteFunc func);
-  
+
 private:
   HttpRequestBody();
 
@@ -368,8 +378,8 @@ class HttpHeaderCollection
 public:
   static HttpHeaderCollection ParseHeaders(const WCHAR *str);
 
-  HttpHeaderSet operator[](const std::string& key);
-  const HttpHeaderSet operator[](const std::string& key) const;
+  HttpHeaderSet operator[](const std::string &key);
+  HttpHeaderSet operator[](const std::string &key) const;
 
   std::wstring BuildList() const;
 
@@ -391,27 +401,40 @@ class HttpHeaderSet
   std::vector<HttpHeaderEntry> *items;
 
 public:
-  HttpHeaderSet(const decltype(key)& key, decltype(items) items)
+  HttpHeaderSet(const decltype(key) &key, decltype(items) items)
     : key(key), items(items)
   {
   }
 
-  PROPERTY(get = _GetKey) const std::string& Key;
+  PROPERTY(get = _GetKey) const std::string &Key;
 
-  void AddValue(const std::string& val);
-  void RemoveValue(const std::string& val);
+  void AddValue(const std::string &val);
+  void RemoveValue(const std::string &val);
   void Clear();
 
-  size_t Count() { return items->size(); }
+  size_t Count()
+  {
+    return items->size();
+  }
 
-  auto begin() -> decltype(items->begin()) { return items->begin(); }
-  auto end() -> decltype(items->end()) { return items->end(); }
+  auto begin() -> decltype(items->begin())
+  {
+    return items->begin();
+  }
+
+  auto end() -> decltype(items->end())
+  {
+    return items->end();
+  }
 
 private:
   FRIEND_IMPLS;
 
 public:
-  inline const std::string& _GetKey() { return key; }
+  inline const std::string &_GetKey()
+  {
+    return key;
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -419,17 +442,17 @@ public:
 class HttpHeaderEntry
 {
 public:
-  HttpHeaderEntry(const std::string& key, const std::string& value)
+  HttpHeaderEntry(const std::string &key, const std::string &value)
     : Key(key), Value(value)
   {
   }
 
-  bool operator==(const HttpHeaderEntry& rhs) const
+  bool operator==(const HttpHeaderEntry &rhs) const
   {
     return Key == rhs.Key && Value == rhs.Value;
   }
 
-  bool operator!=(const HttpHeaderEntry& rhs) const
+  bool operator!=(const HttpHeaderEntry &rhs) const
   {
     return !(*this == rhs);
   }
@@ -443,21 +466,22 @@ public:
 
 // ----------------------------------------------------------------------------
 
-static inline std::string HttpURLEscape(const std::string& unescaped, bool escapeSpace = true)
+static inline std::string HttpURLEscape(const std::string &unescaped, bool escapeSpace = true)
 {
   static std::locale loc("en-US");
 
   std::wstringstream out;
 
-  for (auto& c : widen(unescaped))
+  for (auto &c : widen(unescaped))
   {
     if (std::isalnum(c, loc) || (!escapeSpace && c == L' '))
       out << c;
     else
     {
-      for (auto& uc : narrow({c}))
+      for (auto &uc : narrow({c}))
       {
-        out << std::hex << L'%' << std::setw(2) << std::setfill(L'0') << ((unsigned)(byte)uc);
+        out << std::hex << L'%' << std::setw(2) << std::setfill(L'0') 
+            << static_cast<unsigned>(static_cast<byte>(uc));
       }
     }
   }
@@ -466,4 +490,3 @@ static inline std::string HttpURLEscape(const std::string& unescaped, bool escap
 }
 
 // ----------------------------------------------------------------------------
-

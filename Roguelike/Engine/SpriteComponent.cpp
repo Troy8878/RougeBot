@@ -40,12 +40,17 @@ SpriteComponent::~SpriteComponent()
 
 // ----------------------------------------------------------------------------
 
-void SpriteComponent::Initialize(Entity *owner, const std::string& name)
+void SpriteComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
-  _texture = (TextureComponent *) Owner->GetComponent("TextureComponent");
+  _texture = static_cast<TextureComponent *>(Owner->GetComponent("TextureComponent"));
   renderTarget->AddDrawable(this, ModelShader);
+
+  DEF_EVENT_ID(sprite_hide);
+  DEF_EVENT_ID(sprite_show);
+  Owner->AddEvent(this, sprite_hide, &SpriteComponent::SpriteHide);
+  Owner->AddEvent(this, sprite_show, &SpriteComponent::SpriteShow);
 }
 
 // ----------------------------------------------------------------------------
@@ -56,7 +61,7 @@ void SpriteComponent::Draw()
     return;
 
   auto transform = Owner->Transform.get();
-  auto& textures = _texture->Textures;
+  auto &textures = _texture->Textures;
 
   if (_texture && TextureCount)
     UnitSquare->texture = textures[TextureIndex % TextureCount];
@@ -71,12 +76,26 @@ void SpriteComponent::Draw()
 
 // ----------------------------------------------------------------------------
 
+void SpriteComponent::SpriteHide(Events::EventMessage &)
+{
+  Visible = false;
+}
+
+// ----------------------------------------------------------------------------
+
+void SpriteComponent::SpriteShow(Events::EventMessage &)
+{
+  Visible = true;
+}
+
+// ----------------------------------------------------------------------------
+
 Model *SpriteComponent::GetSpriteModel()
 {
   THREAD_EXCLUSIVE_SCOPE;
 
   static Model *unitSquare = nullptr;
-  
+
   if (unitSquare)
     return unitSquare;
 
@@ -94,7 +113,7 @@ Model *SpriteComponent::GetSpriteModel()
       auto xprog = x * (1.0f / (segments - 1));
       auto yprog = y * (1.0f / (segments - 1));
 
-      auto& vertex = vertices[y * segments + x];
+      auto &vertex = vertices[y * segments + x];
       vertex.position.x = -0.5f + xprog;
       vertex.position.y = 0.5f - yprog;
       vertex.texture.x = xprog;
@@ -109,12 +128,12 @@ Model *SpriteComponent::GetSpriteModel()
     {
       UINT base = (y * (segments - 1) + x) * 6;
 
-      UINT vtl = (  y  ) * segments + (  x  );
-      UINT vtr = (  y  ) * segments + (x + 1);
-      UINT vbl = (y + 1) * segments + (  x  );
+      UINT vtl = (y) * segments + (x);
+      UINT vtr = (y) * segments + (x + 1);
+      UINT vbl = (y + 1) * segments + (x);
       UINT vbr = (y + 1) * segments + (x + 1);
 
-      (vtl, vtr, vbl, vbr);
+      (vtl , vtr , vbl , vbr);
 
       indices[base + 0] = vtl;
       indices[base + 1] = vbl;
@@ -139,23 +158,23 @@ SpriteComponentFactory::SpriteComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *SpriteComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   auto shader_name = map_fetch(data, "shader", "Textured").as_string();
   auto shader = RegisteredShaders[shader_name];
 
   if (shader == nullptr)
-    throw string_exception("Shader '" + shader_name + 
-                           "' could not be found while initializing SpriteComponent!");
+    throw string_exception("Shader '" + shader_name +
+      "' could not be found while initializing SpriteComponent!");
 
   auto set_name = data["render_target"].as_string();
   auto set = RenderGroup::Instance.GetSet(set_name);
 
   if (set == nullptr)
-    throw string_exception("Render Target '" + set_name + 
-                           "' could not be found while initializing SpriteComponent!");
+    throw string_exception("Render Target '" + set_name +
+      "' could not be found while initializing SpriteComponent!");
 
-  return new (memory) SpriteComponent(shader, set);
+  return new(memory) SpriteComponent(shader, set);
 }
 
 // ----------------------------------------------------------------------------
@@ -166,7 +185,10 @@ static RClass *cbase;
 static mrb_data_type mrb_spritecomp_data_type;
 
 static mrb_value mrb_spritecomp_new(mrb_state *mrb, SpriteComponent *comp);
-static void mrb_spritecomp_free(mrb_state *, void *) {}
+
+static void mrb_spritecomp_free(mrb_state *, void *)
+{
+}
 
 static mrb_value rb_sprite_initialize(mrb_state *mrb, mrb_value self);
 static mrb_value rb_sprite_get_textureindex(mrb_state *mrb, mrb_value self);
@@ -332,7 +354,7 @@ static mrb_value rb_sprite_set_tint_tex(mrb_state *mrb, mrb_value self)
 {
   mrb_value param;
   mrb_get_args(mrb, "o", &param);
-  
+
   auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
   auto tex = *ruby::data_get<Texture2D>(mrb, param);
 

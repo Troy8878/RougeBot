@@ -16,12 +16,11 @@ ButtonManager ButtonManager::Instance;
 ButtonManager::ButtonManager()
   : event_base(this)
 {
-
 }
 
 // ----------------------------------------------------------------------------
 
-void ButtonManager::OnClick(Events::EventMessage&)
+void ButtonManager::OnClick(Events::EventMessage &)
 {
   DEF_EVENT_ID(button_probe);
 

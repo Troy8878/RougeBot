@@ -15,7 +15,10 @@
 
 ParticleSystemComponentFactory ParticleSystemComponent::factory;
 
-static void mrb_particlesystem_free(mrb_state *, void *) {}
+static void mrb_particlesystem_free(mrb_state *, void *)
+{
+}
+
 static mrb_data_type mrb_particlesystemcomp_data_type;
 
 static void mrb_particlesystemcomponent_init(mrb_state *mrb, RClass *module, RClass *base);
@@ -32,8 +35,8 @@ static mrb_value mrb_particlesystem_set_rotvel(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
-ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges& scale,
-                                                 Ranges& rotation, Ranges& velocity, Ranges& rotVel, float rate)
+ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges &scale,
+                                                 Ranges &rotation, Ranges &velocity, Ranges &rotVel, float rate)
   : system(maxParticles), renderTarget(target)
 {
   system.model = GetUnitSquare();
@@ -57,7 +60,7 @@ ParticleSystemComponent::~ParticleSystemComponent()
 
 // ----------------------------------------------------------------------------
 
-void ParticleSystemComponent::Initialize(Entity *owner, const std::string& name)
+void ParticleSystemComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -69,7 +72,7 @@ void ParticleSystemComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void ParticleSystemComponent::OnUpdate(Events::EventMessage& e)
+void ParticleSystemComponent::OnUpdate(Events::EventMessage &e)
 {
   float dt = (float) e.GetData<Events::UpdateEvent>()->gameTime.Dt;
 
@@ -78,23 +81,23 @@ void ParticleSystemComponent::OnUpdate(Events::EventMessage& e)
   while (tb > 0)
   {
     //randomize particle
-    system.particleTransform.scaleRate = math::Vector{ random(scaleRange.Xmin, scaleRange.Xmax),
-                                                       0,
-                                                       random(scaleRange.Ymin, scaleRange.Ymax),
-                                                       0 };
-    system.particleTransform.rotationRate = math::Vector{ random(rotationRange.Xmin, rotationRange.Xmax),
-                                                          0,
-                                                          random(rotationRange.Ymin, rotationRange.Ymax),
-                                                          0 };
-    system.particleTransform.absoluteVelocity = math::Vector{ random(velocityRange.Xmin, velocityRange.Xmax),
-                                                              0,
-                                                              random(velocityRange.Ymin, velocityRange.Ymax),
-                                                              0 };
-    system.particleTransform.rotationalVelocity = math::Vector{ random(rotVelRange.Xmin, rotVelRange.Xmax),
-                                                                0,
-                                                                random(rotVelRange.Ymin, rotVelRange.Ymax),
-                                                                0 };
-    
+    system.particleTransform.scaleRate = math::Vector{random(scaleRange.Xmin, scaleRange.Xmax),
+      0,
+      random(scaleRange.Ymin, scaleRange.Ymax),
+      0};
+    system.particleTransform.rotationRate = math::Vector{random(rotationRange.Xmin, rotationRange.Xmax),
+      0,
+      random(rotationRange.Ymin, rotationRange.Ymax),
+      0};
+    system.particleTransform.absoluteVelocity = math::Vector{random(velocityRange.Xmin, velocityRange.Xmax),
+      0,
+      random(velocityRange.Ymin, velocityRange.Ymax),
+      0};
+    system.particleTransform.rotationalVelocity = math::Vector{random(rotVelRange.Xmin, rotVelRange.Xmax),
+      0,
+      random(rotVelRange.Ymin, rotVelRange.Ymax),
+      0};
+
     system.SpawnParticle(Owner->Transform, 1);
     --tb;
   }
@@ -131,7 +134,7 @@ ParticleSystemComponentFactory::ParticleSystemComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *ParticleSystemComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   auto targetName = data["render_target"].as_string();
   auto target = RenderGroup::Instance.GetSet(targetName);
@@ -143,25 +146,25 @@ Component *ParticleSystemComponentFactory::CreateObject(
   if (it != data.end())
     scale = ParseRanges(it->second);
   else
-    scale = Ranges { 1, 1, 1, 1 };
+    scale = Ranges{1, 1, 1, 1};
 
   it = data.find("rotation");
   if (it != data.end())
     rotation = ParseRanges(it->second);
   else
-    rotation = Ranges { 0, 1, 0, 1 };
+    rotation = Ranges{0, 1, 0, 1};
 
   it = data.find("velocity");
   if (it != data.end())
     velocity = ParseRanges(it->second);
   else
-    velocity = Ranges { 0, 1, 0, 1 };
+    velocity = Ranges{0, 1, 0, 1};
 
   it = data.find("rotationVelocity");
   if (it != data.end())
     rotVel = ParseRanges(it->second);
   else
-    rotVel = Ranges { 0, 0, 0, 0 };
+    rotVel = Ranges{0, 0, 0, 0};
 
   it = data.find("rate");
   if (it != data.end())
@@ -169,7 +172,7 @@ Component *ParticleSystemComponentFactory::CreateObject(
   else
     rate = 10;
 
-  auto *comp = new (memory) ParticleSystemComponent( 1000, target, scale, rotation, velocity, rotVel, rate);
+  auto *comp = new(memory) ParticleSystemComponent(1000, target, scale, rotation, velocity, rotVel, rate);
 
   return comp;
 }
@@ -248,22 +251,22 @@ float ParticleSystemComponent::GetRotationVelocity(int index)
 
 void ParticleSystemComponent::SetScale(float Xmin, float Xmax, float Ymin, float Ymax)
 {
-  scaleRange = Ranges{ Xmin, Xmax, Ymin, Ymax };
+  scaleRange = Ranges{Xmin, Xmax, Ymin, Ymax};
 }
 
 void ParticleSystemComponent::SetRotation(float Xmin, float Xmax, float Ymin, float Ymax)
 {
-  rotationRange = Ranges{ Xmin, Xmax, Ymin, Ymax };
+  rotationRange = Ranges{Xmin, Xmax, Ymin, Ymax};
 }
 
 void ParticleSystemComponent::SetVelocity(float Xmin, float Xmax, float Ymin, float Ymax)
 {
-  velocityRange = Ranges{ Xmin, Xmax, Ymin, Ymax };
+  velocityRange = Ranges{Xmin, Xmax, Ymin, Ymax};
 }
 
 void ParticleSystemComponent::SetRotationVelocity(float Xmin, float Xmax, float Ymin, float Ymax)
 {
-  rotVelRange = Ranges{ Xmin, Xmax, Ymin, Ymax };
+  rotVelRange = Ranges{Xmin, Xmax, Ymin, Ymax};
 }
 
 // ----------------------------------------------------------------------------
@@ -274,7 +277,7 @@ Ranges ParticleSystemComponentFactory::ParseRanges(json::value jv)
   while (nums.size() < 4)
     nums.push_back(0);
 
-  Ranges ranges = { (float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3] };
+  Ranges ranges = {(float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3]};
 
   return ranges;
 }
@@ -320,8 +323,8 @@ static mrb_value mrb_particlesystemcomponent_new(mrb_state *mrb, ParticleSystemC
 mrb_value ParticleSystemComponent::GetRubyWrapper()
 {
   RUN_ONCE(mrb_particlesystemcomponent_init(*mrb_inst,
-           GetComponentRModule(),
-           GetComponentRClass()));
+      GetComponentRModule(),
+    GetComponentRClass()));
   return mrb_particlesystemcomponent_new(*mrb_inst, this);
 }
 
@@ -385,12 +388,12 @@ static mrb_value mrb_particlesystem_get_rotvel(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_particlesystem_set_scale(mrb_state *mrb, mrb_value self)
 {
   auto particlesyst = (ParticleSystemComponent *)mrb_data_get_ptr(mrb, self, &mrb_particlesystemcomp_data_type);
-  
+
   mrb_float Xmin, Xmax, Ymin, Ymax;
-  mrb_get_args(mrb, "ffff",  &Xmin, &Xmax, &Ymin, &Ymax);
+  mrb_get_args(mrb, "ffff", &Xmin, &Xmax, &Ymin, &Ymax);
 
   particlesyst->SetScale((float)Xmin, (float)Xmax, (float)Ymin, (float)Ymax);
-  
+
   return mrb_nil_value();
 }
 

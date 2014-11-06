@@ -22,7 +22,7 @@ public:
 
   // Please call this in your implementations
   // just at the top do Component::initialize(parent)
-  virtual void Initialize(Entity *owner, const std::string& name);
+  virtual void Initialize(Entity *owner, const std::string &name);
   virtual void Cleanup();
 
   IR_PROPERTY(Entity *, Owner);
@@ -30,7 +30,7 @@ public:
 
   virtual mrb_value GetRubyWrapper()
   {
-    return ruby::ruby_value{};
+    return mrb_nil_value();
   }
 
   static std::vector<std::string> AdditionalDependencies()
@@ -41,10 +41,13 @@ public:
 protected:
   static ruby::ruby_module GetComponentRModule();
   static ruby::ruby_class GetComponentRClass();
-  
+
   friend void RegisterEngineComponents();
 
-  virtual ~Component() {}
+  virtual ~Component()
+  {
+  }
+
   friend class ComponentManager;
 };
 
@@ -57,25 +60,25 @@ public:
 
   static ComponentManager Instance;
 
-  void RegisterComponent(const ComponentRegistration& registration);
+  void RegisterComponent(const ComponentRegistration &registration);
   PROPERTY(get = _GetComponentRegistrations) component_map ComponentRegistrations;
 
-  Component *InstantiateComponent(const std::string& compName, 
-                                  component_factory_data& data);
+  Component *InstantiateComponent(const std::string &compName,
+                                  component_factory_data &data);
   void ReleaseComponent(Component *component);
 
 private:
   ComponentManager();
 
 public:
-  static component_map& _GetComponentRegistrations();
+  static component_map &_GetComponentRegistrations();
 };
 
 // ----------------------------------------------------------------------------
 
 __interface IComponentFactory
 {
-  Component *CreateObject(void *memory, component_factory_data& data);
+  Component *CreateObject(void *memory, component_factory_data &data);
 
   PROPERTY(get = _GetAllocator) IAllocator *Allocator;
   IAllocator *_GetAllocator();
@@ -85,8 +88,8 @@ __interface IComponentFactory
 
 struct ComponentRegistration
 {
-  ComponentRegistration(std::type_index const& componentType,
-                        std::string const& componentName,
+  ComponentRegistration(std::type_index const &componentType,
+                        std::string const &componentName,
                         IComponentFactory *factory,
                         IAllocator *allocator)
     : componentName(componentName),
@@ -100,9 +103,9 @@ struct ComponentRegistration
   std::type_index componentType;
   IComponentFactory *factory;
   IAllocator *allocator;
-  
-  PROPERTY(get = _GetFactory) IComponentFactory& Factory;
-  PROPERTY(get = _GetAllocator) IAllocator& Allocator;
+
+  PROPERTY(get = _GetFactory) IComponentFactory &Factory;
+  PROPERTY(get = _GetAllocator) IAllocator &Allocator;
 
 private:
   ComponentRegistration()
@@ -113,8 +116,15 @@ private:
   friend class flat_map<std::string, ComponentRegistration>;
 
 public:
-  inline IComponentFactory& _GetFactory() { return *factory; }
-  inline IAllocator& _GetAllocator() { return *allocator; }
+  inline IComponentFactory &_GetFactory()
+  {
+    return *factory;
+  }
+
+  inline IAllocator &_GetAllocator()
+  {
+    return *allocator;
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -124,7 +134,7 @@ void RegisterEngineComponents();
 // ----------------------------------------------------------------------------
 
 template <typename T>
-void RegisterStaticComponent(const std::string& name,
+void RegisterStaticComponent(const std::string &name,
                              IComponentFactory *factory = &T::factory)
 {
   ComponentRegistration registration{typeid(T), name, factory, factory->Allocator};
@@ -132,9 +142,9 @@ void RegisterStaticComponent(const std::string& name,
 
   auto prevfg = console::fg_color();
   std::cout << console::fg::green
-            << "Registered static component '" 
-            << registration.componentName << "'" << std::endl
-            << prevfg;
+    << "Registered static component '"
+    << registration.componentName << "'" << std::endl
+    << prevfg;
 }
 
 // ----------------------------------------------------------------------------
@@ -151,22 +161,20 @@ inline void comp_add_property(mrb_state *mrb, RClass *cls, mrb_sym id,
 {
   static const mrb_sym add_property = mrb_intern_lit(mrb, "property");
   const mrb_value values[] =
-  {
-    mrb_symbol_value(id),
-    mrb_symbol_value(type),
-    mrb_bool_value(can_set)
-  };
+    {
+      mrb_symbol_value(id),
+      mrb_symbol_value(type),
+      mrb_bool_value(can_set)
+    };
   mrb_funcall_argv(mrb, mrb_obj_value(cls), add_property, ARRAYSIZE(values), values);
 }
 
-template <size_t id_size, size_t type_size>
-inline void comp_add_property(mrb_state *mrb, RClass *cls, const char(&id)[id_size],
-                              const char(&type)[type_size], bool can_set = false)
+inline void comp_add_property(mrb_state *mrb, RClass *cls, const char *id,
+                              const char *type, bool can_set = false)
 {
-  mrb_sym id_sym = mrb_intern(mrb, id, id_size - 1);
-  mrb_sym type_sym = mrb_intern(mrb, type, type_size - 1);
+  mrb_sym id_sym = mrb_intern(mrb, id, strlen(id));
+  mrb_sym type_sym = mrb_intern(mrb, type, strlen(type));
   comp_add_property(mrb, cls, id_sym, type_sym, can_set);
 }
 
 // ----------------------------------------------------------------------------
-

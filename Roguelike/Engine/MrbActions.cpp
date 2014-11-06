@@ -89,7 +89,7 @@ static mrb_value mrb_actions_enqueue(mrb_state *mrb, mrb_value self)
   }
   else
   {
-    mrb_raise(mrb, terr, 
+    mrb_raise(mrb, terr,
               "ActionManager#enqueue has the following overloads:"
               "  - enqueue {|dt| block }"
               "  - enqueue(Proc)"

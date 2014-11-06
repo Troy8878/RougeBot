@@ -46,7 +46,7 @@ Entity::~Entity()
 
   if (!_components.empty())
   {
-    for (auto& pair : _components)
+    for (auto &pair : _components)
     {
       ComponentManager::Instance.ReleaseComponent(pair.second);
     }
@@ -54,7 +54,7 @@ Entity::~Entity()
 
   if (!_actionSequences.empty())
   {
-    for (auto& pair : _actionSequences)
+    for (auto &pair : _actionSequences)
     {
       sequenceAllocator.Destroy(pair.second);
     }
@@ -65,7 +65,7 @@ Entity::~Entity()
 
 // ----------------------------------------------------------------------------
 
-void Entity::_SetName(const std::string& name)
+void Entity::_SetName(const std::string &name)
 {
   UnregisterNamehash();
   _name = name;
@@ -74,8 +74,8 @@ void Entity::_SetName(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-Component *Entity::AddComponent(const std::string& name, 
-                                component_factory_data& data)
+Component *Entity::AddComponent(const std::string &name,
+                                component_factory_data &data)
 {
   if (_components[name])
     RemoveComponent(name);
@@ -90,12 +90,12 @@ Component *Entity::AddComponent(const std::string& name,
 
 // ----------------------------------------------------------------------------
 
-void Entity::RemoveComponent(const std::string& name)
+void Entity::RemoveComponent(const std::string &name)
 {
   auto compit = _components.find(name);
   auto comp = compit->second;
 
-  for (auto& event : _events)
+  for (auto &event : _events)
   {
     event.second.erase(comp);
     this->event_list_invalidated = true;
@@ -108,7 +108,7 @@ void Entity::RemoveComponent(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-Component *Entity::GetComponent(const std::string& name)
+Component *Entity::GetComponent(const std::string &name)
 {
   if (_components.empty())
     return nullptr;
@@ -119,21 +119,21 @@ Component *Entity::GetComponent(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-bool Entity::CanHandle(const Events::EventMessage& e)
+bool Entity::CanHandle(const Events::EventMessage &e)
 {
   return _eventCounts[e.EventId] > 0;
 }
 
 // ----------------------------------------------------------------------------
 
-void Entity::Handle(Events::EventMessage& e)
+void Entity::Handle(Events::EventMessage &e)
 {
   RaiseEvent(e);
 }
 
 // ----------------------------------------------------------------------------
-  
-void Entity::LocalEvent(Events::EventMessage& e)
+
+void Entity::LocalEvent(Events::EventMessage &e)
 {
   bool invalidation_occurred = false;
   event_list_invalidated = false;
@@ -147,15 +147,15 @@ void Entity::LocalEvent(Events::EventMessage& e)
   {
     if (invalidation_occurred)
     {
-      if (std::find(handled_for.begin(), handled_for.end(), it->first) != handled_for.end())
+      if (find(handled_for.begin(), handled_for.end(), it->first) != handled_for.end())
         continue;
     }
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
 
     performance::register_guard perf_g(translate_method_name(it->second));
 
-    #endif
+#endif
 
     auto *comp = it->first;
     // Apply member function pointer
@@ -191,7 +191,7 @@ void Entity::LocalEvent(Events::EventMessage& e)
   DEF_EVENT_ID(update);
   if (e.EventId == update)
   {
-    auto& time = GetGame()->Time;
+    auto &time = GetGame()->Time;
     OnUpdate(float(time.Dt));
   }
 
@@ -201,7 +201,7 @@ void Entity::LocalEvent(Events::EventMessage& e)
     static Entity *processed[1024];
     size_t process_count = 0;
 
-    auto& proxy = it->second.maps;
+    auto &proxy = it->second.maps;
 
     if (proxies.size() > 1024)
       throw basic_exception("I can't process more than 1024 proxies on a single entity");
@@ -240,7 +240,7 @@ void Entity::LocalEvent(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::RaiseEvent(Events::EventMessage& e)
+void Entity::RaiseEvent(Events::EventMessage &e)
 {
   LocalEvent(e);
 
@@ -255,7 +255,7 @@ void Entity::RaiseEvent(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::SinkEvent(Events::EventMessage& e)
+void Entity::SinkEvent(Events::EventMessage &e)
 {
   LocalEvent(e);
 
@@ -267,10 +267,10 @@ void Entity::SinkEvent(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::AddEvent(Component *component, event_id id, 
+void Entity::AddEvent(Component *component, event_id id,
                       component_handler handler)
 {
-  auto& handlers = _events[id];
+  auto &handlers = _events[id];
   handlers[component] = handler;
 
   event_list_invalidated = true;
@@ -282,7 +282,7 @@ void Entity::AddEvent(Component *component, event_id id,
 
 void Entity::RemoveEvent(Component *component, event_id id)
 {
-  auto& handlers = _events[id];
+  auto &handlers = _events[id];
   if (handlers.find(component) != handlers.end())
     handlers.erase(component);
 
@@ -302,9 +302,9 @@ void Entity::AddProxy(Entity *entity, event_id id, EventProxyList::Func func)
 
 void Entity::RemoveProxy(Entity *entity, event_id id)
 {
-  auto& proxy = proxies[id];
+  auto &proxy = proxies[id];
   proxy.maps.erase(entity);
-  
+
   if (proxy.maps.empty())
   {
     proxies.erase(id);
@@ -326,13 +326,13 @@ void Entity::RecalculateEventCounts()
   _eventCounts[draw] = 1;
 
   // Tally up the component handlers
-  for (auto& event : _events)
+  for (auto &event : _events)
   {
     _eventCounts[event.first] += event.second.size();
   }
 
   // Tally up the proxies
-  for (auto& proxy : proxies)
+  for (auto &proxy : proxies)
   {
     _eventCounts[proxy.first] += proxy.second.maps.size();
   }
@@ -340,7 +340,7 @@ void Entity::RecalculateEventCounts()
   // Tally the children's results
   for (auto child : children)
   {
-    for (auto& count : child->_eventCounts)
+    for (auto &count : child->_eventCounts)
     {
       _eventCounts[count.first] += count.second;
     }
@@ -363,7 +363,7 @@ entity_id Entity::CreateEntityId()
 
 void Entity::AddChild(Entity *entity)
 {
-  if (std::find(children.begin(), children.end(), entity) != children.end())
+  if (find(children.begin(), children.end(), entity) != children.end())
     return;
 
   if (entity->Parent)
@@ -382,7 +382,7 @@ void Entity::AddChild(Entity *entity)
 
 void Entity::RemoveChild(Entity *entity)
 {
-  auto it = std::find(children.begin(), children.end(), entity);
+  auto it = find(children.begin(), children.end(), entity);
   if (it == children.end())
     return;
 
@@ -430,7 +430,7 @@ Entity *Entity::FindEntity(entity_id id)
 
 // ----------------------------------------------------------------------------
 
-Entity *Entity::FindEntity(const std::string& name)
+Entity *Entity::FindEntity(const std::string &name)
 {
   auto bucket = namemap.bucket(name);
   auto first = namemap.begin(bucket);
@@ -447,7 +447,7 @@ Entity *Entity::FindEntity(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-Entity *Entity::LocalFind(const std::string& name)
+Entity *Entity::LocalFind(const std::string &name)
 {
   if (name == _name)
     return this;
@@ -455,7 +455,7 @@ Entity *Entity::LocalFind(const std::string& name)
   if (children.empty())
     return nullptr;
 
-  for (auto& child : children)
+  for (auto &child : children)
   {
     auto res = child->LocalFind(name);
     if (res)
@@ -467,8 +467,8 @@ Entity *Entity::LocalFind(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void Entity::SearchEntities(std::vector<Entity *>& results,
-                            const std::string& namePattern,
+void Entity::SearchEntities(std::vector<Entity *> &results,
+                            const std::string &namePattern,
                             bool partialMatch)
 {
   if (!partialMatch)
@@ -508,8 +508,8 @@ void Entity::SearchEntities(std::vector<Entity *>& results,
 
 // ----------------------------------------------------------------------------
 
-void Entity::SearchEntities(std::vector<Entity *>& results, 
-                            const std::regex& namePattern)
+void Entity::SearchEntities(std::vector<Entity *> &results,
+                            const std::regex &namePattern)
 {
   for (size_t i = 0; i < namemap.bucket_count(); ++i)
   {
@@ -520,7 +520,7 @@ void Entity::SearchEntities(std::vector<Entity *>& results,
       continue;
 
     // Check if this bucket matches the pattern
-    if (!std::regex_search(iter->first, namePattern))
+    if (!regex_search(iter->first, namePattern))
       continue;
 
     for (; iter != end; ++iter)
@@ -556,7 +556,7 @@ mrb_value Entity::GetRubyWrapper()
 
   auto rclass = GetWrapperRClass();
   auto data = mrb_data_object_alloc(mrb, rclass, this, &rb_ent_dt);
-  
+
   return mrb_obj_value(data);
 }
 
@@ -565,7 +565,7 @@ mrb_value Entity::GetRubyWrapper()
 static mrb_value rb_ent_id(mrb_state *mrb, mrb_value self)
 {
   auto entity = ruby::data_get<Entity>(mrb, self);
-  return mrb_fixnum_value((mrb_int) entity->Id);
+  return mrb_fixnum_value(static_cast<mrb_int>(entity->Id));
 }
 
 // ----------------------------------------------------------------------------
@@ -581,7 +581,7 @@ static mrb_value rb_ent_name(mrb_state *mrb, mrb_value self)
 static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 {
   ruby::ruby_engine engine{mrb};
-  
+
   mrb_value comp_name_v;
   mrb_get_args(mrb, "S", &comp_name_v);
 
@@ -607,12 +607,12 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
   {
     jdata = mrb_inst->hash_to_json(hash);
   }
-  catch (std::exception& e)
+  catch (std::exception &e)
   {
     mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), e.what());
   }
 
-  for (auto& item : jdata.as_object())
+  for (auto &item : jdata.as_object())
   {
     data[item.first] = item.second;
   }
@@ -624,7 +624,7 @@ static mrb_value rb_ent_add_component(mrb_state *mrb, mrb_value self)
     auto *comp = entity->AddComponent(name, data);
     return comp->GetRubyWrapper();
   }
-  catch (std::exception& e)
+  catch (std::exception &e)
   {
     mrb_raise(mrb, mrb->eException_class, e.what());
   }
@@ -657,17 +657,17 @@ static mrb_value rb_ent_proxy_event(mrb_state *mrb, mrb_value self)
   Entity *targetEnt = ruby::data_get<Entity>(mrb, targetOwner);
 
   entity->AddProxy(targetEnt, event,
-  [mrb, target, target_sym](Events::EventMessage& e)
-  {
-    mrb_value edata = mrb_nil_value();
-    if (e.Data)
-    {
-      edata = e.Data->GetRubyWrapper();
-    }
+                   [mrb, target, target_sym](Events::EventMessage &e)
+                   {
+                     mrb_value edata = mrb_nil_value();
+                     if (e.Data)
+                     {
+                       edata = e.Data->GetRubyWrapper();
+                     }
 
-    mrb_funcall_argv(mrb, target, target_sym, 1, &edata);
-    mrb_inst->log_and_clear_error();
-  });
+                     mrb_funcall_argv(mrb, target, target_sym, 1, &edata);
+                     mrb_inst->log_and_clear_error();
+                   });
 
   return mrb_nil_value();
 }
@@ -695,7 +695,7 @@ static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
 {
   mrb_value identifier;
   mrb_get_args(mrb, "o", &identifier);
-  
+
   auto parent = ruby::data_get<Entity>(mrb, self);
   if (mrb_string_p(identifier))
   {
@@ -705,7 +705,7 @@ static mrb_value rb_ent_find_entity(mrb_state *mrb, mrb_value self)
   }
   else if (mrb_fixnum_p(identifier))
   {
-    auto entity = parent->FindEntity((entity_id) mrb_fixnum(identifier));
+    auto entity = parent->FindEntity(static_cast<entity_id>(mrb_fixnum(identifier)));
     if (entity)
       return entity->RubyWrapper;
   }
@@ -746,14 +746,14 @@ static mrb_value rb_ent_search_entities(mrb_state *mrb, mrb_value self)
   std::vector<Entity *> resvect;
 
   auto parent = ruby::data_get<Entity>(mrb, self);
-  
+
   if (mrb_string_p(pattern))
   {
     parent->SearchEntities(resvect, mrb_str_to_stdstring(pattern), !!partial);
   }
   else
   {
-    auto& regexp = mrb_regexp_cppregex(mrb, pattern);
+    auto &regexp = mrb_regexp_cppregex(mrb, pattern);
     parent->SearchEntities(resvect, regexp);
   }
 
@@ -784,7 +784,7 @@ static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self)
 {
   auto entity = ruby::data_get<Entity>(mrb, self);
   auto results = mrb_hash_new(mrb);
-  for (auto& component : entity->_components)
+  for (auto &component : entity->_components)
   {
     if (component.second == nullptr)
       continue;
@@ -820,7 +820,7 @@ static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self)
   // Components
   inspection << ", components=[";
   bool first = true;
-  for (auto& component : entity->_components)
+  for (auto &component : entity->_components)
   {
     if (!first)
       inspection << ",";
@@ -864,7 +864,7 @@ static mrb_value rb_ent_remove_child(mrb_state *mrb, mrb_value self)
 
   if (mrb_obj_class(mrb, child_v) != mrb_class_get(mrb, "GameEntity"))
     mrb_raise(mrb, mrb->eException_class, "Expected param to be GameEntity");
-  
+
   auto *parent = ruby::data_get<Entity>(mrb, self);
   auto *child = ruby::data_get<Entity>(mrb, child_v);
 
@@ -893,7 +893,7 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
   mrb_value mrb_id = mrb_hash_get(mrb, opts, id_sym_v);
   entity_id id = UNASSIGNED_ENTITY_ID;
   if (mrb_fixnum_p(mrb_id))
-    id = (entity_id) mrb_fixnum(mrb_id);
+    id = static_cast<entity_id>(mrb_fixnum(mrb_id));
 
   mrb_value name = mrb_hash_get(mrb, opts, name_sym_v);
   mrb_value archetype = mrb_hash_get(mrb, opts, arch_sym_v);
@@ -906,7 +906,7 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 
   entity_factory_data data;
   auto jdata = mrb_inst->hash_to_json(components).as_object();
-  for (auto& item : jdata)
+  for (auto &item : jdata)
   {
     data[item.first] = item.second.as_object();
   }
@@ -957,7 +957,7 @@ static mrb_value rb_ent_local_event(mrb_state *mrb, mrb_value self)
   Events::EventMessage message{event_id, &data_wrapper, true};
 
   using namespace std::placeholders;
-  Events::Event::CustomRaise(message, std::bind(&Entity::LocalEvent, entity, _1));
+  Events::Event::CustomRaise(message, bind(&Entity::LocalEvent, entity, _1));
 
   return event_data;
 }
@@ -976,7 +976,7 @@ static mrb_value rb_ent_raise_event(mrb_state *mrb, mrb_value self)
   Events::EventMessage message{event_id, &data_wrapper, true};
 
   using namespace std::placeholders;
-  Events::Event::CustomRaise(message, std::bind(&Entity::RaiseEvent, entity, _1));
+  Events::Event::CustomRaise(message, bind(&Entity::RaiseEvent, entity, _1));
 
   return event_data;
 }
@@ -995,7 +995,7 @@ static mrb_value rb_ent_sink_event(mrb_state *mrb, mrb_value self)
   Events::EventMessage message{event_id, &data_wrapper, true};
 
   using namespace std::placeholders;
-  Events::Event::CustomRaise(message, std::bind(&Entity::SinkEvent, entity, _1));
+  Events::Event::CustomRaise(message, bind(&Entity::SinkEvent, entity, _1));
 
   return event_data;
 }
@@ -1040,7 +1040,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
     return rclass;
 
   rb_ent_dt.struct_name = typeid(Entity).name();
-  rb_ent_dt.dfree = ruby::data_nop_delete;
+  rb_ent_dt.dfree = data_nop_delete;
 
   rclass = ruby_engine::global_engine->define_class("GameEntity");
   rclass.define_class_method("new", mrb_nop, ARGS_ANY());
@@ -1049,7 +1049,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   rclass.define_method("id", rb_ent_id, ARGS_NONE());
   rclass.define_method("name", rb_ent_name, ARGS_NONE());
-  
+
   // Components
   rclass.define_method("components", rb_ent_components, ARGS_NONE());
   rclass.define_method("get_component", rb_ent_get_component, ARGS_REQ(1));
@@ -1059,7 +1059,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
   // Proxies
   rclass.define_method("proxy_event", rb_ent_proxy_event, ARGS_REQ(3));
   rclass.define_method("remove_event", rb_ent_remove_proxy, ARGS_REQ(2));
-  
+
   // Children
   rclass.define_class_method("create_entity", rb_ent_create, ARGS_OPT(1));
   rclass.define_method("children", rb_ent_children, ARGS_NONE());
@@ -1083,7 +1083,7 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   // RAWR I'M A ZOMBIE!
   rclass.define_method("zombify!", rb_ent_zombify, ARGS_NONE());
-  
+
   return rclass;
 }
 
@@ -1093,7 +1093,7 @@ static BucketAllocator entityAllocator{sizeof(Entity)};
 
 // ----------------------------------------------------------------------------
 
-std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependencies()
+std::unordered_map<std::string, std::vector<std::string>> &GetComponentDependencies()
 {
   static std::unordered_map<std::string, std::vector<std::string>> items;
   static bool init = false;
@@ -1101,7 +1101,7 @@ std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependenc
     return items;
 
   auto jlist = ParseJsonAsset("Definitions", "ComponentDependencies.json");
-  for (auto& pair : jlist.as_object())
+  for (auto &pair : jlist.as_object())
   {
     items[pair.first] = pair.second.as_array_of<json::value::string_t>();
   }
@@ -1115,21 +1115,22 @@ std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependenc
 /**
   Whether b depends on a
 */
-static bool component_depends_on(const std::string& a, const std::string& b)
+static bool component_depends_on(const std::string &a, const std::string &b)
 {
-  auto& dependencies = GetComponentDependencies();
+  auto &dependencies = GetComponentDependencies();
   auto deps = dependencies.find(b);
   if (deps == dependencies.end())
     return false;
 
-  auto& deplist = deps->second;
-  return std::find(deplist.begin(), deplist.end(), a) != deplist.end();
+  auto &deplist = deps->second;
+  return find(deplist.begin(), deplist.end(), a) != deplist.end();
 }
 
 // ----------------------------------------------------------------------------
 
 typedef std::pair<std::string, component_factory_data> cpair;
-bool ComponentsAreSorted(std::vector<cpair>& components, size_t& i, size_t& j)
+
+bool ComponentsAreSorted(std::vector<cpair> &components, size_t &i, size_t &j)
 {
   for (i = 0; i < components.size(); ++i)
   {
@@ -1145,14 +1146,14 @@ bool ComponentsAreSorted(std::vector<cpair>& components, size_t& i, size_t& j)
 
 // ----------------------------------------------------------------------------
 
-static std::vector<std::pair<std::string, component_factory_data>> 
-SortComponentDependencies(const entity_factory_data& data)
+static std::vector<std::pair<std::string, component_factory_data>>
+SortComponentDependencies(const entity_factory_data &data)
 {
   std::vector<cpair> components;
   components.reserve(data.size());
 
   // copy the components over
-  for (auto& comp : data)
+  for (auto &comp : data)
   {
     components.push_back(comp);
   }
@@ -1160,7 +1161,7 @@ SortComponentDependencies(const entity_factory_data& data)
   size_t i, j;
   while (!ComponentsAreSorted(components, i, j))
   {
-    std::swap(components[i], components[j]);
+    swap(components[i], components[j]);
   }
 
   return components;
@@ -1168,8 +1169,8 @@ SortComponentDependencies(const entity_factory_data& data)
 
 // ----------------------------------------------------------------------------
 
-Entity *EntityFactory::CreateEntity(const std::string& entdef, 
-                                    const entity_factory_data& data,
+Entity *EntityFactory::CreateEntity(const std::string &entdef,
+                                    const entity_factory_data &data,
                                     entity_id entid)
 {
   // Read entdef
@@ -1180,11 +1181,11 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
       throw basic_exception("Incorrect entity definition file");
 
     auto parts = tree.as_object_of<json::value::object_t>();
-    for (auto& part : parts)
+    for (auto &part : parts)
     {
-      auto& datamap = entdata[part.first];
+      auto &datamap = entdata[part.first];
 
-      for (auto& prop : part.second)
+      for (auto &prop : part.second)
       {
         datamap[prop.first] = prop.second;
       }
@@ -1192,11 +1193,11 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   }
 
   // Merge entdef with data
-  for (auto& part : data)
+  for (auto &part : data)
   {
-    auto& datamap = entdata[part.first];
+    auto &datamap = entdata[part.first];
 
-    for (auto& prop : part.second)
+    for (auto &prop : part.second)
     {
       datamap[prop.first] = prop.second;
     }
@@ -1207,7 +1208,7 @@ Entity *EntityFactory::CreateEntity(const std::string& entdef,
   auto components = SortComponentDependencies(entdata);
 
   // Create all of the components
-  for (auto& cpair : components)
+  for (auto &cpair : components)
   {
     entity->AddComponent(cpair.first, cpair.second);
   }
@@ -1249,7 +1250,7 @@ void Entity::ApplyParentTransforms()
 void Entity::OnUpdate(float dt)
 {
   _actionGroup.Update(dt);
-  for (auto& pair : _actionSequences)
+  for (auto &pair : _actionSequences)
   {
     pair.second->Update(dt);
   }
@@ -1257,14 +1258,14 @@ void Entity::OnUpdate(float dt)
 
 // ----------------------------------------------------------------------------
 
-ActionManager& Entity::GetActionGroup()
+ActionManager &Entity::GetActionGroup()
 {
   return _actionGroup;
 }
 
 // ----------------------------------------------------------------------------
 
-ActionManager& Entity::GetActionSequence(mrb_sym id)
+ActionManager &Entity::GetActionSequence(mrb_sym id)
 {
   auto seq = _actionSequences[id];
   if (!seq)
@@ -1277,7 +1278,7 @@ ActionManager& Entity::GetActionSequence(mrb_sym id)
 
 // ----------------------------------------------------------------------------
 
-ActionManager& Entity::GetActionSequence(const char *name)
+ActionManager &Entity::GetActionSequence(const char *name)
 {
   return GetActionSequence(mrb_intern_cstr(*mrb_inst, name));
 }
@@ -1289,8 +1290,8 @@ void Entity::Zombify()
   // You better not zombify LevelRoot, or Connor is coming after you :U (LevelRoot is id: 0)
   if (Id == 0)
     mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
-    "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
-    "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+              "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+              "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
   if (zombified)
     return;
@@ -1322,7 +1323,7 @@ void Entity::Zombify()
 
 void Entity::ExecuteZombies()
 {
-  while(!death_row.empty())
+  while (!death_row.empty())
   {
     auto *zombie = death_row.front();
     death_row.pop_front();

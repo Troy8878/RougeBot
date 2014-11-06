@@ -29,7 +29,8 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
   mrb_int imin = 0;
   mrb_int imax = std::numeric_limits<mrb_int>::max();
 
-  auto arg_count = mrb_get_args(mrb, "|n*", &type, &extra_absorbtion, &absorbed);
+  mrb_int arg_count;
+  mrb_get_args(mrb, "|n*", &type, &extra_absorbtion, &absorbed);
 
   if (type == float_sym)
   {
@@ -44,7 +45,7 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
     std::uniform_real_distribution<mrb_float> dist(fmin, fmax);
     return mrb_float_value(mrb, dist(rng));
   }
-  else if (type == int_sym)
+  if (type == int_sym)
   {
     arg_count = mrb_get_args(mrb, "|nii", &type, &imin, &imax);
 
@@ -59,8 +60,7 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
   }
 
   mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), "Type argument must be :int or :float");
-  // WARNING C4702: Unreachable code
-  //return mrb_nil_value();
+  return mrb_nil_value();
 }
 
 // ----------------------------------------------------------------------------
@@ -76,21 +76,30 @@ extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
   if (argc < 3)
     options = 0;
 
-  mrb_int result = MessageBox(NULL, (text), (title), UINT(options));
+  mrb_int result = MessageBox(nullptr, (text), (title), UINT(options));
 
   mrb_sym result_sym = mrb_intern_cstr(mrb, "unknown_result");
   switch (result)
   {
-    case IDABORT: result_sym = mrb_intern_cstr(mrb, "abort"); break;
-    case IDCANCEL: result_sym = mrb_intern_cstr(mrb, "cancel"); break;
-    case IDCONTINUE: result_sym = mrb_intern_cstr(mrb, "continue"); break;
-    case IDIGNORE: result_sym = mrb_intern_cstr(mrb, "ignore"); break;
-    case IDNO: result_sym = mrb_intern_cstr(mrb, "no"); break;
-    case IDOK: result_sym = mrb_intern_cstr(mrb, "ok"); break;
-    case IDRETRY: result_sym = mrb_intern_cstr(mrb, "retry"); break;
-    case IDTRYAGAIN: result_sym = mrb_intern_cstr(mrb, "try_again"); break;
-    case IDYES: result_sym = mrb_intern_cstr(mrb, "yes"); break;
-  };
+  case IDABORT: result_sym = mrb_intern_cstr(mrb, "abort");
+    break;
+  case IDCANCEL: result_sym = mrb_intern_cstr(mrb, "cancel");
+    break;
+  case IDCONTINUE: result_sym = mrb_intern_cstr(mrb, "continue");
+    break;
+  case IDIGNORE: result_sym = mrb_intern_cstr(mrb, "ignore");
+    break;
+  case IDNO: result_sym = mrb_intern_cstr(mrb, "no");
+    break;
+  case IDOK: result_sym = mrb_intern_cstr(mrb, "ok");
+    break;
+  case IDRETRY: result_sym = mrb_intern_cstr(mrb, "retry");
+    break;
+  case IDTRYAGAIN: result_sym = mrb_intern_cstr(mrb, "try_again");
+    break;
+  case IDYES: result_sym = mrb_intern_cstr(mrb, "yes");
+    break;
+  }
 
   return mrb_symbol_value(result_sym);
 }
@@ -135,7 +144,7 @@ static mrb_value mrb_level_root_entity(mrb_state *, mrb_value)
 
 static mrb_value mrb_toggle_debug_draw(mrb_state *, mrb_value)
 {
-  auto& dev = *GetGame()->GameDevice;
+  auto &dev = *GetGame()->GameDevice;
   dev.DebugDraw = !dev.DebugDraw;
 
   return mrb_bool_value(dev.DebugDraw);
@@ -175,13 +184,13 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));
   mrb_define_class_method(mrb, gameClass, "quit!", mrb_quit_game, ARGS_NONE());
 
-  #pragma region MessageBox stuff
-  
+#pragma region MessageBox stuff
+
   mrb_define_class_method(mrb, gameClass, "message_box", ruby_message_box, MRB_ARGS_ARG(2, 1));
 
   auto mbModule = mrb_define_module(mrb, "MessageBox");
   mrb_define_const(mrb, mbModule, "TOPMOST", mrb_fixnum_value(0x40000L));
-    
+
   auto iconModule = mrb_define_module_under(mrb, mbModule, "Icon");
   mrb_define_const(mrb, iconModule, "EXCLAMATION", mrb_fixnum_value(0x30L));
   mrb_define_const(mrb, iconModule, "WARNING", mrb_fixnum_value(0x30L));
@@ -191,7 +200,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_const(mrb, iconModule, "STOP", mrb_fixnum_value(0x10L));
   mrb_define_const(mrb, iconModule, "ERROR", mrb_fixnum_value(0x10L));
   mrb_define_const(mrb, iconModule, "HAND", mrb_fixnum_value(0x10L));
-    
+
   auto sModule = mrb_define_module_under(mrb, mbModule, "s");
   mrb_define_const(mrb, sModule, "HELP", mrb_fixnum_value(0x4000L));
   mrb_define_const(mrb, sModule, "ABORTRETRYIGNORE", mrb_fixnum_value(0x2L));
@@ -207,16 +216,14 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_const(mrb, modalModule, "SYSTEM", mrb_fixnum_value(0x1000L));
   mrb_define_const(mrb, modalModule, "TASK", mrb_fixnum_value(0x2000L));
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Level Wrapper
+#pragma region Level Wrapper
 
   auto levelWrapper = mrb_define_class(mrb, "GameLevelWrapper", mrb->object_class);
   mrb_define_method(mrb, levelWrapper, "root_entity", mrb_level_root_entity, ARGS_NONE());
 
-  #pragma endregion
-
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
-

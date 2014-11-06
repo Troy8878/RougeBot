@@ -64,6 +64,14 @@ class Inventory
     on_update :slot, insert_index, item
   end
 
+  def extract(slot)
+    item = @inventory[slot]
+    @inventory[slot] = nil
+    on_update :slot, slot, nil
+
+    item
+  end
+
   # Function to equip an item/add it to the equipment hash map
   def equip(slot)
 

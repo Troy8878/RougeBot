@@ -14,7 +14,7 @@ CameraComponentFactory CameraComponent::factory;
 
 // ----------------------------------------------------------------------------
 
-CameraComponent::CameraComponent(const std::string& name, int layer, const MultiCam& camera)
+CameraComponent::CameraComponent(const std::string &name, int layer, const MultiCam &camera)
   : _Name(name), _camera(camera), _cameraPtr(&_camera)
 {
   RenderGroup::Instance.CreateSet(name, Camera, layer, false);
@@ -22,7 +22,7 @@ CameraComponent::CameraComponent(const std::string& name, int layer, const Multi
 
 // ----------------------------------------------------------------------------
 
-CameraComponent::CameraComponent(const std::string& name, int layer, MultiCam *copy)
+CameraComponent::CameraComponent(const std::string &name, int layer, MultiCam *copy)
   : _Name(name), _cameraPtr(copy)
 {
   if (!_cameraPtr)
@@ -40,7 +40,7 @@ CameraComponent::~CameraComponent()
 
 // ----------------------------------------------------------------------------
 
-void CameraComponent::Initialize(Entity *owner, const std::string& name)
+void CameraComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -60,24 +60,24 @@ void CameraComponent::FixCameras()
   if (prevSize != newSize)
   {
     prevSize = newSize;
-      
+
     // Mostly just fixing the aspect ratios
     if (CameraType == typeid(HUDCamera))
     {
-        auto& hcam = *MCamera.GetCamera<HUDCamera>();
-        hcam.size.x = hcam.size.y * newSize.x / newSize.y;
-        Camera->Init();
+      auto &hcam = *MCamera.GetCamera<HUDCamera>();
+      hcam.size.x = hcam.size.y * newSize.x / newSize.y;
+      Camera->Init();
     }
     else if (CameraType == typeid(LookAtCamera))
     {
-      auto& lcam = *MCamera.GetCamera<LookAtCamera>();
+      auto &lcam = *MCamera.GetCamera<LookAtCamera>();
       lcam.aspectRatio = newSize.x / newSize.y;
       Camera->Init();
     }
     else if (CameraType == typeid(ManualCamera))
     {
       // but also letting ManualCamera know its owner transform
-      auto& mcam = *MCamera.GetCamera<ManualCamera>();
+      auto &mcam = *MCamera.GetCamera<ManualCamera>();
       mcam.cameraTransform = &Owner->Transform;
       mcam.aspectRatio = newSize.x / newSize.y;
       Camera->Init();
@@ -87,7 +87,7 @@ void CameraComponent::FixCameras()
 
 // ----------------------------------------------------------------------------
 
-void CameraComponent::OnUpdate(Events::EventMessage&)
+void CameraComponent::OnUpdate(Events::EventMessage &)
 {
   FixCameras();
   Camera->Update();
@@ -102,11 +102,11 @@ CameraComponentFactory::CameraComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-Component *CameraComponentFactory::CreateObject(void *memory, component_factory_data& data)
+Component *CameraComponentFactory::CreateObject(void *memory, component_factory_data &data)
 {
   MultiCam camera;
   auto target_name = data["target_name"].as_string();
-  auto layer = (int) map_fetch(data, "layer", 0).as_number();
+  auto layer = static_cast<int>(map_fetch(data, "layer", 0).as_number());
 
   auto copyit = data.find("copy");
   if (copyit != data.end())
@@ -115,14 +115,14 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
 
     auto icam = copyset->RenderCamera;
     auto multicam = reinterpret_cast<MultiCam *>(
-        reinterpret_cast<byte *>(icam) +
-        (reinterpret_cast<byte *>(&camera) -
-         reinterpret_cast<byte *>(camera.Base))
-      );
+      reinterpret_cast<byte *>(icam) +
+      (reinterpret_cast<byte *>(&camera) -
+        reinterpret_cast<byte *>(camera.Base))
+    );
 
-    return new (memory) CameraComponent(target_name, layer, multicam);
+    return new(memory) CameraComponent(target_name, layer, multicam);
   }
-  
+
   auto type = map_fetch(data, "type", "ManualCamera").as_string();
   if (type == "HUDCamera")
   {
@@ -143,7 +143,7 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
 
   camera.Base->LoadFromData(data);
   camera.Base->Init();
-  return new (memory) CameraComponent(target_name, layer, camera);
+  return new(memory) CameraComponent(target_name, layer, camera);
 }
 
 // ----------------------------------------------------------------------------

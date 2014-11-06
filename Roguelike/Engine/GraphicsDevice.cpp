@@ -58,15 +58,15 @@ void GraphicsDevice::FreeD2DResources()
 
 // ----------------------------------------------------------------------------
 
-std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions& options)
+std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions &options)
 {
   auto *window = new WindowDevice(options);
-  return std::unique_ptr < WindowDevice > {window};
+  return std::unique_ptr<WindowDevice>{window};
 }
 
 // ----------------------------------------------------------------------------
 
-HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
+HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 {
   std::string className = std::to_string(reinterpret_cast<size_t>(this));
 
@@ -79,28 +79,28 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
   RegisterClassEx(&wndc);
 
-  #pragma region Fix the width and height for the client rect
+#pragma region Fix the width and height for the client rect
 
   RECT rect;
   rect.left = 0;
-  rect.right = (LONG)options.size.x;
+  rect.right = static_cast<LONG>(options.size.x);
   rect.top = 0;
-  rect.bottom = (LONG)options.size.y;
+  rect.bottom = static_cast<LONG>(options.size.y);
 
   AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
   UINT width = UINT(rect.right - rect.left);
   UINT height = UINT(rect.bottom - rect.top);
 
-  #pragma endregion
+#pragma endregion
 
   HWND window = CreateWindow(wndc.lpszClassName,
-                             options.gameTitle.c_str(),
-                             WS_OVERLAPPEDWINDOW,
-                             CW_USEDEFAULT, CW_USEDEFAULT,
-                             width, height,
-                             NULL, NULL, options.hInstance,
-                             reinterpret_cast<void *>(this));
+    options.gameTitle.c_str(),
+    WS_OVERLAPPEDWINDOW,
+    CW_USEDEFAULT, CW_USEDEFAULT,
+    width, height,
+    NULL, NULL, options.hInstance,
+    reinterpret_cast<void *>(this));
 
   ShowWindow(window, SW_SHOWNORMAL);
   UpdateWindow(window);
@@ -110,7 +110,7 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
 
 // ----------------------------------------------------------------------------
 
-WindowDevice::WindowDevice(const WindowCreationOptions& options)
+WindowDevice::WindowDevice(const WindowCreationOptions &options)
   : _size(options.size)
 {
   Window = InitializeWindow(options);
@@ -137,11 +137,11 @@ LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
 
 LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-  auto& game = *GetGame();
+  auto &game = *GetGame();
   auto iter = game._wndprocCallbacks.find(msg);
   if (iter != game._wndprocCallbacks.end())
   {
-    auto& handler = iter->second;
+    auto &handler = iter->second;
 
     LRESULT result = 0;
     handler(hwnd, msg, wparam, lparam, result);
@@ -150,7 +150,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
   switch (msg)
   {
-    case WM_PAINT:
+  case WM_PAINT:
     {
       PAINTSTRUCT ps;
       BeginPaint(hwnd, &ps);
@@ -158,7 +158,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       return 0;
     }
 
-    case WM_CLOSE:
+  case WM_CLOSE:
     {
       GetGame()->Stop();
       return 0;
@@ -217,6 +217,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   CHECK_HRESULT(hr);
 
   hr = Device->CreateRenderTargetView(pBuffer, nullptr, &RenderTargetView);
+  CHECK_HRESULT(hr);
+
   ReleaseDXInterface(pBuffer);
 
   InitializeDepthBuffer();
@@ -266,7 +268,7 @@ void WindowDevice::EndFrame()
   {
     const double min_frame_time = 0.001;
 
-    static auto& time = GetGame()->Time;
+    static auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame_time)
       Sleep(0);
 
@@ -282,7 +284,7 @@ void GraphicsDevice::InitializeD3DContext()
   auto _window = GetContextWindow();
   CHECK_HRESULT(GetLastError());
 
-  #pragma region Initialize Swap Chain
+#pragma region Initialize Swap Chain
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
@@ -298,16 +300,16 @@ void GraphicsDevice::InitializeD3DContext()
   sd.SampleDesc.Quality = 0;
   sd.Windowed = TRUE;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Create Device and Swap Chain
+#pragma region Create Device and Swap Chain
 
-  D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
-  {
-    D3D_FEATURE_LEVEL_11_0,
-  };
-  UINT               numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
-  D3D_FEATURE_LEVEL  FeatureLevelSupported;
+  D3D_FEATURE_LEVEL FeatureLevelsRequested[] =
+    {
+      D3D_FEATURE_LEVEL_11_0,
+    };
+  UINT numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
+  D3D_FEATURE_LEVEL FeatureLevelSupported;
 
   // this is a big function call >.> just go to
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ff476879(v=vs.85).aspx
@@ -340,11 +342,11 @@ void GraphicsDevice::InitializeD3DContext()
 
   ReleaseDXInterface(backBuffer);
 
-  #pragma endregion
+#pragma endregion
 
   InitializeDepthBuffer();
 
-  #pragma region Rasterizer
+#pragma region Rasterizer
 
   D3D11_RASTERIZER_DESC rasterDesc;
   rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
@@ -378,9 +380,9 @@ void GraphicsDevice::InitializeD3DContext()
   hr = Device->CreateRasterizerState(&wireframeDesc, &WireframeState);
   CHECK_HRESULT(hr);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Viewport
+#pragma region Viewport
 
   D3D11_VIEWPORT viewport;
   viewport.Width = contextSize.x;
@@ -392,9 +394,9 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetViewports(1, &viewport);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Blend State
+#pragma region Blend State
 
   D3D11_BLEND_DESC blendStateDesc;
   ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
@@ -414,8 +416,7 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
 
-  #pragma endregion
-
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -428,7 +429,7 @@ void GraphicsDevice::InitializeDepthBuffer()
   ReleaseDXInterface(DepthStencilState);
   ReleaseDXInterface(DepthStencilView);
 
-  #pragma region Depth Stencil Buffer
+#pragma region Depth Stencil Buffer
 
   D3D11_TEXTURE2D_DESC depthBufferDesc;
   ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -447,9 +448,9 @@ void GraphicsDevice::InitializeDepthBuffer()
   hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
   CHECK_HRESULT(hr);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Depth Stencil State
+#pragma region Depth Stencil State
 
   D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
   ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -477,9 +478,9 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Depth Stencil View Desc
+#pragma region Depth Stencil View Desc
 
   D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
   ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -492,8 +493,7 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 
-  #pragma endregion
-
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -529,7 +529,7 @@ void GraphicsDevice::InitializeD2DContext()
 
   D2D.DeviceContext->SetDpi(96, 96);
 
-  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
+  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
                            __uuidof(*D2D.WriteFactory),
                            reinterpret_cast<IUnknown **>(&D2D.WriteFactory));
   CHECK_HRESULT(hr);
@@ -539,7 +539,7 @@ void GraphicsDevice::InitializeD2DContext()
 
 // ----------------------------------------------------------------------------
 
-void DisplayAdapter::GetAdapters(std::vector<DisplayAdapter>& adapters)
+void DisplayAdapter::GetAdapters(std::vector<DisplayAdapter> &adapters)
 {
   IDXGIFactory1 *dxgFactory = nullptr;
   auto result = CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&dxgFactory));
@@ -590,21 +590,21 @@ DisplayOutput::DisplayOutput(IDXGIOutput *dxgOutput)
   hr = dxgOutput->GetDisplayModeList(format, flags, &numModes, modeStructs.data());
   CHECK_HRESULT(hr);
 
-  for (auto& mode : modeStructs)
+  for (auto &mode : modeStructs)
     DisplayModes.emplace_back(mode);
 }
 
 // ----------------------------------------------------------------------------
 
-void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
+void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting> &settings)
 {
-  for (auto& mode : DisplayModes)
+  for (auto &mode : DisplayModes)
   {
-    auto pred = [&mode] (const DisplaySetting& setting)
-    {
-      return mode.Width == setting.Width &&
-             mode.Height == setting.Height;
-    };
+    auto pred = [&mode] (const DisplaySetting &setting)
+      {
+        return mode.Width == setting.Width &&
+          mode.Height == setting.Height;
+      };
 
     auto it = std::find_if(settings.begin(), settings.end(), pred);
     if (it != settings.end())
@@ -620,7 +620,7 @@ void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
 
 // ----------------------------------------------------------------------------
 
-DisplayMode::DisplayMode(const DXGI_MODE_DESC& desc)
+DisplayMode::DisplayMode(const DXGI_MODE_DESC &desc)
   : DXGI_MODE_DESC(desc)
 {
 }
@@ -648,4 +648,3 @@ HRESULT GraphicsDevice::D2DData::EndDraw()
 }
 
 // ----------------------------------------------------------------------------
-

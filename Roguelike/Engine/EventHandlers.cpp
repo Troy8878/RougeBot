@@ -9,27 +9,26 @@
 
 namespace Events
 {
+  // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-
-  bool BasicEventDispatcher::CanHandle(const EventMessage& e)
+  bool BasicEventDispatcher::CanHandle(const EventMessage &e)
   {
     bool any = false;
 
-    for (auto& hpair : recievers)
+    for (auto &hpair : recievers)
     {
       hpair.second = hpair.first->CanHandle(e);
       if (hpair.second)
         any = true;
     }
-    
+
     static EventId recieverDestroyedId("event_reciever_destroyed");
     return any || e.EventId == recieverDestroyedId;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::Handle(EventMessage& e)
+  void BasicEventDispatcher::Handle(EventMessage &e)
   {
     static EventId recieverDestroyedId("event_reciever_destroyed");
 
@@ -39,7 +38,7 @@ namespace Events
       RemoveListener(rec);
     }
 
-    for (auto& hpair : recievers)
+    for (auto &hpair : recievers)
     {
       if (!hpair.second)
         continue;
@@ -50,14 +49,14 @@ namespace Events
     }
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::AddListener(EventReciever *reciever)
   {
     recievers[reciever] = false;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::RemoveListener(EventReciever *reciever)
   {
@@ -68,6 +67,5 @@ namespace Events
     recievers.erase(it);
   }
 
-// ----------------------------------------------------------------------------
-
+  // ----------------------------------------------------------------------------
 }

@@ -11,7 +11,7 @@
 
 // ----------------------------------------------------------------------------
 
-RenderSet::RenderSet(ICamera *camera, const std::string& name, 
+RenderSet::RenderSet(ICamera *camera, const std::string &name,
                      int priority, std::type_index camtype)
   : _RenderCamera(camera), _Name(name), _CameraType(camtype), _Priority(priority)
 {
@@ -27,7 +27,7 @@ void RenderSet::AddDrawable(Drawable *drawable, Shader *shader)
 
 // ----------------------------------------------------------------------------
 
-static bool operator==(const RenderSet::DrawablePair& dp, Drawable *dr)
+static bool operator==(const RenderSet::DrawablePair &dp, Drawable *dr)
 {
   return dp.drawable == dr;
 }
@@ -43,7 +43,7 @@ void RenderSet::RemoveDrawable(Drawable *drawable)
 
 void RenderSet::Draw()
 {
-  for (auto& pair : drawables)
+  for (auto &pair : drawables)
   {
     pair.shader->camera = RenderCamera;
     pair.drawable->Draw();
@@ -71,7 +71,7 @@ void RenderGroup::Initialize()
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::GetSet(const std::string& name)
+RenderSet *RenderGroup::GetSet(const std::string &name)
 {
   auto it = sets.find(name);
   return it != sets.end() ? it->second.first : nullptr;
@@ -79,7 +79,7 @@ RenderSet *RenderGroup::GetSet(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-RenderSet *RenderGroup::CreateSet(const std::string& name, ICamera *camera, 
+RenderSet *RenderGroup::CreateSet(const std::string &name, ICamera *camera,
                                   std::type_index camtype, int pri, bool perma)
 {
   std::pair<RenderSet *, bool> pair{new RenderSet(camera, name, pri, camtype), perma};
@@ -92,10 +92,10 @@ RenderSet *RenderGroup::CreateSet(const std::string& name, ICamera *camera,
 
 // ----------------------------------------------------------------------------
 
-void RenderGroup::RemoveSet(const std::string& name)
+void RenderGroup::RemoveSet(const std::string &name)
 {
   auto set = sets[name].first;
-  for (auto& drawable : set->drawables)
+  for (auto &drawable : set->drawables)
   {
     drawable.drawable->OnSetDestroyed();
   }
@@ -110,7 +110,7 @@ void RenderGroup::RemoveSet(const std::string& name)
 
 void RenderGroup::ClearSets()
 {
-  for (auto& pair : sets)
+  for (auto &pair : sets)
   {
     if (pair.second.second)
       continue;
@@ -123,9 +123,9 @@ void RenderGroup::ClearSets()
 
 // ----------------------------------------------------------------------------
 
-void RenderGroup::Draw(Events::EventMessage&)
+void RenderGroup::Draw(Events::EventMessage &)
 {
-  for (auto& set : priorityList)
+  for (auto &set : priorityList)
   {
     set.second->Draw();
   }
@@ -136,7 +136,7 @@ void RenderGroup::Draw(Events::EventMessage&)
 void RenderGroup::UpdatePriorities()
 {
   priorityList.clear();
-  for (auto& set : sets)
+  for (auto &set : sets)
   {
     priorityList.push_back({set.second.first->Priority, set.second.first});
   }
@@ -145,4 +145,3 @@ void RenderGroup::UpdatePriorities()
 }
 
 // ----------------------------------------------------------------------------
-

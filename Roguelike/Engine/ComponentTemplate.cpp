@@ -19,7 +19,7 @@ COMPONENTNAMEHEREComponent::COMPONENTNAMEHEREComponent()
 
 // ----------------------------------------------------------------------------
 
-void COMPONENTNAMEHEREComponent::Initialize(Entity *owner, const std::string& name)
+void COMPONENTNAMEHEREComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 }
@@ -34,11 +34,11 @@ COMPONENTNAMEHEREComponentFactory::COMPONENTNAMEHEREComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *COMPONENTNAMEHEREComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   (data); // do something with the serialization data
 
-  auto *component = new (memory) COMPONENTNAMEHEREComponent;
+  auto *component = new(memory) COMPONENTNAMEHEREComponent;
 
   // do something to the component
 

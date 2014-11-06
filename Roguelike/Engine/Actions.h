@@ -29,7 +29,9 @@ public:
   */
   virtual bool Update(float dt) = 0;
 
-  virtual ~Action() {};
+  virtual ~Action()
+  {
+  };
 
 protected:
   Action() = default;
@@ -40,11 +42,12 @@ protected:
 class ActionManager
 {
 public:
+  virtual ~ActionManager()
+  {
+  }
+
   virtual void Update(float dt) = 0;
   virtual void Queue(Action *action) = 0;
-
-protected:
-  ~ActionManager() {}
 };
 
 // ----------------------------------------------------------------------------
@@ -80,7 +83,7 @@ private:
 class DelayAction : public Action
 {
 public:
-  DelayAction(double time);
+  explicit DelayAction(double time);
   bool Update(float dt) override;
 
 private:
@@ -94,7 +97,7 @@ class FunctionalAction : public Action
 public:
   typedef std::function<bool(float dt)> UpdateFunc;
 
-  FunctionalAction(const UpdateFunc& func);
+  explicit FunctionalAction(const UpdateFunc &func);
   bool Update(float dt) override;
 
 private:
@@ -124,7 +127,7 @@ class RubyProcAction : public Action
 public:
   RubyProcAction(mrb_value proc);
   ~RubyProcAction();
-  
+
   bool Update(float dt) override;
 
 private:
@@ -139,7 +142,7 @@ class RubyObjectAction : public Action
 public:
   RubyObjectAction(mrb_value obj, mrb_sym method);
   ~RubyObjectAction();
-  
+
   bool Update(float dt) override;
 
 private:
@@ -162,7 +165,7 @@ public:
 
   VectorEaseAction(math::Vector *vect, math::Vector end,
                    double time, EasingMode mode);
-  
+
   bool Update(float dt) override;
 
 private:
@@ -195,7 +198,6 @@ private:
       float duration;
 
       float value_at(float progress);
-
     } bounce_data;
   } ed;
 };
@@ -215,11 +217,9 @@ MemberFunctionAction<Class>::MemberFunctionAction(Class *object, UpdateFunc func
 template <typename Class>
 bool MemberFunctionAction<Class>::Update(float dt)
 {
-  return (_object->*_func)(dt);
+  return (_object ->* _func)(dt);
 }
 
 #pragma endregion
 
 // ----------------------------------------------------------------------------
-
-

@@ -17,7 +17,7 @@ EventDispatcher *Event::GlobalDispatcher;
 
 // ----------------------------------------------------------------------------
 
-event_id Event::CreateEventId(const std::string& name)
+event_id Event::CreateEventId(const std::string &name)
 {
   THREAD_EXCLUSIVE_SCOPE;
 
@@ -28,7 +28,7 @@ event_id Event::CreateEventId(const std::string& name)
 
 static std::stack<EventMessage *> event_stack;
 
-void Event::Raise(EventMessage& e, EventReciever& reciever)
+void Event::Raise(EventMessage &e, EventReciever &reciever)
 {
   ruby::ruby_gc_guard gc_guard(*mrb_inst);
 
@@ -40,7 +40,7 @@ void Event::Raise(EventMessage& e, EventReciever& reciever)
   event_stack.pop();
 }
 
-void Event::CustomRaise(EventMessage& e, std::function<void(EventMessage&)> raise)
+void Event::CustomRaise(EventMessage &e, std::function<void(EventMessage &)> raise)
 {
   ruby::ruby_gc_guard gc_guard(*mrb_inst);
 
@@ -51,7 +51,7 @@ void Event::CustomRaise(EventMessage& e, std::function<void(EventMessage&)> rais
   event_stack.pop();
 }
 
-EventMessage& Event::GetCurrentEvent()
+EventMessage &Event::GetCurrentEvent()
 {
   return *event_stack.top();
 }
@@ -108,7 +108,7 @@ static mrb_value mrb_event_handled_set(mrb_state *mrb, mrb_value)
   {
     Event::GetCurrentEvent().Handled = !!value;
   }
-  catch (std::exception& e)
+  catch (std::exception &e)
   {
     mrb_raise(mrb, mrb->eException_class, e.what());
   }
@@ -117,4 +117,3 @@ static mrb_value mrb_event_handled_set(mrb_state *mrb, mrb_value)
 }
 
 // ----------------------------------------------------------------------------
-

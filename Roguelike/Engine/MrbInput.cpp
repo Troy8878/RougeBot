@@ -95,7 +95,7 @@ static void mrb_kse_free(mrb_state *, void *)
 
 static mrb_value mrb_kse_is_held(mrb_state *mrb, mrb_value self)
 {
-  auto key = (const KeyState *) mrb_data_get_ptr(mrb, self, &mrb_kse_data_type);
+  auto key = static_cast<const KeyState *>(mrb_data_get_ptr(mrb, self, &mrb_kse_data_type));
   return mrb_bool_value(key->down);
 }
 
@@ -103,7 +103,7 @@ static mrb_value mrb_kse_is_held(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_kse_hold_time(mrb_state *mrb, mrb_value self)
 {
-  auto key = (const KeyState *) mrb_data_get_ptr(mrb, self, &mrb_kse_data_type);
+  auto key = static_cast<const KeyState *>(mrb_data_get_ptr(mrb, self, &mrb_kse_data_type));
   return mrb_float_value(mrb, key->hold_time);
 }
 
@@ -111,7 +111,7 @@ static mrb_value mrb_kse_hold_time(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_kse_vkey(mrb_state *mrb, mrb_value self)
 {
-  auto key = (const KeyState *) mrb_data_get_ptr(mrb, self, &mrb_kse_data_type);
+  auto key = static_cast<const KeyState *>(mrb_data_get_ptr(mrb, self, &mrb_kse_data_type));
   return mrb_fixnum_value(key->virtual_key);
 }
 
@@ -119,7 +119,7 @@ static mrb_value mrb_kse_vkey(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_kse_is_plain_char(mrb_state *mrb, mrb_value self)
 {
-  auto key = (const KeyState *) mrb_data_get_ptr(mrb, self, &mrb_kse_data_type);
+  auto key = static_cast<const KeyState *>(mrb_data_get_ptr(mrb, self, &mrb_kse_data_type));
   return mrb_bool_value(key->char_code >= 0x20 && key->char_code <= 0x7F);
 }
 
@@ -127,11 +127,11 @@ static mrb_value mrb_kse_is_plain_char(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_kse_plain_char(mrb_state *mrb, mrb_value self)
 {
-  auto key = (const KeyState *) mrb_data_get_ptr(mrb, self, &mrb_kse_data_type);
+  auto key = static_cast<const KeyState *>(mrb_data_get_ptr(mrb, self, &mrb_kse_data_type));
   if (key->char_code < 0x20 || key->char_code > 0x7F)
     return mrb_nil_value();
 
-  char c[] = { (char) key->char_code, 0 };
+  char c[] = {static_cast<char>(key->char_code), 0};
   return mrb_str_new_cstr(mrb, c);
 }
 
@@ -157,8 +157,7 @@ static void mrb_me_free(mrb_state *, void *)
 
 static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self)
 {
-  const MouseState *state = (const MouseState *) 
-    mrb_data_get_ptr(mrb, self, &mrb_me_data_type);
+  const MouseState *state = static_cast<const MouseState *>(mrb_data_get_ptr(mrb, self, &mrb_me_data_type));
 
   return ruby::create_new_vector(state->position.get());
 }

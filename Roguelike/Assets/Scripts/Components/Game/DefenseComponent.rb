@@ -16,6 +16,7 @@ class DefenseComponent < ComponentBase
 
   attr_accessor :health, :armor
 
+  # Property viewer declarations
   property :health, :int, true
   property :armor, :float, true
 
@@ -25,6 +26,14 @@ class DefenseComponent < ComponentBase
     @defense = 0.0
     @armor = 0
     @health = data.fetch("health", 10).to_i
+  end
+
+  def on_access
+    self.owner.raise_event :health_changed, {
+      kind: :touch,
+      amount: 0,
+      new_value: @health
+    }
   end
 
   def be_attacked(attack, damage)

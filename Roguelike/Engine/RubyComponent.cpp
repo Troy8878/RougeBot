@@ -15,13 +15,13 @@
 
 // ----------------------------------------------------------------------------
 
-RubyComponent::RubyComponent(ruby::ruby_class rclass, component_factory_data& data)
+RubyComponent::RubyComponent(ruby::ruby_class rclass, component_factory_data &data)
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto &mrb = *ruby::ruby_engine::global_engine;
 
   component_inst = mrb.hash_from_map(data).silent_reset();
 
-  static auto rclass_sym = 
+  static auto rclass_sym =
     mrb_symbol_value(mrb_intern_cstr(mrb, "new_inst_rclass"));
   auto rclass_v = mrb_obj_value(rclass.mrb_handle());
 
@@ -34,7 +34,7 @@ RubyComponent::~RubyComponent()
 {
   mrb_state *mrb = *ruby::ruby_engine::global_engine;
 
-  #pragma region Unsave component
+#pragma region Unsave component
 
   mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
   mrb_value comp_reg = mrb_gv_get(mrb, comp_reg_sym);
@@ -43,7 +43,7 @@ RubyComponent::~RubyComponent()
 
   mrb_hash_delete_key(mrb, reg, comp_name);
 
-  #pragma endregion
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -55,13 +55,13 @@ void RubyComponent::Cleanup()
 
 // ----------------------------------------------------------------------------
 
-void RubyComponent::Initialize(Entity *owner, const std::string& name)
+void RubyComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto &mrb = *ruby::ruby_engine::global_engine;
 
-  static mrb_value 
+  static mrb_value
     entity_ptr_key = mrb_symbol_value(mrb_intern_cstr(mrb, "entity_ptr_v")),
     comp_ptr_key = mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
 
@@ -74,14 +74,14 @@ void RubyComponent::Initialize(Entity *owner, const std::string& name)
   mrb_hash_set(mrb, map, entity_ptr_key, entity_ptr_v);
   mrb_hash_set(mrb, map, comp_ptr_key, comp_ptr_v);
 
-  static auto rclass_sym = 
+  static auto rclass_sym =
     mrb_symbol_value(mrb_intern_cstr(mrb, "new_inst_rclass"));
-  auto rclass_p = (RClass *) mrb_object(mrb_hash_get(mrb, map, rclass_sym));
+  auto rclass_p = reinterpret_cast<RClass *>(mrb_object(mrb_hash_get(mrb, map, rclass_sym)));
   ruby::ruby_class rclass{&mrb, rclass_p};
 
   component_inst = rclass.new_inst(map).silent_reset();
 
-  #pragma region Save component
+#pragma region Save component
   mrb_sym comp_reg_sym = mrb_intern_lit(mrb, "GLOBAL_COMP_REGISTER");
   mrb_value comp_reg = mrb_gv_get(mrb, comp_reg_sym);
   mrb_value reg = mrb_hash_get(mrb, comp_reg, mrb_fixnum_value(Owner->Id));
@@ -93,7 +93,7 @@ void RubyComponent::Initialize(Entity *owner, const std::string& name)
 
   mrb_value comp_name = mrb_str_new(mrb, Name.c_str(), Name.size());
   mrb_hash_set(mrb, reg, comp_name, component_inst);
-  #pragma endregion
+#pragma endregion
 
   mrb.log_and_clear_error();
 }
@@ -107,24 +107,24 @@ RubyComponentFactory::RubyComponentFactory(ruby::ruby_class rclass)
 
 // ----------------------------------------------------------------------------
 
-Component *RubyComponentFactory::CreateObject(void *memory, 
-                                              component_factory_data& data)
+Component *RubyComponentFactory::CreateObject(void *memory,
+                                              component_factory_data &data)
 {
-  return new (memory) RubyComponent(rclass, data);
+  return new(memory) RubyComponent(rclass, data);
 }
 
 // ----------------------------------------------------------------------------
 
-void RubyComponent::OnEvent(Events::EventMessage& e)
+void RubyComponent::OnEvent(Events::EventMessage &e)
 {
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto &mrb = *ruby::ruby_engine::global_engine;
 
   mrb_value edata = mrb_nil_value();
   if (e.Data)
   {
     edata = e.Data->GetRubyWrapper();
   }
-  
+
   auto mid = events[e.EventId];
 
   performance::register_guard perf(component_inst, mid);
@@ -163,12 +163,12 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
 {
   ruby::ruby_gc_guard gcguard{*mrb_inst};
 
-  auto& mrb = *ruby::ruby_engine::global_engine;
+  auto &mrb = *ruby::ruby_engine::global_engine;
   assert(mrb == _mrb);
-  auto comp_class = ruby::ruby_class{&mrb, (RClass *) mrb_ptr(self)};
+  auto comp_class = ruby::ruby_class{&mrb, static_cast<RClass *>(mrb_ptr(self))};
 
   mrb_value comp_name_v;
-  
+
   // register_component(comp_name_v:String)
   mrb_get_args(mrb, "S", &comp_name_v);
 
@@ -177,19 +177,19 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
   auto factory = new RubyComponentFactory(comp_class);
   std::string comp_name = mrb_str_to_stdstring(comp_name_v);
 
-  ComponentRegistration registration{typeid(RubyComponent), comp_name, 
-                                     factory, factory->Allocator};
+  ComponentRegistration registration{typeid(RubyComponent), comp_name,
+    factory, factory->Allocator};
   ComponentManager::Instance.RegisterComponent(registration);
 
-  #pragma region Load additional dependencies
+#pragma region Load additional dependencies
 
   auto cbase = mrb_obj_value(mrb_class_get(mrb, "ComponentBase"));
   auto flush_deps = mrb_intern_lit(mrb, "flush_dependencies");
   mrb_value deps = mrb_funcall_argv(mrb, cbase, flush_deps, 0, nullptr);
   mrb_int dep_len = mrb_ary_len(mrb, deps);
 
-  auto& dependencies = GetComponentDependencies();
-  auto& depList = dependencies[comp_name];
+  auto &dependencies = GetComponentDependencies();
+  auto &depList = dependencies[comp_name];
 
   for (mrb_int i = 0; i < dep_len; ++i)
   {
@@ -197,13 +197,13 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
     depList.push_back(mrb_str_to_stdstring(dep));
   }
 
-  #pragma endregion
+#pragma endregion
 
   auto prevfg = console::fg_color();
   std::cout << console::fg::green
-            << "Registered ruby component '"
-            << comp_name << "'" << std::endl
-            << prevfg;
+    << "Registered ruby component '"
+    << comp_name << "'" << std::endl
+    << prevfg;
 
   return mrb_nil_value();
 }
@@ -214,13 +214,8 @@ static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
 {
   ruby::ruby_gc_guard gcguard{*mrb_inst};
 
-  auto& mrb = *mrb_inst;
+  auto &mrb = *mrb_inst;
   assert(mrb == _mrb);
-
-  mrb_value comp_class_v = mrb_obj_value(mrb_class(mrb, self));
-  ruby::ruby_value comp_name;
-  comp_name = mrb_iv_get(mrb, comp_class_v, 
-                         mrb_intern_cstr(mrb, "component_name"));
 
   mrb_value data_hash;
   mrb_get_args(mrb, "H", &data_hash);
@@ -240,7 +235,7 @@ static Component *rb_component_get_ptr(mrb_state *mrb, mrb_value self)
   Component *component;
   if (self.tt == MRB_TT_DATA)
   {
-    component = (Component *)((RData *)self.value.p)->data;
+    component = static_cast<Component *>(static_cast<RData *>(self.value.p)->data);
   }
   else
   {
@@ -253,7 +248,7 @@ static Component *rb_component_get_ptr(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
 {
-  auto& mrb = *mrb_inst;
+  auto &mrb = *mrb_inst;
   assert(mrb == _mrb);
 
   Component *component = rb_component_get_ptr(mrb, self);
@@ -265,10 +260,10 @@ static mrb_value rb_component_get_owner(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
 {
-  auto& mrb = *mrb_inst;
+  auto &mrb = *mrb_inst;
   assert(mrb == _mrb);
-  
-  RubyComponent *component = (RubyComponent *) rb_component_get_ptr(mrb, self);
+
+  RubyComponent *component = static_cast<RubyComponent *>(rb_component_get_ptr(mrb, self));
 
   mrb_sym event_sym, handler_sym;
   mrb_get_args(mrb, "nn", &event_sym, &handler_sym);
@@ -282,7 +277,7 @@ static mrb_value rb_component_register_event(mrb_state *_mrb, mrb_value self)
 
 static mrb_value rb_component_remove_event(mrb_state *mrb, mrb_value self)
 {
-  RubyComponent *component = (RubyComponent *) rb_component_get_ptr(mrb, self);
+  RubyComponent *component = static_cast<RubyComponent *>(rb_component_get_ptr(mrb, self));
 
   mrb_sym event_sym;
   mrb_get_args(mrb, "n", &event_sym);
@@ -303,8 +298,8 @@ ruby::ruby_class Component::GetComponentRClass()
 
   if (init)
     return comp_class;
-  
-  auto& engine = *ruby::ruby_engine::global_engine;
+
+  auto &engine = *ruby::ruby_engine::global_engine;
   comp_class = engine.define_class("ComponentBase");
 
   comp_class.define_class_method("register_component",
@@ -329,17 +324,15 @@ ruby::ruby_module Component::GetComponentRModule()
   THREAD_EXCLUSIVE_SCOPE;
 
   static bool init = false;
-  auto& engine = *ruby::ruby_engine::global_engine;
+  auto &engine = *ruby::ruby_engine::global_engine;
 
   if (init)
   {
     return engine.get_module("Components");
   }
-  else
-  {
-    init = true;
-    return engine.define_module("Components");
-  }
+  
+  init = true;
+  return engine.define_module("Components");
 }
 
 // ----------------------------------------------------------------------------

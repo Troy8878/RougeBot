@@ -29,7 +29,7 @@ CustomModelComponent::~CustomModelComponent()
 
 // ----------------------------------------------------------------------------
 
-void CustomModelComponent::Initialize(Entity *owner, const std::string& name)
+void CustomModelComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -67,13 +67,13 @@ CustomModelComponentFactory::CustomModelComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-auto CustomModelComponentFactory::CreateObject(void *memory, component_factory_data& data) 
-  -> Component *
+auto CustomModelComponentFactory::CreateObject(void *memory, component_factory_data &data)
+-> Component *
 {
   auto shader = RegisteredShaders[map_fetch(data, "shader", "Basic").as_string()];
   auto set = RenderGroup::Instance.GetSet(data["render_target"].as_string());
 
-  return new (memory) CustomModelComponent(shader, set);
+  return new(memory) CustomModelComponent(shader, set);
 }
 
 // ----------------------------------------------------------------------------

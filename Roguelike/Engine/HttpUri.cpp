@@ -15,14 +15,14 @@ HttpUri::HttpUri()
 
 // ----------------------------------------------------------------------------
 
-HttpUri::HttpUri(const std::string& uri)
+HttpUri::HttpUri(const std::string &uri)
   : HttpUri(Parse(uri))
 {
 }
 
 // ----------------------------------------------------------------------------
 
-std::string HttpUri::Encode(const std::string& str)
+std::string HttpUri::Encode(const std::string &str)
 {
   static std::locale loc;
   std::ostringstream buf;
@@ -42,21 +42,21 @@ std::string HttpUri::Encode(const std::string& str)
 
 // ----------------------------------------------------------------------------
 
-std::string HttpUri::Decode(const std::string& str)
+std::string HttpUri::Decode(const std::string &str)
 {
   std::ostringstream buf;
 
   const size_t size = str.size();
   for (size_t i = 0; i < size; ++i)
   {
-    const auto& c = str[i];
+    const auto &c = str[i];
 
     if (c == '%')
     {
       if (i + 2 >= size)
         break;
 
-      auto val = std::stoul(str.substr(i + 1, 2), 0, 16);
+      auto val = stoul(str.substr(i + 1, 2), nullptr, 16);
       buf << char(val);
 
       i += 2;
@@ -114,7 +114,7 @@ HttpUri HttpUri::Parse(std::string uri)
 
       size_t port_len = path_start - (port_start + 1);
       if (port_len != uri.npos)
-        result.Port = std::stoi(uri.substr(port_start + 1, port_len));
+        result.Port = stoi(uri.substr(port_start + 1, port_len));
     }
     else
     {
@@ -154,7 +154,7 @@ HttpUri HttpUri::Parse(std::string uri)
     result.Fragment = uri;
     return result;
   }
-  catch(...)
+  catch (...)
   {
     throw basic_exception("Malformed URI");
   }
@@ -205,4 +205,3 @@ std::string HttpUri::BuildPath() const
 }
 
 // ----------------------------------------------------------------------------
-

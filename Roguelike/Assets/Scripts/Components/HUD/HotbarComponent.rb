@@ -32,7 +32,7 @@ class HotbarComponent < ComponentBase
     holder = self.owner.local_find "ChildHolder"
     return if holder.children.empty?
     
-    holder.remove_child holder.children.last
+    holder.children.last.zombify!
   end
 
   def display_item(item)

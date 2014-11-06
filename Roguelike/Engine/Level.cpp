@@ -15,10 +15,10 @@ static BucketAllocator levelAllocator{sizeof(Level)};
 
 // ----------------------------------------------------------------------------
 
-Level *Level::CreateLevel(const std::string& def)
+Level *Level::CreateLevel(const std::string &def)
 {
   auto memory = levelAllocator.Allocate();
-  auto level = new (memory) Level;
+  auto level = new(memory) Level;
 
   mrb_gv_set(*mrb_inst, mrb_intern_lit(*mrb_inst, "GLOBAL_COMP_REGISTER"), mrb_hash_new(*mrb_inst));
 

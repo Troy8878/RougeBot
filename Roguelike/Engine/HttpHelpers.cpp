@@ -35,9 +35,9 @@ HttpHeaderCollection HttpHeaderCollection::ParseHeaders(const WCHAR *str)
   std::wistringstream input{str};
 
   std::wstring line;
-  std::getline(input, line); // Skip over the status code
+  getline(input, line); // Skip over the status code
 
-  while(std::getline(input, line))
+  while (getline(input, line))
   {
     line = chomp(line);
     if (line.empty())
@@ -49,7 +49,7 @@ HttpHeaderCollection HttpHeaderCollection::ParseHeaders(const WCHAR *str)
 
     auto set = collection[key];
     auto items = split(val, L';');
-    for (auto& item : items)
+    for (auto &item : items)
     {
       set.AddValue(chomp(narrow(item)));
     }
@@ -67,14 +67,14 @@ HttpHeaderCollection::HttpHeaderCollection()
 
 // ----------------------------------------------------------------------------
 
-HttpHeaderSet HttpHeaderCollection::operator[](const std::string& key)
+HttpHeaderSet HttpHeaderCollection::operator[](const std::string &key)
 {
   return HttpHeaderSet(key, &impl->headers[key]);
 }
 
 // ----------------------------------------------------------------------------
 
-const HttpHeaderSet HttpHeaderCollection::operator[](const std::string& key) const
+HttpHeaderSet HttpHeaderCollection::operator[](const std::string &key) const
 {
   return HttpHeaderSet(key, &impl->headers[key]);
 }
@@ -85,7 +85,7 @@ std::wstring HttpHeaderCollection::BuildList() const
 {
   std::wostringstream buf;
 
-  for (auto& pair : impl->headers)
+  for (auto &pair : impl->headers)
   {
     if (pair.first == "Accept")
       continue;
@@ -95,7 +95,7 @@ std::wstring HttpHeaderCollection::BuildList() const
     buf << widen(pair.first) << L": ";
 
     bool first = true;
-    for (auto& val : pair.second)
+    for (auto &val : pair.second)
     {
       if (first)
         first = false;
@@ -114,6 +114,7 @@ std::wstring HttpHeaderCollection::BuildList() const
 // ----------------------------------------------------------------------------
 
 auto HttpHeaderCollection::begin() -> map::iterator
+
 {
   return impl->headers.begin();
 }
@@ -121,17 +122,18 @@ auto HttpHeaderCollection::begin() -> map::iterator
 // ----------------------------------------------------------------------------
 
 auto HttpHeaderCollection::end() -> map::iterator
+
 {
   return impl->headers.end();
 }
 
 // ----------------------------------------------------------------------------
 
-void HttpHeaderSet::AddValue(const std::string& val)
+void HttpHeaderSet::AddValue(const std::string &val)
 {
   HttpHeaderEntry entry(key, val);
 
-  if (std::find(begin(), end(), entry) != end())
+  if (find(begin(), end(), entry) != end())
     return;
 
   items->push_back(entry);
@@ -139,10 +141,10 @@ void HttpHeaderSet::AddValue(const std::string& val)
 
 // ----------------------------------------------------------------------------
 
-void HttpHeaderSet::RemoveValue(const std::string& val)
+void HttpHeaderSet::RemoveValue(const std::string &val)
 {
   HttpHeaderEntry entry(key, val);
-  auto it = std::find(begin(), end(), entry);
+  auto it = find(begin(), end(), entry);
   if (it != end())
     items->erase(it);
 }

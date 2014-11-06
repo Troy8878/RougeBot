@@ -117,7 +117,7 @@ bool DelayAction::Update(float dt)
 
 #pragma region FunctionalAction
 
-FunctionalAction::FunctionalAction(const UpdateFunc& func)
+FunctionalAction::FunctionalAction(const UpdateFunc &func)
   : _func(func)
 {
 }
@@ -203,16 +203,16 @@ VectorEaseAction::VectorEaseAction(math::Vector *vect, math::Vector end,
   : _vect(vect), _begin(*vect), _end(end), _offset(_end - _begin),
     _time(time), _curr_time(0), _ease(mode)
 {
-  #pragma region Initialize Bouncing
+#pragma region Initialize Bouncing
   // Initialize bounce easing
   if (_ease == EASE_BOUNCE)
   {
     // Hardcoded for now, maybe I'll find a way to fix that later
     const float elasticity = 0.1f;
-    auto& bd = ed.bounce_data;
+    auto &bd = ed.bounce_data;
 
     bd.elasticity = elasticity;
-    bd.bounces = 
+    bd.bounces =
       int(log(BOUNCE_EPSILON / BOUNCE_HEIGHT) / log(elasticity));
 
     float totalDuration = 0.0f;
@@ -244,7 +244,7 @@ VectorEaseAction::VectorEaseAction(math::Vector *vect, math::Vector end,
 
     // Calculate acceleration
     float firstHalfDuration = bd.durations[0];
-    bd.acceleration = 
+    bd.acceleration =
       (2.0f * BOUNCE_HEIGHT) / (firstHalfDuration * firstHalfDuration);
 
     // Calculate Velocities
@@ -253,14 +253,14 @@ VectorEaseAction::VectorEaseAction(math::Vector *vect, math::Vector end,
       if (i == 0)
         bd.velocities[i] = 0.0f;
       else
-        bd.velocities[i] = 
+        bd.velocities[i] =
           bd.durations[i] / 2.0f * bd.acceleration;
     }
 
     // Now invert the acceleration to point "down"
     bd.acceleration = -bd.acceleration;
   }
-  #pragma endregion
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -269,14 +269,14 @@ bool VectorEaseAction::Update(float dt)
 {
   switch (_ease)
   {
-    case EASE_LINEAR:
-      return UpdateLinear(dt);
+  case EASE_LINEAR:
+    return UpdateLinear(dt);
 
-    case EASE_EXPONENTIAL:
-      return UpdateExponential(dt);
+  case EASE_EXPONENTIAL:
+    return UpdateExponential(dt);
 
-    case EASE_BOUNCE:
-      return UpdateBounce(dt);
+  case EASE_BOUNCE:
+    return UpdateBounce(dt);
   }
 
   return false;
@@ -292,11 +292,9 @@ bool VectorEaseAction::UpdateLinear(float dt)
     *_vect = _end;
     return false;
   }
-  else
-  {
-    *_vect = _begin + _offset * float(_curr_time / _time);
-    return true;
-  }
+
+  *_vect = _begin + _offset * float(_curr_time / _time);
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -309,11 +307,9 @@ bool VectorEaseAction::UpdateExponential(float dt)
     *_vect = _end;
     return false;
   }
-  else
-  {
-    *_vect = _begin + _offset * float(log(_curr_time + 1) / log(_time + 1));
-    return true;
-  }
+
+  *_vect = _begin + _offset * float(log(_curr_time + 1) / log(_time + 1));
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -326,12 +322,10 @@ bool VectorEaseAction::UpdateBounce(float dt)
     *_vect = _end;
     return false;
   }
-  else
-  {
-    float time = ed.bounce_data.value_at(float(_curr_time));
-    *_vect = _begin + _offset * time;
-    return true; 
-  }
+
+  float time = ed.bounce_data.value_at(float(_curr_time));
+  *_vect = _begin + _offset * time;
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -345,13 +339,13 @@ float VectorEaseAction::EaseData::BounceData::value_at(float progress)
 
   int index = 0;
   float total = 0;
-        
+
   while (index < bounces && progress > total + durations[index])
     total += durations[index++];
 
   progress -= total;
 
-  float height = 0.0f;
+  float height;
   if (index == 0)
   {
     height = BOUNCE_HEIGHT + acceleration * (progress * progress) / 2.0f;

@@ -13,7 +13,9 @@
 
 struct MrbHttpResult
 {
-  MrbHttpResult(const HttpResult& res) : result(res) { }
+  explicit MrbHttpResult(const HttpResult &res) : result(res)
+  {
+  }
 
   HttpResult result;
   mrb_value mrb_result;
@@ -33,7 +35,7 @@ struct MrbHttpClient
 
 struct HttpResultLineReader
 {
-  HttpResultLineReader(const HttpResultStream& stream)
+  HttpResultLineReader(const HttpResultStream &stream)
     : stream(stream)
   {
   }
@@ -42,6 +44,13 @@ struct HttpResultLineReader
 
   mrb_value next_line();
 };
+
+// ----------------------------------------------------------------------------
+
+mrb_value HttpResultLineReader::next_line()
+{
+  return mrb_nil_value();
+}
 
 // ----------------------------------------------------------------------------
 
@@ -74,12 +83,19 @@ mrb_data_type mrb_http_result_linereader_dt;
   }
 
 MRB_FREE_FUN(MrbHttpClient, http_client);
+
 MRB_FREE_FUN(HttpUri, http_uri);
+
 MRB_FREE_FUN(HttpHeaderCollection, http_headers);
+
 MRB_FREE_FUN(HttpHeaderSet, http_header_set);
+
 MRB_FREE_FUN(HttpRequest, http_request);
+
 MRB_FREE_FUN(HttpRequestBody, http_request_body);
+
 MRB_FREE_FUN(MrbHttpResult, http_result);
+
 MRB_FREE_FUN(HttpResultLineReader, http_result_linereader);
 
 #pragma endregion
@@ -94,14 +110,14 @@ static RClass *mrb_http_get_class_internal(mrb_state *mrb, RClass *outer, const 
 }
 
 template <typename... Path>
-static RClass *mrb_http_get_class_internal(mrb_state *mrb, RClass *outer, const char *next, Path&&... path)
+static RClass *mrb_http_get_class_internal(mrb_state *mrb, RClass *outer, const char *next, Path &&... path)
 {
   auto newouter = mrb_class_get_under(mrb, outer, next);
   return mrb_http_get_class_internal(mrb, newouter, path...);
 }
 
 template <typename... Path>
-static RClass *mrb_http_get_class(mrb_state *mrb, Path&&... path)
+static RClass *mrb_http_get_class(mrb_state *mrb, Path &&... path)
 {
   static auto module = mrb_module_get(mrb, "Http");
   return mrb_http_get_class_internal(mrb, module, path...);
@@ -193,19 +209,26 @@ static mrb_value mrb_http_uri_build_path(mrb_state *mrb, mrb_value self);
 #pragma endregion
 
 MrbHttpUriStringProp(Scheme, scheme);
+
 MrbHttpUriStringProp(Username, username);
+
 MrbHttpUriStringProp(Password, password);
+
 MrbHttpUriStringProp(Host, host);
-MrbHttpUriIntProp   (Port, port);
+
+MrbHttpUriIntProp (Port, port);
+
 MrbHttpUriStringProp(Path, path);
+
 MrbHttpUriStringProp(Query, query);
+
 MrbHttpUriStringProp(Fragment, fragment);
 
 #pragma endregion
 
 #pragma region Http::Headers
 
-static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection& headers);
+static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection &headers);
 
 static mrb_value mrb_http_headers_each(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self);
@@ -214,7 +237,7 @@ static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self);
 
 #pragma region Http::Headers::Set
 
-static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet& set);
+static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet &set);
 
 static mrb_value mrb_http_header_set_key(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_http_header_set_each(mrb_state *mrb, mrb_value self);
@@ -237,7 +260,7 @@ static mrb_value mrb_http_request_headers(mrb_state *mrb, mrb_value self);
 
 #pragma region Http::Request::Body
 
-static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody& body);
+static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody &body);
 
 static mrb_value mrb_http_request_body_json_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_http_request_body_string_set(mrb_state *mrb, mrb_value self);
@@ -263,14 +286,12 @@ static mrb_value mrb_http_result_failed_p(mrb_state *mrb, mrb_value self);
 #pragma region Http::Result::LineReader
 
 
-
 #pragma endregion
 
 // ----------------------------------------------------------------------------
 
 extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 {
-
 #pragma region Define classes
 
   MRB_INIT_DT(MrbHttpClient, http_client);
@@ -298,16 +319,16 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   auto client = mrb_define_class_under(mrb, http, "Client", mrb->object_class);
 
-  mrb_define_class_method(mrb, client, "new", 
+  mrb_define_class_method(mrb, client, "new",
                           mrb_http_client_new, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, client, "make_request", 
+  mrb_define_method(mrb, client, "make_request",
                     mrb_http_client_request, MRB_ARGS_REQ(1) | MRB_ARGS_BLOCK());
-  mrb_define_method(mrb, client, "update", 
+  mrb_define_method(mrb, client, "update",
                     mrb_http_client_update, MRB_ARGS_NONE());
 
 #pragma endregion
-  
+
 
 #pragma region Http::Uri
 
@@ -358,7 +379,7 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
   mrb_funcall(mrb, mrb_obj_value(header_set), "include", 1, mrb_obj_value(mrb_module_get(mrb, "Enumerable")));
 
 #pragma endregion
-  
+
 
 #pragma region Http::Request
 
@@ -377,17 +398,17 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, request_body, "new", mrb_nop, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, request_body, "json=", 
+  mrb_define_method(mrb, request_body, "json=",
                     mrb_http_request_body_json_set, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, request_body, "string=", 
+  mrb_define_method(mrb, request_body, "string=",
                     mrb_http_request_body_string_set, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, request_body, "form=", 
+  mrb_define_method(mrb, request_body, "form=",
                     mrb_http_request_body_form_set, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, request_body, "content_type=",
                     mrb_http_request_body_type_set, MRB_ARGS_REQ(1));
 
 #pragma endregion
-  
+
 
 #pragma region Http::Result
 
@@ -412,7 +433,6 @@ extern "C" void mrb_mruby_http_init(mrb_state *mrb)
   mrb_define_class_method(mrb, result_linereader, "new", mrb_nop, MRB_ARGS_NONE());
 
 #pragma endregion
-
 }
 
 // ----------------------------------------------------------------------------
@@ -427,7 +447,7 @@ void MrbHttpClient::Update(mrb_state *mrb, mrb_value self)
   for (mrb_int i = 0; i < mrb_ary_len(mrb, queue); ++i)
   {
     auto mrb_result = mrb_ary_entry(queue, i);
-    auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, mrb_result, &mrb_http_result_dt);
+    auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, mrb_result, &mrb_http_result_dt));
 
     if (result.result.HasFailed || result.result.HasData)
     {
@@ -463,9 +483,9 @@ static mrb_value mrb_http_client_request(mrb_state *mrb, mrb_value self)
   mrb_value request_v;
   mrb_value block = mrb_nil_value();
   mrb_get_args(mrb, "o|&", &request_v, &block);
-  
-  auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
-  auto& request = *(HttpRequest *) mrb_data_get_ptr(mrb, request_v, &mrb_http_request_dt);
+
+  auto &client = *static_cast<MrbHttpClient *>(mrb_data_get_ptr(mrb, self, &mrb_http_client_dt));
+  auto &request = *static_cast<HttpRequest *>(mrb_data_get_ptr(mrb, request_v, &mrb_http_request_dt));
 
   auto result = client.client.MakeRequest(request);
   auto mresult = new MrbHttpResult(result);
@@ -492,7 +512,7 @@ static mrb_value mrb_http_client_request(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_client_update(mrb_state *mrb, mrb_value self)
 {
-  auto& client = *(MrbHttpClient *) mrb_data_get_ptr(mrb, self, &mrb_http_client_dt);
+  auto &client = *static_cast<MrbHttpClient *>(mrb_data_get_ptr(mrb, self, &mrb_http_client_dt));
 
   client.Update(mrb, self);
 
@@ -512,7 +532,7 @@ static mrb_value mrb_http_uri_new(mrb_state *mrb, mrb_value)
   mrb_value str = mrb_nil_value();
   mrb_get_args(mrb, "|S", &str);
 
-  auto uri = mrb_nil_p(str)? new HttpUri() : new HttpUri(mrb_str_to_stdstring(str));
+  auto uri = mrb_nil_p(str) ? new HttpUri() : new HttpUri(mrb_str_to_stdstring(str));
   auto obj = mrb_data_object_alloc(mrb, uri_c, uri, &mrb_http_uri_dt);
   return mrb_obj_value(obj);
 }
@@ -550,7 +570,7 @@ static mrb_value mrb_http_uri_inspect(mrb_state *mrb, mrb_value self)
 
   buf << ">";
   auto uristr = buf.str();
-  
+
   return mrb_str_new(mrb, uristr.c_str(), uristr.size());
 }
 
@@ -576,7 +596,7 @@ static mrb_value mrb_http_uri_build_path(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Headers
 
-static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection& headers)
+static mrb_value mrb_http_headers_new(mrb_state *mrb, const HttpHeaderCollection &headers)
 {
   static auto headers_c = mrb_http_get_class(mrb, "Headers");
 
@@ -599,9 +619,9 @@ static mrb_value mrb_http_headers_each(mrb_state *mrb, mrb_value self)
     return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
   }
 
-  auto& headers = *(HttpHeaderCollection *) mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt);
+  auto &headers = *static_cast<HttpHeaderCollection *>(mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt));
 
-  for (auto& pair : headers)
+  for (auto &pair : headers)
   {
     mrb_yield(mrb, block, mrb_http_header_set_new(mrb, headers[pair.first]));
   }
@@ -613,8 +633,8 @@ static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self)
 {
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
-  
-  auto& headers = *(HttpHeaderCollection *) mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt);
+
+  auto &headers = *static_cast<HttpHeaderCollection *>(mrb_data_get_ptr(mrb, self, &mrb_http_headers_dt));
 
   return mrb_http_header_set_new(mrb, headers[mrb_str_to_stdstring(str)]);
 }
@@ -625,7 +645,7 @@ static mrb_value mrb_http_headers_get(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Headers::Set
 
-static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet& set)
+static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet &set)
 {
   static auto set_c = mrb_http_get_class(mrb, "Headers", "Set");
 
@@ -639,7 +659,7 @@ static mrb_value mrb_http_header_set_new(mrb_state *mrb, const HttpHeaderSet& se
 
 static mrb_value mrb_http_header_set_key(mrb_state *mrb, mrb_value self)
 {
-  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  auto &set = *static_cast<HttpHeaderSet *>(mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt));
   return mrb_str_new(mrb, set.Key.c_str(), set.Key.size());
 }
 
@@ -658,9 +678,9 @@ static mrb_value mrb_http_header_set_each(mrb_state *mrb, mrb_value self)
     return mrb_funcall_argv(mrb, self, to_enum, 1, &each);
   }
 
-  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  auto &set = *static_cast<HttpHeaderSet *>(mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt));
 
-  for (auto& item : set)
+  for (auto &item : set)
   {
     mrb_yield(mrb, block, mrb_str_new(mrb, item.Value.c_str(), item.Value.size()));
   }
@@ -675,7 +695,7 @@ static mrb_value mrb_http_header_set_add(mrb_state *mrb, mrb_value self)
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
 
-  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  auto &set = *static_cast<HttpHeaderSet *>(mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt));
   set.AddValue(mrb_str_to_stdstring(str));
 
   return mrb_nil_value();
@@ -688,7 +708,7 @@ static mrb_value mrb_http_header_set_remove(mrb_state *mrb, mrb_value self)
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
 
-  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  auto &set = *static_cast<HttpHeaderSet *>(mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt));
   set.RemoveValue(mrb_str_to_stdstring(str));
 
   return mrb_nil_value();
@@ -698,7 +718,7 @@ static mrb_value mrb_http_header_set_remove(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_header_set_clear(mrb_state *mrb, mrb_value self)
 {
-  auto& set = *(HttpHeaderSet *) mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt);
+  auto &set = *static_cast<HttpHeaderSet *>(mrb_data_get_ptr(mrb, self, &mrb_http_header_set_dt));
   set.Clear();
 
   return mrb_nil_value();
@@ -727,10 +747,10 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
   }
   else
   {
-    cpp_uri = *(HttpUri *)mrb_data_get_ptr(mrb, uri, &mrb_http_uri_dt);
+    cpp_uri = *static_cast<HttpUri *>(mrb_data_get_ptr(mrb, uri, &mrb_http_uri_dt));
   }
 
-  auto request = new HttpRequest(cpp_uri, (HttpMethod) verb);
+  auto request = new HttpRequest(cpp_uri, static_cast<HttpMethod>(verb));
   auto obj = mrb_data_object_alloc(mrb, req_c, request, &mrb_http_request_dt);
   auto req = mrb_obj_value(obj);
 
@@ -746,7 +766,7 @@ static mrb_value mrb_http_request_new(mrb_state *mrb, mrb_value)
 
 static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self)
 {
-  auto& request = *(HttpRequest *)mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+  auto &request = *static_cast<HttpRequest *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_dt));
   return mrb_http_request_body_new(mrb, request.Body);
 }
 
@@ -754,7 +774,7 @@ static mrb_value mrb_http_request_body(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_request_headers(mrb_state *mrb, mrb_value self)
 {
-  auto& request = *(HttpRequest *)mrb_data_get_ptr(mrb, self, &mrb_http_request_dt);
+  auto &request = *static_cast<HttpRequest *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_dt));
   return mrb_http_headers_new(mrb, request.Headers);
 }
 
@@ -764,7 +784,7 @@ static mrb_value mrb_http_request_headers(mrb_state *mrb, mrb_value self)
 
 #pragma region Http::Request::Body
 
-static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody& body)
+static mrb_value mrb_http_request_body_new(mrb_state *mrb, const HttpRequestBody &body)
 {
   static auto body_c = mrb_http_get_class(mrb, "Request", "Body");
 
@@ -786,12 +806,12 @@ static mrb_value mrb_http_request_body_json_set(mrb_state *mrb, mrb_value self)
   {
     jval = mrb_inst->value_to_json(data);
   }
-  catch(std::exception& ex)
+  catch (std::exception &ex)
   {
     mrb_raise(mrb, mrb->eException_class, ex.what());
   }
 
-  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+  auto &body = *static_cast<HttpRequestBody *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt));
   body.SetJson(jval);
 
   return mrb_nil_value();
@@ -803,10 +823,10 @@ static mrb_value mrb_http_request_body_string_set(mrb_state *mrb, mrb_value self
 {
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
-  
-  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+
+  auto &body = *static_cast<HttpRequestBody *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt));
   body.SetString(mrb_str_to_stdstring(str));
-  
+
   return mrb_nil_value();
 }
 
@@ -822,7 +842,7 @@ static mrb_value mrb_http_request_body_form_set(mrb_state *mrb, mrb_value self)
   {
     jval = mrb_inst->value_to_json(data);
   }
-  catch(std::exception& ex)
+  catch (std::exception &ex)
   {
     mrb_raise(mrb, mrb->eException_class, ex.what());
   }
@@ -832,8 +852,8 @@ static mrb_value mrb_http_request_body_form_set(mrb_state *mrb, mrb_value self)
     jval = json::value(std::_Noinit);
     mrb_raise(mrb, mrb->eException_class, "Form must be a Hash containing Strings");
   }
-  
-  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+
+  auto &body = *static_cast<HttpRequestBody *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt));
   body.SetForm(jval.as_object_of<json::value::string_t>());
 
   return mrb_nil_value();
@@ -845,10 +865,10 @@ static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self)
 {
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
-  
-  auto& body = *(HttpRequestBody *)mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt);
+
+  auto &body = *static_cast<HttpRequestBody *>(mrb_data_get_ptr(mrb, self, &mrb_http_request_body_dt));
   body.SetContentType(mrb_str_to_stdstring(str));
-  
+
   return mrb_nil_value();
 }
 
@@ -860,7 +880,7 @@ static mrb_value mrb_http_request_body_type_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_headers(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
   return mrb_http_headers_new(mrb, result.result.Headers);
 }
 
@@ -868,7 +888,7 @@ static mrb_value mrb_http_result_headers(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_as_json(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
   auto json = result.result.AsJson;
 
   return mrb_inst->json_to_value(json);
@@ -878,12 +898,12 @@ static mrb_value mrb_http_result_as_json(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_as_string(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
 
   if (result.result.HasFailed)
     mrb_raise(mrb, mrb->eException_class, "HTTP Request failed, cannot get data");
 
-  auto& str = *result.result.AsString;
+  auto &str = *result.result.AsString;
   return mrb_str_new(mrb, str.c_str(), str.size());
 }
 
@@ -891,7 +911,7 @@ static mrb_value mrb_http_result_as_string(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_headers_p(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
   return mrb_bool_value(result.result.HasHeaders);
 }
 
@@ -899,7 +919,7 @@ static mrb_value mrb_http_result_headers_p(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_data_p(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
   return mrb_bool_value(result.result.HasData);
 }
 
@@ -907,7 +927,7 @@ static mrb_value mrb_http_result_data_p(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_http_result_failed_p(mrb_state *mrb, mrb_value self)
 {
-  auto& result = *(MrbHttpResult *) mrb_data_get_ptr(mrb, self, &mrb_http_result_dt);
+  auto &result = *static_cast<MrbHttpResult *>(mrb_data_get_ptr(mrb, self, &mrb_http_result_dt));
   return mrb_bool_value(result.result.HasFailed);
 }
 
@@ -916,7 +936,6 @@ static mrb_value mrb_http_result_failed_p(mrb_state *mrb, mrb_value self)
 // ----------------------------------------------------------------------------
 
 #pragma region Http::Result::LineReader
-
 
 
 #pragma endregion

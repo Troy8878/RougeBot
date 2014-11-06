@@ -23,7 +23,7 @@ ButtonComponent::ButtonComponent()
 
 // ----------------------------------------------------------------------------
 
-void ButtonComponent::Initialize(Entity *owner, const std::string& name)
+void ButtonComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -36,18 +36,18 @@ void ButtonComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void ButtonComponent::OnUpdate(Events::EventMessage&)
+void ButtonComponent::OnUpdate(Events::EventMessage &)
 {
 }
 
 // ----------------------------------------------------------------------------
 
-void ButtonComponent::OnProbe(Events::EventMessage& e)
+void ButtonComponent::OnProbe(Events::EventMessage &e)
 {
-  auto& probe = *e.GetData<ButtonProbeEvent>();
+  auto &probe = *e.GetData<ButtonProbeEvent>();
 
   auto mousepos = Input::Instance.GetMouseState().position;
-  
+
   // Button's Position = [transform] * [origin]
   auto position = Owner->Transform * DirectX::g_XMIdentityR3;
   // Normal = [transform] * [negative Z axis]
@@ -55,18 +55,18 @@ void ButtonComponent::OnProbe(Events::EventMessage& e)
 
   float distance;
 
-  #pragma region Calculate frame size
+#pragma region Calculate frame size
 
   using namespace DirectX;
   XMFLOAT3 frame[] =
-  {
-    {-Size.x / 2,  Size.y / 2, 0},
-    { Size.x / 2,  Size.y / 2, 0},
-    { Size.x / 2, -Size.y / 2, 0},
-  };
+    {
+      {-Size.x / 2, Size.y / 2, 0},
+      {Size.x / 2, Size.y / 2, 0},
+      {Size.x / 2, -Size.y / 2, 0},
+    };
   XMFLOAT3 oframe[ARRAYSIZE(frame)];
-  XMVector3TransformNormalStream(oframe, ARRAY_STRIDE(oframe), 
-                                 frame, ARRAY_STRIDE(frame), 
+  XMVector3TransformNormalStream(oframe, ARRAY_STRIDE(oframe),
+                                 frame, ARRAY_STRIDE(frame),
                                  ARRAYSIZE(frame), Owner->Transform);
 
   auto vbwidth = XMVector3Length(XMLoadFloat3(oframe + 0) - XMLoadFloat3(oframe + 1));
@@ -75,9 +75,9 @@ void ButtonComponent::OnProbe(Events::EventMessage& e)
   auto bwidth = XMVectorGetX(vbwidth);
   auto bheight = XMVectorGetX(vbheight);
 
-  #pragma endregion
+#pragma endregion
 
-  auto projection = ScreenToPlane(mousepos, position, normal, 
+  auto projection = ScreenToPlane(mousepos, position, normal,
                                   RenderTarget->RenderCamera, &distance);
 
   if (distance < 0)
@@ -90,8 +90,8 @@ void ButtonComponent::OnProbe(Events::EventMessage& e)
 
   math::Vector2D curpos = TrInverse * projection;
 
-  if (curpos.x > -bwidth  / 2 && curpos.x <  bwidth / 2 &&
-      curpos.y > -bheight / 2 && curpos.y < bheight / 2)
+  if (curpos.x > -bwidth / 2 && curpos.x < bwidth / 2 &&
+    curpos.y > -bheight / 2 && curpos.y < bheight / 2)
   {
     probe.bestMatch = Owner;
     probe.matchDistance = distance;
@@ -108,21 +108,21 @@ ButtonComponentFactory::ButtonComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *ButtonComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   auto set_name = data["render_target"].as_string();
   auto set = RenderGroup::Instance.GetSet(set_name);
 
   if (set == nullptr)
-    throw string_exception("Render Target '" + set_name + 
-                           "' could not be found while initializing SpriteComponent!");
+    throw string_exception("Render Target '" + set_name +
+      "' could not be found while initializing SpriteComponent!");
 
   math::Vector2D size = {1,1};
   auto size_arr = data["size"].as_array_of<json::value::number_t>();
   if (size_arr.size() == 2)
-    size = math::Vector2D { (float)size_arr[0], (float)size_arr[1] };
+    size = math::Vector2D{static_cast<float>(size_arr[0]), static_cast<float>(size_arr[1])};
 
-  auto *component = new (memory) ButtonComponent;
+  auto *component = new(memory) ButtonComponent;
 
   component->RenderTarget = set;
   component->Size = size;
@@ -175,7 +175,7 @@ static mrb_value mrb_button_new(mrb_state *mrb, ButtonComponent *button)
 
 static mrb_value mrb_button_size(mrb_state *mrb, mrb_value self)
 {
-  auto *button = (ButtonComponent *) mrb_data_get_ptr(mrb, self, &mrb_button_dt);
+  auto *button = static_cast<ButtonComponent *>(mrb_data_get_ptr(mrb, self, &mrb_button_dt));
   return ruby::wrap_memory_vector(&button->Size);
 }
 

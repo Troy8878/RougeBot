@@ -9,14 +9,14 @@
 
 // ----------------------------------------------------------------------------
 
-HttpRequest::HttpRequest(const HttpUri& uri, HttpMethod method)
+HttpRequest::HttpRequest(const HttpUri &uri, HttpMethod method)
 {
   impl = std::make_shared<HttpRequestImpl>(uri, method);
 }
 
 // ----------------------------------------------------------------------------
 
-HttpRequestImpl::HttpRequestImpl(const HttpUri& uri, HttpMethod method)
+HttpRequestImpl::HttpRequestImpl(const HttpUri &uri, HttpMethod method)
   : uri(uri), method(method)
 {
 }
@@ -43,14 +43,14 @@ void HttpRequest::_SetMethod(HttpMethod method)
 
 // ----------------------------------------------------------------------------
 
-HttpUri& HttpRequest::_GetUri()
+HttpUri &HttpRequest::_GetUri()
 {
   return impl->uri;
 }
 
 // ----------------------------------------------------------------------------
 
-const HttpUri& HttpRequest::_GetUri() const
+const HttpUri &HttpRequest::_GetUri() const
 {
   return impl->uri;
 }
@@ -75,15 +75,15 @@ void HttpRequestBody::SetJson(json::value jvalue)
 {
   impl->bodyType = HttpRequestBodyImpl::BODY_DATA;
   SetContentType("application/json");
-  WriteStream([jvalue](std::ostream& out)
-  {
-    jvalue.serialize(out);
-  });
+  WriteStream([jvalue](std::ostream &out)
+    {
+      jvalue.serialize(out);
+    });
 }
 
 // ----------------------------------------------------------------------------
 
-void HttpRequestBody::SetString(const std::string& str)
+void HttpRequestBody::SetString(const std::string &str)
 {
   auto shared = std::make_shared<std::string>(str);
   SetString(shared);
@@ -94,42 +94,42 @@ void HttpRequestBody::SetString(const std::string& str)
 void HttpRequestBody::SetString(HttpShared<std::string> str)
 {
   impl->bodyType = HttpRequestBodyImpl::BODY_DATA;
-  WriteStream([str](std::ostream& out)
-  {
-    out << str;
-  });
+  WriteStream([str](std::ostream &out)
+    {
+      out << str;
+    });
 }
 
 // ----------------------------------------------------------------------------
 
 void HttpRequestBody::SetForm(
-  const std::unordered_map<std::string, std::string>& data)
+  const std::unordered_map<std::string, std::string> &data)
 {
   auto shared = std::make_shared<const std::unordered_map<
     std::string, std::string>>(data);
 
   impl->bodyType = HttpRequestBodyImpl::BODY_DATA;
   SetContentType("application/x-www-form-urlencoded");
-  WriteStream([shared](std::ostream& out)
-  {
-    bool first = true;
-    for (auto& pair : *shared)
+  WriteStream([shared](std::ostream &out)
     {
-      if (first)
-        first = false;
-      else
-        out << "&";
+      bool first = true;
+      for (auto &pair : *shared)
+      {
+        if (first)
+          first = false;
+        else
+          out << "&";
 
-      out << pair.first;
-      out << "=";
-      out << HttpURLEscape(pair.second);
-    }
-  });
+        out << pair.first;
+        out << "=";
+        out << HttpURLEscape(pair.second);
+      }
+    });
 }
 
 // ----------------------------------------------------------------------------
 
-void HttpRequestBody::SetContentType(const std::string& type)
+void HttpRequestBody::SetContentType(const std::string &type)
 {
   impl->contentType = type;
 }

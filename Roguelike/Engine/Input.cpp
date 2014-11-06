@@ -32,82 +32,78 @@ void Input::Initialize()
   static Events::EventId updateId("update");
   SetHandler(updateId, &Input::OnUpdate);
 
-  auto& game = *GetGame();
+  auto &game = *GetGame();
 
-  game.SetProcHandler(WM_KILLFOCUS, [this](HWND, UINT, WPARAM, LPARAM, LRESULT&)
-  {
-    AllKeysUp();
-    AllMouseUp();
-  });
+  game.SetProcHandler(WM_KILLFOCUS, [this](HWND, UINT, WPARAM, LPARAM, LRESULT &)
+                                  {
+                                    AllKeysUp();
+                                    AllMouseUp();
+                                  });
 
-  game.SetProcHandler(WM_KEYDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
-  {
-    auto signal = TranslateSignal(msg, wp, lp);
-    OnKeyDown(signal);
-  });
+  game.SetProcHandler(WM_KEYDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
+                                {
+                                  auto signal = TranslateSignal(msg, wp, lp);
+                                  OnKeyDown(signal);
+                                });
 
-  game.SetProcHandler(WM_KEYUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT&)
-  {
-    auto signal = TranslateSignal(msg, wp, lp);
-    OnKeyUp(signal);
-  });
+  game.SetProcHandler(WM_KEYUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
+                              {
+                                auto signal = TranslateSignal(msg, wp, lp);
+                                OnKeyUp(signal);
+                              });
 
-  game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
-  {
-    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
-  });
+  game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
+                                  {
+                                    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+                                  });
 
   static const virtual_key mouse_buttons[] =
-  {
-    MK_LBUTTON,
-    MK_MBUTTON,
-    MK_RBUTTON,
-    MK_XBUTTON1,
-    MK_XBUTTON2
-  };
+    {
+      MK_LBUTTON,
+      MK_MBUTTON,
+      MK_RBUTTON,
+      MK_XBUTTON1,
+      MK_XBUTTON2
+    };
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
-  {
-    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+                       {
+                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-    for (auto bt : mouse_buttons)
-      if (wp & bt)
-        this->OnMouseDown(bt);
+                         for (auto bt : mouse_buttons)
+                           if (wp & bt)
+                             this->OnMouseDown(bt);
+                       }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
 
-  }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+                       {
+                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
-  {
-    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+                         for (auto bt : mouse_buttons)
+                           if (wp & bt)
+                             this->OnMouseUp(bt);
+                       }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
 
-    for (auto bt : mouse_buttons)
-      if (wp & bt)
-        this->OnMouseUp(bt);
+  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+                       {
+                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-  }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
-
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT&)
-  {
-    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
-
-    for (auto bt : mouse_buttons)
-      if (wp & bt)
-        this->OnDoubleClick(bt);
-
-  }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
+                         for (auto bt : mouse_buttons)
+                           if (wp & bt)
+                             this->OnDoubleClick(bt);
+                       }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
 }
 
 // ----------------------------------------------------------------------------
 
-void Input::OnKeyDown(const InputSignal& signal)
+void Input::OnKeyDown(const InputSignal &signal)
 {
-
-  KeyState *state = nullptr;
+  KeyState *state;
   if (signal.virtual_key < 0x100)
     state = &keyStates[signal.virtual_key];
   else
     state = &unicodeStates[signal.virtual_key];
-  
+
   if (state->down)
     return;
 
@@ -115,7 +111,7 @@ void Input::OnKeyDown(const InputSignal& signal)
   state->trigger_frame = GetGame()->Time.Frame;
   state->hold_time = 0;
   state->hold_time_buffer = 0;
-  
+
   DEF_EVENT_ID(key_down);
   RaiseKeyEvent(key_down, *state);
   DEF_EVENT_ID(key_held);
@@ -124,9 +120,9 @@ void Input::OnKeyDown(const InputSignal& signal)
 
 // ----------------------------------------------------------------------------
 
-void Input::OnKeyUp(const InputSignal& signal)
+void Input::OnKeyUp(const InputSignal &signal)
 {
-  KeyState *state = nullptr;
+  KeyState *state;
   if (signal.virtual_key < 0x100)
     state = &keyStates[signal.virtual_key];
   else
@@ -135,7 +131,7 @@ void Input::OnKeyUp(const InputSignal& signal)
 
   state->release_frame = GetGame()->Time.Frame;
   state->hold_time = 0;
-  
+
   DEF_EVENT_ID(key_up);
   RaiseKeyEvent(key_up, *state);
 }
@@ -144,7 +140,7 @@ void Input::OnKeyUp(const InputSignal& signal)
 
 void Input::AllKeysUp()
 {
-  for (auto& state : keyStates)
+  for (auto &state : keyStates)
   {
     if (state.down)
     {
@@ -153,9 +149,9 @@ void Input::AllKeysUp()
     }
   }
 
-  for (auto& pair : unicodeStates)
+  for (auto &pair : unicodeStates)
   {
-    auto& state = pair.second;
+    auto &state = pair.second;
 
     if (state.down)
     {
@@ -169,8 +165,8 @@ void Input::AllKeysUp()
 
 void Input::OnMouseMove(COORD position)
 {
-  mouse.position = math::Vector2D{(float)position.X, (float)position.Y};
-  
+  mouse.position = math::Vector2D{static_cast<float>(position.X), static_cast<float>(position.Y)};
+
   DEF_EVENT_ID(mouse_move);
   RaiseMouseEvent(mouse_move);
 }
@@ -212,13 +208,13 @@ void Input::OnDoubleClick(const virtual_key button)
 void Input::AllMouseUp()
 {
   virtual_key const buttons[] =
-  {
-    VK_LBUTTON,
-    VK_RBUTTON,
-    VK_MBUTTON,
-    VK_XBUTTON1,
-    VK_XBUTTON2
-  };
+    {
+      VK_LBUTTON,
+      VK_RBUTTON,
+      VK_MBUTTON ,
+      VK_XBUTTON1 ,
+      VK_XBUTTON2
+    };
 
   for (const auto button : buttons)
   {
@@ -229,7 +225,7 @@ void Input::AllMouseUp()
 
 // ----------------------------------------------------------------------------
 
-const KeyState& Input::GetKeyState(virtual_key key)
+const KeyState &Input::GetKeyState(virtual_key key)
 {
   KeyState *state;
   if (key < 0x100)
@@ -249,7 +245,7 @@ const KeyState& Input::GetKeyState(virtual_key key)
 
 // ----------------------------------------------------------------------------
 
-const MouseState& Input::GetMouseState()
+const MouseState &Input::GetMouseState()
 {
   return mouse;
 }
@@ -258,7 +254,7 @@ const MouseState& Input::GetMouseState()
 
 wchar_t Input::VKeyToChar(virtual_key key)
 {
-  return (wchar_t) MapVirtualKey(key, MAPVK_VK_TO_CHAR);
+  return static_cast<wchar_t>(MapVirtualKey(key, MAPVK_VK_TO_CHAR));
 }
 
 // ----------------------------------------------------------------------------
@@ -266,24 +262,24 @@ wchar_t Input::VKeyToChar(virtual_key key)
 InputSignal Input::TranslateSignal(UINT msg, WPARAM wParam, LPARAM)
 {
   InputSignal signal;
-  signal.virtual_key = (UINT) wParam;
-  signal.char_code = VKeyToChar((UINT) wParam);
+  signal.virtual_key = static_cast<UINT>(wParam);
+  signal.char_code = VKeyToChar(static_cast<UINT>(wParam));
   signal.down = msg == WM_KEYDOWN;
   return signal;
 }
 
 // ----------------------------------------------------------------------------
 
-void Input::OnUpdate(Events::EventMessage& e)
+void Input::OnUpdate(Events::EventMessage &e)
 {
   auto dt = e.GetData<Events::UpdateEvent>()->gameTime.Dt;
 
-  for (auto& state : keyStates)
+  for (auto &state : keyStates)
   {
     UpdateState(state, dt);
   }
 
-  for (auto& pair : unicodeStates)
+  for (auto &pair : unicodeStates)
   {
     UpdateState(pair.second, dt);
   }
@@ -291,7 +287,7 @@ void Input::OnUpdate(Events::EventMessage& e)
 
 // ----------------------------------------------------------------------------
 
-void Input::UpdateState(KeyState& state, double dt)
+void Input::UpdateState(KeyState &state, double dt)
 {
   if (state.down)
   {
@@ -314,7 +310,7 @@ void Input::UpdateState(KeyState& state, double dt)
 
 // ----------------------------------------------------------------------------
 
-void Input::RaiseKeyEvent(event_id id, KeyState& state)
+void Input::RaiseKeyEvent(event_id id, KeyState &state)
 {
   KeyStateEvent eventData{state};
   Events::EventMessage eventMsg{id, &eventData, true};

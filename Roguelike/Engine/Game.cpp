@@ -18,6 +18,7 @@
 // ----------------------------------------------------------------------------
 
 static Game *_gameInst;
+
 Game *GetGame()
 {
   return _gameInst;
@@ -25,7 +26,7 @@ Game *GetGame()
 
 // ----------------------------------------------------------------------------
 
-Game::Game(const std::string& title, HINSTANCE hInstance)
+Game::Game(const std::string &title, HINSTANCE hInstance)
   : BasicClassEventReciever(this), _title(title), _hInstance(hInstance)
 {
   GameLock.enter();
@@ -42,7 +43,7 @@ Game::Game(const std::string& title, HINSTANCE hInstance)
 // ----------------------------------------------------------------------------
 
 Game::~Game()
-{  
+{
   delete _respack;
 }
 
@@ -62,7 +63,7 @@ void Game::Run()
 
   try
   {
-    _graphicsDevice = GraphicsDevice::CreateGameWindow({_hInstance, {1280, 720}, _title});
+    _graphicsDevice = GraphicsDevice::CreateGameWindow({_hInstance,{1280, 720}, _title});
     GraphicsOnInit();
 
     RegisterEngineComponents();
@@ -74,16 +75,16 @@ void Game::Run()
       performance::register_guard glperf("Game Loop");
 
       _graphicsDevice->ProcessMessages();
-      
-      #if !PRODUCTION
+
+#if !PRODUCTION
       // Provide a window for other threads to do things to the engine
       // This will never need to happen in "Production" builds
       {
-          GameLock.leave();
-          Sleep(1);
-          GameLock.enter();
+        GameLock.leave();
+        Sleep(1);
+        GameLock.enter();
       }
-      #endif
+#endif
 
       // Update
       _gameTime.Update();
@@ -140,7 +141,7 @@ void Game::Run()
           performance::register_guard perf("draw event");
           Event::Raise(msg);
         }
-        
+
         performance::register_guard perf("drawing");
 
         // Do the draw
@@ -151,7 +152,7 @@ void Game::Run()
         {
           _graphicsDevice->DeviceContext->RSSetState(_graphicsDevice->WireframeState);
           _graphicsDevice->WireframeDraw = true;
-          
+
           RenderGroup::Instance.Draw(msg);
 
           _graphicsDevice->WireframeDraw = false;
@@ -166,7 +167,7 @@ void Game::Run()
       {
         Entity::ExecuteZombies();
       }
-      
+
       // Collect dat garbage
       {
         performance::register_guard perf("mruby garbage collection");
@@ -177,7 +178,7 @@ void Game::Run()
     OnFree();
   }
 #if !defined(_DEBUG)
-  catch (const basic_exception& ex)
+  catch (const basic_exception &ex)
   {
     std::stringstream buf;
     buf << "A fatal exception occurred: ";
@@ -185,20 +186,20 @@ void Game::Run()
     buf << '\n';
     ex.print_trace(buf);
 
-    MessageBox(NULL, buf.str().c_str(), NULL, MB_ICONERROR);
+    MessageBox(nullptr, buf.str().c_str(), nullptr, MB_ICONERROR);
   }
-  catch (const std::exception& ex)
+  catch (const std::exception &ex)
   {
     if (&ex == nullptr)
     {
-      MessageBox(NULL, "There is no hope, an exception is null...", NULL, MB_ICONERROR);
+      MessageBox(nullptr, "There is no hope, an exception is null...", nullptr, MB_ICONERROR);
       _exit(-1);
     }
 
     std::string message = "A fatal exception occurred: ";
     message += ex.what();
 
-    MessageBox(NULL, message.c_str(), NULL, MB_ICONERROR);
+    MessageBox(nullptr, message.c_str(), nullptr, MB_ICONERROR);
   }
 #else
   catch(void *) // please don't throw these >.>
@@ -218,37 +219,37 @@ void Game::SetProcHandler(UINT message, wndproc_callback callback)
 
 void Game::GraphicsOnInit()
 {
-  SetProcHandler(WM_SIZE, [this](HWND, UINT, WPARAM, LPARAM lparam, LRESULT&)
-  {
-    float nx = LOWORD(lparam);
-    float ny = HIWORD(lparam);
-    
-    GameDevice->SetSize({nx, ny});
+  SetProcHandler(WM_SIZE, [this](HWND, UINT, WPARAM, LPARAM lparam, LRESULT &)
+                        {
+                          float nx = LOWORD(lparam);
+                          float ny = HIWORD(lparam);
 
-    using namespace Events;
-    static EventId eventId("window_resize");
+                          GameDevice->SetSize({nx, ny});
 
-    RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};
-    EventMessage message{eventId, &data, false};
+                          using namespace Events;
+                          static EventId eventId("window_resize");
 
-    Event::Raise(message);
-  });
+                          RudimentaryEventWrapper<math::Vector2D> data{{nx, ny}};
+                          EventMessage message{eventId, &data, false};
+
+                          Event::Raise(message);
+                        });
 }
 
 // ----------------------------------------------------------------------------
 
-bool Game::LevelEventProxy::CanHandle(const Events::EventMessage& e)
+bool Game::LevelEventProxy::CanHandle(const Events::EventMessage &e)
 {
-  static auto& game = *GetGame();
+  static auto &game = *GetGame();
 
   return game._currentLevel && game._currentLevel->levelEvents.CanHandle(e);
 }
 
 // ----------------------------------------------------------------------------
 
-void Game::LevelEventProxy::Handle(Events::EventMessage& e)
+void Game::LevelEventProxy::Handle(Events::EventMessage &e)
 {
-  static auto& game = *GetGame();
+  static auto &game = *GetGame();
 
   game._currentLevel->levelEvents.Handle(e);
 }

@@ -946,7 +946,7 @@ struct MetaProperty
 
   void on_access(mrb_value obj) const
   {
-    static mrb_sym on_update = mrb_intern_lit(mrb, "on_update");
+    static mrb_sym on_update = mrb_intern_lit(mrb, "on_access");
     if (mrb_respond_to(mrb, obj, on_update))
     {
       mrb_funcall_argv(mrb, obj, on_update, 0, nullptr);

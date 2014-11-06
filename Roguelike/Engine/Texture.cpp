@@ -17,14 +17,14 @@ TextureManager TextureManager::Instance;
 
 // ----------------------------------------------------------------------------
 
-Texture2D::Texture2D(const std::shared_ptr<TextureResource>& resource)
+Texture2D::Texture2D(const std::shared_ptr<TextureResource> &resource)
   : _res(resource)
 {
 }
 
 // ----------------------------------------------------------------------------
 
-Texture2D::Texture2D(ID3D11Device *device, const std::string& asset)
+Texture2D::Texture2D(ID3D11Device *device, const std::string &asset)
   : Texture2D{device, ImageResource::fromAsset("Textures", asset)}
 {
 }
@@ -95,15 +95,15 @@ Texture2D Texture2D::GetNullTexture()
     return nullTexture;
 
   nullTexture = Texture2D
-  {
-    GetGame()->GameDevice->Device, 
-    ImageResource
     {
-      1, 1,
-      ImageResource::Format::RGBA,
-      {255, 255, 255, 255}
-    }
-  };
+      GetGame()->GameDevice->Device,
+      ImageResource
+      {
+        1, 1,
+        ImageResource::Format::RGBA,
+        {255, 255, 255, 255}
+      }
+    };
 
   nullTexture._res->name = "SPECIAL/NULL";
 
@@ -117,9 +117,9 @@ ID2D1BitmapBrush1 *Texture2D::To2DBrush()
 {
   if (!_res->device)
     return nullptr;
-  
+
   HRESULT hr;
-  auto& d2d = _res->device->D2D;
+  auto &d2d = _res->device->D2D;
 
   if (_res->brush && _res->brush_timestamp >= d2d.ResourceTimestamp)
     return _res->brush;
@@ -132,8 +132,8 @@ ID2D1BitmapBrush1 *Texture2D::To2DBrush()
 
   D2D1_BITMAP_PROPERTIES1 props =
     D2D1::BitmapProperties1(
-      D2D1_BITMAP_OPTIONS_NONE, 
-      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 
+      D2D1_BITMAP_OPTIONS_NONE,
+      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
       96, 96);
 
   ReleaseDXInterface(_res->bitmap);
@@ -185,7 +185,7 @@ TextureManager::TextureManager()
 
 // ----------------------------------------------------------------------------
 
-Texture2D TextureManager::LoadTexture(const std::string& asset)
+Texture2D TextureManager::LoadTexture(const std::string &asset)
 {
   auto it = _resources.find(asset);
   if (it != _resources.end())
@@ -196,10 +196,8 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
     {
       return Texture2D{strong_ref};
     }
-    else
-    {
-      _resources.erase(it);
-    }
+
+    _resources.erase(it);
   }
 
   auto device = GetGame()->GameDevice;
@@ -212,7 +210,8 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
   else if (asset.find("SPECIAL/SURFACE/") == 0)
   {
     std::string data{asset.begin() + asset.find_first_not_of("SPECIAL/SURFACE/"), asset.end()};
-    auto cpos = data.find(':'); (cpos);
+    auto cpos = data.find(':');
+    (cpos);
     assert(cpos + 1 < data.size());
 
     UINT width = std::stoul(std::string{data.begin(), data.begin() + cpos});
@@ -248,7 +247,7 @@ Texture2D TextureManager::LoadTexture(const std::string& asset)
 
 // ----------------------------------------------------------------------------
 
-bool TextureManager::IsTextureCached(const std::string& asset)
+bool TextureManager::IsTextureCached(const std::string &asset)
 {
   auto it = _resources.find(asset);
   return it != _resources.end() && !it->second.expired();
@@ -266,7 +265,7 @@ void Texture2D::TextureResource::ValidateSpecialSurface()
 
   HRESULT hr;
 
-  #pragma region Texture
+#pragma region Texture
 
   D3D11_TEXTURE2D_DESC td;
   td.ArraySize = 1;
@@ -284,9 +283,9 @@ void Texture2D::TextureResource::ValidateSpecialSurface()
   hr = device->Device->CreateTexture2D(&td, nullptr, &texture);
   CHECK_HRESULT(hr);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Shader Resource
+#pragma region Shader Resource
 
   D3D11_SHADER_RESOURCE_VIEW_DESC sdesc;
   sdesc.Format = td.Format;
@@ -297,17 +296,17 @@ void Texture2D::TextureResource::ValidateSpecialSurface()
   hr = device->Device->CreateShaderResourceView(texture, &sdesc, &resource);
   CHECK_HRESULT(hr);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region D2D Resource
+#pragma region D2D Resource
 
   hr = texture->QueryInterface(&surface);
   CHECK_HRESULT(hr);
 
   D2D1_BITMAP_PROPERTIES1 props =
     D2D1::BitmapProperties1(
-      D2D1_BITMAP_OPTIONS_TARGET, 
-      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 
+      D2D1_BITMAP_OPTIONS_TARGET,
+      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
       96, 96);
 
   hr = device->D2D.DeviceContext->CreateBitmapFromDxgiSurface(
@@ -318,12 +317,12 @@ void Texture2D::TextureResource::ValidateSpecialSurface()
 
   timestamp = clock::now();
 
-  #pragma endregion
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
 
-Texture2D Texture2D::FromTextureZip(TextureZip& zip)
+Texture2D Texture2D::FromTextureZip(TextureZip &zip)
 {
   // Just make a new Zip and point it to itself
   auto pZip = new TextureZip(zip);
@@ -336,25 +335,24 @@ Texture2D Texture2D::FromTextureZip(TextureZip& zip)
 Texture2D Texture2D::LoadTextureDefinition(json::value definition)
 {
   static std::unordered_map<std::string, Texture2D(*)(json::value)> constructors =
-  {
-    {"texture", Texture2D::ConstructTexture},
-    {"zipped", Texture2D::ConstructZipped}
-  };
+    {
+      {"texture", Texture2D::ConstructTexture},
+      {"zipped", Texture2D::ConstructZipped}
+    };
 
   if (definition.is(json::json_type::jobject))
   {
-    auto& obj = definition.as_object();
+    auto &obj = definition.as_object();
 
     assert(obj.size() == 1); // THERE CAN ONLY BE ONE!!1!
-    auto& pair = *obj.begin();
+    auto &pair = *obj.begin();
 
     return constructors[pair.first](pair.second);
   }
-  else // A single string must mean a single texture
-  {
-    assert(definition.is(json::json_type::jstring));
-    return ConstructTexture(definition);
-  }
+
+  // A single string must mean a single texture
+  assert(definition.is(json::json_type::jstring));
+  return ConstructTexture(definition);
 }
 
 // ----------------------------------------------------------------------------
@@ -378,7 +376,7 @@ Texture2D Texture2D::ConstructZipped(json::value definition)
 
 mrb_data_type mrb_texture_2d_dt;
 
-mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex);
+mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D &tex);
 
 static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value self);
 
@@ -397,10 +395,10 @@ extern "C" void mrb_mruby_texture_init(mrb_state *mrb)
   mrb_texture_2d_dt.struct_name = typeid(Texture2D).name();
 
   auto tex = mrb_define_class(mrb, "Texture", mrb->object_class);
-  
+
   mrb_define_class_method(mrb, tex, "new", mrb_texture_load, ARGS_REQ(1));
   mrb_define_class_method(mrb, tex, "load", mrb_texture_load, ARGS_REQ(1));
-  
+
   mrb_func_t get_name =
     ruby::data_getter_access_string<
       Texture2D, &mrb_texture_2d_dt,
@@ -423,7 +421,7 @@ extern "C" void mrb_mruby_texture_init(mrb_state *mrb)
 
 // ----------------------------------------------------------------------------
 
-mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D& tex)
+mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D &tex)
 {
   static auto tex_c = mrb_class_get(mrb, "Texture");
 
@@ -457,4 +455,3 @@ static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value)
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
-

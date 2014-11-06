@@ -54,6 +54,8 @@ private:
   bool _visible;
 
   static Model *GetSpriteModel();
+  void SpriteHide(Events::EventMessage&);
+  void SpriteShow(Events::EventMessage&);
 
 public:
   size_t _GetTextureCount() { return _texture ? _texture->TextureCount : 0; }

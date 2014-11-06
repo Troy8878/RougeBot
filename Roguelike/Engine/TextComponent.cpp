@@ -166,7 +166,7 @@ void TextComponent::DrawingResources::Draw()
     // Clear the buffer and draw the new content
     d2d.DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
     d2d.DeviceContext->FillRectangle(rect, bgBrush);
-    d2d.DeviceContext->DrawText(text.c_str(), (UINT) text.size(),
+    d2d.DeviceContext->DrawText(text.c_str(), static_cast<UINT>(text.size()),
                                 textFormat, rect, textBrush);
 
     HRESULT hr = d2d.EndDraw();
@@ -235,7 +235,7 @@ Component *TextComponentFactory::CreateObject(
     component->BGColor = StringToColor(it->second.as_string());
 
   component->Font = widen(data["font"].as_string());
-  component->FontSize = (FLOAT) map_fetch(data, "font_size", 48).as_number();
+  component->FontSize = static_cast<FLOAT>(map_fetch(data, "font_size", 48).as_number());
   
   auto& talign = data["text_align"].as_string();
   if (talign == "center")
@@ -259,7 +259,7 @@ Component *TextComponentFactory::CreateObject(
   if (it != data.end())
   {
     auto jsize = it->second.as_array_of<json::value::number_t>();
-    component->PopulateTextureComponent(D2D1::SizeF((FLOAT)jsize[0], (FLOAT)jsize[1]));
+    component->PopulateTextureComponent(D2D1::SizeF(static_cast<FLOAT>(jsize[0]), static_cast<FLOAT>(jsize[1])));
   }
 
   return component;
@@ -299,7 +299,7 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
   auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
 
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
-  mrb_define_method(mrb, rclass, "on_update", mrb_textcomp_on_update, ARGS_ANY());
+  mrb_define_method(mrb, rclass, "on_access", mrb_textcomp_on_update, ARGS_ANY());
   
   mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
   mrb_define_method(mrb, rclass, "get_text_at", mrb_textcomp_get_text_at, ARGS_REQ(1));
@@ -377,7 +377,7 @@ static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &index);
   
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
-  auto& text = tcomp->GetText((size_t) index);
+  auto& text = tcomp->GetText(static_cast<size_t>(index));
 
   return mrb_str_new(mrb, text.c_str(), text.size());
 }
@@ -393,7 +393,7 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto text = mrb_str_to_stdstring(str);
 
-  tcomp->SetText((size_t) index, text);
+  tcomp->SetText(static_cast<size_t>(index), text);
 
   return str;
 }
@@ -444,7 +444,7 @@ static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self)
 {
-  auto *tcomp = (TextComponent *) mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type);
+  auto *tcomp = static_cast<TextComponent *>(mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type));
   auto size = mrb_float_value(mrb, tcomp->FontSize);
   
   return size;
@@ -458,7 +458,7 @@ static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "f", &size);
   
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
-  tcomp->FontSize = (FLOAT) size;
+  tcomp->FontSize = static_cast<FLOAT>(size);
   
   return mrb_float_value(mrb, size);
 }
@@ -478,12 +478,12 @@ static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self)
   mrb_value rcolor;
   mrb_get_args(mrb, "o", &rcolor);
 
-  D2D1::ColorF color = D2D1::ColorF(0);
+  D2D1::ColorF color(0);
   if (mrb_string_p(rcolor))
   {
     color = StringToColor(mrb_str_to_stdstring(rcolor));
   }
-  else
+  else if (rcolor.tt == MRB_TT_DATA)
   {
     color = ruby::get_ruby_vector(rcolor);
   }
@@ -509,12 +509,12 @@ static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self)
   mrb_value rcolor;
   mrb_get_args(mrb, "o", &rcolor);
 
-  D2D1::ColorF color = D2D1::ColorF(0);
+  D2D1::ColorF color(0);
   if (mrb_string_p(rcolor))
   {
     color = StringToColor(mrb_str_to_stdstring(rcolor));
   }
-  else
+  else if (rcolor.tt == MRB_TT_DATA)
   {
     color = ruby::get_ruby_vector(rcolor);
   }

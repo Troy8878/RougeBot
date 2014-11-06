@@ -25,9 +25,13 @@ public:
   CustomModelComponent(Shader *shader, RenderSet *set);
   ~CustomModelComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
   void Draw() override;
-  void OnSetDestroyed() override { renderTarget = nullptr; }
+
+  void OnSetDestroyed() override
+  {
+    renderTarget = nullptr;
+  }
 
   PROPERTY(get = _GetCustomModel, put = _SetCustomModel) Model *CustomModel;
   IR_PROPERTY(Shader *, ModelShader);
@@ -40,19 +44,27 @@ private:
   TextureComponent *texture = nullptr;
 
 public:
-  inline Model *_GetCustomModel() const { return customModel; }
+  inline Model *_GetCustomModel() const
+  {
+    return customModel;
+  }
+
   void _SetCustomModel(Model *model);
 };
 
 // ----------------------------------------------------------------------------
 
-class CustomModelComponentFactory : public IComponentFactory
+class CustomModelComponentFactory final : public IComponentFactory
 {
 public:
   CustomModelComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

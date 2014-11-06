@@ -281,7 +281,7 @@ json::value ruby_engine::value_to_json(mrb_value value)
   }
   if (mrb_fixnum_p(value))
   {
-    return json::value::number((json::value::number_t) mrb_fixnum(value));
+    return json::value::number(static_cast<json::value::number_t>(mrb_fixnum(value)));
   }
   if (mrb_float_p(value))
   {

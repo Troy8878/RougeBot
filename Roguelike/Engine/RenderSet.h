@@ -28,7 +28,7 @@ __interface Drawable
 class RenderSet
 {
 public:
-  RenderSet(ICamera *camera, const std::string& name, int priority, std::type_index camtype);
+  RenderSet(ICamera *camera, const std::string &name, int priority, std::type_index camtype);
 
   void AddDrawable(Drawable *drawable, Shader *shader);
   void RemoveDrawable(Drawable *drawable);
@@ -43,20 +43,21 @@ public:
   struct DrawablePair
   {
     DrawablePair() = default;
+
     DrawablePair(Drawable *drawable, Shader *shader)
       : drawable(drawable), shader(shader)
     {
     }
-    
+
     Drawable *drawable = nullptr;
     Shader *shader = nullptr;
 
-    inline bool operator<(const DrawablePair& other)
+    inline bool operator<(const DrawablePair &other)
     {
       return shader < other.shader;
     }
   };
-  
+
 private:
   std::vector<DrawablePair> drawables;
 
@@ -69,19 +70,19 @@ class RenderGroup : public Events::BasicClassEventReciever<RenderGroup>
 {
 public:
   template <typename CameraType>
-  RenderSet *CreateSet(const std::string& name, CameraType *cam, int priority, bool perma);
-  RenderSet *GetSet(const std::string& name);
-  void RemoveSet(const std::string& name);
+  RenderSet *CreateSet(const std::string &name, CameraType *cam, int priority, bool perma);
+  RenderSet *GetSet(const std::string &name);
+  void RemoveSet(const std::string &name);
   void ClearSets();
 
   void Initialize();
 
-  void Draw(Events::EventMessage&);
+  void Draw(Events::EventMessage &);
 
   static RenderGroup Instance;
 
 private:
-  RenderSet *CreateSet(const std::string& name, ICamera *camera, 
+  RenderSet *CreateSet(const std::string &name, ICamera *camera,
                        std::type_index camtype, int pri, bool perma);
   RenderGroup();
 
@@ -94,11 +95,10 @@ private:
 // ----------------------------------------------------------------------------
 
 template <typename CameraType>
-RenderSet *RenderGroup::CreateSet(const std::string& name,
+RenderSet *RenderGroup::CreateSet(const std::string &name,
                                   CameraType *cam, int priority, bool perma)
 {
   return CreateSet(name, cam, typeid(CameraType), priority, perma);
 }
 
 // ----------------------------------------------------------------------------
-

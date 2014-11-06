@@ -17,10 +17,7 @@ public:
 
   ButtonManager();
 
-  void OnClick(Events::EventMessage& e);
-
-private:
-
+  void OnClick(Events::EventMessage &e);
 };
 
 // ----------------------------------------------------------------------------

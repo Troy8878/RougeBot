@@ -33,12 +33,12 @@ public:
   virtual bool BeginFrame() = 0;
   virtual void EndFrame() = 0;
 
-  static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions& options);
-  void CreateInputLayout(byte* bytecode,
+  static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions &options);
+  void CreateInputLayout(byte *bytecode,
                          UINT bytecodeSize,
-                         D3D11_INPUT_ELEMENT_DESC* layoutDesc,
+                         D3D11_INPUT_ELEMENT_DESC *layoutDesc,
                          UINT layoutDescNumElements,
-                         ID3D11InputLayout** layout);
+                         ID3D11InputLayout **layout);
 
   // 3D stuff
   IR_PROPERTY(IDXGISwapChain *, SwapChain);
@@ -75,6 +75,7 @@ public:
     void DrawTo(Texture2D texture);
     HRESULT EndDraw();
   };
+
   IR_PROPERTY(D2DData, D2D);
 
 protected:
@@ -104,7 +105,10 @@ class WindowDevice final : public GraphicsDevice
   math::Vector2D _size;
 
 public:
-  HWND GetContextWindow() override { return Window; }
+  HWND GetContextWindow() override
+  {
+    return Window;
+  }
 
   void SetSize(math::Vector2D newSize, bool overrideFullscreen = false) final override;
   math::Vector2D GetSize() const final override;
@@ -117,10 +121,10 @@ public:
   IR_PROPERTY(HWND, Window);
 
 private:
-  WindowDevice(const WindowCreationOptions& options);
+  explicit WindowDevice(const WindowCreationOptions &options);
   static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-  HWND InitializeWindow(const WindowCreationOptions& options);
+  HWND InitializeWindow(const WindowCreationOptions &options);
   LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
   friend class GraphicsDevice;
@@ -131,11 +135,12 @@ private:
 struct DisplayMode : public DXGI_MODE_DESC
 {
   DisplayMode() = default;
-  DisplayMode(const DXGI_MODE_DESC& mode);
+  explicit DisplayMode(const DXGI_MODE_DESC &mode);
 
-  DisplayMode& operator=(const DXGI_MODE_DESC& other) 
-  { 
-    DXGI_MODE_DESC::operator=(other); 
+  DisplayMode &operator=(const DXGI_MODE_DESC &other)
+  {
+    DXGI_MODE_DESC::operator=(other);
+    return *this;
   }
 };
 
@@ -145,20 +150,20 @@ struct DisplaySetting;
 
 struct DisplayOutput : public DXGI_OUTPUT_DESC
 {
-  DisplayOutput(IDXGIOutput *output);
+  explicit DisplayOutput(IDXGIOutput *output);
 
   std::vector<DisplayMode> DisplayModes;
 
-  void CreateResolutionList(std::vector<DisplaySetting>& settings);
+  void CreateResolutionList(std::vector<DisplaySetting> &settings);
 };
 
 // ----------------------------------------------------------------------------
 
 struct DisplayAdapter
 {
-  static void GetAdapters(std::vector<DisplayAdapter>& adapters);
-  
-  DisplayAdapter(IDXGIAdapter *dxgAdapter);
+  static void GetAdapters(std::vector<DisplayAdapter> &adapters);
+
+  explicit DisplayAdapter(IDXGIAdapter *dxgAdapter);
 
   std::vector<DisplayOutput> DisplayOutputs;
 };
@@ -167,8 +172,8 @@ struct DisplayAdapter
 
 struct DisplaySetting
 {
-  DisplaySetting(const DXGI_MODE_DESC& mode)
-    : Width(mode.Width), Height(mode.Height), Variants({mode})
+  explicit DisplaySetting(const DXGI_MODE_DESC &mode)
+    : Width(mode.Width), Height(mode.Height), Variants({DisplayMode(mode)})
   {
   }
 

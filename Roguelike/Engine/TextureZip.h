@@ -14,7 +14,7 @@
 class TextureZip
 {
 public:
-  TextureZip(const std::vector<std::string>& assets);
+  TextureZip(const std::vector<std::string> &assets);
 
   struct TextureMapping
   {
@@ -27,19 +27,25 @@ public:
   typedef std::unordered_map<std::string, TextureMapping> mapping_t;
 
   PROPERTY(get = _GetTexture) Texture2D Texture;
-  PROPERTY(get = _GetMappings) const mapping_t& Mappings;
+  PROPERTY(get = _GetMappings) const mapping_t &Mappings;
 
 private:
   Texture2D _texture;
   mapping_t _mappings;
 
-  TextureMapping PrintImageToBuffer(ImageResource& buffer, const ImageResource& image, 
+  TextureMapping PrintImageToBuffer(ImageResource &buffer, const ImageResource &image,
                                     UINT x, UINT y);
 
 public:
-  Texture2D _GetTexture() { return _texture; }
-  const mapping_t& _GetMappings() { return _mappings; }
+  Texture2D _GetTexture()
+  {
+    return _texture;
+  }
+
+  const mapping_t &_GetMappings()
+  {
+    return _mappings;
+  }
 };
 
 // ----------------------------------------------------------------------------
-

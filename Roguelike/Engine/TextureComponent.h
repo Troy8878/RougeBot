@@ -20,9 +20,9 @@ class TextureComponent : public Component
 public:
   TextureComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
-  PROPERTY(get = _GetTextures) const std::vector<Texture2D>& Textures;
+  PROPERTY(get = _GetTextures) const std::vector<Texture2D> &Textures;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
 
   void AddTexture(json::value definition);
@@ -36,22 +36,36 @@ private:
   std::vector<Texture2D> textures;
 
 public:
-  const std::vector<Texture2D>& _GetTextures() const { return textures; }
-  size_t _GetTextureCount() const { return textures.size(); }
+  const std::vector<Texture2D> &_GetTextures() const
+  {
+    return textures;
+  }
+
+  size_t _GetTextureCount() const
+  {
+    return textures.size();
+  }
 
   // For the sake of ruby
-  size_t _GetTextureCount() { return textures.size(); }
+  size_t _GetTextureCount()
+  {
+    return textures.size();
+  }
 };
 
 // ----------------------------------------------------------------------------
 
-class TextureComponentFactory : public IComponentFactory
+class TextureComponentFactory final : public IComponentFactory
 {
 public:
   TextureComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

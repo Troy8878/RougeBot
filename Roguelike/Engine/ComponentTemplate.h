@@ -22,7 +22,7 @@ class COMPONENTNAMEHEREComponent : public Component
 public:
   COMPONENTNAMEHEREComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
   mrb_value GetRubyWrapper() override;
 
@@ -31,13 +31,17 @@ public:
 
 // ----------------------------------------------------------------------------
 
-class COMPONENTNAMEHEREComponentFactory : public IComponentFactory
+class COMPONENTNAMEHEREComponentFactory final : public IComponentFactory
 {
 public:
   COMPONENTNAMEHEREComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

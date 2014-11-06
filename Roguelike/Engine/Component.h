@@ -79,9 +79,7 @@ public:
 __interface IComponentFactory
 {
   Component *CreateObject(void *memory, component_factory_data &data);
-
-  PROPERTY(get = _GetAllocator) IAllocator *Allocator;
-  IAllocator *_GetAllocator();
+  IAllocator *Allocator();
 };
 
 // ----------------------------------------------------------------------------
@@ -137,7 +135,7 @@ template <typename T>
 void RegisterStaticComponent(const std::string &name,
                              IComponentFactory *factory = &T::factory)
 {
-  ComponentRegistration registration{typeid(T), name, factory, factory->Allocator};
+  ComponentRegistration registration{typeid(T), name, factory, factory->Allocator()};
   ComponentManager::Instance.RegisterComponent(registration);
 
   auto prevfg = console::fg_color();

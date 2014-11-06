@@ -21,8 +21,7 @@
 
 namespace ruby
 {
-
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_engine;
   class ruby_class;
@@ -31,15 +30,15 @@ namespace ruby
   class ruby_func;
   class ruby_symbol_manager;
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_symbol_manager
   {
-    ruby_engine& engine;
+    ruby_engine &engine;
 
   public:
-    ruby_symbol_manager(ruby_engine& engine) 
-      : engine(engine) 
+    ruby_symbol_manager(ruby_engine &engine)
+      : engine(engine)
     {
     };
 
@@ -49,15 +48,15 @@ namespace ruby
     NO_ASSIGNMENT_OPERATOR(ruby_symbol_manager);
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_function_manager
   {
-    ruby_engine& engine;
+    ruby_engine &engine;
     mrb_value invokee;
 
   public:
-    ruby_function_manager(ruby_engine& engine, mrb_value invokee) 
+    ruby_function_manager(ruby_engine &engine, mrb_value invokee)
       : engine(engine), invokee(invokee)
     {
     };
@@ -68,7 +67,7 @@ namespace ruby
     NO_ASSIGNMENT_OPERATOR(ruby_function_manager);
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_engine
   {
@@ -82,13 +81,20 @@ namespace ruby
 
     const ruby_symbol_manager symbols;
 
-    ruby_engine(const ruby_engine&) = delete;
-    ruby_engine& operator=(const ruby_engine&) = delete;
+    ruby_engine(const ruby_engine &) = delete;
+    ruby_engine &operator=(const ruby_engine &) = delete;
 
-    inline mrb_state *mrb_handle() { return mrb; }
-    inline operator mrb_state *() { return mrb; }
+    inline mrb_state *mrb_handle()
+    {
+      return mrb;
+    }
 
-    bool evaluate_asset(const std::string& asset);
+    inline operator mrb_state *()
+    {
+      return mrb;
+    }
+
+    bool evaluate_asset(const std::string &asset);
 
     ruby_class define_class(const char *className, RClass *baseClass = nullptr);
     ruby_class get_class(const char *className);
@@ -102,7 +108,7 @@ namespace ruby
     void *unwrap_native_ptr(mrb_value value);
 
     template <typename MapType>
-    ruby_value hash_from_map(const MapType& map);
+    ruby_value hash_from_map(const MapType &map);
 
     json::value value_to_json(mrb_value value);
     json::value hash_to_json(mrb_value hash);
@@ -119,20 +125,27 @@ namespace ruby
     bool transient = false;
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_class
   {
   protected:
     ruby_engine *_engine;
     RClass *_class;
-    
+
   public:
     ruby_class() = default;
     ruby_class(ruby_engine *engine, RClass *_class);
 
-    inline RClass *mrb_handle() { return _class; }
-    inline operator RClass *() { return _class; }
+    inline RClass *mrb_handle()
+    {
+      return _class;
+    }
+
+    inline operator RClass *()
+    {
+      return _class;
+    }
 
     ruby_class get_class(const char *name);
 
@@ -148,7 +161,7 @@ namespace ruby
     ruby_value new_inst_argv(ruby_value (&values)[count]);
 
     template <typename... Args>
-    ruby_value new_inst(const Args&... args);
+    ruby_value new_inst(const Args &... args);
 
     PROPERTY(get = _GetFuncMgr) ruby_function_manager functions;
 
@@ -159,7 +172,7 @@ namespace ruby
     }
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_module : public ruby_class
   {
@@ -169,64 +182,84 @@ namespace ruby
     ruby_module get_module(const char *name);
 
     void define_module_method(const char *name, mrb_func_t func, mrb_aspec aspec);
-    
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_value : public mrb_value
   {
     ruby_engine *_engine;
 
   public:
-    ruby_value(const mrb_value& value = mrb_nil_value(), ruby_engine *engine = ruby_engine::global_engine);
+    ruby_value(const mrb_value &value = mrb_nil_value(), ruby_engine *engine = ruby_engine::global_engine);
     ~ruby_value();
 
-    ruby_value(ruby_value&& moving);
-    ruby_value& operator=(ruby_value&& moving);
+    ruby_value(ruby_value &&moving);
+    ruby_value &operator=(ruby_value &&moving);
 
     ruby_class get_class();
 
-    ruby_value& operator=(const mrb_value& value);
+    ruby_value &operator=(const mrb_value &value);
 
-    ruby_value& operator=(nullptr_t) { return set_mrbv(mrb_nil_value()); }
+    ruby_value &operator=(nullptr_t)
+    {
+      return set_mrbv(mrb_nil_value());
+    }
 
-    ruby_value& operator=(int64_t i) { return set_mrbv(mrb_fixnum_value(i)); }
-    ruby_value& operator=(int32_t i) { return set_mrbv(mrb_fixnum_value(i)); }
-    ruby_value& operator=(double f) { return set_mrbv(mrb_float_value(*_engine, f)); }
+    ruby_value &operator=(int64_t i)
+    {
+      return set_mrbv(mrb_fixnum_value(i));
+    }
+
+    ruby_value &operator=(int32_t i)
+    {
+      return set_mrbv(mrb_fixnum_value(i));
+    }
+
+    ruby_value &operator=(double f)
+    {
+      return set_mrbv(mrb_float_value(*_engine, f));
+    }
+
     operator int64_t();
     explicit operator int32_t();
     operator double();
     explicit operator float();
 
-    ruby_value& operator=(const char *string);
-    ruby_value& operator=(const std::string& string);
+    ruby_value &operator=(const char *string);
+    ruby_value &operator=(const std::string &string);
     operator const char *();
 
     operator std::vector<ruby_value>();
 
     // Json conversion
-    ruby_value& operator=(json::value jv) { return set_mrbv(_engine->json_to_value(jv)); }
+    ruby_value &operator=(json::value jv)
+    {
+      return set_mrbv(_engine->json_to_value(jv));
+    }
 
     // Custom class conversions
-    ruby_value& operator=(const math::Vector& vector);
-    ruby_value& operator=(const math::Vector2D& vector);
+    ruby_value &operator=(const math::Vector &vector);
+    ruby_value &operator=(const math::Vector2D &vector);
     operator math::Vector();
     operator math::Vector2D();
 
-    mrb_value silent_reset() 
-    { 
-      mrb_value c = *this; 
-      mrb_value::operator=(mrb_nil_value()); 
+    mrb_value silent_reset()
+    {
+      mrb_value c = *this;
+      mrb_value::operator=(mrb_nil_value());
       return c;
     }
 
     PROPERTY(get = _GetFuncMgr) ruby_function_manager functions;
 
-    inline bool is_nil() { return mrb_nil_p(*this); }
+    inline bool is_nil()
+    {
+      return mrb_nil_p(*this);
+    }
 
   private:
-    ruby_value& set_mrbv(const mrb_value& val);
+    ruby_value &set_mrbv(const mrb_value &val);
 
   public:
     ruby_function_manager _GetFuncMgr()
@@ -235,7 +268,7 @@ namespace ruby
     }
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_func
   {
@@ -252,10 +285,10 @@ namespace ruby
     ruby_value call_argv(const ruby_value *values, mrb_int num);
 
     template <typename... Args>
-    ruby_value call(const Args&... args);
+    ruby_value call(const Args &... args);
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   class ruby_gc_guard
   {
@@ -267,7 +300,7 @@ namespace ruby
     ~ruby_gc_guard();
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <mrb_int count>
   ruby_value ruby_class::new_inst_argv(ruby_value (&values)[count])
@@ -275,13 +308,13 @@ namespace ruby
     return new_inst_argv(values, count);
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <>
   ruby_value ruby_class::new_inst();
 
   template <typename... Args>
-  ruby_value ruby_class::new_inst(const Args&... args)
+  ruby_value ruby_class::new_inst(const Args &... args)
   {
     ruby_value values[sizeof...(args)];
 
@@ -290,17 +323,17 @@ namespace ruby
     return new_inst_argv(values);
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename MapType>
-  ruby_value ruby_engine::hash_from_map(const MapType& map)
+  ruby_value ruby_engine::hash_from_map(const MapType &map)
   {
     auto hash = mrb_hash_new(mrb);
 
     ruby_value key{mrb_nil_value(), this};
     ruby_value value{mrb_nil_value(), this};
 
-    for (auto& pair : map)
+    for (auto &pair : map)
     {
       key = pair.first;
       value = pair.second;
@@ -311,13 +344,13 @@ namespace ruby
     return ruby_value{hash, this};
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
-  template <> 
+  template <>
   ruby_value ruby_func::call();
 
   template <typename... Args>
-  ruby_value ruby_func::call(const Args&... args)
+  ruby_value ruby_func::call(const Args &... args)
   {
     ruby_value values[sizeof...(args)];
 
@@ -326,7 +359,7 @@ namespace ruby
     return call_argv(values, sizeof...(args));
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
 # define MRB_NATIVE_PTR_SAVED_SYM_NAME "___native_pointer___"
 
@@ -337,8 +370,8 @@ namespace ruby
     mrb_iv_set(mrb, self, ptr_sym, mrb_cptr_value(mrb, (void *) ptr));
   }
 
-// ----------------------------------------------------------------------------
-  
+  // ----------------------------------------------------------------------------
+
   template <typename T>
   T *read_native_ptr(mrb_state *mrb, mrb_value self)
   {
@@ -346,7 +379,7 @@ namespace ruby
     return reinterpret_cast<T *>(mrb_cptr(mrb_iv_get(mrb, self, ptr_sym)));
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename T>
   void data_scalar_delete(mrb_state *, void *data)
@@ -358,7 +391,7 @@ namespace ruby
   {
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename T>
   T *data_get(mrb_state *mrb, mrb_value value)
@@ -369,7 +402,7 @@ namespace ruby
     {
       auto badName = mrb_class_name(mrb, mrb_obj_class(mrb, value));
       mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
-                 mrb_str_new_cstr(mrb, badName), 
+                 mrb_str_new_cstr(mrb, badName),
                  mrb_str_new_cstr(mrb, correctName));
     }
 
@@ -379,24 +412,24 @@ namespace ruby
     if (strcmp(realName, correctName) != 0)
     {
       mrb_raisef(mrb, E_TYPE_ERROR, "wrong argument type %S (expected %S)",
-                 mrb_str_new_cstr(mrb, realName), 
+                 mrb_str_new_cstr(mrb, realName),
                  mrb_str_new_cstr(mrb, correctName));
     }
 
     return (T *) data->data;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
   mrb_value data_getter_access_integer(mrb_state *mrb, mrb_value self)
   {
     // Sorry, I couldn't resist trying them out (the emoji)
-    auto& obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
-    return mrb_fixnum_value((mrb_int) (obj.*MFP)());
+    auto &obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
+    return mrb_fixnum_value((mrb_int) (obj .* MFP)());
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
   mrb_value data_getter_access_string(mrb_state *mrb, mrb_value self)
@@ -406,11 +439,11 @@ namespace ruby
     if (obj == nullptr)
       return mrb_str_new(mrb, "", 0);
 
-    std::string val = static_cast<std::string>((obj->*MFP)());
+    std::string val = static_cast<std::string>((obj ->* MFP)());
     return mrb_str_new(mrb, val.c_str(), val.size());
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   inline mrb_int enumerable_length(mrb_state *mrb, mrb_value enumerable)
   {
@@ -418,7 +451,7 @@ namespace ruby
     return mrb_fixnum(mrb_funcall_argv(mrb, enumerable, length, 0, nullptr));
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   inline mrb_value enumerable_first(mrb_state *mrb, mrb_value enumerable)
   {
@@ -426,7 +459,7 @@ namespace ruby
     return mrb_funcall_argv(mrb, enumerable, first, 0, nullptr);
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   inline mrb_value enumerable_at(mrb_state *mrb, mrb_value enumerable, mrb_int index)
   {
@@ -437,7 +470,7 @@ namespace ruby
     {
       return mrb_ary_entry(enumerable, index);
     }
-    
+
     const mrb_value index_val = mrb_fixnum_value(index);
     if (mrb_respond_to(mrb, enumerable, subscript))
     {
@@ -452,7 +485,7 @@ namespace ruby
     mrb_raisef(mrb, mrb->eException_class, "%S is not an Enumerable object", enumerable);
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   struct mrb_ary_iter
   {
@@ -471,12 +504,12 @@ namespace ruby
       {
       }
 
-      bool operator==(const iterator& rhs) const
+      bool operator==(const iterator &rhs) const
       {
         return pos == rhs.pos;
       }
 
-      bool operator!=(const iterator& rhs) const
+      bool operator!=(const iterator &rhs) const
       {
         return pos != rhs.pos;
       }
@@ -486,13 +519,13 @@ namespace ruby
         return mrb_ary_entry(ary, pos);
       }
 
-      iterator& operator++()
+      iterator &operator++()
       {
         ++pos;
         return *this;
       }
 
-      iterator& operator--()
+      iterator &operator--()
       {
         --pos;
         return *this;
@@ -536,12 +569,11 @@ namespace ruby
     return mrb_ary_iter(mrb, ary);
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   extern mrb_data_type mrb_dt_native_ptr;
 
-// ----------------------------------------------------------------------------
-
+  // ----------------------------------------------------------------------------
 }
 
 // ----------------------------------------------------------------------------
@@ -569,5 +601,3 @@ extern bool mrb_debug_mbox;
   static ::mrb_value var##_v = mrb_symbol_value(var)
 
 // ----------------------------------------------------------------------------
-
-

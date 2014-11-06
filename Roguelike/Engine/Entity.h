@@ -26,7 +26,7 @@ class Entity;
 
 struct EventProxyList
 {
-  typedef std::function<void(Events::EventMessage&)> Func;
+  typedef std::function<void(Events::EventMessage &)> Func;
   std::unordered_map<Entity *, Func> maps;
 };
 
@@ -34,20 +34,20 @@ struct EventProxyList
 
 class Entity : public Events::EventReciever
 {
-  #pragma region Typedefs
+#pragma region Typedefs
 
 public:
 
-  typedef void(Component::*component_handler)(Events::EventMessage&);
-  
+  typedef void(Component::*component_handler)(Events::EventMessage &);
+
   template <typename T>
-  using derived_handler = void(T::*)(Events::EventMessage&);
-  
+  using derived_handler = void(T::*)(Events::EventMessage &);
+
   typedef std::unordered_map<Component *, component_handler> event_registrations;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Constructors and Properties
+#pragma region Constructors and Properties
 
 public:
 
@@ -63,7 +63,7 @@ public:
   PROPERTY(get = _GetName, put = _SetName) std::string Name;
   IRW_PROPERTY(math::Matrix, LocalTransform);
   IR_PROPERTY(math::Matrix, Transform);
-  
+
   void ApplyParentTransforms();
 
 private:
@@ -75,13 +75,21 @@ private:
   friend class BucketAllocator;
 
 public:
-  std::string& _GetName() { return _name; }
-  const std::string& _GetName() const { return _name; }
-  void _SetName(const std::string& name);
+  std::string &_GetName()
+  {
+    return _name;
+  }
 
-  #pragma endregion
+  const std::string &_GetName() const
+  {
+    return _name;
+  }
 
-  #pragma region Components
+  void _SetName(const std::string &name);
+
+#pragma endregion
+
+#pragma region Components
 
 public:
 
@@ -89,21 +97,21 @@ public:
     Initialize a new component for this entity with the
     given name and component factory data
   */
-  Component *AddComponent(const std::string& name, component_factory_data& data);
-  
+  Component *AddComponent(const std::string &name, component_factory_data &data);
+
   /**
     Destruct the component with the given name from this
     entity
   */
-  void RemoveComponent(const std::string& name);
-  
+  void RemoveComponent(const std::string &name);
+
   /**
     Returns the component on this entity with the given name
   */
-  Component *GetComponent(const std::string& name);
+  Component *GetComponent(const std::string &name);
 
   template <typename DerivedComponent>
-  DerivedComponent *GetComponent(const std::string& name)
+  DerivedComponent *GetComponent(const std::string &name)
   {
 #ifdef _DEBUG
     return dynamic_cast<DerivedComponent *>(GetComponent(name));
@@ -112,11 +120,11 @@ public:
 #endif
   }
 
-  PROPERTY(get = _GetComponents) const std::unordered_map<std::string, Component *>& Components;
+  PROPERTY(get = _GetComponents) const std::unordered_map<std::string, Component *> &Components;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Events
+#pragma region Events
 
 public:
 
@@ -124,17 +132,17 @@ public:
     Check if any of your components care about
     the eventId of this event message.
   */
-  bool CanHandle(const Events::EventMessage& e) override;
+  bool CanHandle(const Events::EventMessage &e) override;
   /**
     Dispatch this event to all of your components
     that are waiting for it.
   */
-  void Handle(Events::EventMessage& e) override;
-  
-  void LocalEvent(Events::EventMessage& e);
-  void RaiseEvent(Events::EventMessage& e);
-  void SinkEvent(Events::EventMessage& e);
-  
+  void Handle(Events::EventMessage &e) override;
+
+  void LocalEvent(Events::EventMessage &e);
+  void RaiseEvent(Events::EventMessage &e);
+  void SinkEvent(Events::EventMessage &e);
+
   /**
     This will be used when one of your components wants to
     connect to an event
@@ -164,9 +172,9 @@ private:
   std::unordered_map<event_id, EventProxyList> proxies;
   bool proxies_invalidated;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Children and Parents
+#pragma region Children and Parents
 
 public:
   IR_PROPERTY(Entity *, Parent);
@@ -193,25 +201,29 @@ public:
     Find an entity by exact match of a name.
     This search is case sensitive.
   */
-  Entity *FindEntity(const std::string& name);
+  Entity *FindEntity(const std::string &name);
 
-  Entity *LocalFind(const std::string& name);
+  Entity *LocalFind(const std::string &name);
 
   /**
     Finds entities by a full or partial match on their name.
   */
-  void SearchEntities(std::vector<Entity *>& results,
-                      const std::string& namePattern,
+  void SearchEntities(std::vector<Entity *> &results,
+                      const std::string &namePattern,
                       bool partialMatch = true);
   /**
     Finds entities by a partial match on their name.
     This search uses the passed regex for matching.
   */
-  void SearchEntities(std::vector<Entity *>& results, 
-                      const std::regex& namePattern);
+  void SearchEntities(std::vector<Entity *> &results,
+                      const std::regex &namePattern);
 
   PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
-  const std::vector<Entity *>& _GetChildren() { return children; }
+
+  const std::vector<Entity *> &_GetChildren()
+  {
+    return children;
+  }
 
   bool IsSelfOrChildOf(Entity *other)
   {
@@ -231,9 +243,9 @@ private:
 
   std::vector<Entity *> children;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Protected fields
+#pragma region Protected fields
 
 protected:
 
@@ -256,12 +268,16 @@ public:
     return _components;
   }
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Other fields and helpers
+#pragma region Other fields and helpers
 
 public:
-  entity_id _GetEntityId() { return _id; }
+  entity_id _GetEntityId()
+  {
+    return _id;
+  }
+
   mrb_value GetRubyWrapper();
 
 private:
@@ -276,22 +292,22 @@ private:
   friend static mrb_value rb_ent_inspect(mrb_state *mrb, mrb_value self);
   friend static mrb_value rb_ent_components(mrb_state *mrb, mrb_value self);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Actions
+#pragma region Actions
 
 public:
-  ActionManager& GetActionGroup();
-  ActionManager& GetActionSequence(mrb_sym id);
-  ActionManager& GetActionSequence(const char *name);
+  ActionManager &GetActionGroup();
+  ActionManager &GetActionSequence(mrb_sym id);
+  ActionManager &GetActionSequence(const char *name);
 
 private:
   ActionGroup _actionGroup;
   std::unordered_map<mrb_sym, ActionSequence *> _actionSequences;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Orphans
+#pragma region Orphans
 
 public:
   // Adds the entity to Death Row, and will be deleted next frame
@@ -302,8 +318,7 @@ public:
 private:
   bool zombified = false;
 
-  #pragma endregion
-
+#pragma endregion
 };
 
 // ----------------------------------------------------------------------------
@@ -313,15 +328,14 @@ typedef std::unordered_map<std::string, component_factory_data> entity_factory_d
 class EntityFactory
 {
 public:
-  static Entity *CreateEntity(const std::string& entdef, 
-                              const entity_factory_data& data,
+  static Entity *CreateEntity(const std::string &entdef,
+                              const entity_factory_data &data,
                               entity_id entid = UNASSIGNED_ENTITY_ID);
   static void DestroyEntity(Entity *entity);
 };
 
 // ----------------------------------------------------------------------------
 
-std::unordered_map<std::string, std::vector<std::string>>& GetComponentDependencies();
+std::unordered_map<std::string, std::vector<std::string>> &GetComponentDependencies();
 
 // ----------------------------------------------------------------------------
-

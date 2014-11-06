@@ -178,7 +178,7 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
   std::string comp_name = mrb_str_to_stdstring(comp_name_v);
 
   ComponentRegistration registration{typeid(RubyComponent), comp_name,
-    factory, factory->Allocator};
+    factory, factory->Allocator()};
   ComponentManager::Instance.RegisterComponent(registration);
 
 #pragma region Load additional dependencies

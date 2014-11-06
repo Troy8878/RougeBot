@@ -21,13 +21,13 @@ class TransformComponent;
 class PositionDisplayComponent : public Component
 {
 public:
-  PositionDisplayComponent(const std::string& entity, const std::wstring& font, 
+  PositionDisplayComponent(const std::string &entity, const std::wstring &font,
                            FLOAT fontSize);
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
-  void OnFirstUpdate(Events::EventMessage&);
-  void OnUpdate(Events::EventMessage&);
+  void OnFirstUpdate(Events::EventMessage &);
+  void OnUpdate(Events::EventMessage &);
 
   void DrawDisplay();
 
@@ -57,19 +57,26 @@ private:
     bool Validate();
     void Release();
 
-    ~DrawingResources() { Release(); }
+    ~DrawingResources()
+    {
+      Release();
+    }
   } drawing;
 };
 
 // ----------------------------------------------------------------------------
 
-class PositionDisplayComponentFactory : public IComponentFactory
+class PositionDisplayComponentFactory final : public IComponentFactory
 {
 public:
   PositionDisplayComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

@@ -19,8 +19,14 @@ class MapComponentFactory;
 class MapItem
 {
 public:
+  MapItem() = default;
+
   // Shapes that can be drawn.
-  enum Shapes{RECTANGLE, ELLIPSE};
+  enum Shapes
+  {
+    RECTANGLE,
+    ELLIPSE
+  };
 
   // Properties
   PROPERTY(get = _GetX, put = _SetX) int X;
@@ -35,14 +41,13 @@ public:
   void Validate();
   void Release();
   void Draw(float mapScale, mrb_int mapSize);
-  mrb_value GetRubyWrapper();
 
 private:
-  int _x = 0, _y = 0;                                           // Coordinates to draw at
-  D2D1::ColorF _color = D2D1::ColorF(D2D1::ColorF::Black);      // Color to draw
-  Shapes _shape = Shapes::RECTANGLE;                            // Shape to use
-  ID2D1Geometry *_geometry = 0;                                 // The Direct2D shape
-  ID2D1Brush *_brush = 0;                                       // The brush to use
+  int _x = 0, _y = 0; // Coordinates to draw at
+  D2D1::ColorF _color = D2D1::ColorF(D2D1::ColorF::Black); // Color to draw
+  Shapes _shape = Shapes::RECTANGLE; // Shape to use
+  ID2D1Geometry *_geometry = nullptr; // The Direct2D shape
+  ID2D1Brush *_brush = nullptr; // The brush to use
 
   typedef GraphicsDevice::D2DData::clock clock;
   // Timestamp which says when we last updated.
@@ -54,6 +59,7 @@ public:
   {
     return _x;
   }
+
   void _SetX(int x)
   {
     _x = x;
@@ -64,6 +70,7 @@ public:
   {
     return _y;
   }
+
   void _SetY(int y)
   {
     _y = y;
@@ -74,7 +81,8 @@ public:
   {
     return _color;
   }
-  void _SetColor(const D2D1::ColorF& color)
+
+  void _SetColor(const D2D1::ColorF &color)
   {
     _color = color;
     _timestamp = clock::from_time_t(0);
@@ -84,7 +92,8 @@ public:
   {
     return _shape;
   }
-  void _SetShape(const Shapes& shape)
+
+  void _SetShape(const Shapes &shape)
   {
     _shape = shape;
     _timestamp = clock::from_time_t(0);
@@ -109,11 +118,11 @@ public:
   MapComponent();
   ~MapComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
-  void OnUpdate(Events::EventMessage&);
+  void OnUpdate(Events::EventMessage &);
 
-  void OnMapUpdate(Events::EventMessage&);
+  void OnMapUpdate(Events::EventMessage &);
 
   void DrawMap();
 
@@ -137,7 +146,7 @@ private:
 
   // We need another Vector for everything that wants to be drawn.
   std::vector<MapItem *> _items;
-  
+
   // Drawing resources
   struct DrawingResources
   {
@@ -149,32 +158,34 @@ private:
 
     Brush *wallBrush = nullptr;
     Brush *playerBrush = nullptr;
-    
+
     bool Validate();
     void Release();
 
     // Deconstructor
-    ~DrawingResources() { Release(); }
-
+    ~DrawingResources()
+    {
+      Release();
+    }
   } _drawing;
-
 };
 
 // ----------------------------------------------------------------------------
 
-class MapComponentFactory : public IComponentFactory
+class MapComponentFactory final : public IComponentFactory
 {
 public:
   MapComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;
 };
 
 // ----------------------------------------------------------------------------
-
-
-

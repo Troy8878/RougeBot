@@ -13,7 +13,7 @@
 class HttpRequestImpl
 {
 public:
-  HttpRequestImpl(const HttpUri& uri, HttpMethod method);
+  HttpRequestImpl(const HttpUri &uri, HttpMethod method);
   ~HttpRequestImpl();
 
   HttpUri uri;
@@ -36,14 +36,14 @@ public:
   }
 
   ~HttpResultImpl();
-  
+
   template <typename ThreadFunc>
-  void Start(ThreadFunc&& func)
+  void Start(ThreadFunc &&func)
   {
     thread = std::thread(func);
     thread.detach();
   }
-  
+
   mutable critical_section lock;
   std::thread thread;
 
@@ -57,7 +57,6 @@ public:
   {
     HINTERNET server = nullptr;
     HINTERNET request = nullptr;
-
   } handles;
 
   HttpHeaderCollection headers;
@@ -87,11 +86,11 @@ public:
     HINTERNET session;
   } handles;
 
-  HttpResult PerformEmpty(const HttpRequest& request);
-  HttpResult PerformBody(const HttpRequest& request);
+  HttpResult PerformEmpty(const HttpRequest &request);
+  HttpResult PerformBody(const HttpRequest &request);
 
   static void AsyncWriteData(HttpClient client, HttpRequest request, HttpResult result);
-  
+
   static void AsyncBeginRequest(HttpClient client, HttpRequest request, HttpResult result);
   static void AsyncCompleteRequest(HttpClient client, HttpResult result);
 
@@ -115,7 +114,7 @@ public:
   {
     if (error)
       return;
-    
+
     WriteBuffer();
     WriteBuffer(true);
   }
@@ -190,10 +189,12 @@ public:
   {
     BODY_EMPTY,
     BODY_DATA
-
   } bodyType;
+
   std::string contentType;
-  HttpRequestBody::WriteFunc func = [](const std::ostream&){};
+  HttpRequestBody::WriteFunc func = [](const std::ostream &)
+  {
+  };
 };
 
 // ----------------------------------------------------------------------------

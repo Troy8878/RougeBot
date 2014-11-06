@@ -68,10 +68,10 @@ struct KeyState : InputSignal
   PROPERTY(get = _GetTriggered) bool triggered;
   PROPERTY(get = _GetReleased) bool released;
 
-  KeyState& operator=(const InputSignal& in)
-  { 
-    InputSignal::operator=(in); 
-    return *this; 
+  KeyState &operator=(const InputSignal &in)
+  {
+    InputSignal::operator=(in);
+    return *this;
   }
 
 private:
@@ -81,8 +81,15 @@ private:
   friend class Input;
 
 public:
-  bool _GetTriggered() { return trigger_frame == GetGame()->Time.Frame; };
-  bool _GetReleased() { return release_frame == GetGame()->Time.Frame; };
+  bool _GetTriggered()
+  {
+    return trigger_frame == GetGame()->Time.Frame;
+  };
+
+  bool _GetReleased()
+  {
+    return release_frame == GetGame()->Time.Frame;
+  };
 };
 
 // ----------------------------------------------------------------------------
@@ -94,8 +101,15 @@ struct MouseState
   UINT state;
   UINT lastButton;
 
-  bool ButtonDown(UINT button) { return !!(state & button); }
-  bool ButtonUp(UINT button) { return !(state & button); }
+  bool ButtonDown(UINT button)
+  {
+    return !!(state & button);
+  }
+
+  bool ButtonUp(UINT button)
+  {
+    return !(state & button);
+  }
 };
 
 #pragma endregion
@@ -108,7 +122,7 @@ struct KeyStateEvent : public Events::EventData
 {
   const KeyState *state;
 
-  KeyStateEvent(const KeyState& state)
+  KeyStateEvent(const KeyState &state)
     : state(&state)
   {
   }
@@ -126,7 +140,7 @@ struct MouseEvent : public Events::EventData
     : state(state)
   {
   }
-  
+
   mrb_value GetRubyWrapper() override;
 };
 
@@ -145,9 +159,9 @@ public:
   void Initialize();
 
   // Called when the game detects a keydown signal
-  void OnKeyDown(const InputSignal& signal);
+  void OnKeyDown(const InputSignal &signal);
   // Called when the game detects a keyup signal
-  void OnKeyUp(const InputSignal& signal);
+  void OnKeyUp(const InputSignal &signal);
   void AllKeysUp();
 
   void OnMouseMove(COORD position);
@@ -158,19 +172,19 @@ public:
   void AllMouseUp();
 
   // Gets the current state of the given virtual key
-  const KeyState& GetKeyState(virtual_key key);
+  const KeyState &GetKeyState(virtual_key key);
 
   // Given the Win32 message parameters, create a new
   // InputSignal with the proper fields set.
   static InputSignal TranslateSignal(UINT msg, WPARAM wParam, LPARAM lParam);
 
-  const MouseState& GetMouseState();
+  const MouseState &GetMouseState();
 
 private:
   // Handler for the update event
-  void OnUpdate(Events::EventMessage& e);
-  void UpdateState(KeyState& state, double dt);
-  void RaiseKeyEvent(event_id id, KeyState& state);
+  void OnUpdate(Events::EventMessage &e);
+  void UpdateState(KeyState &state, double dt);
+  void RaiseKeyEvent(event_id id, KeyState &state);
   void RaiseMouseEvent(event_id id);
 
   static wchar_t VKeyToChar(virtual_key key);
@@ -181,5 +195,3 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-
-

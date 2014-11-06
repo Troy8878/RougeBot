@@ -21,9 +21,9 @@ class ButtonComponent : public Component
 public:
   ButtonComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
-  void OnUpdate(Events::EventMessage&);
-  void OnProbe(Events::EventMessage& e);
+  void Initialize(Entity *owner, const std::string &name) override;
+  void OnUpdate(Events::EventMessage &);
+  void OnProbe(Events::EventMessage &e);
 
   RenderSet *RenderTarget;
   math::Vector Size;
@@ -35,13 +35,17 @@ public:
 
 // ----------------------------------------------------------------------------
 
-class ButtonComponentFactory : public IComponentFactory
+class ButtonComponentFactory final : public IComponentFactory
 {
 public:
   ButtonComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

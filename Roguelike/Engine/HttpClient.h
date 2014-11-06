@@ -418,11 +418,13 @@ public:
   }
 
   auto begin() -> decltype(items->begin())
+  
   {
     return items->begin();
   }
 
   auto end() -> decltype(items->end())
+  
   {
     return items->end();
   }
@@ -480,8 +482,8 @@ static inline std::string HttpURLEscape(const std::string &unescaped, bool escap
     {
       for (auto &uc : narrow({c}))
       {
-        out << std::hex << L'%' << std::setw(2) << std::setfill(L'0') 
-            << static_cast<unsigned>(static_cast<byte>(uc));
+        out << std::hex << L'%' << std::setw(2) << std::setfill(L'0')
+          << static_cast<unsigned>(static_cast<byte>(uc));
       }
     }
   }

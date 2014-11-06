@@ -18,15 +18,15 @@ public:
   const double minDt = 0;
   const double clock_period = clock::period::num / static_cast<double>(clock::period::den);
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   GameTime()
     : _Paused(false)
   {
   }
 
-// ----------------------------------------------------------------------------
-  
+  // ----------------------------------------------------------------------------
+
   IR_PROPERTY(double, Dt);
   IR_PROPERTY(uint64_t, Frame);
   IR_PROPERTY(clock::duration, TimeDiff);
@@ -34,8 +34,8 @@ public:
   PROPERTY(get = _GetRunningTime) clock::duration RunningTime;
   PROPERTY(get = _GetCurrFrameTime) double CurrFrameTime;
 
-// ----------------------------------------------------------------------------
-  
+  // ----------------------------------------------------------------------------
+
   void Update()
   {
     ++Frame;
@@ -55,31 +55,31 @@ public:
       Dt = 0;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   clock::duration _GetRunningTime() const
   {
     return _currTime - _initTime;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   double _GetCurrFrameTime() const
   {
     auto time = clock::now();
     auto diff = time - _currTime;
-    
+
     return diff.count() * clock_period;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
 private:
   const clock::time_point _initTime = clock::now();
   clock::time_point _prevTime = clock::now();
   clock::time_point _currTime = clock::now();
 
-  GameTime& operator=(const GameTime&) = delete;
+  GameTime &operator=(const GameTime &) = delete;
 };
 
 // ----------------------------------------------------------------------------

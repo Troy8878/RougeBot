@@ -15,18 +15,23 @@ class GameTime;
 
 namespace Events
 {
-
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   struct EventData
   {
+  protected:
+    virtual ~EventData()
+    {
+    }
+
+  public:
     virtual mrb_value GetRubyWrapper()
-    { 
-      return ruby::ruby_value{}; 
+    {
+      return mrb_nil_value();
     };
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   template <typename T>
   struct RudimentaryEventWrapper : public EventData
@@ -34,7 +39,8 @@ namespace Events
     T data;
 
     RudimentaryEventWrapper() = default;
-    RudimentaryEventWrapper(const T& data)
+
+    explicit RudimentaryEventWrapper(const T &data)
       : data(data)
     {
     }
@@ -42,13 +48,13 @@ namespace Events
     NO_ASSIGNMENT_OPERATOR(RudimentaryEventWrapper<T>);
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   struct UpdateEvent : public EventData
   {
-    GameTime& gameTime;
+    GameTime &gameTime;
 
-    UpdateEvent(GameTime& gameTime)
+    UpdateEvent(GameTime &gameTime)
       : gameTime(gameTime)
     {
     }
@@ -58,7 +64,7 @@ namespace Events
     NO_ASSIGNMENT_OPERATOR(UpdateEvent);
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   struct EventRecieverDestroyedEvent : public EventData
   {
@@ -70,13 +76,13 @@ namespace Events
     }
   };
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   struct RubyEvent : public EventData
   {
     mrb_value ruby_obj;
 
-    RubyEvent(mrb_value ruby_obj)
+    explicit RubyEvent(mrb_value ruby_obj)
       : ruby_obj(ruby_obj)
     {
     }
@@ -87,7 +93,5 @@ namespace Events
     }
   };
 
-// ----------------------------------------------------------------------------
-
+  // ----------------------------------------------------------------------------
 }
-

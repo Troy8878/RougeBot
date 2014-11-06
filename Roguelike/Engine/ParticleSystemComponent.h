@@ -28,15 +28,19 @@ class ParticleSystemComponentFactory;
 class ParticleSystemComponent : public Component, public Drawable
 {
 public:
-  ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges& scale, Ranges& rotation,
-                          Ranges& velocity, Ranges& rotVel, float rate);
+  ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges &scale, Ranges &rotation,
+                          Ranges &velocity, Ranges &rotVel, float rate);
   ~ParticleSystemComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
-  void OnUpdate(Events::EventMessage&);
-  
+  void Initialize(Entity *owner, const std::string &name) override;
+  void OnUpdate(Events::EventMessage &);
+
   void Draw() override;
-  void OnSetDestroyed() override { renderTarget = nullptr; }
+
+  void OnSetDestroyed() override
+  {
+    renderTarget = nullptr;
+  }
 
   mrb_value GetRubyWrapper() override;
 
@@ -63,13 +67,17 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class ParticleSystemComponentFactory : public IComponentFactory
+class ParticleSystemComponentFactory final : public IComponentFactory
 {
 public:
   ParticleSystemComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

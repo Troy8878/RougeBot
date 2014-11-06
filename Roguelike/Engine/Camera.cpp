@@ -392,3 +392,16 @@ static mrb_value mrb_manualcamera_set_fov(mrb_state *mrb, mrb_value self);
 #pragma endregion
 
 // ----------------------------------------------------------------------------
+
+void Basic3DCamera::LoadFromData(const component_factory_data&)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value Basic3DCamera::GetRubyWrapper()
+{
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------

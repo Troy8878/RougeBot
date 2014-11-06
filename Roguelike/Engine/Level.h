@@ -18,7 +18,7 @@ class Game;
 class Level : public Events::BasicEventDispatcher
 {
 public:
-  static Level *CreateLevel(const std::string& def);
+  static Level *CreateLevel(const std::string &def);
   static void DestroyLevel(Level *level);
 
   IR_PROPERTY(std::string, Name);
@@ -35,4 +35,3 @@ protected:
 };
 
 // ----------------------------------------------------------------------------
-

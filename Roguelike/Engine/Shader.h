@@ -33,14 +33,14 @@ struct Shader
 
   static void LoadShader(
     GraphicsDevice *device,
-    const std::string& asset);
+    const std::string &asset);
 
 private:
   void InitCameraBuffer();
   static Shader *LoadShader(
     GraphicsDevice *device,
-    const std::string& vertexAsset,
-    const std::string& pixelAsset);
+    const std::string &vertexAsset,
+    const std::string &pixelAsset);
 };
 
 // ----------------------------------------------------------------------------

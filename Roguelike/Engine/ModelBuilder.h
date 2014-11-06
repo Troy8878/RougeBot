@@ -25,7 +25,7 @@ public:
   static void InitializeRubyModule(mrb_state *mrb);
 
 private:
-  UINT SaveVertex(const TexturedVertex& vertex);
+  UINT SaveVertex(const TexturedVertex &vertex);
 
   std::vector<TexturedVertex> vertices;
   std::vector<UINT> indices;

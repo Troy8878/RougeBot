@@ -18,18 +18,21 @@ class RubyComponentFactory;
 class RubyComponent : public Component
 {
 public:
-  RubyComponent(ruby::ruby_class rclass, component_factory_data& data);
+  RubyComponent(ruby::ruby_class rclass, component_factory_data &data);
   ~RubyComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
   void Cleanup() override;
 
-  void OnEvent(Events::EventMessage& e);
+  void OnEvent(Events::EventMessage &e);
 
   void AddEventHandler(event_id event, mrb_sym handler);
   void RemoveEventHandler(event_id event);
 
-  mrb_value GetRubyWrapper() override { return component_inst; }
+  mrb_value GetRubyWrapper() override
+  {
+    return component_inst;
+  }
 
   static RubyComponentFactory factory;
 
@@ -42,13 +45,17 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class RubyComponentFactory : public IComponentFactory
+class RubyComponentFactory final : public IComponentFactory
 {
 public:
-  RubyComponentFactory(ruby::ruby_class rclass);
+  explicit RubyComponentFactory(ruby::ruby_class rclass);
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;
@@ -56,5 +63,3 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-
-

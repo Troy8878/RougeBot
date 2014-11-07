@@ -21,17 +21,36 @@ class GameEntity
   end
 end
 
+class Module
+  attr_reader :mod_deps
+
+  def module_dependency(*deps)
+    @mod_deps ||= []
+    deps.each do |dep|
+      @mod_deps << dep unless @mod_deps.include? dep
+    end
+  end
+end
+
 class ComponentBase
   @@component_dependencies = []
 
   def self.dependency(*deps)
-    @@component_dependencies += deps
+    deps.each do |dep|
+      @@component_dependencies << dep unless @@component_dependencies.include? dep
+    end
   end
 
   def self.flush_dependencies
     ary = @@component_dependencies
     @@component_dependencies = []
     ary
+  end
+
+  def self.include(included_module)
+    deps = included_module.mod_deps
+    dependency(*deps) if deps
+    super included_module
   end
 end
 

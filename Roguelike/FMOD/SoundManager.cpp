@@ -40,7 +40,7 @@ ManagedSound SoundManager::Load(json::value definition)
   {
     return LoadAsset(definition.as_string());
   }
-  else if (definition.is(json::json_type::jobject))
+  if (definition.is(json::json_type::jobject))
   {
     return LoadDefinition(definition);
   }
@@ -50,7 +50,7 @@ ManagedSound SoundManager::Load(json::value definition)
 
 // ----------------------------------------------------------------------------
 
-ManagedSound SoundManager::LoadAsset(const std::string& asset)
+ManagedSound SoundManager::LoadAsset(const std::string &asset)
 {
   return Load(ParseJsonAsset("Audio", asset + ".audiodef"));
 }
@@ -59,7 +59,7 @@ ManagedSound SoundManager::LoadAsset(const std::string& asset)
 
 ManagedSound SoundManager::LoadDefinition(json::value definition)
 {
-  auto& obj = definition.as_object();
+  auto &obj = definition.as_object();
   decltype(obj.cbegin()) it;
 
   auto *audio = GetGame()->Respack["Audio"];
@@ -82,7 +82,7 @@ ManagedSound SoundManager::LoadDefinition(json::value definition)
 
     return SoundClass::Sound::CreateSound(tempFilename.c_str(), GetGame()->SoundSystem, infos);
   }
-  else if (map_get_check(obj, it, "music"))
+  if (map_get_check(obj, it, "music"))
   {
     json::value filename = it->second;
 
@@ -101,4 +101,3 @@ ManagedSound SoundManager::LoadDefinition(json::value definition)
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
-

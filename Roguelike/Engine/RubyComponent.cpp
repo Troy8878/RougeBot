@@ -197,6 +197,8 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
     depList.push_back(mrb_str_to_stdstring(dep));
   }
 
+  std::cout << "Dependencies for " << comp_name << ": " << depList << std::endl;
+
 #pragma endregion
 
   auto prevfg = console::fg_color();

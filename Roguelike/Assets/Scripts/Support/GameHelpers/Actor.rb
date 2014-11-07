@@ -7,6 +7,8 @@
 module Actor
   attr_reader :actor_position
 
+  module_dependency "PositionComponent", "TransformComponent"
+
   NOT_BLOCKED = 0
   BLOCKED_BY_UNKNOWN = 1
   BLOCKED_BY_ACTOR = 2
@@ -25,6 +27,11 @@ module Actor
     @actor_position = self.owner.position_component.position
 
     register_event :zombified, :actor_zombified
+  end
+
+  def actor_sub_init
+    @actor_transform = self.owner.transform_component
+    @actor_position = self.owner.position_component.position
   end
 
   def actor_init?

@@ -45,4 +45,4 @@ void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_FILE_ASYNCREAD_CALLBACK 
 
 void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_CHANNELORDER data, std::vector<SoundClass::Sound::ExInfo> &vec);
 
-void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP* data, std::vector<SoundClass::Sound::ExInfo> &vec);
+void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP *data, std::vector<SoundClass::Sound::ExInfo> &vec);

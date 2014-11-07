@@ -28,7 +28,6 @@ std::vector<SoundClass::Sound::ExInfo>::iterator FindExInfo(SoundClass::Sound::E
 
   // If nothing is found, return the iter at end.  The function that called this should deal with it on its own
   return vec.end();
-
 }
 
 void DeleteExInfo(SoundClass::Sound::EXTRA_INFO info, std::vector<SoundClass::Sound::ExInfo> &vec)
@@ -47,7 +46,6 @@ void DeleteExInfo(SoundClass::Sound::EXTRA_INFO info, std::vector<SoundClass::So
   {
     iter = vec.erase(iter);
   }
-
 }
 
 void AddExInfo(SoundClass::Sound::EXTRA_INFO info, int data, std::vector<SoundClass::Sound::ExInfo> &vec)
@@ -475,7 +473,7 @@ void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_FILE_ASYNCREAD_CALLBACK 
 {
   // Only assign this if it's one of the following: (otherwise it's the wrong type)
   if (info == SoundClass::Sound::EXTRA_INFO::USER_DATA_SR
-  || info == SoundClass::Sound::EXTRA_INFO::USER_DATA_SC)
+    || info == SoundClass::Sound::EXTRA_INFO::USER_DATA_SC)
   {
     // Overwrite data if it's already in place
     std::vector<SoundClass::Sound::ExInfo>::iterator it = FindExInfo(info, vec);
@@ -530,7 +528,7 @@ void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_CHANNELORDER data, std::
   throw basic_exception("Attempted to add a non-channel order to a channel order type!");
 }
 
-void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP* data, std::vector<SoundClass::Sound::ExInfo> &vec)
+void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP *data, std::vector<SoundClass::Sound::ExInfo> &vec)
 {
   // Only assign this if it's one of the following: (otherwise it's the wrong type)
   if (info == SoundClass::Sound::EXTRA_INFO::INIT_SOUND_GROUP)

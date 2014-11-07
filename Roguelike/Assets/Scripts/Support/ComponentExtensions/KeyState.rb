@@ -34,6 +34,7 @@ module Keys
   NONCONVERT = 0x1D
   ACCEPT = 0x1E
   MODECHANGE = 0x1F
+  
   SPACE = 0x20
   PRIOR = 0x21
   NEXT = 0x22
@@ -50,6 +51,7 @@ module Keys
   INSERT = 0x2D
   DELETE = 0x2E
   HELP = 0x2F
+
   N0 = 0x30
   N1 = 0x31
   N2 = 0x32
@@ -60,6 +62,7 @@ module Keys
   N7 = 0x37
   N8 = 0x38
   N9 = 0x39
+
   A = 0x41
   B = 0x42
   C = 0x43
@@ -86,10 +89,12 @@ module Keys
   X = 0x58
   Y = 0x59
   Z = 0x5a
+
   LWIN = 0x5B
   RWIN = 0x5C
   APPS = 0x5D
   SLEEP = 0x5F
+
   NUMPAD0 = 0x60
   NUMPAD1 = 0x61
   NUMPAD2 = 0x62
@@ -100,12 +105,14 @@ module Keys
   NUMPAD7 = 0x67
   NUMPAD8 = 0x68
   NUMPAD9 = 0x69
+
   MULTIPLY = 0x6A
   ADD = 0x6B
   SEPARATOR = 0x6C
   SUBTRACT = 0x6D
   DECIMAL = 0x6E
   DIVIDE = 0x6F
+
   F1 = 0x70
   F2 = 0x71
   F3 = 0x72
@@ -130,6 +137,7 @@ module Keys
   F22 = 0x85
   F23 = 0x86
   F24 = 0x87
+
   NUMLOCK = 0x90
   SCROLL = 0x91
   LSHIFT = 0xA0
@@ -157,10 +165,19 @@ module Keys
   LAUNCH_APP1 = 0xB6
   LAUNCH_APP2 = 0xB7
   OEM_1 = 0xBA
+
+  PLUS = 0xBB
   OEM_PLUS = 0xBB
+
+  COMMA = 0xBC
   OEM_COMMA = 0xBC
+
+  MINUS = 0xBD
   OEM_MINUS = 0xBD
+
+  PERIOD = 0xBE
   OEM_PERIOD = 0xBE
+
   OEM_2 = 0xBF
   OEM_3 = 0xC0
   OEM_4 = 0xDB

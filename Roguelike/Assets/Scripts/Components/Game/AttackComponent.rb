@@ -11,7 +11,6 @@
 # damage - the range of damage an object can do
 ################################################################
 class AttackComponent < ComponentBase
-  attr_accessor :attack
   attr_reader :damage
 
   property :damage, :float_pair, true
@@ -19,7 +18,6 @@ class AttackComponent < ComponentBase
   def initialize(data)
     super data
 
-    @attack = data.fetch("attack", 0).to_f
     @damage = data.fetch("damage", [2,4])
   end
 
@@ -27,32 +25,26 @@ class AttackComponent < ComponentBase
     # Pull the weapon from the inventory.
     item = self.owner.inventory_component.inventory.equipment[:weapon]
     # Set the attack and damage values to the newly equipped weapon's values.
-    attack = item.attack
     damage = item.damage
   end
 
   def do_attack(target)
     return if target == owner
 
-    # We need to come up with a roll value. WHAT ARE WE ROLLING
-    att = Random.die_roll 20 + @attack
     dmg = Random.int_range_inc *@damage
 
-    result = target.defense_component.be_attacked(att, dmg)
+    result = target.defense_component.be_attacked(dmg)
 
     # All our data for this attack
     event_data = {
       attacker: self.owner,
       defender: target,
       result: result,
-      attack_roll: att,
       damage_roll: dmg
     }
 
     # Send out the final result
     case result
-    when :miss
-      Event.raise_event :attack_miss, event_data
     when :hit
       Event.raise_event :attack_hit, event_data
     end

@@ -16,23 +16,17 @@
 class Item
 end
 
-#An array containing every weapon ever.
-WEAPONS = []
-
 class Weapon < Item
-  attr_reader :attack, :damage, :durability
+  attr_reader :damage, :durability
 
 
   def initialize(data)
     super data
 
     if data.is_a? Weapon
-      @attack = data.attack
       @damage = data.damage
       @durability = data.durability
     else
-      @attack = data.fetch("attack", 1).to_f
-      # Extract the damage. This is harder than it sounds.
       range = data.fetch("damage", [1, 1])
       if range.is_a?(String)
         range = range.split(' ')

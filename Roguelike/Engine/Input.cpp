@@ -1,8 +1,9 @@
 /*********************************
-* Input.cpp
-* Connor Hilarides
-* Created 2014/09/08
-*********************************/
+ * Input.cpp
+ * Connor Hilarides
+ * Created 2014/09/08
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
 
 #include "Common.h"
 #include "Input.h"

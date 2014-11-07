@@ -2,8 +2,7 @@
  * Common.cpp
  * Connor Hilarides
  * Created 2014/08/07
- *
- * Precompiled header build file
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"

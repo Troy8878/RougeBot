@@ -2,6 +2,7 @@
  * Game.cpp
  * Connor Hilarides
  * Created 2014/05/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"

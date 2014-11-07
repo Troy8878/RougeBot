@@ -2,6 +2,7 @@
  * ParticleSystemComponent.cpp
  * Enrique Rodriguez
  * Created 2014/09/30
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"

@@ -66,6 +66,7 @@ namespace std { namespace tr2 { namespace sys
       {
         this->~iterator();
         new (this) iterator(std::move(other));
+        return *this;
       }
 
       ~iterator()
@@ -76,7 +77,7 @@ namespace std { namespace tr2 { namespace sys
         FindClose(hFind);
       }
 
-      iterator(const directory_contents *parent)
+      explicit iterator(const directory_contents *parent)
         : parent(parent)
       {
         hFind = FindFirstFileW((parent->fullpath + L"\\" + parent->mask).c_str(), &findData);
@@ -118,6 +119,9 @@ namespace std { namespace tr2 { namespace sys
           case files:
             if (is_directory())
               return ++*this;
+            break;
+
+          default:
             break;
         }
 

@@ -276,7 +276,7 @@ static ID3D11Buffer *CreateTimeResource()
 {
   D3D11_BUFFER_DESC desc;
   desc.Usage = D3D11_USAGE_DYNAMIC;
-  desc.ByteWidth = sizeof(float) * 4;
+  desc.ByteWidth = 16;
   desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
   desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
   desc.MiscFlags = 0;

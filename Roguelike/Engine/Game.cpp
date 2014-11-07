@@ -210,6 +210,28 @@ void Game::Run()
 
 // ----------------------------------------------------------------------------
 
+void Game::Stop()
+{
+  _running = false;
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::RestartLevel()
+{
+  levelChangeContext.loaded = false;
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::ChangeLevel(const std::string& name)
+{
+  levelChangeContext.name = name;
+  levelChangeContext.loaded = false;
+}
+
+// ----------------------------------------------------------------------------
+
 void Game::SetProcHandler(UINT message, wndproc_callback callback)
 {
   _wndprocCallbacks[message] = callback;

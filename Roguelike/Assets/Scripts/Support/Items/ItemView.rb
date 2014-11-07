@@ -5,7 +5,7 @@
 #######################
 
 class ItemView
-  attr_reader :texture, :color, :decorations, :owner
+  attr_reader :texture, :decorations, :owner
 
   def initialize(data, owner = nil)
     @owner = owner
@@ -23,23 +23,18 @@ class ItemView
       @decorations = data.decorations.map do |dec|
         dec.dup
       end
-    else
-      # Load from JSON
-      @texture = data["texture"]
-      @color = data.fetch("color", "White")
-      @decorations = data["decorations"].map do |dec_data|
-        ItemDecoration.new dec_data
-      end
     end
+  end
+
+  def add_decoration(decoration)
+    
   end
 
   def create_entity
     entity = GameEntity.create_entity archetype: "Items/ItemView"
     entity.text_component.texts = [owner.name]
 
-    #entity.sprite_component.tint = @color
-    #self.load_textures entity
-    #self.construct_decorations entity
+    
 
     entity
   end
@@ -54,15 +49,5 @@ class ItemView
 
   def dup
     ItemView.new self
-  end
-end
-
-class ItemDecoration
-  def initialize(data)
-    # TODO: Initialize decorations
-  end
-
-  def dup
-    ItemDecoration.new self
   end
 end

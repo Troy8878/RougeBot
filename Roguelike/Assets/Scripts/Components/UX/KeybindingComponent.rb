@@ -15,6 +15,8 @@ class KeybindingComponent < ComponentBase
   end
 
   def on_down(e)
+    puts "VKey pressed: #{e.vkey.to_s 16}"
+
     on_key :down, e
   end
 

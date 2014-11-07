@@ -2,6 +2,7 @@
  * Game.h
  * Connor Hilarides
  * Created 2014/05/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -30,7 +31,7 @@ Game *GetGame();
 template <typename GameType>
 GameType *GetGame()
 {
-  return static_cast<GameType *>(getGame());
+  return static_cast<GameType *>(GetGame());
 }
 
 // ----------------------------------------------------------------------------
@@ -50,11 +51,7 @@ public:
   Game &operator=(const Game &) = delete;
 
   void Run();
-
-  void Stop()
-  {
-    _running = false;
-  }
+  void Stop();
 
   virtual void OnInit()
   {
@@ -65,12 +62,7 @@ public:
   }
 
   void RestartLevel();
-
-  void ChangeLevel(const std::string &name)
-  {
-    levelChangeContext.name = name;
-    levelChangeContext.loaded = false;
-  }
+  void ChangeLevel(const std::string &name);
 
   void SetProcHandler(UINT message, wndproc_callback callback);
 

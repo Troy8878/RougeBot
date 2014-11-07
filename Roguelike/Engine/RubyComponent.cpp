@@ -2,6 +2,7 @@
  * RubyComponent.cpp
  * Connor Hilarides
  * Created 2014/08/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -196,6 +197,8 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
     mrb_value dep = mrb_ary_entry(deps, i);
     depList.push_back(mrb_str_to_stdstring(dep));
   }
+
+  std::cout << "Dependencies for " << comp_name << ": " << depList << std::endl;
 
 #pragma endregion
 

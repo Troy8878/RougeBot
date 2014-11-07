@@ -2,6 +2,7 @@
  * Game.cpp
  * Connor Hilarides
  * Created 2014/05/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -206,6 +207,28 @@ void Game::Run()
   {
   }
 #endif
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::Stop()
+{
+  _running = false;
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::RestartLevel()
+{
+  levelChangeContext.loaded = false;
+}
+
+// ----------------------------------------------------------------------------
+
+void Game::ChangeLevel(const std::string& name)
+{
+  levelChangeContext.name = name;
+  levelChangeContext.loaded = false;
 }
 
 // ----------------------------------------------------------------------------

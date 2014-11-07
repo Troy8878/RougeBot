@@ -1,8 +1,9 @@
 /*********************************
-* ExInfoVec.h
-* Troy
-* Created 2014/10/9
-*********************************/
+ * ExInfoVec.h
+ * Troy
+ * Created 2014/10/9
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
 
 #include "FMOD/fmod.hpp"
 #include "FMOD/fmod_errors.h"
@@ -45,4 +46,4 @@ void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_FILE_ASYNCREAD_CALLBACK 
 
 void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_CHANNELORDER data, std::vector<SoundClass::Sound::ExInfo> &vec);
 
-void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP* data, std::vector<SoundClass::Sound::ExInfo> &vec);
+void AddExInfo(SoundClass::Sound::EXTRA_INFO info, FMOD_SOUNDGROUP *data, std::vector<SoundClass::Sound::ExInfo> &vec);

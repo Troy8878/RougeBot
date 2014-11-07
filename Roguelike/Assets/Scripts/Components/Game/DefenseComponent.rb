@@ -37,8 +37,11 @@ class DefenseComponent < ComponentBase
 
   def be_attacked(damage)
 
-    total_dmg = damage - @armor
-    @health -= (damage - @armor)
+    total_dmg = damage / Math.log(@armor + Math::E)
+    total_dmg = total_dmg.to_i
+    total_dmg = 1 if total_dmg < 1
+
+    @health -= total_dmg
 
     # Notify that the health has changed
     self.owner.raise_event :health_changed, { 

@@ -2,6 +2,7 @@
  * AIBehaviour.h
  * Jake Robsahm
  * Created 2014/10/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once

@@ -2,6 +2,7 @@
  * COMPONENTNAMEHEREComponent.h
  * YOUR NAME HERE
  * Created 2014/YOUR DATE HERE
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 // Just Ctrl+H "COMPONENTNAMEHERE" with your component name

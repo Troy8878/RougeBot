@@ -19,7 +19,7 @@ class PlayerProjectileLogicComponent < ComponentBase
     @speed = data.fetch("speed", 0)
 
     # 0 speed just means it doesn't move.
-    #This can be achieved by disabling direc instead since speed is used in the collision logic
+    # This can be achieved by disabling direc instead since speed is used in the collision logic
 
     if @speed == 0
       @speed = 1
@@ -34,6 +34,10 @@ class PlayerProjectileLogicComponent < ComponentBase
     actor_init(MapItem::ELLIPSE, "Peru, 0.75") # A colour that in fact does not appear on country-Peru's flag
     actor_minimap_update
     ghost_actor!
+
+    if @direc[0] != 0 && @direc[1] != 0
+      @actor_diagonal = true
+    end
 
     remove_event :update
   end
@@ -77,8 +81,8 @@ class PlayerProjectileLogicComponent < ComponentBase
       end
 
       if resolution == false
-        if @blocked_reason == BLOCKED_BY_WALL # Add a delay:  Don't delete until reaching the last locale that isn't a wall.
-                                              # Do this via  (delay until translation = @position)
+        if @blocked_reason == BLOCKED_BY_WALL || @blocked_reason == CANNOT_MOVE_DIAGONALLY
+        # Add a delay:  Don't delete until reaching the last locale that isn't a wall. Do this via  (delay until translation = @position)
           self.owner.zombify!
           return
         elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"
@@ -94,12 +98,12 @@ class PlayerProjectileLogicComponent < ComponentBase
         elsif @blocked_reason == BLOCKED_BY_COOLDOWN
           puts "Code Error"
           return
-        elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
+        # Ignore unknown blocks and the player & move anyways
+        elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player")
           move
         end
       else
         move
-
       end
     end
 

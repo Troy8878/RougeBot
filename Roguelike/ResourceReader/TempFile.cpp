@@ -2,6 +2,7 @@
  * TempFile.cpp
  * Connor Hilarides
  * Created 2014/08/08
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "TempFile.h"

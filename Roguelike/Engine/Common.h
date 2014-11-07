@@ -2,9 +2,7 @@
  * Common.h
  * Connor Hilarides
  * Created 2014/08/07
- *
- * Precompiled header file for 
- * common resources
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once

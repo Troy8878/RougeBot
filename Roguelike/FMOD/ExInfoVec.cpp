@@ -1,8 +1,9 @@
 /*********************************
-* ExInfoVec.cpp
-* Troy
-* Created 2014/10/9
-*********************************/
+ * ExInfoVec.cpp
+ * Troy
+ * Created 2014/10/9
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
 
 #include "ExInfoVec.h"
 

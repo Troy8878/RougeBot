@@ -37,20 +37,20 @@ Config.load_defaults do
   Config.bind_action "fire_dl",         { held: [:fire, [-1, -1]] }
   Config.bind_action "fire_dr",         { held: [:fire, [ 1, -1]] }
 
-  Config.bind_key "Player", [Keys::NUMPAD8], "fire_up"
-  Config.bind_key "Player", [Keys::NUMPAD4], "fire_left"
-  Config.bind_key "Player", [Keys::NUMPAD2], "fire_down"
-  Config.bind_key "Player", [Keys::NUMPAD6], "fire_right"
-  Config.bind_key "Player", [Keys::NUMPAD1], "fire_ul"
-  Config.bind_key "Player", [Keys::NUMPAD3], "fire_ur"
-  Config.bind_key "Player", [Keys::NUMPAD7], "fire_dl"
-  Config.bind_key "Player", [Keys::NUMPAD9], "fire_dr"
+  Config.bind_key "Player", [Keys::I,          Keys::NUMPAD8], "fire_up"
+  Config.bind_key "Player", [Keys::J,          Keys::NUMPAD4], "fire_left"
+  Config.bind_key "Player", [Keys::L,          Keys::NUMPAD2], "fire_down"
+  Config.bind_key "Player", [Keys::OEM_COMMA,  Keys::NUMPAD6], "fire_right"
+  Config.bind_key "Player", [Keys::U,          Keys::NUMPAD7], "fire_ul"
+  Config.bind_key "Player", [Keys::O,          Keys::NUMPAD9], "fire_ur"
+  Config.bind_key "Player", [Keys::M,          Keys::NUMPAD1], "fire_dl"
+  Config.bind_key "Player", [Keys::OEM_PERIOD, Keys::NUMPAD3], "fire_dr"
 
   ######################
   # Minimap
 
   Config.bind_action "minimap_toggle", { down: [:minimap_toggle] }
-  Config.bind_key "Game", Keys::M, "minimap_toggle"
+  Config.bind_key "Game", Keys::E, "minimap_toggle"
 
   ######################
   # Hotbar quick equip

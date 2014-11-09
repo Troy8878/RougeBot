@@ -1,6 +1,6 @@
 #########################
 # Actor.rb
-# Connor Hilarides
+# Troy
 # Created 2014/10/20
 #########################
 
@@ -14,6 +14,7 @@ module Actor
   BLOCKED_BY_ACTOR = 2
   BLOCKED_BY_WALL = 3
   BLOCKED_BY_COOLDOWN = 4
+  CANNOT_MOVE_DIAGONALLY = 5
 
   def ghost_actor!
     @ghost_actor = true
@@ -25,6 +26,7 @@ module Actor
 
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
+    @actor_diagonal = false
 
     register_event :zombified, :actor_zombified
   end
@@ -99,11 +101,6 @@ module Actor
       return false
     end
 
-    if xo != 0 and yo != 0
-      @blocked_reason = BLOCKED_BY_UNKNOWN
-      return false # unless can_move?(xo, 0) && can_move?(0, yo)
-    end
-
     if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
       @blocked_reason = BLOCKED_BY_UNKNOWN
       return false
@@ -113,7 +110,7 @@ module Actor
 
     # false if the move animation isn't done
     real_pos = @actor_transform.position.dup
-    real_pos.z = @actor_position.z
+    real_pos.z = 0
     real_pos.w = 0
 
     @blocked_reason = BLOCKED_BY_UNKNOWN
@@ -136,7 +133,18 @@ module Actor
     res = !tile.solid?
     @blocked_reason = BLOCKED_BY_WALL
     return res
+
+    if xo != 0 and yo != 0
+      if(@actor_diagonal == false)
+        @blocked_reason = CANNOT_MOVE_DIAGONALLY
+        return false
+      end
+    else
+      return true
+    end
   end
+
+# Ranged combat below here
 
   def can_move_more_than_one?(xo, yo)
     @blocked_reason = -1
@@ -148,8 +156,10 @@ module Actor
     end
 
     if xo != 0 and yo != 0
-      @blocked_reason = BLOCKED_BY_UNKNOWN
-      return false # unless can_move?(xo, 0) && can_move?(0, yo)
+      if(@actor_diagonal == false)
+        @blocked_reason = CANNOT_MOVE_DIAGONALLY
+        return false
+      end
     end
 
     if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
@@ -161,8 +171,7 @@ module Actor
 
     # false if the move animation isn't done
     real_pos = @actor_transform.position.dup
-    real_pos.y = real_pos.z
-    real_pos.z = @actor_position.z
+    real_pos.z = 0
     real_pos.w = 0
 
     x = (@actor_position.x + 0.5).to_i + xo
@@ -196,11 +205,6 @@ module Actor
       return false
     end
 
-    if xo != 0 and yo != 0
-      @blocked_reason = BLOCKED_BY_UNKNOWN
-      return false # unless can_move?(xo, 0) && can_move?(0, yo)
-    end
-
     if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
       @blocked_reason = BLOCKED_BY_UNKNOWN
       return false
@@ -210,8 +214,7 @@ module Actor
 
     # false if the move animation isn't done
     real_pos = @actor_transform.position.dup
-    real_pos.y = real_pos.z
-    real_pos.z = @actor_position.z
+    real_pos.z = 0
     real_pos.w = 0
 
     @blocked_reason = BLOCKED_BY_UNKNOWN

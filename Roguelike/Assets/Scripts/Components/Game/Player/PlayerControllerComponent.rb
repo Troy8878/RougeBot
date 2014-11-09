@@ -85,6 +85,7 @@ class PlayerControllerComponent < ComponentBase
   # Stuffs Troy added for ranged combat
 
   def fire(e)
+
     return if @logic_cooldown > 0
 
     x = e[0]

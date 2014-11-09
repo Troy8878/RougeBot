@@ -15,8 +15,6 @@ class KeybindingComponent < ComponentBase
   end
 
   def on_down(e)
-    puts "VKey pressed: #{e.vkey.to_s 16}"
-
     on_key :down, e
   end
 
@@ -39,6 +37,7 @@ class KeybindingComponent < ComponentBase
     message = binding[type]
     return unless message.is_a? Array
 
+    puts "Dispatching #{e.vkey.to_s 16} to #{self.owner}"
     self.owner.raise_event message.first, message.second
   end
 

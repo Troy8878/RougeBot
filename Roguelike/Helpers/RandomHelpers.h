@@ -104,7 +104,7 @@ split(const std::basic_string<Elem> &str, Delim &&delim)
 // just a nice little helper to turn GetLastError() into a readable message
 inline std::string GetLastErrorString(DWORD error = 0)
 {
-  LPSTR pBuffer = 0;
+  LPSTR pBuffer = nullptr;
 
   if (error == 0)
     error = GetLastError();
@@ -113,11 +113,11 @@ inline std::string GetLastErrorString(DWORD error = 0)
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
                                   FORMAT_MESSAGE_FROM_SYSTEM |
                                   FORMAT_MESSAGE_IGNORE_INSERTS,
-                                  NULL,
+                                  nullptr,
                                   error,
                                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                  (LPTSTR) &pBuffer,
-                                  0, NULL);
+                                  reinterpret_cast<LPTSTR>(&pBuffer),
+                                  0, nullptr);
 
   if (pBuffer == 0)
     return "UNKNOWN ERROR";
@@ -277,7 +277,7 @@ template <typename Interface>
 void setDXDebugName(Interface *object, const std::string &name)
 {
   HRESULT result = object->SetPrivateData(WKPDID_D3DDebugObjectName,
-                                          (UINT) name.length(),
+                                          static_cast<UINT>(name.length()),
                                           name.c_str());
   CHECK_HRESULT(result);
 }
@@ -300,7 +300,7 @@ void variadic_push_container(Container &container, const Arg &param)
 // ----------------------------------------------------------------------------
 
 template <typename Container, typename Arg, typename... Args>
-void variadic_push_container(Container &containter, const Arg &param,
+void variadic_push_container(Container &container, const Arg &param,
                              const Args &&... params)
 {
   container.push_back(param);
@@ -514,7 +514,7 @@ map_fetch(const Map &map,
 // ----------------------------------------------------------------------------
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>>
-void svtprintf(std::basic_ostream<CharT, CharTraits> &out, FwIt first, FwIt last)
+inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out, FwIt first, FwIt last)
 {
   while (first != last)
   {
@@ -527,8 +527,8 @@ void svtprintf(std::basic_ostream<CharT, CharTraits> &out, FwIt first, FwIt last
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>,
           typename Arg, typename... Args>
-void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
-               FwIt first, FwIt last, const Arg &value, const Args &... rest)
+inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
+                      FwIt first, FwIt last, const Arg &value, Args &&... rest)
 {
   while (first != last)
   {
@@ -543,10 +543,11 @@ void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
       if (n == 'v')
       {
         out << value;
-        svtprintf(out, first, last, rest...);
+        svtprintf(out, first, last, std::forward(rest)...);
         return;
       }
-      else if (n != '%')
+      
+      if (n != '%')
       {
         throw std::logic_error("An unknown format specifier was encountered (not % or v)");
       }

@@ -6,6 +6,7 @@
  *********************************/
 
 #include "Common.h"
+#include "GameConsole.h"
 #include "PropertyAPI/PropertyServer.h"
 
 static void CreateConsole()
@@ -16,10 +17,14 @@ static void CreateConsole()
   freopen_s(&file, "CONOUT$", "wt", stderr);
   freopen_s(&file, "CONIN$", "rt", stdin);
 
+  consoleStreamBuf.extra = std::cout.rdbuf();
+  std::cout.rdbuf(&consoleStreamBuf);
+  std::cerr.rdbuf(&consoleStreamBuf);
+
   std::ios::sync_with_stdio();
 }
 
-Roguelike game("Roguebot", GetModuleHandle(NULL));
+Roguelike game("Roguebot", GetModuleHandle(nullptr));
 
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()

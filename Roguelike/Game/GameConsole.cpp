@@ -10,6 +10,22 @@
 
 // ----------------------------------------------------------------------------
 
+MrbAryStreamBuffer consoleStreamBuf;
+
+// ----------------------------------------------------------------------------
+
+EXTERN_C void gwrite(const void *str, size_t size, size_t ct)
+{
+  std::cout.write(reinterpret_cast<const char *>(str), size * ct);
+}
+
+EXTERN_C void gputc(int c)
+{
+  std::cout << static_cast<char>(c);
+}
+
+// ----------------------------------------------------------------------------
+
 GameConsole::GameConsole(bool listenCmd)
   : event_base(this), main_thread(std::this_thread::get_id())
 {
@@ -96,4 +112,8 @@ void GameConsole::CinListen()
 
 // ----------------------------------------------------------------------------
 
+mrb_value MrbAryStreamBuffer::GetRubyWrapper()
+{
+}
 
+// ----------------------------------------------------------------------------

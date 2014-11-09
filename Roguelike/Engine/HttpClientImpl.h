@@ -134,7 +134,7 @@ protected:
     if (buf_count == buffer_size)
       WriteBuffer();
 
-    temp_buf[buf_count++] = (char)c;
+    temp_buf[buf_count++] = static_cast<char>(c);
 
     return c;
   }

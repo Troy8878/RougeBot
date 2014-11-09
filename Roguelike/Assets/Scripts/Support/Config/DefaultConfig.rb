@@ -57,7 +57,7 @@ Config.load_defaults do
 
   (1..9).each do |i|
     Config.bind_action "hotbar_equip_#{i}", { down: [:quick_equip, i - 1] }
-    Config.bind_key "Hotbar", Keys::N0 + i, "hotbar_equip_#{i}"
+    Config.bind_key "Hotbar", (Keys::N0 + i), "hotbar_equip_#{i}"
   end
 
   ######################

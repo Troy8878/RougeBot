@@ -9,6 +9,22 @@
 
 #include "AIBehaviour.h"
 
-class AIRoaming : public AIBehaviour
+class AIRoaming final : public AIBehaviour
 {
+public:
+  void ApplyBehaviour(const WorldSnapshot &world) override;
+  void Prepare() override;
+  void InitializeTarget(Entity *target) override;
+  void InitilizeOwner(Entity *thisEntity) override;
+  AIResult GetResult() override;
+
+private:
+  Entity *owner;
+  Entity *target;
+
+  mrb_int ox, oy;
+  mrb_int tx, ty;
+
+  AIResult result;
+
 };

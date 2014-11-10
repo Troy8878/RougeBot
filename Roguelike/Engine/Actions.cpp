@@ -10,8 +10,8 @@
 
 // ----------------------------------------------------------------------------
 
-static mrb_int GCLockObj(mrb_value value);
-static void GCUnlockObj(mrb_int holdId);
+EXTERN_C mrb_int GCLockObj(mrb_value value);
+EXTERN_C void GCUnlockObj(mrb_int holdId);
 
 // ----------------------------------------------------------------------------
 
@@ -383,7 +383,7 @@ static mrb_value GCLockHash()
 
 // ----------------------------------------------------------------------------
 
-static mrb_int GCLockObj(mrb_value value)
+EXTERN_C mrb_int GCLockObj(mrb_value value)
 {
   static mrb_int next_lock_id = 0;
   static auto lock = GCLockHash();
@@ -398,7 +398,7 @@ static mrb_int GCLockObj(mrb_value value)
 
 // ----------------------------------------------------------------------------
 
-static void GCUnlockObj(mrb_int holdId)
+EXTERN_C void GCUnlockObj(mrb_int holdId)
 {
   static auto lock = GCLockHash();
   mrb_value lock_v = mrb_fixnum_value(holdId);

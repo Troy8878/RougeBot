@@ -50,7 +50,7 @@ Config.load_defaults do
   # Minimap
 
   Config.bind_action "minimap_toggle", { down: [:minimap_toggle] }
-  Config.bind_key "Game", Keys::E, "minimap_toggle"
+  Config.bind_key "Game", '/', "minimap_toggle"
 
   ######################
   # Hotbar quick equip

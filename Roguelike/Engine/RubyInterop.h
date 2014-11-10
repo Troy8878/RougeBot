@@ -575,6 +575,15 @@ namespace ruby
   extern mrb_data_type mrb_dt_native_ptr;
 
   // ----------------------------------------------------------------------------
+
+  template <typename T>
+  void data_type_init(mrb_data_type &dt, void(*dfree)(mrb_state *, void *) = data_nop_delete)
+  {
+    dt.dfree = dfree;
+    dt.struct_name = typeid(T).name();
+  }
+
+  // ----------------------------------------------------------------------------
 }
 
 // ----------------------------------------------------------------------------
@@ -600,5 +609,10 @@ extern bool mrb_debug_mbox;
 #define MRB_DECL_SYM(mrb, var, sname) \
   static ::mrb_sym var = mrb_intern_lit(mrb, sname); \
   static ::mrb_value var##_v = mrb_symbol_value(var)
+
+// ----------------------------------------------------------------------------
+
+EXTERN_C mrb_int GCLockObj(mrb_value value);
+EXTERN_C void GCUnlockObj(mrb_int holdId);
 
 // ----------------------------------------------------------------------------

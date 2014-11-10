@@ -23,7 +23,16 @@ class MrbAryStreamBuffer : public std::streambuf
 {
 public:
   MrbAryStreamBuffer()
+    : ary(mrb_nil_value())
   {
+  }
+
+  ~MrbAryStreamBuffer()
+  {
+    if (!mrb_nil_p(ary))
+    {
+      GCUnlockObj(gclock);
+    }
   }
 
   mrb_value PeekAry()
@@ -34,7 +43,11 @@ public:
   mrb_value FlushAry()
   {
     mrb_value ary = this->ary;
+
+    GCUnlockObj(gclock);
     this->ary = mrb_ary_new(*mrb_inst);
+    gclock = GCLockObj(this->ary);
+
     return ary;
   }
 
@@ -69,8 +82,11 @@ protected:
   {
     if (!mrb_inst)
       return false;
+    if (!mrb_nil_p(ary))
+      return true;
 
     ary = mrb_ary_new(*mrb_inst);
+    gclock = GCLockObj(ary);
     return true;
   }
 
@@ -86,6 +102,7 @@ private:
   char currLine[GameConsoleMaxLine];
   size_t currPos = 0;
   mrb_value ary;
+  mrb_int gclock;
 };
 
 extern MrbAryStreamBuffer consoleStreamBuf;

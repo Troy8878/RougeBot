@@ -109,9 +109,7 @@ public:
   {
     using namespace Events;
     auto& time = e.GetData<UpdateEvent>()->gameTime;
-    float dt = (float) time.Dt;
-
-
+    float dt = static_cast<float>(time.Dt);
 
     UpdateTitleFPS(dt);
   }
@@ -130,7 +128,7 @@ public:
       {
         prev_fps = fps;
 
-        auto title = _title + " [" + std::to_string((int) (fps + 0.5f)) + " fps]";
+        auto title = _title + " [" + std::to_string(static_cast<int>(fps + 0.5f)) + " fps]";
         SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }
@@ -143,6 +141,9 @@ public:
 
 private:
   GameConsole *_console = nullptr;
+
+public:
+  GameConsole *ConsoleInst() { return _console; }
 };
 
 // ----------------------------------------------------------------------------

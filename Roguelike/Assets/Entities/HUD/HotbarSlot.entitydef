@@ -24,7 +24,7 @@
         "name": "SelectedIndicator",
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.06]
+            "position": [0, 0, -0.01]
           },
           "TextureComponent": {
             "textures": ["HUD/TileCursor.png"]

@@ -68,8 +68,6 @@ class HotbarComponent < ComponentBase
   end
 
   def quick_equip(slot)
-    puts "quick_equip #{slot}"
-
     deselect_slot
     return unless slot == @inv_slot
     select_slot

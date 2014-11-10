@@ -219,7 +219,7 @@ public:
   void SearchEntities(std::vector<Entity *> &results,
                       const std::regex &namePattern);
 
-  PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
+  PROPERTY(get = _GetChildren) const std::vector<Entity *> &Children;
 
   const std::vector<Entity *> &_GetChildren()
   {

@@ -1,0 +1,32 @@
+{
+  "TransformComponent": {
+    "position": [0, -0.675]
+  },
+  "ConsoleTextComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "TextDisplay",
+        "components": {
+          "TransformComponent": {
+            "scale": [2, 0.0375]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/1600:30"],
+          },
+          "SpriteComponent": {
+            "render_target": "ConsoleLayer"
+          },
+          "TextComponent": {
+            "texts": [""],
+            "font": "Consolas",
+            "font_size": 28,
+            "text_align": "leading",
+            "bg_color": "Black, 0.49",
+            "text_color": "White"
+          }
+        }
+      }
+    ]
+  }
+}

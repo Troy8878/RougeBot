@@ -47,6 +47,16 @@
           }
         },
         {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
+        },
+        {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
@@ -54,6 +64,10 @@
             }
           },
           "children": [
+            {
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
             {
               "name": "Hotbar",
               "archetype": "HUD/Hotbar",
@@ -78,8 +92,8 @@
                 },
                 "MapComponent": {},
                 "MapControllerComponent": {}
-              }
-            }
+              },
+            },
           ]
         }
       ]

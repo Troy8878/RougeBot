@@ -158,6 +158,8 @@ public:
   void AddProxy(Entity *entity, event_id id, EventProxyList::Func func);
   void RemoveProxy(Entity *entity, event_id id);
 
+  void HandleSend(Events::EventMessage &e);
+
   /**
     Helper for adding member functions of properly inheriting components
   */

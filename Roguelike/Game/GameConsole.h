@@ -17,7 +17,7 @@ EXTERN_C void gputc(int c);
 
 // ----------------------------------------------------------------------------
 
-const size_t GameConsoleMaxLine = 100;
+const size_t GameConsoleMaxLine = 127;
 
 class MrbAryStreamBuffer : public std::streambuf
 {
@@ -72,6 +72,9 @@ protected:
 
     if (currPos == GameConsoleMaxLine)
       FlushLine();
+
+    if (currPos == 0)
+      color = static_cast<mrb_int>(console::fg_color());
     
     currLine[currPos++] = static_cast<char>(c);
 
@@ -93,15 +96,23 @@ protected:
   void FlushLine()
   {
     mrb_state *mrb = *mrb_inst;
-    mrb_ary_push(mrb, ary, mrb_str_new(mrb, currLine, currPos));
+
+    static mrb_sym color_s = mrb_intern_lit(mrb, "color");
+    static mrb_sym text_s = mrb_intern_lit(mrb, "text");
+
+    mrb_value hsh = mrb_hash_new(mrb);
+    mrb_hash_set(mrb, hsh, mrb_symbol_value(color_s), mrb_fixnum_value(color));
+    mrb_hash_set(mrb, hsh, mrb_symbol_value(text_s), mrb_str_new(mrb, currLine, currPos));
+    mrb_ary_push(mrb, ary, hsh);
 
     currPos = 0;
   }
 
 private:
-  char currLine[GameConsoleMaxLine];
+  char currLine[GameConsoleMaxLine + 1];
   size_t currPos = 0;
   mrb_value ary;
+  mrb_int color;
   mrb_int gclock;
 };
 

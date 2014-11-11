@@ -175,7 +175,12 @@ Component *SpriteComponentFactory::CreateObject(
     throw string_exception("Render Target '" + set_name +
       "' could not be found while initializing SpriteComponent!");
 
-  return new(memory) SpriteComponent(shader, set);
+  auto *sprite = new (memory) SpriteComponent(shader, set);
+
+  auto tintColor = map_fetch(data, "tint", nullptr);
+  sprite->Tint = JsonToColor(tintColor);
+
+  return sprite;
 }
 
 // ----------------------------------------------------------------------------

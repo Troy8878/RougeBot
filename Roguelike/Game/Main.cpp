@@ -11,17 +11,17 @@
 
 static void CreateConsole()
 {
-  AllocConsole();
-  FILE *file;
-  freopen_s(&file, "CONOUT$", "wt", stdout);
-  freopen_s(&file, "CONOUT$", "wt", stderr);
-  freopen_s(&file, "CONIN$", "rt", stdin);
+  //AllocConsole();
+  //FILE *file;
+  //freopen_s(&file, "CONOUT$", "wt", stdout);
+  //freopen_s(&file, "CONOUT$", "wt", stderr);
+  //freopen_s(&file, "CONIN$", "rt", stdin);
 
-  consoleStreamBuf.extra = std::cout.rdbuf();
+  //consoleStreamBuf.extra = std::cout.rdbuf();
   std::cout.rdbuf(&consoleStreamBuf);
   std::cerr.rdbuf(&consoleStreamBuf);
 
-  std::ios::sync_with_stdio();
+  //std::ios::sync_with_stdio();
 }
 
 Roguelike game("Roguebot", GetModuleHandle(nullptr));

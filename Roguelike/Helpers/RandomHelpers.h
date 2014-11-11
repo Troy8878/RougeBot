@@ -622,6 +622,7 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
 
 // ----------------------------------------------------------------------------
 
+D2D1::ColorF JsonToColor(json::value json);
 D2D1::ColorF StringToColor(const std::string &name);
 
 // ----------------------------------------------------------------------------

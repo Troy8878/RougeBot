@@ -35,25 +35,25 @@ void Input::Initialize()
 
   auto &game = *GetGame();
 
-  game.SetProcHandler(WM_KILLFOCUS, [this](HWND, UINT, WPARAM, LPARAM, LRESULT &)
+  game.SetProcHandler(WM_KILLFOCUS, [this] (HWND, UINT, WPARAM, LPARAM, LRESULT &)
                                   {
                                     AllKeysUp();
                                     AllMouseUp();
                                   });
 
-  game.SetProcHandler(WM_KEYDOWN, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandler(WM_KEYDOWN, [this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
                                 {
                                   auto signal = TranslateSignal(msg, wp, lp);
                                   OnKeyDown(signal);
                                 });
 
-  game.SetProcHandler(WM_KEYUP, [this](HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandler(WM_KEYUP, [this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
                               {
                                 auto signal = TranslateSignal(msg, wp, lp);
                                 OnKeyUp(signal);
                               });
 
-  game.SetProcHandler(WM_MOUSEMOVE, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
+  game.SetProcHandler(WM_MOUSEMOVE, [this] (HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
                                   {
                                     this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
                                   });
@@ -67,7 +67,7 @@ void Input::Initialize()
       MK_XBUTTON2
     };
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
                        {
                          this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
@@ -76,7 +76,7 @@ void Input::Initialize()
                              this->OnMouseDown(bt);
                        }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
                        {
                          this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
@@ -85,7 +85,7 @@ void Input::Initialize()
                              this->OnMouseUp(bt);
                        }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
 
-  game.SetProcHandlers([this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
                        {
                          this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
@@ -93,6 +93,17 @@ void Input::Initialize()
                            if (wp & bt)
                              this->OnDoubleClick(bt);
                        }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
+  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM, LRESULT &)
+                       {
+                         wchar_t buf[2] = { static_cast<wchar_t>(wp), 0 };
+                         ruby::ruby_gc_guard guard{*mrb_inst};
+                         DEF_EVENT_ID(key_char);
+
+                         auto str = narrow(buf);
+                         Events::RubyEvent data(mrb_str_new(*mrb_inst, str.c_str(), str.size()));
+                         Events::EventMessage msg(key_char, &data);
+                         Events::Event::Raise(msg);
+                       }, WM_CHAR);
 }
 
 // ----------------------------------------------------------------------------

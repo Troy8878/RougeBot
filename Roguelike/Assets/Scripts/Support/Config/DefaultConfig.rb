@@ -65,4 +65,7 @@ Config.load_defaults do
   Config.bind_action "pancakification", { down: [:pancakification] }
   Config.bind_key "Game", Keys::PAUSE, "pancakification"
 
+  Config.bind_action "toggle_console", { down: [:toggle_console] }
+  Config.bind_key "Game", Keys::TILDE, "toggle_console"
+
 end

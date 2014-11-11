@@ -178,6 +178,8 @@ module Keys
   PERIOD = 0xBE
   OEM_PERIOD = 0xBE
 
+  TILDE = 0xC0
+
   OEM_2 = 0xBF
   OEM_3 = 0xC0
   OEM_4 = 0xDB

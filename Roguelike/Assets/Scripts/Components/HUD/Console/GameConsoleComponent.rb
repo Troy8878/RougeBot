@@ -48,7 +48,9 @@ class GameConsoleComponent < ComponentBase
       end
       @textbuf = String.new
     elsif e.vkey == Keys::BACK
-      @textbuf = @textbuf.slice(0, @textbuf.length - 1)
+      if !@textbuf.empty?
+        @textbuf = @textbuf.slice(0, @textbuf.length - 1)
+      end
     end
 
     update_textbuf

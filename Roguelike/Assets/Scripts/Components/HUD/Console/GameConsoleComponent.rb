@@ -13,6 +13,8 @@ class GameConsoleComponent < ComponentBase
   OPEN_SPEED = 8
   CLOSE_SPEED = 8
 
+  HISTORY = []
+
   def initialize(data)
     super data
 
@@ -20,7 +22,7 @@ class GameConsoleComponent < ComponentBase
     @pos = owner.transform_component.position
     @textbuf = String.new
 
-    register_event :update, :on_update
+    register_event :update, :first_update
     register_event :key_down, :on_key
     register_event :key_char, :on_char
     register_event :append_line, :append_line
@@ -74,6 +76,14 @@ class GameConsoleComponent < ComponentBase
     box.raise_event :send, [:set_text_at, [0, "> " + @textbuf]]
   end
 
+  def first_update(e)
+    register_event :update, :on_update
+
+    HISTORY.each do |line|
+      append_line line, true
+    end
+  end
+
   def on_update(e)
     pos = @pos
 
@@ -89,10 +99,9 @@ class GameConsoleComponent < ComponentBase
       end
     end
 
-    ary = AryStreamBuffer.game_console.peek
-    unless ary.empty?
-      append_line(ary.first)
-      ary.delete_at 0
+    ary = AryStreamBuffer.game_console.flush
+    ary.each do |msg|
+      append_line(msg)
     end
   end
 
@@ -121,7 +130,14 @@ class GameConsoleComponent < ComponentBase
     15 => FG_RED + FG_GRN + FG_BLU   + FG_ALPHA
   }
 
-  def append_line(msg)
+
+  def append_line(msg, from_history = false)
+    if from_history
+      HISTORY.delete_at 0 while HISTORY.length > 50
+    else
+      HISTORY << msg
+    end
+
     root = owner.local_find("TextRoot")
     root.raise_event :shift_up, nil
 

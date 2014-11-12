@@ -18,7 +18,7 @@
             "render_target": "ConsoleLayer"
           },
           "TextComponent": {
-            "texts": [""],
+            "texts": ["> "],
             "font": "Consolas",
             "font_size": 28,
             "text_align": "leading",

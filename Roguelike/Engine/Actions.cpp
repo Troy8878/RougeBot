@@ -158,6 +158,12 @@ bool RubyProcAction::Update(float dt)
   mrb_value dt_value = mrb_float_value(*mrb_inst, dt);
   mrb_value result = mrb_funcall_argv(*mrb_inst, _proc, call, 1, &dt_value);
 
+  if (mrb_inst->mrb_handle()->exc)
+  {
+    mrb_inst->log_and_clear_error();
+    return false;
+  }
+
   return result.tt != MRB_TT_FALSE;
 }
 
@@ -186,6 +192,12 @@ bool RubyObjectAction::Update(float dt)
 {
   mrb_value dt_value = mrb_float_value(*mrb_inst, dt);
   mrb_value result = mrb_funcall_argv(*mrb_inst, _obj, _method, 1, &dt_value);
+
+  if (mrb_inst->mrb_handle()->exc)
+  {
+    mrb_inst->log_and_clear_error();
+    return false;
+  }
 
   return result.tt != MRB_TT_FALSE;
 }

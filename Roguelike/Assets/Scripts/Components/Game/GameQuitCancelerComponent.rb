@@ -12,6 +12,14 @@ class GameQuitCancelerComponent < ComponentBase
   end
 
   def on_quit(e)
+    Event.handled = true
+
+    owner.children.each do |entity|
+      entity.raise_event :quit, e
+    end
+
+    return if e[:quit] == false
+
     e[:quit] = false
     Game.switch_level "Splash"
   end

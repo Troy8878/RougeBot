@@ -7,6 +7,7 @@
 
 #include "Common.h"
 #include "Level.h"
+#include <shellapi.h>
 
 #include "mruby.h"
 
@@ -66,10 +67,8 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
 
 // ----------------------------------------------------------------------------
 
-extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
+extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value)
 {
-  (self);
-
   char *text, *title;
   mrb_int options;
 
@@ -109,21 +108,8 @@ extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value self)
 
 extern "C" mrb_value ruby_clearscreen(mrb_state *, mrb_value)
 {
-  HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (!console)
-    return mrb_false_value();
-
-  DWORD cw;
-  CONSOLE_SCREEN_BUFFER_INFO info;
-  GetConsoleScreenBufferInfo(console, &info);
-
-  auto conSize = info.dwSize.X * info.dwSize.Y;
-  FillConsoleOutputCharacter(console, ' ', conSize, COORD{0,0}, &cw);
-
-  GetConsoleScreenBufferInfo(console, &info);
-  FillConsoleOutputAttribute(console, info.wAttributes, conSize, COORD{0,0}, &cw);
-
-  SetConsoleCursorPosition(console, COORD{0,0});
+  for (size_t i = 0; i < 50; ++i)
+    std::cout << std::endl;
 
   return mrb_nil_value();
 }
@@ -173,6 +159,16 @@ static mrb_value mrb_quit_game(mrb_state *, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_browse(mrb_state *, mrb_value)
+{
+  ShellExecuteA(nullptr, "open", 
+                "http://localhost:5430/game/index.html",
+                nullptr, nullptr, SW_SHOWNORMAL);
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -180,6 +176,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 
   mrb_define_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
+  mrb_define_method(mrb, kernel, "browse", mrb_browse, ARGS_NONE());
 
   mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
   mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));

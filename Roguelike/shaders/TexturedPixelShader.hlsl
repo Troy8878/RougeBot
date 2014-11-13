@@ -10,6 +10,7 @@
 cbuffer ColorData
 {
   float4 tint;
+  float time;
 };
 
 Texture2D shaderTexture;

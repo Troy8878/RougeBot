@@ -56,10 +56,23 @@ class DefenseComponent < ComponentBase
       return :kill
     end
 
-    message = StatusMessage.new("#{total_dmg}", 1, "Red")
+    message = StatusMessage.new("#{total_dmg}", 1, "Red, 0.8")
     message.display self.owner
 
     return :hit
+  end
+
+  def heal(amt)
+    @health += amt
+    
+    self.owner.raise_event :health_changed, {
+      kind: :heal,
+      amount: amt,
+      new_value: @health
+    }
+
+    message = StatusMessage.new("#{amt}", 1, "Green, 0.8")
+    message.display self.owner
   end
 
   def notify_death

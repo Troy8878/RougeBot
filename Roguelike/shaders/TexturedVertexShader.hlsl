@@ -38,9 +38,8 @@ TexturedPixelInputType main(TexturedVertexInputType input)
   //output.position.z += sval * distance(output.position.z, 3.5);
 
   // Light thingy
-  float dist = (distance(output.position.xy, float2(0, 0)) + 1.9) / 2;
-  output.color.xyz *= 1.2 / dist;
-  output.color.xyz *= float3(0.9, 0.9, 1.2); // blue
+  float dist = (distance(output.position.xy, float2(0, 0)));
+  output.color.xyz += min(max(1 - dist / 2, -0.99), 0.2);
 
   // Camera to Projection space
   output.position = mul(output.position, projectionMatrix);

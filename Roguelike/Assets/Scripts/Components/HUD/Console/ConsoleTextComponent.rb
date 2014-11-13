@@ -8,7 +8,7 @@ class ConsoleTextComponent < ComponentBase
   dependency "TransformComponent"
 
   SHIFT_DY = 0.0375
-  MAX_LINES = 37
+  MAX_LINES = 25
 
   def initialize(data)
     super data

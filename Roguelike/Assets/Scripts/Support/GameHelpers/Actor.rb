@@ -34,6 +34,7 @@ module Actor
   def actor_sub_init
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
+    @actor_diagonal = false
   end
 
   def actor_init?
@@ -101,6 +102,13 @@ module Actor
       return false
     end
 
+    if xo != 0 && yo != 0
+      unless @actor_diagonal
+        @blocked_reason = CANNOT_MOVE_DIAGONALLY
+        return false
+      end
+    end
+
     if Math.abs(xo) > 1.5 || Math.abs(yo) > 1.5
       @blocked_reason = BLOCKED_BY_UNKNOWN
       return false
@@ -133,15 +141,6 @@ module Actor
     res = !tile.solid?
     @blocked_reason = BLOCKED_BY_WALL
     return res
-
-    if xo != 0 and yo != 0
-      if(@actor_diagonal == false)
-        @blocked_reason = CANNOT_MOVE_DIAGONALLY
-        return false
-      end
-    else
-      return true
-    end
   end
 
 # Ranged combat below here
@@ -156,7 +155,7 @@ module Actor
     end
 
     if xo != 0 and yo != 0
-      if(@actor_diagonal == false)
+      unless @actor_diagonal
         @blocked_reason = CANNOT_MOVE_DIAGONALLY
         return false
       end

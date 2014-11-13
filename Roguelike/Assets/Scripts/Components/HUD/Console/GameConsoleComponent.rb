@@ -7,7 +7,7 @@
 class GameConsoleComponent < ComponentBase
   dependency "TransformComponent"
 
-  OPEN_Y = 0.2
+  OPEN_Y = 1.2
   CLOSE_Y = 3
 
   OPEN_SPEED = 8
@@ -15,14 +15,17 @@ class GameConsoleComponent < ComponentBase
 
   HISTORY = []
   INPUT_HISTORY = []
+  MAX_HISTORY = 25
 
   def initialize(data)
     super data
 
     @open = false
     @pos = owner.transform_component.position
+    @pos.y = CLOSE_Y
     @textbuf = String.new
     @history_index = -1
+    @cursor_pos = 0
     @suffix = ""
     @suffix_sequence = self.owner.action_sequence :text_suffix
     add_suffix
@@ -82,6 +85,7 @@ class GameConsoleComponent < ComponentBase
       end
       @textbuf = String.new
       @history_index = -1
+      @cursor_pos = 0
     when Keys::BACK
       @backspace_cooldown = nil
     when Keys::UP
@@ -92,6 +96,7 @@ class GameConsoleComponent < ComponentBase
         end
 
         @textbuf = INPUT_HISTORY[@history_index]
+        @cursor_pos = @textbuf.length
       end
     when Keys::DOWN
       if INPUT_HISTORY.length > 0
@@ -102,7 +107,14 @@ class GameConsoleComponent < ComponentBase
         else
           @textbuf = INPUT_HISTORY[@history_index]
         end
+        @cursor_pos = @textbuf.length
       end
+    when Keys::RIGHT
+      @cursor_pos += 1
+      @cursor_pos = @textbuf.length if @cursor_pos > @textbuf.length
+    when Keys::LEFT
+      @cursor_pos -= 1
+      @cursor_pos = 0 if @cursor_pos < 0
     end
     update_textbuf
   end
@@ -117,26 +129,54 @@ class GameConsoleComponent < ComponentBase
       return
     end
 
-    @textbuf = @textbuf.slice(0, @textbuf.length - 1)
+    return if @cursor_pos == 0
+
+    if @cursor_pos == @textbuf.length
+      @textbuf = @textbuf.slice(0, @textbuf.length - 1)
+    else
+      split = @textbuf.split('')
+      split.delete_at @cursor_pos - 1
+      @textbuf = split.join('')
+    end
+
+    @cursor_pos -= 1
+
     update_textbuf
   end
 
   IGNORE_KEYS = [
     96, # `
     8,  # \b
+    9,  # \t
     13  # \n
   ]
 
   def on_char(e)
     return unless @open
+    return if e.nil?
     return if IGNORE_KEYS.include? e.char_code
-    @textbuf += e
+
+    if @cursor_pos == @textbuf.length
+      @textbuf += e
+    else
+      split = @textbuf.split('')
+      split.insert @cursor_pos, e
+      @textbuf = split.join('')
+    end
+    @cursor_pos += e.length
     update_textbuf
   end
 
   def update_textbuf
     box = owner.local_find "Textbox"
-    box.raise_event :send, [:set_text_at, [0, "> " + @textbuf + @suffix]]
+    text = @textbuf
+    if @cursor_pos != text.length
+      text = text.split('').insert(@cursor_pos, "|").join('')
+      text = "> #{text}"
+    else
+      text = "> #{text}#{@suffix}"
+    end
+    box.raise_event :send, [:set_text_at, [0, text]]
   end
 
   def first_update(e)
@@ -148,7 +188,11 @@ class GameConsoleComponent < ComponentBase
 
   def process_output
     ary = AryStreamBuffer.game_console.flush
-    ary.each do |msg|
+    if ary.length > 10
+      AryStreamBuffer.game_console.peek.replace(ary[10..-1])
+    end
+
+    ary.lazy.take(10).each do |msg|
       append_line(msg)
     end
   end
@@ -161,6 +205,7 @@ class GameConsoleComponent < ComponentBase
     pos = @pos
 
     if @open && pos.y > OPEN_Y
+      owner.local_find("TextRoot").raise_event :send, [:visible=, [true]]
       pos.y -= e.dt * OPEN_SPEED
       if pos.y < OPEN_Y
         pos.y = OPEN_Y
@@ -169,6 +214,7 @@ class GameConsoleComponent < ComponentBase
       pos.y += e.dt * CLOSE_SPEED
       if pos.y > CLOSE_Y
         pos.y = CLOSE_Y
+        owner.local_find("TextRoot").raise_event :send, [:visible=, [false]]
       end
     end
 
@@ -216,7 +262,7 @@ class GameConsoleComponent < ComponentBase
 
   def append_line(msg)
     HISTORY << msg
-    HISTORY.delete_at 0 while HISTORY.length > 50
+    HISTORY.delete_at 0 while HISTORY.length > MAX_HISTORY
 
     root = owner.local_find("TextRoot")
     root.raise_event :shift_up, nil

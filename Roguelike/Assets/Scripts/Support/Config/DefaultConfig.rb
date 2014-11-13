@@ -6,6 +6,8 @@
 
 Config.load_defaults do
 
+  Config[:console_enabled] = true
+
   Config[:keybind_actions] = {}
 
   Config[:touch_mode] = false

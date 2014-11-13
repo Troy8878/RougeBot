@@ -182,6 +182,8 @@ class GameConsoleComponent < ComponentBase
   def first_update(e)
     register_event :update, :on_update
 
+    owner.zombify! unless Config[:console_enabled]
+
     ary = AryStreamBuffer.game_console.peek
     ary.replace(HISTORY + ary)
   end

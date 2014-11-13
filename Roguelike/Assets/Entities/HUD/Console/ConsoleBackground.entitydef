@@ -1,6 +1,7 @@
 {
   "TransformComponent": {
-    "scale": [2.1, 1.575, 1]
+    "scale": [2.1, 1.575, 1],
+    "position": [0, 0, 0.05]
   },
   "TextureComponent": {
     "textures": ["SPECIAL/NULL"]

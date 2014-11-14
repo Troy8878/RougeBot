@@ -10,6 +10,15 @@
 #include "Common.h"
 #include "WorldSnapshot.h"
 
+WorldSnapshot::WorldSnapshot()
+{
+  mrb_state *mrb = *mrb_inst;
+  mrb_value floor = mrb_funcall_argv(mrb, mrb_obj_value(mrb->top_self), 
+                                     mrb_intern_lit(mrb, "current_floor"), 0, nullptr);
+
+  mrb_value rows = mrb_convert_type(mrb, floor, MRB_TT_ARRAY, "Array", "to_a");
+  height = mrb_ary_len(mrb, rows);
+}
 
 const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
 {

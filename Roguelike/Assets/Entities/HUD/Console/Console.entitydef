@@ -1,0 +1,11 @@
+{
+  "TransformComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "GameConsole",
+        "archetype": "HUD/Console/GameConsole"
+      }
+    ]
+  }
+}

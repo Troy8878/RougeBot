@@ -1,3 +1,10 @@
+/*********************************
+ * TexturedVertexShader.hlsl
+ * Connor Hilarides
+ * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
+
 #include "ShaderCommons.hlsli"
 
 cbuffer CameraData
@@ -31,9 +38,9 @@ TexturedPixelInputType main(TexturedVertexInputType input)
   //output.position.z += sval * distance(output.position.z, 3.5);
 
   // Light thingy
-  float dist = (distance(output.position.xy, float2(0, 0)) + 1.9) / 2;
-  output.color.xyz *= 1.2 / dist;
-  output.color.xyz *= float3(0.9, 0.9, 1.2); // blue
+  float dist = (distance(output.position.xy, float2(0, 0)));
+  output.color.xyz += min(max(0.5 - dist / 3, -0.99), 0.2);
+  output.color.xyz *= float3(0.9, 0.9, 1.2);
 
   // Camera to Projection space
   output.position = mul(output.position, projectionMatrix);

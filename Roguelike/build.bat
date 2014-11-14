@@ -9,6 +9,13 @@ if /i "%1"=="" (
   msbuild /m /property:Configuration=Release
   goto rungame
 )
+if /i "%1"=="RAVX" (
+  goto runavx
+)
+if /i "%1"=="AVX" (
+  msbuild /m /target:Clean;Rebuild /property:Configuration=AVX
+  goto runavx
+)
 if /i "%1"=="build" (
   msbuild /m /target:Rebuild /property:Configuration=Release
   goto rungame
@@ -21,11 +28,13 @@ if /i "%1"=="cleanbuild" (
   msbuild /m /target:Clean;Rebuild /property:Configuration=Release
   goto rungame
 )
-if /i "%1"=="typescript" (
-  
-)
 
 :rungame
 start x64\Release\Game.exe
+goto end
+
+:runavx
+start x64\AVX\Game.exe
+goto end
 
 :end

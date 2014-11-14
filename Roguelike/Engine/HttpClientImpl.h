@@ -2,6 +2,7 @@
  * HttpClientImpl.h
  * Connor Hilarides
  * Created 2014/10/14
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -64,8 +65,6 @@ public:
   json::value jvalue;
 
   bool hasJson = false;
-
-  void LoadResult();
 
   NO_COPY_CONSTRUCTOR(HttpResultImpl);
   NO_ASSIGNMENT_OPERATOR(HttpResultImpl);
@@ -135,7 +134,7 @@ protected:
     if (buf_count == buffer_size)
       WriteBuffer();
 
-    temp_buf[buf_count++] = (char)c;
+    temp_buf[buf_count++] = static_cast<char>(c);
 
     return c;
   }

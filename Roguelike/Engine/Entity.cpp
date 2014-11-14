@@ -2,6 +2,7 @@
  * Entity.cpp
  * Jake Robsahm, Connor Hilarides, Leonardo Saikali
  * Created 2014/08/11
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -36,6 +37,8 @@ Entity::Entity(entity_id id)
     next_ent_id = _id + 1;
 
   RegisterNamehash();
+
+  LocalTransform = DirectX::XMMatrixIdentity();
 }
 
 // ----------------------------------------------------------------------------
@@ -137,6 +140,12 @@ void Entity::LocalEvent(Events::EventMessage &e)
 {
   bool invalidation_occurred = false;
   event_list_invalidated = false;
+
+  {
+    DEF_EVENT_ID(send);
+    if (e.EventId == send)
+      HandleSend(e);
+  }
 
   auto *handlers = &_events[e.EventId];
 
@@ -313,10 +322,34 @@ void Entity::RemoveProxy(Entity *entity, event_id id)
 
 // ----------------------------------------------------------------------------
 
+void Entity::HandleSend(Events::EventMessage& e)
+{
+  mrb_state *mrb = *mrb_inst;
+  mrb_value event_params = e.GetData<Events::RubyEvent>()->GetRubyWrapper();
+  if (ruby::enumerable_length(mrb, event_params) != 2)
+    return;
+
+  mrb_sym sym = mrb_symbol(ruby::enumerable_at(mrb, event_params, 0));
+  mrb_value aryval = ruby::enumerable_at(mrb, event_params, 1);
+  RArray *ary = mrb_ary_ptr(aryval);
+  
+  for (auto &pair : Components)
+  {
+    auto comp = pair.second->GetRubyWrapper();
+    if (mrb_respond_to(mrb, comp, sym))
+    {
+      mrb_funcall_argv(mrb, comp, sym, mrb_ary_len(mrb, aryval), ary->ptr);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 void Entity::RecalculateEventCounts()
 {
   DEF_EVENT_ID(update);
   DEF_EVENT_ID(draw);
+  DEF_EVENT_ID(send);
 
   _eventCounts.clear();
 
@@ -324,6 +357,7 @@ void Entity::RecalculateEventCounts()
   // regardless of what components they have.
   _eventCounts[update] = 1;
   _eventCounts[draw] = 1;
+  _eventCounts[send] = 1;
 
   // Tally up the component handlers
   for (auto &event : _events)

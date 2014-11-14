@@ -175,6 +175,7 @@
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureZip.h" />
     <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="WorldSnapshot.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">
@@ -184,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actions.cpp" />
+    <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -235,6 +237,7 @@
     <ClCompile Include="TextureComponent.cpp" />
     <ClCompile Include="TextureZip.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
+    <ClCompile Include="WorldSnapshot.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

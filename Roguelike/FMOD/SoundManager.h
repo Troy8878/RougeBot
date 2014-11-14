@@ -2,6 +2,7 @@
  * SoundManager.h
  * Connor Hilarides
  * Created 2014/10/24
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -12,7 +13,10 @@ class ManagedSound
 {
 public:
   ManagedSound() = default;
-  ManagedSound(ManagedSound&& managed) : _sound(std::move(managed._sound)) { }
+
+  ManagedSound(ManagedSound &&managed) : _sound(std::move(managed._sound))
+  {
+  }
 
   SoundClass::Sound *operator->();
   SoundClass::Sound *get();
@@ -30,9 +34,9 @@ public:
   static SoundManager Instance;
 
   ManagedSound Load(json::value definition);
-  
+
 private:
-  ManagedSound LoadAsset(const std::string& asset);
+  ManagedSound LoadAsset(const std::string &asset);
   ManagedSound LoadDefinition(json::value definition);
 
   std::unordered_map<std::string, std::weak_ptr<SoundClass::Sound>> cache;

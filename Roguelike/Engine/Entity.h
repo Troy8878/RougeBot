@@ -2,6 +2,7 @@
  * Entity.h
  * Connor Hilarides
  * Created 2014/08/11
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -157,6 +158,8 @@ public:
   void AddProxy(Entity *entity, event_id id, EventProxyList::Func func);
   void RemoveProxy(Entity *entity, event_id id);
 
+  void HandleSend(Events::EventMessage &e);
+
   /**
     Helper for adding member functions of properly inheriting components
   */
@@ -218,7 +221,7 @@ public:
   void SearchEntities(std::vector<Entity *> &results,
                       const std::regex &namePattern);
 
-  PROPERTY(get = _GetChildren) std::vector<Entity *> Children;
+  PROPERTY(get = _GetChildren) const std::vector<Entity *> &Children;
 
   const std::vector<Entity *> &_GetChildren()
   {

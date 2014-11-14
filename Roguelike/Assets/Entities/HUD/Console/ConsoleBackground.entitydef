@@ -1,0 +1,13 @@
+{
+  "TransformComponent": {
+    "scale": [2.1, 1.575, 1],
+    "position": [0, 0, 0.05]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "ConsoleLayer",
+    "tint": "Black, 0.7"
+  }
+}

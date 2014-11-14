@@ -1,0 +1,27 @@
+{
+  "TransformComponent": {
+    "scale": [1.5, 1.5, 1.5],
+    "position": [0, 0, -0.5]
+  },
+  "GameConsoleComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "ConsoleBackground",
+        "archetype": "HUD/Console/ConsoleBackground"
+      },
+      {
+        "name": "TextRoot"
+      },
+      {
+        "name": "Textbox",
+        "archetype": "HUD/Console/TextItem",
+        "components": {
+          "TransformComponent": {
+            "position": [0, -0.72]
+          },
+        }
+      }
+    ]
+  }
+}

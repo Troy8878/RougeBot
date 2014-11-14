@@ -2,6 +2,9 @@
 #include "mruby/string.h"
 #include <stdio.h>
 
+void gwrite(const void *str, size_t size, size_t ct);
+void gputc(int c);
+
 static void
 printstr(mrb_state *mrb, mrb_value obj)
 {
@@ -11,7 +14,7 @@ printstr(mrb_state *mrb, mrb_value obj)
   if (mrb_string_p(obj)) {
     s = RSTRING_PTR(obj);
     len = RSTRING_LEN(obj);
-    fwrite(s, len, 1, stdout);
+    gwrite(s, len, 1);
   }
 }
 

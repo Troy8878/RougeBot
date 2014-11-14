@@ -1,8 +1,9 @@
 /*********************************
-* Floor.h
-* Avi Whitten-Vile
-* Created 2014/09/08
-*********************************/
+ * Floor.h
+ * Avi Whitten-Vile
+ * Created 2014/09/08
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
 
 #pragma once
 

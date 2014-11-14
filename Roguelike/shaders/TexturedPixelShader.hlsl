@@ -1,8 +1,16 @@
+/*********************************
+ * TexturedPixelShader.hlsl
+ * Connor Hilarides
+ * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
+
 #include "ShaderCommons.hlsli"
 
 cbuffer ColorData
 {
   float4 tint;
+  float time;
 };
 
 Texture2D shaderTexture;

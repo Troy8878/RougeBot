@@ -2,6 +2,7 @@
  * RandomHelpers.cpp
  * Connor Hilarides
  * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Engine/Common.h"
@@ -50,15 +51,12 @@ bool getline_async(std::string& str,
     if (!has_any && std::chrono::system_clock::now() - start > timeout)
       return false;
 
-    bool hit = false;
-
     if (_kbhit())
     {
       prev_len = str.size();
       has_any = true;
-      hit = true;
 
-      char c = (char)_getch();
+      char c = static_cast<char>(_getch());
 
       if (c == '\r') // [ENTER]
       {
@@ -67,7 +65,7 @@ bool getline_async(std::string& str,
         message_list.push_back(str);
         return true;
       }
-      else if (c == '\b') // [BACKSPACE]
+      if (c == '\b') // [BACKSPACE]
       {
         if (pos)
         {
@@ -82,7 +80,7 @@ bool getline_async(std::string& str,
       {
         if (c == -32 || c == 0) // special movement keys
         {
-          char m = (char)_getch();
+          char m = static_cast<char>(_getch());
 
           switch (m)
           {
@@ -127,7 +125,7 @@ bool getline_async(std::string& str,
               break;
 
             default: // for detecting keys I've missed
-              unknown_modifier[ARRAYSIZE(unknown_modifier) - 2] = m;
+              unknown_modifier[ARRAYSIZE(reinterpret_cast<const char(&)[24]>(unknown_modifier)) - 2] = m;
               notif_msg = unknown_modifier;
           }
         }
@@ -167,7 +165,7 @@ bool getline_async(std::string& str,
             auto htext = GetClipboardData(CF_TEXT);
             if (htext)
             {
-              auto ctext = (const char *) GlobalLock(htext);
+              auto ctext = static_cast<const char *>(GlobalLock(htext));
               if (ctext)
               {
                 str = ctext;
@@ -221,7 +219,7 @@ bool getline_async(std::string& str,
       _cputs(str.c_str()); // Print out the contents
 
       // Put the cursor at the current text position
-      cpos.X = (short) pos + (str.size() ? 2 : 0);
+      cpos.X = static_cast<short>(pos) + (str.size() ? 2 : 0);
       SetConsoleCursorPosition(console, cpos);
     }
     else
@@ -274,6 +272,30 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
   }
 
   return projected;
+}
+
+// ----------------------------------------------------------------------------
+
+D2D1::ColorF JsonToColor(json::value json)
+{
+  D2D1::ColorF color(D2D1::ColorF::White);
+  if (json.is(json::json_type::jstring))
+  {
+    color = StringToColor(json.as_string());
+  }
+  else if (json.is_array_of<json::value::number_t>())
+  {
+    auto ary = json.as_array_of<json::value::number_t>();
+    if (ary.size() >= 1)
+      color.r = static_cast<float>(ary[0]);
+    if (ary.size() >= 2)
+      color.g = static_cast<float>(ary[1]);
+    if (ary.size() >= 3)
+      color.b = static_cast<float>(ary[2]);
+    if (ary.size() >= 4)
+      color.a = static_cast<float>(ary[3]);
+  }
+  return color;
 }
 
 // ----------------------------------------------------------------------------
@@ -426,17 +448,17 @@ D2D1::ColorF StringToColor(const std::string& name)
   };
   #pragma endregion
 
-  D2D1::ColorF color{0};
+  D2D1::ColorF color(D2D1::ColorF::White);
 
   auto it = namedColors.end();
   if (name.find('#') == 0 && name.size() >= 7)
   {
-    color.r = std::stoul(name.substr(1, 2), 0, 16) / 255.0f;
-    color.g = std::stoul(name.substr(3, 2), 0, 16) / 255.0f;
-    color.b = std::stoul(name.substr(5, 2), 0, 16) / 255.0f;
+    color.r = stoul(name.substr(1, 2), nullptr, 16) / 255.0f;
+    color.g = stoul(name.substr(3, 2), nullptr, 16) / 255.0f;
+    color.b = stoul(name.substr(5, 2), nullptr, 16) / 255.0f;
 
     if (name.size() >= 9)
-      color.a = std::stoul(name.substr(7, 2), 0, 16) / 255.0f;
+      color.a = stoul(name.substr(7, 2), nullptr, 16) / 255.0f;
   }
   else if ((it = namedColors.find(downcase(name))) != namedColors.end())
   {
@@ -452,7 +474,7 @@ D2D1::ColorF StringToColor(const std::string& name)
     if ((it = namedColors.find(downcase(colorName))) != namedColors.end())
     {
       color = it->second;
-      color.a = std::stof(alphaTxt);
+      color.a = stof(alphaTxt);
     }
   }
 

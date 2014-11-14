@@ -1,6 +1,5 @@
 {
   "TransformComponent": {
-    "rotation": [1.5707, 0, 0],
   },
   "AttackComponent": {
     "attack": 0, 

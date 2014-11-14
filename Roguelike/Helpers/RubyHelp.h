@@ -2,6 +2,7 @@
  * RubyHelp.h
  * Connor Hilarides
  * Created 2014/05/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "mruby.h"
@@ -10,6 +11,7 @@
 #include "mruby\error.h"
 
 #include <string>
+#include <Engine/EntitySection.h>
 
 inline std::string mrb_to_s(mrb_state *mrb, mrb_value value, bool clear_error = true, bool *has_error = nullptr)
 {
@@ -39,7 +41,7 @@ inline bool mrb_errord(mrb_state *mrb)
   return !!mrb->exc;
 }
 
-void mrb_get_error(mrb_state *mrb, std::string& message, std::string& backtrace)
+inline void mrb_get_error(mrb_state *mrb, std::string& message, std::string& backtrace)
 {
   if (!mrb_errord(mrb))
     throw basic_exception("mruby did not just raise an error");

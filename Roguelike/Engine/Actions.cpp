@@ -2,6 +2,7 @@
  * Actions.cpp
  * Connor Hilarides
  * Created 2014/10/24
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -9,8 +10,8 @@
 
 // ----------------------------------------------------------------------------
 
-static mrb_int GCLockObj(mrb_value value);
-static void GCUnlockObj(mrb_int holdId);
+EXTERN_C mrb_int GCLockObj(mrb_value value);
+EXTERN_C void GCUnlockObj(mrb_int holdId);
 
 // ----------------------------------------------------------------------------
 
@@ -157,6 +158,12 @@ bool RubyProcAction::Update(float dt)
   mrb_value dt_value = mrb_float_value(*mrb_inst, dt);
   mrb_value result = mrb_funcall_argv(*mrb_inst, _proc, call, 1, &dt_value);
 
+  if (mrb_inst->mrb_handle()->exc)
+  {
+    mrb_inst->log_and_clear_error();
+    return false;
+  }
+
   return result.tt != MRB_TT_FALSE;
 }
 
@@ -185,6 +192,12 @@ bool RubyObjectAction::Update(float dt)
 {
   mrb_value dt_value = mrb_float_value(*mrb_inst, dt);
   mrb_value result = mrb_funcall_argv(*mrb_inst, _obj, _method, 1, &dt_value);
+
+  if (mrb_inst->mrb_handle()->exc)
+  {
+    mrb_inst->log_and_clear_error();
+    return false;
+  }
 
   return result.tt != MRB_TT_FALSE;
 }
@@ -382,7 +395,7 @@ static mrb_value GCLockHash()
 
 // ----------------------------------------------------------------------------
 
-static mrb_int GCLockObj(mrb_value value)
+EXTERN_C mrb_int GCLockObj(mrb_value value)
 {
   static mrb_int next_lock_id = 0;
   static auto lock = GCLockHash();
@@ -397,7 +410,7 @@ static mrb_int GCLockObj(mrb_value value)
 
 // ----------------------------------------------------------------------------
 
-static void GCUnlockObj(mrb_int holdId)
+EXTERN_C void GCUnlockObj(mrb_int holdId)
 {
   static auto lock = GCLockHash();
   mrb_value lock_v = mrb_fixnum_value(holdId);

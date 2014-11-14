@@ -11,6 +11,8 @@
 # damage - the range of damage an object can do
 ################################################################
 class AttackComponent < ComponentBase
+  include Actor
+
   attr_reader :damage
 
   property :damage, :float_pair, true
@@ -19,6 +21,8 @@ class AttackComponent < ComponentBase
     super data
 
     @damage = data.fetch("damage", [2,4])
+
+    actor_sub_init
   end
 
   def equip_weapon
@@ -26,6 +30,11 @@ class AttackComponent < ComponentBase
     item = self.owner.inventory_component.inventory.equipment[:weapon]
     # Set the attack and damage values to the newly equipped weapon's values.
     damage = item.damage
+  end
+
+  def swing_melee_weapon(direction)
+    tile = current_tile
+
   end
 
   def do_attack(target)

@@ -1,3 +1,10 @@
+/*********************************
+ * StandardShapes.h
+ * Connor Hilarides
+ * Created 2014/07/07
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
+
 #pragma once
 
 #include "Helpers\UseDirectX.h"

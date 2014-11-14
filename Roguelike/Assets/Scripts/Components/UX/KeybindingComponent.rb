@@ -5,6 +5,7 @@
 #########################
 
 class KeybindingComponent < ComponentBase
+  @@locked_input = false
 
   def initialize(data)
     super data
@@ -27,6 +28,8 @@ class KeybindingComponent < ComponentBase
   end
 
   def on_key(type, e)
+    return if @@locked_input
+
     section = Config.key_bindings[self.owner.name]
     return unless section.is_a? Hash
 
@@ -38,6 +41,14 @@ class KeybindingComponent < ComponentBase
     return unless message.is_a? Array
 
     self.owner.raise_event message.first, message.second
+  end
+
+  def self.lock!
+    @@locked_input = true
+  end
+
+  def self.unlock!
+    @@locked_input = false
   end
 
   register_component "KeybindingComponent"

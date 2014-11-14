@@ -2,6 +2,7 @@
  * RandomHelpers.h
  * Connor Hilarides
  * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -22,17 +23,17 @@ typedef _com_error COMError;
 
 // ----------------------------------------------------------------------------
 
-inline std::wstring widen(const std::string& narrow_string)
+inline std::wstring widen(const std::string &narrow_string)
 {
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
   return converter.from_bytes(narrow_string.c_str());
 }
 
 // ----------------------------------------------------------------------------
 
-inline std::string narrow(const std::wstring& wide_string)
+inline std::string narrow(const std::wstring &wide_string)
 {
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
   return converter.to_bytes(wide_string);
 }
 
@@ -61,8 +62,8 @@ inline std::basic_string<Elem> chomp(std::basic_string<Elem> str)
 // ----------------------------------------------------------------------------
 
 template <typename Elem, typename Delim>
-inline std::vector<std::basic_string<Elem>> 
-split(const std::basic_string<Elem>& str, Delim&& delim)
+inline std::vector<std::basic_string<Elem>>
+split(const std::basic_string<Elem> &str, Delim &&delim)
 {
   std::vector<std::basic_string<Elem>> items;
   size_t pos = 0, next;
@@ -103,20 +104,20 @@ split(const std::basic_string<Elem>& str, Delim&& delim)
 // just a nice little helper to turn GetLastError() into a readable message
 inline std::string GetLastErrorString(DWORD error = 0)
 {
-  LPSTR pBuffer = 0;
+  LPSTR pBuffer = nullptr;
 
   if (error == 0)
     error = GetLastError();
 
   FormatMessage(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
-    FORMAT_MESSAGE_FROM_SYSTEM |
-    FORMAT_MESSAGE_IGNORE_INSERTS,
-    NULL,
-    error,
-    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    (LPTSTR) &pBuffer,
-    0, NULL);
+                                  FORMAT_MESSAGE_FROM_SYSTEM |
+                                  FORMAT_MESSAGE_IGNORE_INSERTS,
+                                  nullptr,
+                                  error,
+                                  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                  reinterpret_cast<LPTSTR>(&pBuffer),
+                                  0, nullptr);
 
   if (pBuffer == 0)
     return "UNKNOWN ERROR";
@@ -144,7 +145,7 @@ public:
   {
   }
 
-  void print_trace(std::ostream& out) const
+  void print_trace(std::ostream &out) const
   {
     trace.print(out);
   }
@@ -166,12 +167,12 @@ public:
     return reinterpret_cast<const char *>(_error.ErrorMessage());
   }
 
-  COMError& error()
+  COMError &error()
   {
     return _error;
   }
 
-  const COMError& error() const
+  const COMError &error() const
   {
     return _error;
   }
@@ -187,7 +188,7 @@ class string_exception : public basic_exception
   std::string message;
 
 public:
-  string_exception(const std::string& message)
+  string_exception(const std::string &message)
     : message(message)
   {
   }
@@ -213,7 +214,7 @@ public:
 
 template <class Interface>
 /** Safely releases DirectX interfaces */
-inline void ReleaseDXInterface(Interface *& interfaceToRelease)
+inline void ReleaseDXInterface(Interface *&interfaceToRelease)
 {
   if (interfaceToRelease)
   {
@@ -228,7 +229,7 @@ template <class Interface>
 class DXReleaser
 {
 public:
-  DXReleaser(Interface *& itr)
+  DXReleaser(Interface *&itr)
     : itr(itr)
   {
   }
@@ -238,10 +239,10 @@ public:
     ReleaseDXInterface(itr);
   }
 
-  DXReleaser& operator=(const DXReleaser&) = delete;
+  DXReleaser &operator=(const DXReleaser &) = delete;
 
 private:
-  Interface *& itr;
+  Interface *&itr;
 };
 
 // ----------------------------------------------------------------------------
@@ -258,14 +259,14 @@ private:
 
 inline void CheckHRESULT(HRESULT hr)
 {
-  if (FAILED(hr)) 
+  if (FAILED(hr))
     throw DXFatalError(hr);
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Interface>
-void setDXDebugName(Interface *object, const std::wstring& name)
+void setDXDebugName(Interface *object, const std::wstring &name)
 {
   setDXDebugName(object, narrow(name));
 }
@@ -273,10 +274,10 @@ void setDXDebugName(Interface *object, const std::wstring& name)
 // ----------------------------------------------------------------------------
 
 template <typename Interface>
-void setDXDebugName(Interface *object, const std::string& name)
+void setDXDebugName(Interface *object, const std::string &name)
 {
   HRESULT result = object->SetPrivateData(WKPDID_D3DDebugObjectName,
-                                          (UINT) name.length(),
+                                          static_cast<UINT>(name.length()),
                                           name.c_str());
   CHECK_HRESULT(result);
 }
@@ -284,14 +285,14 @@ void setDXDebugName(Interface *object, const std::string& name)
 // ----------------------------------------------------------------------------
 
 template <typename Container>
-void variadic_push_container(Container&)
+void variadic_push_container(Container &)
 {
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename Container, typename Arg>
-void variadic_push_container(Container& container, const Arg& param)
+void variadic_push_container(Container &container, const Arg &param)
 {
   container.push_back(param);
 }
@@ -299,8 +300,8 @@ void variadic_push_container(Container& container, const Arg& param)
 // ----------------------------------------------------------------------------
 
 template <typename Container, typename Arg, typename... Args>
-void variadic_push_container(Container& containter, const Arg& param, 
-                             const Args&&... params)
+void variadic_push_container(Container &container, const Arg &param,
+                             const Args &&... params)
 {
   container.push_back(param);
   variadic_push_container(container, params...);
@@ -316,8 +317,8 @@ void variadic_push_array(T [], size_t)
 // ----------------------------------------------------------------------------
 
 template <typename T, typename First, typename... Rest>
-void variadic_push_array(T array[], size_t index, 
-                         const First& param, const Rest&... params)
+void variadic_push_array(T array[], size_t index,
+                         const First &param, const Rest &... params)
 {
   array[index] = param;
   variadic_push_array(array, index + 1, params...);
@@ -468,11 +469,13 @@ struct component_factory_data : public std::unordered_map<std::string, json::val
   typedef std::unordered_map<std::string, json::value> base;
 
   component_factory_data() = default;
-  component_factory_data(const base& b) 
-    : base(b) 
+
+  component_factory_data(const base &b)
+    : base(b)
   {
   }
-  component_factory_data(const std::initializer_list<value_type>& list)
+
+  component_factory_data(const std::initializer_list<value_type> &list)
     : base(list)
   {
   }
@@ -497,9 +500,9 @@ public:
 
 template <typename Map, typename DefType>
 typename Map::mapped_type
-map_fetch(const Map& map,
-          const typename Map::key_type& key,
-          const DefType& def)
+map_fetch(const Map &map,
+          const typename Map::key_type &key,
+          const DefType &def)
 {
   auto it = map.find(key);
   if (it != map.end())
@@ -511,7 +514,7 @@ map_fetch(const Map& map,
 // ----------------------------------------------------------------------------
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>>
-void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last)
+inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out, FwIt first, FwIt last)
 {
   while (first != last)
   {
@@ -522,10 +525,10 @@ void svtprintf(std::basic_ostream<CharT, CharTraits>& out, FwIt first, FwIt last
 
 // ----------------------------------------------------------------------------
 
-template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>, 
+template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>,
           typename Arg, typename... Args>
-void svtprintf(std::basic_ostream<CharT, CharTraits>& out, 
-               FwIt first, FwIt last, const Arg& value, const Args&... rest)
+inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
+                      FwIt first, FwIt last, const Arg &value, Args &&... rest)
 {
   while (first != last)
   {
@@ -540,10 +543,11 @@ void svtprintf(std::basic_ostream<CharT, CharTraits>& out,
       if (n == 'v')
       {
         out << value;
-        svtprintf(out, first, last, rest...);
+        svtprintf(out, first, last, std::forward(rest)...);
         return;
       }
-      else if (n != '%')
+      
+      if (n != '%')
       {
         throw std::logic_error("An unknown format specifier was encountered (not % or v)");
       }
@@ -564,7 +568,7 @@ void vtprintf(const char *str, Args... args)
 // ----------------------------------------------------------------------------
 
 template <typename... Args>
-void vtprintf(const std::string& str, Args... args)
+void vtprintf(const std::string &str, Args... args)
 {
   svtprintf(std::cout, str.begin(), str.end(), args...);
 }
@@ -580,14 +584,14 @@ void vtprintf(const wchar_t *str, Args... args)
 // ----------------------------------------------------------------------------
 
 template <typename... Args>
-void vtprintf(const std::wstring& str, Args... args)
+void vtprintf(const std::wstring &str, Args... args)
 {
   svtprintf(std::wcout, str.begin(), str.end(), args...);
 }
 
 // ----------------------------------------------------------------------------
 
-json::value ParseJsonAsset(const std::string& containerName, const std::string& asset);
+json::value ParseJsonAsset(const std::string &containerName, const std::string &asset);
 
 // ----------------------------------------------------------------------------
 
@@ -597,23 +601,29 @@ json::value ParseJsonAsset(const std::string& containerName, const std::string& 
   (as long as it's the only one trying), if you think the main
   thread may end before the function returns.
 */
-bool getline_async(std::string& str,
+bool getline_async(std::string &str,
                    std::chrono::system_clock::duration timeout);
 extern bool stop_getline_async;
 
 // ----------------------------------------------------------------------------
 
-namespace math { class Vector; class Vector2D; }
+namespace math
+{
+  class Vector;
+  class Vector2D;
+}
+
 struct Camera;
 
-math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point, 
-                                        DirectX::FXMVECTOR planeOrigin, 
-                                        DirectX::FXMVECTOR planeNormal, 
+math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
+                                        DirectX::FXMVECTOR planeOrigin,
+                                        DirectX::FXMVECTOR planeNormal,
                                         Camera *camera, float *distance = nullptr);
 
 // ----------------------------------------------------------------------------
 
-D2D1::ColorF StringToColor(const std::string& name);
+D2D1::ColorF JsonToColor(json::value json);
+D2D1::ColorF StringToColor(const std::string &name);
 
 // ----------------------------------------------------------------------------
 
@@ -627,7 +637,9 @@ public:
   }
 #else
   template <typename... A>
-  inline DebugMessage(A...) {}
+  inline DebugMessage(A...)
+  {
+  }
 #endif
 };
 
@@ -644,17 +656,17 @@ public:
 
 // ----------------------------------------------------------------------------
 
-template <typename CharType, typename Traits = std::char_traits<CharType>, 
+template <typename CharType, typename Traits = std::char_traits<CharType>,
           typename Alloc = std::allocator<CharType>>
 inline std::basic_string<CharType, Traits, Alloc> downcase(
-  const std::basic_string<CharType, Traits, Alloc>& input)
+  const std::basic_string<CharType, Traits, Alloc> &input)
 {
   std::basic_string<CharType, Traits, Alloc> copy = input;
   std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
   return copy;
 }
 
-template <typename CharType, typename Traits = std::char_traits<CharType>, 
+template <typename CharType, typename Traits = std::char_traits<CharType>,
           typename Alloc = std::allocator<CharType>>
 inline std::basic_string<CharType, Traits, Alloc> downcase(
   const CharType *str)
@@ -669,12 +681,22 @@ inline std::basic_string<CharType, Traits, Alloc> downcase(
 template <typename T>
 struct array_iterator_t
 {
-  array_iterator_t(T *a, size_t c) : c(c), a(a) {}
+  array_iterator_t(T *a, size_t c) : c(c), a(a)
+  {
+  }
+
   size_t c;
   T *a;
 
-  T *begin() { return a; }
-  T *end() { return a + c; }
+  T *begin()
+  {
+    return a;
+  }
+
+  T *end()
+  {
+    return a + c;
+  }
 };
 
 template <typename T>
@@ -692,7 +714,7 @@ array_iterator_t<const T> const_array_iterator(const T *a, size_t c)
 // ----------------------------------------------------------------------------
 
 template <typename Cont, typename Iter, typename Key>
-bool map_get_check(const Cont& container, Iter& iter, Key& key)
+bool map_get_check(const Cont &container, Iter &iter, Key &key)
 {
   auto it = container.find(key);
   if (it != container.end())
@@ -708,10 +730,10 @@ bool map_get_check(const Cont& container, Iter& iter, Key& key)
 
 template <typename PredRet, typename Cont>
 std::vector<PredRet> map_to_vector(
-  const Cont& cont, std::function<PredRet(decltype(*cont.cbegin()))> pred)
+  const Cont &cont, std::function<PredRet(decltype(*cont.cbegin()))> pred)
 {
   std::vector<PredRet> items;
-  for (auto& item : cont)
+  for (auto &item : cont)
   {
     items.push_back(pred(item));
   }
@@ -721,7 +743,8 @@ std::vector<PredRet> map_to_vector(
 // ----------------------------------------------------------------------------
 
 template <typename Cont>
-auto pop_front(Cont& cont) -> decltype(cont.erase(cont.begin()))
+auto pop_front(Cont &cont) -> decltype(cont.erase(cont.begin()))
+
 {
   return cont.erase(cont.begin());
 }
@@ -732,7 +755,7 @@ template <typename T, typename U>
 T assert_limits(const U val)
 {
   assert(val <= std::numeric_limits<T>::max() &&
-         val >= std::numeric_limits<T>::min());
+    val >= std::numeric_limits<T>::min());
   return T(val);
 }
 
@@ -741,16 +764,37 @@ T assert_limits(const U val)
 template <typename T>
 T assert_limits_mrb(mrb_state *mrb, const mrb_int val)
 {
-  if(!(val <= std::numeric_limits<T>::max()) ||
-     !(val >= std::numeric_limits<T>::min()))
+  if (!(static_cast<T>(val) <= std::numeric_limits<T>::max()) ||
+      !(val >= static_cast<mrb_int>(std::numeric_limits<T>::min())))
   {
     mrb_raisef(mrb, E_RUNTIME_ERROR, "Value %S is out of range for type %S",
                mrb_obj_as_string(mrb, mrb_fixnum_value(val)),
                mrb_str_new_cstr(mrb, typeid(T).name()));
   }
 
-  return T(val);
+  return static_cast<T>(val);
 }
 
 // ----------------------------------------------------------------------------
 
+template <typename E, typename A>
+std::ostream &operator<<(std::ostream &os, const std::vector<E, A> &cont)
+{
+  os << "[";
+
+  bool first = true;
+  for (auto &elem : cont)
+  {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+
+    os << elem;
+  }
+
+  os << "]";
+  return os;
+}
+
+// ----------------------------------------------------------------------------

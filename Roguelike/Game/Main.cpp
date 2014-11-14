@@ -2,23 +2,29 @@
  * Main.cpp
  * Connor Hilarides
  * Created 2014/05/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
+#include "GameConsole.h"
 #include "PropertyAPI/PropertyServer.h"
 
 static void CreateConsole()
 {
-  AllocConsole();
-  FILE *file;
-  freopen_s(&file, "CONOUT$", "wt", stdout);
-  freopen_s(&file, "CONOUT$", "wt", stderr);
-  freopen_s(&file, "CONIN$", "rt", stdin);
+  //AllocConsole();
+  //FILE *file;
+  //freopen_s(&file, "CONOUT$", "wt", stdout);
+  //freopen_s(&file, "CONOUT$", "wt", stderr);
+  //freopen_s(&file, "CONIN$", "rt", stdin);
 
-  std::ios::sync_with_stdio();
+  //consoleStreamBuf.extra = std::cout.rdbuf();
+  std::cout.rdbuf(&consoleStreamBuf);
+  std::cerr.rdbuf(&consoleStreamBuf);
+
+  //std::ios::sync_with_stdio();
 }
 
-Roguelike game("Roguebot", GetModuleHandle(NULL));
+Roguelike game("Roguebot", GetModuleHandle(nullptr));
 
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()

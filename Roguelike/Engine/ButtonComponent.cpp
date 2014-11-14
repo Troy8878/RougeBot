@@ -2,6 +2,7 @@
  * ButtonComponent.cpp
  * Leonardo Saikali
  * Created 2014/YOUR DATE HERE
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"

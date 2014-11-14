@@ -1,5 +1,11 @@
-.code
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; AVXSupport.asm
+; Connor Hilarides
+; Created 10/01/2014
+; Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+.code
   ; int IsAvxSupported();
   IsAvxSupported proc
     xor eax, eax ; Clear eax register

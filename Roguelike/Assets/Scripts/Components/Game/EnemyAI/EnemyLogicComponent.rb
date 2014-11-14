@@ -93,12 +93,17 @@ class EnemyLogicComponent < ComponentBase
     end
   end
 
+  PROJECTILE_NAMES = [
+    "Bomb",
+    "Mine",
+    "Arrow"
+  ]
+
   def resolve_player_projectiles?(x, y)
-      if(@move_tile.actor != nil)
-        if(@move_tile.actor.name == "Bomb" || @move_tile.actor.name == "Mine" || @move_tile.actor.name == "Arrow") # We'l actually want a list of sorts at some point
-          @move_tile.actor.owner.attack_component.do_attack self
-        end
-      end
+    return unless @move_tile && @move_tile.actor
+    return unless PROJECTILE_NAMES.include? @move_tile.actor.name
+
+    @move_tile.actor.owner.attack_component.do_attack self
   end
 
   def move(dx, dy)

@@ -10,6 +10,8 @@
 #include "Common.h"
 #include "WorldSnapshot.h"
 
+// ----------------------------------------------------------------------------
+
 WorldSnapshot::WorldSnapshot()
 {
   mrb_state *mrb = *mrb_inst;

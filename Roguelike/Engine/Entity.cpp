@@ -1238,7 +1238,6 @@ Entity *EntityFactory::CreateEntity(const std::string &entdef,
   }
 
   auto entity = entityAllocator.Create<Entity>(entid);
-
   auto components = SortComponentDependencies(entdata);
 
   // Create all of the components
@@ -1247,6 +1246,7 @@ Entity *EntityFactory::CreateEntity(const std::string &entdef,
     entity->AddComponent(cpair.first, cpair.second);
   }
 
+  mrb_full_gc(*mrb_inst);
   return entity;
 }
 

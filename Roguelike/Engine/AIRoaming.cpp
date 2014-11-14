@@ -12,8 +12,7 @@
 
 void AIRoaming::ApplyBehaviour(const WorldSnapshot &world)
 {
-  world;
-  result.action = AIResult::Nil;
+  
 }
 
 void AIRoaming::Prepare()

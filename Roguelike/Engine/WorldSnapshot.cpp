@@ -11,6 +11,8 @@
 #include "WorldSnapshot.h"
 
 
+// ----------------------------------------------------------------------------
+
 const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
 {
   if (y >= height || y < 0)
@@ -21,6 +23,8 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
 
   return map[(y * width) + x];
 }
+
+// ----------------------------------------------------------------------------
 
 WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy)
 {

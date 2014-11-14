@@ -10,10 +10,15 @@
 #include "RubyWrappers.h"
 #include "WorldSnapshot.h"
 
+
+// ----------------------------------------------------------------------------
+
 void AIRoaming::ApplyBehaviour(const WorldSnapshot &world)
 {
-  
+  world;
 }
+
+// ----------------------------------------------------------------------------
 
 void AIRoaming::Prepare()
 {
@@ -33,18 +38,31 @@ void AIRoaming::Prepare()
   ty = static_cast<mrb_int>(targetPos.y);
 }
 
+// ----------------------------------------------------------------------------
+
 void AIRoaming::InitializeTarget(Entity *target)
 {
   this->target = target;
 }
+
+// ----------------------------------------------------------------------------
 
 void AIRoaming::InitilizeOwner(Entity *thisEntity)
 {
   owner = thisEntity;
 }
 
+// ----------------------------------------------------------------------------
+
 AIResult AIRoaming::GetResult()
 {
   return result;
 }
 
+// ----------------------------------------------------------------------------
+// Private functions
+
+void AIRoaming::MoveTowards()
+{
+  target;
+}

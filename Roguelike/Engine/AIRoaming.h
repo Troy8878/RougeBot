@@ -19,7 +19,7 @@ public:
   AIResult GetResult() override;
 
 private:
-  void MoveTowards(Entity *target);
+  void MoveTowards();
 
   Entity *owner;
   Entity *target;

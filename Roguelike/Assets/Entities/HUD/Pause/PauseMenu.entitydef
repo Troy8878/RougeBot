@@ -1,0 +1,14 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, -1]
+  },
+  "GamePauseControllerComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "PauseBG",
+        "archetype": "HUD/Pause/PauseBG"
+      }
+    ]
+  }
+}

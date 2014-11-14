@@ -21,7 +21,7 @@ class GameQuitCancelerComponent < ComponentBase
     return if e[:quit] == false
 
     e[:quit] = false
-    Game.switch_level "Splash"
+    owner.raise_event :pause, nil
   end
 
   register_component "GameQuitCancelerComponent"

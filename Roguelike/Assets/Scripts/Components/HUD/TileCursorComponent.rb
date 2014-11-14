@@ -13,6 +13,15 @@ module HUD
       @transform = self.owner.transform_component
 
       register_event :update, :first_update
+      register_event :on_pause, :on_pause
+    end
+
+    def on_pause(val)
+      if val
+        owner.raise_event :send, [:tint=, [Vector.zero]]
+      else
+        owner.raise_event :send, [:tint=, [Vector.one]]
+      end
     end
 
     def first_update(e)

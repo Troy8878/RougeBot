@@ -73,5 +73,5 @@ class AnimatedComponent < ComponentBase
     return i
   end
 
-  register_component "AnimatedComponent"
+  register_component
 end

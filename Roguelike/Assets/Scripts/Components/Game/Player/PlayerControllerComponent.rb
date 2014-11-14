@@ -45,9 +45,20 @@ class PlayerControllerComponent < ComponentBase
     end
 
     self.register_event :mouse_move, :mouse_move
+    self.register_event :on_pause, :on_pause
+  end
+
+  def on_pause(val)
+    if val
+      @paused = true
+    else
+      @paused = false
+    end
   end
 
   def move(x, y)
+    return if @paused
+
     unless can_move? x, y
       return if @blocked_reason != BLOCKED_BY_ACTOR
     end

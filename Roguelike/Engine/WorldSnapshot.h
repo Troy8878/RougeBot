@@ -31,9 +31,9 @@ public:
     // Store the type of Actor.
     ActorType actor;
     // Various checks.
-    bool has_projectile;
-    bool has_item;
-    bool is_solid;
+    bool hasProjectile;
+    bool hasItem;
+    bool isSolid;
   };
 
   enum BlockedReason
@@ -49,7 +49,7 @@ public:
 
   const Tile &GetTile(mrb_int x, mrb_int y);
 
-  bool CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy);
+  BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy);
 
 private:
   Tile *map;

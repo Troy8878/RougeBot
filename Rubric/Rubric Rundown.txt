@@ -1,0 +1,69 @@
+DCR
+---
+Game Pitch
+3 dungeons
+	vary room generation
+	vary size of floors
+	1. ends in hub world with discovery book
+	2. ends in treasure room
+	3. ends in boss room
+
+Story to explain reasons for dungeon crawling
+
+No cursed weapons
+
+3 uses of anticipation
+	boss' arrival
+	weapon just above gold on player
+	???
+
+Robot against Fantasy theme
+
+Basic weapons to Weird weapons to Overpowered weapons
+
+Always something for the player to do
+
+Enemy HP Bars
+Level Progress Tracker
+Dungeon Doors Locked/Unlocked on HUB world
+
+ICR
+---
+Decent Controls
+	Tutorial
+Camera
+Audio Feedback
+	Defeat
+	Victory
+Visual Feedback
+	Player status
+	World status
+	Defeat
+	Victory
+
+NCR
+---
+Spellcheck
+Matching theme
+(story)
+(dialog)
+characters matches theme
+
+
+VCR
+---
+Decent art matching theme
+Some lighting
+Menu
+HUD
+Animations w/ quality
+	Attack animations
+	Move animations?
+	Reaction animations?
+Themed art that matches theme
+
+ACR
+---
+Music - matching theme w/ quality
+Sound FX - matching theme w/ quality
+appropriate volume

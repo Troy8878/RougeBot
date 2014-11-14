@@ -764,15 +764,15 @@ T assert_limits(const U val)
 template <typename T>
 T assert_limits_mrb(mrb_state *mrb, const mrb_int val)
 {
-  if (!(val <= std::numeric_limits<T>::max()) ||
-    !(val >= std::numeric_limits<T>::min()))
+  if (!(static_cast<T>(val) <= std::numeric_limits<T>::max()) ||
+      !(val >= static_cast<mrb_int>(std::numeric_limits<T>::min())))
   {
     mrb_raisef(mrb, E_RUNTIME_ERROR, "Value %S is out of range for type %S",
                mrb_obj_as_string(mrb, mrb_fixnum_value(val)),
                mrb_str_new_cstr(mrb, typeid(T).name()));
   }
 
-  return T(val);
+  return static_cast<T>(val);
 }
 
 // ----------------------------------------------------------------------------

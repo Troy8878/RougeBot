@@ -38,6 +38,8 @@ public:
 
   const Tile &GetTile(mrb_int x, mrb_int y);
 
+  bool CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy);
+
 private:
   Tile *map;
 

@@ -36,6 +36,17 @@ public:
     bool is_solid;
   };
 
+  enum BlockedReason
+  {
+    NotBlocked,
+    OutOfBounds,
+    BlockedByGreatDistance,
+    BlockedByUnknown,
+    BlockedByActor,
+    BlockedByWall,
+    CannotMoveDiagonally
+  };
+
   const Tile &GetTile(mrb_int x, mrb_int y);
 
   bool CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy);

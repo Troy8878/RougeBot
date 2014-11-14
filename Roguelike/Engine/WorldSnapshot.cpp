@@ -5,6 +5,8 @@
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
+#include <cmath>
+
 #include "Common.h"
 #include "WorldSnapshot.h"
 
@@ -20,3 +22,31 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
   return map[(y * width) + x];
 }
 
+bool WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy)
+{
+  // Making sure you aren't trying to move more than one block at a time.
+  if (std::abs(dx) > 1.5 || std::abs(dy) > 1.5)
+  {
+    return BlockedByGreatDistance;
+  }
+
+  // Make sure the player isn't trying to move out of bounds.
+  if (ox + dx < 0 || ox + dx >= width)
+    return OutOfBounds;
+  if (oy + dy < 0 || oy + dy >= height)
+    return OutOfBounds;
+
+  // Get the tile they are trying to move to.
+  auto &tile = GetTile(ox + dx, oy + dy);
+
+  // Make sure the player isn't trying to move into another Actor.
+  if (tile.actor != Tile::Empty)
+    return BlockedByActor;
+
+  // Make sure the player isn't trying to move into a wall.
+  if (tile.isSolid)
+    return BlockedByWall;
+
+  // All good. The player can move!
+  return NotBlocked;
+}

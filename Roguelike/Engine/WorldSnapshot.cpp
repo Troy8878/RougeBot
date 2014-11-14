@@ -22,7 +22,7 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
   return map[(y * width) + x];
 }
 
-bool WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy)
+WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy)
 {
   // Making sure you aren't trying to move more than one block at a time.
   if (std::abs(dx) > 1.5 || std::abs(dy) > 1.5)

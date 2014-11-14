@@ -9,7 +9,7 @@ module GameLog
   LOG_FILE = File.new
 
   def self.log(data)
-    LOG_FILE.open LOG_DIR + "/game_log.txt"
+    LOG_FILE.open LOG_DIR + "/game_log.txt", :out, :append
     LOG_FILE.write data.inspect
     LOG_FILE.write ','
     LOG_FILE.close

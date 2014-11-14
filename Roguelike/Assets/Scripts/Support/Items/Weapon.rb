@@ -26,6 +26,7 @@ class Weapon < Item
     if data.is_a? Weapon
       @damage = data.damage
       @durability = data.durability
+      @damage_type = data.damage_type
     else
       range = data.fetch("damage", [1, 1])
       if range.is_a?(String)
@@ -34,6 +35,7 @@ class Weapon < Item
       end
       @damage = range
       @durability = data.fetch("durability", 1).to_f
+      @damage_type = data.fetch("damage_type", :physical)
 
       @equip_slot = :weapon
     end

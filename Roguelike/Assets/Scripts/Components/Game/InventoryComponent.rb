@@ -22,7 +22,7 @@ class InventoryComponent < ComponentBase
 
       seq = owner.action_sequence :add_items
       seq.delay 1.5
-      8.times do
+      9.times do
         seq.delay 0.5
         seq.once { give_random_weapon 1 }
       end

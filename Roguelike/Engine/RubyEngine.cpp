@@ -80,6 +80,7 @@ bool ruby_engine::evaluate_asset(const std::string &asset)
   resource->Release();
 
   log_and_clear_error();
+  mrb_full_gc(mrb);
   return true;
 }
 

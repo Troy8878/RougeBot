@@ -98,6 +98,7 @@ extern "C" void mrb_mruby_file_init(mrb_state *mrb)
   mrb_define_method(mrb, file, "path", mrb_file_path, MRB_ARGS_NONE());
   mrb_define_method(mrb, file, "open", mrb_file_open, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, file, "read", mrb_file_read, MRB_ARGS_NONE());
+  mrb_define_method(mrb, file, "write", mrb_file_write, MRB_ARGS_NONE());
   mrb_define_method(mrb, file, "close", mrb_file_close, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, file, "lines", mrb_file_lines, MRB_ARGS_NONE());
@@ -300,7 +301,6 @@ static mrb_value mrb_file_open(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-
 static mrb_value mrb_file_read(mrb_state *mrb, mrb_value self)
 {
   auto &file = *static_cast<MrbFile *>(mrb_data_get_ptr(mrb, self, &mrb_file_dt));
@@ -328,17 +328,33 @@ static mrb_value mrb_file_read(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-
 static mrb_value mrb_file_write(mrb_state *mrb, mrb_value self)
 {
   auto &file = *static_cast<MrbFile *>(mrb_data_get_ptr(mrb, self, &mrb_file_dt));
 
-  (file);
+  mrb_value data;
+  mrb_get_args(mrb, "o", &data);
+
+  if (mrb_string_p(data))
+  {
+    file.file.write(RSTRING_PTR(data), RSTRING_LEN(data));
+  }
+  else 
+  {
+    data = mrb_convert_type(mrb, data, MRB_TT_ARRAY, "Array", "to_ary");
+    for (auto value : ruby::array_each(mrb, data))
+    {
+      value = mrb_convert_type(mrb, value, MRB_TT_FIXNUM, "Fixnum", "to_i");
+
+      auto intval = static_cast<byte>(mrb_fixnum(value));
+      file.file.put(reinterpret_cast<const char &>(intval));
+    }
+  }
+
   return mrb_nil_value();
 }
 
 // ----------------------------------------------------------------------------
-
 
 static mrb_value mrb_file_close(mrb_state *mrb, mrb_value self)
 {

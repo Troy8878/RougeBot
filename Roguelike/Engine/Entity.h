@@ -140,6 +140,9 @@ public:
   */
   void Handle(Events::EventMessage &e) override;
 
+  void HandleComponents(Events::EventMessage &e);
+  void HandleProxies(Events::EventMessage &e);
+
   void LocalEvent(Events::EventMessage &e);
   void RaiseEvent(Events::EventMessage &e);
   void SinkEvent(Events::EventMessage &e);
@@ -285,7 +288,6 @@ public:
 
 private:
   entity_id _id;
-  bool event_list_invalidated = false;
 
   void OnUpdate(float dt);
 

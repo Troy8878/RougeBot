@@ -170,7 +170,6 @@ static mrb_value mrb_texture_add(mrb_state *mrb, mrb_value self)
   {
     mrb_raise(mrb, E_RUNTIME_ERROR, ex.what());
   }
-  return{};
 }
 
 // ----------------------------------------------------------------------------
@@ -213,7 +212,6 @@ static mrb_value mrb_texture_remove(mrb_state *mrb, mrb_value self)
   mrb_raise(mrb, E_TYPE_ERROR,
             "TextureComponent#remove must take "
             "either a Fixnum(index) or String(name)");
-  return{};
 }
 
 // ----------------------------------------------------------------------------

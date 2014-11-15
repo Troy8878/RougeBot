@@ -101,7 +101,6 @@ void Entity::RemoveComponent(const std::string &name)
   for (auto &event : _events)
   {
     event.second.erase(comp);
-    this->event_list_invalidated = true;
   }
 
   ComponentManager::Instance.ReleaseComponent(comp);
@@ -136,73 +135,32 @@ void Entity::Handle(Events::EventMessage &e)
 
 // ----------------------------------------------------------------------------
 
-void Entity::LocalEvent(Events::EventMessage &e)
+void Entity::HandleComponents(Events::EventMessage &e)
 {
-  bool invalidation_occurred = false;
-  event_list_invalidated = false;
-
+  struct
   {
-    DEF_EVENT_ID(send);
-    if (e.EventId == send)
-      HandleSend(e);
+    Component *comp;
+    component_handler handle;
+  } handle_list[127];
+  size_t handle_count = 0;
+
+  for (auto &handler : _events[e.EventId])
+  {
+    auto &item = handle_list[handle_count++];
+    item.comp = handler.first;
+    item.handle = handler.second;
   }
 
-  auto *handlers = &_events[e.EventId];
-
-  static std::vector<Component *> handled_for;
-
-  // Execute all of the handlers on the components
-  for (auto it = handlers->begin(); it != handlers->end(); ++it)
+  for (auto &item : array_iterator(handle_list, handle_count))
   {
-    if (invalidation_occurred)
-    {
-      if (find(handled_for.begin(), handled_for.end(), it->first) != handled_for.end())
-        continue;
-    }
-
-#ifdef _DEBUG
-
-    performance::register_guard perf_g(translate_method_name(it->second));
-
-#endif
-
-    auto *comp = it->first;
-    // Apply member function pointer
-    (comp ->* it->second)(e);
-    handled_for.push_back(comp);
-
-    if (event_list_invalidated)
-    {
-      invalidation_occurred = true;
-      event_list_invalidated = false;
-
-      if (_events.find(e.EventId) == _events.end())
-        break;
-
-      handlers = &_events[e.EventId];
-      it = handlers->begin();
-
-      if (it == handlers->end())
-        break;
-    }
-
-    if (_events.empty() || _events.find(e.EventId) == _events.end())
-      break;
+    (item.comp->*item.handle)(e);
   }
+}
 
-  // Update Transform with parents
-  DEF_EVENT_ID(draw);
-  if (e.EventId == draw)
-  {
-    ApplyParentTransforms();
-  }
+// ----------------------------------------------------------------------------
 
-  DEF_EVENT_ID(update);
-  if (e.EventId == update)
-  {
-    auto &time = GetGame()->Time;
-    OnUpdate(float(time.Dt));
-  }
+void Entity::HandleProxies(Events::EventMessage& e)
+{
 
   auto it = proxies.find(e.EventId);
   if (it != proxies.end())
@@ -249,6 +207,33 @@ void Entity::LocalEvent(Events::EventMessage &e)
 
 // ----------------------------------------------------------------------------
 
+void Entity::LocalEvent(Events::EventMessage &e)
+{
+  DEF_EVENT_ID(send);
+  if (e.EventId == send)
+    HandleSend(e);
+
+  HandleComponents(e);
+
+  // Update Transform with parents
+  DEF_EVENT_ID(draw);
+  if (e.EventId == draw)
+  {
+    ApplyParentTransforms();
+  }
+
+  DEF_EVENT_ID(update);
+  if (e.EventId == update)
+  {
+    auto &time = GetGame()->Time;
+    OnUpdate(float(time.Dt));
+  }
+
+  HandleProxies(e);
+}
+
+// ----------------------------------------------------------------------------
+
 void Entity::RaiseEvent(Events::EventMessage &e)
 {
   LocalEvent(e);
@@ -282,8 +267,6 @@ void Entity::AddEvent(Component *component, event_id id,
   auto &handlers = _events[id];
   handlers[component] = handler;
 
-  event_list_invalidated = true;
-
   RecalculateEventCounts();
 }
 
@@ -294,8 +277,6 @@ void Entity::RemoveEvent(Component *component, event_id id)
   auto &handlers = _events[id];
   if (handlers.find(component) != handlers.end())
     handlers.erase(component);
-
-  event_list_invalidated = true;
 
   RecalculateEventCounts();
 }
@@ -947,6 +928,8 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
 
   auto entity = EntityFactory::CreateEntity(mrb_str_to_stdstring(archetype), data, id);
   entity->Name = mrb_str_to_stdstring(name);
+
+  GetGame()->CurrentLevel->RootEntity->AddChild(entity);
 
   return entity->GetRubyWrapper();
 }

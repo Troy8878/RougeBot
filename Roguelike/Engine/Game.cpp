@@ -102,7 +102,9 @@ void Game::Run()
           if (_currentLevel)
             Level::DestroyLevel(_currentLevel);
 
-          _currentLevel = Level::CreateLevel(levelChangeContext.name);
+          auto newLevel = Level::CreateLevel(levelChangeContext.name);
+
+          _currentLevel = newLevel;
           levelChangeContext.loaded = true;
         }
 

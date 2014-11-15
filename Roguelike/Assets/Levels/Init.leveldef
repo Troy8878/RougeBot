@@ -1,0 +1,6 @@
+{
+  "name": "Init",
+  "components": {
+    "GoToSplash": {}
+  }
+}

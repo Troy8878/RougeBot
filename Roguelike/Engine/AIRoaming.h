@@ -19,7 +19,8 @@ public:
   AIResult GetResult() override;
 
 private:
-  void MoveTowards();
+  void MoveTowards(const WorldSnapshot &world);
+  
 
   Entity *owner;
   Entity *target;

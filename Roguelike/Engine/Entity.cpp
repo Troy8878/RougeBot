@@ -161,7 +161,6 @@ void Entity::HandleComponents(Events::EventMessage &e)
 
 void Entity::HandleProxies(Events::EventMessage& e)
 {
-
   auto it = proxies.find(e.EventId);
   if (it != proxies.end())
   {

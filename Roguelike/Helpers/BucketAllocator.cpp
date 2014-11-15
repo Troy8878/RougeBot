@@ -163,9 +163,9 @@ auto BucketAllocator::Bucket::OwnsItem(void *_item) -> bool
 {
   byte *item = reinterpret_cast<byte *>(_item);
   auto offset = item - memory;
-  auto index = offset / (long long) allocator.itemSize;
+  auto index = offset / static_cast<long long>(allocator.itemSize);
 
-  return index >= 0 && index < (long long) allocator.itemCount;
+  return index >= 0 && index < static_cast<long long>(allocator.itemCount);
 }
 
 // ----------------------------------------------------------------------------

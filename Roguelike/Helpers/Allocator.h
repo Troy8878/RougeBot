@@ -11,7 +11,6 @@
 
 __interface IAllocator
 {
-public:
   void *Allocate();
   void Free(void *);
 };

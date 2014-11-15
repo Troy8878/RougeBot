@@ -1,0 +1,12 @@
+{
+  "TransformComponent": {
+    "scale": [100, 100]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "tint": "Black, 0.8",
+    "render_target": "PauseLayer"
+  }
+}

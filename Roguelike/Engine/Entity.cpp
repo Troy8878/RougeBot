@@ -948,8 +948,6 @@ static mrb_value rb_ent_create(mrb_state *mrb, mrb_value)
   auto entity = EntityFactory::CreateEntity(mrb_str_to_stdstring(archetype), data, id);
   entity->Name = mrb_str_to_stdstring(name);
 
-  GetGame()->CurrentLevel->RootEntity->AddChild(entity);
-
   return entity->GetRubyWrapper();
 }
 

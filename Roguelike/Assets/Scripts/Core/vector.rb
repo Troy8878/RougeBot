@@ -14,17 +14,31 @@ class Vector
   alias b= z=
   alias a= w=
 
-  def self.zero; Vector.new(0, 0, 0, 0); end
-  def self.origin; Vector.new(0, 0, 0, 1); end
+  ZERO = Vector.new     0, 0, 0, 0
+  ONE = Vector.new      1, 1, 1, 1
+  ORIGIN = Vector.new   0, 0, 0, 1
 
-  def self.left; Vector.new(-1, 0, 0, 1); end
-  def self.right; Vector.new(1, 0, 0, 1); end
+  LEFT = Vector.new    -1, 0, 0, 0
+  RIGHT = Vector.new    1, 0, 0, 0
 
-  def self.down; Vector.new(0, -1, 0, 1); end
-  def self.up; Vector.new(0, 1, 0, 1); end
+  DOWN = Vector.new     0,-1, 0, 0
+  UP = Vector.new       0, 1, 0, 0
 
-  def self.backward; Vector.new(0, 0, -1, 1); end
-  def self.forward; Vector.new(0, 0, 1, 1); end
+  BACKWARD = Vector.new 0, 0,-1, 0
+  FORWARD = Vector.new  0, 0, 1, 0
+
+  def self.zero; ZERO; end
+  def self.one; ONE; end
+  def self.origin; ORIGIN; end
+
+  def self.left; LEFT; end
+  def self.right; RIGHT; end
+
+  def self.down; DOWN; end
+  def self.up; UP; end
+
+  def self.backward; BACKWARD; end
+  def self.forward; FORWARD; end
 
   def +(v)
     c = Vector.new self

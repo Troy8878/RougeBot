@@ -57,6 +57,16 @@
           }
         },
         {
+          "name": "PauseLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "PauseLayer",
+              "layer": 9001
+            }
+          }
+        },
+        {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
@@ -64,6 +74,10 @@
             }
           },
           "children": [
+            {
+              "name": "PauseMenu",
+              "archetype": "HUD/Pause/PauseMenu"
+            },
             {
               "name": "Console",
               "archetype": "HUD/Console/Console"

@@ -167,16 +167,12 @@ static mrb_value rb_component_register(mrb_state *_mrb, mrb_value self)
   auto &mrb = *ruby::ruby_engine::global_engine;
   assert(mrb == _mrb);
   auto comp_class = ruby::ruby_class{&mrb, static_cast<RClass *>(mrb_ptr(self))};
-
-  mrb_value comp_name_v;
-
-  // register_component(comp_name_v:String)
-  mrb_get_args(mrb, "S", &comp_name_v);
-
+  
+  std::string comp_name = mrb_class_name(mrb, comp_class);
+  mrb_value comp_name_v = mrb_str_new(mrb, comp_name.c_str(), comp_name.size());
   mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "component_name"), comp_name_v);
 
   auto factory = new RubyComponentFactory(comp_class);
-  std::string comp_name = mrb_str_to_stdstring(comp_name_v);
 
   ComponentRegistration registration{typeid(RubyComponent), comp_name,
     factory, factory->Allocator()};
@@ -307,7 +303,7 @@ ruby::ruby_class Component::GetComponentRClass()
 
   comp_class.define_class_method("register_component",
                                  rb_component_register,
-                                 ARGS_REQ(1));
+                                 ARGS_ANY());
 
   comp_class.define_method("initialize", rb_component_initialize, ARGS_REQ(1));
   comp_class.define_method("owner", rb_component_get_owner, ARGS_NONE());

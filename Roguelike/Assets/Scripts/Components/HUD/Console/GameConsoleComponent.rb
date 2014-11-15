@@ -60,6 +60,8 @@ class GameConsoleComponent < ComponentBase
 
   def on_key(e)
     if e.vkey == Keys::TILDE
+      return if (Event.raise_event :is_paused, {})[:paused]
+
       self.toggle
       return
     end

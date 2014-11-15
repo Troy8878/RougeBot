@@ -29,7 +29,9 @@ module ItemGenerate
     data["damage"][0] = data["damage"][0] * itemLevel
     data["damage"][1] = data["damage"][1] * itemLevel
 
-    Weapon.new data
+    wep = Weapon.new data
+    wep.item_level = itemLevel
+    return wep
   end
 
   def self.set_weapon_type(data)

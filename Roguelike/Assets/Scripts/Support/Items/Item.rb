@@ -13,6 +13,7 @@
 
 class Item
   attr_reader :name, :value, :equip_slot
+  attr_accessor :item_level
 
   # Data to determine what the item looks like
   attr_reader :view

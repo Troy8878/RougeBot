@@ -24,7 +24,7 @@ WorldSnapshot::WorldSnapshot()
 
 // ----------------------------------------------------------------------------
 
-const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
+const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y) const
 {
   if (y >= height || y < 0)
     throw basic_exception("Y value out of range");
@@ -37,7 +37,7 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
 
 // ----------------------------------------------------------------------------
 
-WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy)
+WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const
 {
   // Making sure you aren't trying to move more than one block at a time.
   if (std::abs(dx) > 1.5 || std::abs(dy) > 1.5)

@@ -49,9 +49,9 @@ public:
     CannotMoveDiagonally
   };
 
-  const Tile &GetTile(mrb_int x, mrb_int y);
+  const Tile &GetTile(mrb_int x, mrb_int y) const;
 
-  BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy);
+  BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const;
 
 private:
   Tile *map;

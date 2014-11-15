@@ -78,9 +78,11 @@ class HotbarComponent < ComponentBase
     if item.nil?
       puts "Weapon Unequipped"
       atk.damage = [1,1]
+      atk.weapon_level = 1
     else
       puts "Weapon `#{item.name}` with damage of #{item.damage} equipped"
       atk.damage = item.damage
+      atk.weapon_level = item.item_level
     end
   end
 

@@ -41,19 +41,19 @@
         "name": "HealthDisplay",
         "components": {
           "TransformComponent": {
-            "position": [0, -0.8, 0],
-            "scale": [2, 0.5, 1],
+            "position": [0, -1, 0],
+            "scale": [2, 0.75, 1],
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/400:100"]
+            "textures": ["SPECIAL/SURFACE/400:150"]
           },
           "SpriteComponent": {
             "render_target": "TranslucentLayer"
           },
           "TextComponent": {
-            "texts": ["Health: 250\nDamage: [1, 1]"],
+            "texts": ["Health: 250\nDamage: [1, 1]\nItem Level: 1"],
 
-            "text_color": "Black",
+            "text_color": "White",
 
             "font": "Segoe UI",
             "font_size": 40,

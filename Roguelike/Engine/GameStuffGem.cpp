@@ -1,8 +1,8 @@
-/*********************************
+﻿/*********************************
  * GameStuffGem.cpp
  * Connor Hilarides
  * Created 2014/05/30
- * Copyright � 2014 DigiPen Institute of Technology, All Rights Reserved
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -62,7 +62,6 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
   }
 
   mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), "Type argument must be :int or :float");
-  return mrb_nil_value();
 }
 
 // ----------------------------------------------------------------------------

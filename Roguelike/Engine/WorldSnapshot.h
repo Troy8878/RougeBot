@@ -12,6 +12,8 @@
 class WorldSnapshot
 {
 public:
+  WorldSnapshot();
+
   struct Tile
   {
     // Enum for different types of Actors that can be stored.

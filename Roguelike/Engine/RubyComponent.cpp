@@ -42,6 +42,9 @@ RubyComponent::~RubyComponent()
   mrb_value reg = mrb_hash_get(mrb, comp_reg, mrb_fixnum_value(Owner->Id));
   mrb_value comp_name = mrb_str_new(mrb, Name.c_str(), Name.size());
 
+  if (mrb_nil_p(reg))
+    return;
+
   mrb_hash_delete_key(mrb, reg, comp_name);
 
 #pragma endregion

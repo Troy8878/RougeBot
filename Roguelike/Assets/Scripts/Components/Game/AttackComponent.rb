@@ -13,7 +13,7 @@
 class AttackComponent < ComponentBase
   include Actor
 
-  attr_reader :damage
+  attr_reader :damage, :weapon_level
 
   property :damage, :float_pair, true
 
@@ -21,6 +21,7 @@ class AttackComponent < ComponentBase
     super data
 
     @damage = data.fetch("damage", [2,4])
+    @weapon_level = 1
 
     actor_sub_init
   end
@@ -64,6 +65,14 @@ class AttackComponent < ComponentBase
     @damage = value
     self.owner.raise_event :damage_changed, {
       old: old,
+      value: @damage
+    }
+  end
+
+  def weapon_level=(value)
+    @weapon_level = value
+    self.owner.raise_event :damage_changed, {
+      old: @damage,
       value: @damage
     }
   end

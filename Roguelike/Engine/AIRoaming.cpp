@@ -5,6 +5,8 @@
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
+// This is a test AI behaviour! It is written like shit, and works even shittier. Don't use it in production!
+
 #include "Common.h"
 #include "AIRoaming.h"
 #include "RubyWrappers.h"
@@ -83,39 +85,68 @@ void AIRoaming::MoveTowards(const WorldSnapshot &world)
   mrb_int dx = ox - tx;
   mrb_int dy = oy - ty;
   // Absolute values between differences
-  mrb_int ax = std::abs(dx);
-  mrb_int ay = std::abs(dy);
+  // mrb_int ax = std::abs(dx);
+  // mrb_int ay = std::abs(dy);
 
-  //bool canMoveUp = world.CanMove(ox, oy, 0, 1) == WorldSnapshot::NotBlocked;
-  //bool canMoveDown = world.CanMove(ox, oy, 0, -1) == WorldSnapshot::NotBlocked;
-  //bool canMoveRight = world.CanMove(ox, oy, 1, 0) == WorldSnapshot::NotBlocked;
+  // Store whether we can move in each direction ahead of time.
+  bool canMoveUp = world.CanMove(ox, oy, 0, 1) == WorldSnapshot::NotBlocked;
+  bool canMoveDown = world.CanMove(ox, oy, 0, -1) == WorldSnapshot::NotBlocked;
+  bool canMoveRight = world.CanMove(ox, oy, 1, 0) == WorldSnapshot::NotBlocked;
   bool canMoveLeft = world.CanMove(ox, oy, -1, 0) == WorldSnapshot::NotBlocked;
 
-  // Check if we need to move on the x axis before the y axis.
-  if (ax > ay)
+  // Check if we are to the right of the target.
+  if (dx > 0 && canMoveLeft)
   {
-    // Check if we need to move left.
-    if (dx > 0)
-    {
-      if ( canMoveLeft )
-      {
-        result.action = AIResult::Move;
-        result.x = ox - 1;
-        result.y = oy;
-        return;
-      }
-      // Otherwise, check to see if we want to move up/down.
-      else if (ay)
-      {
-        // Check if we want to move down.
-        if (dy > 0)
-        {
-          
-        }
-      }
+    MoveLeft();
+    return;
+  }
 
-    }
+  // Check if we are to the left of the target.
+  if (dx < 0 && canMoveRight)
+  {
+    MoveRight();
+    return;
+  }
+
+  // Check if we are below the target.
+  if (dy < 0 && canMoveDown)
+  {
+    MoveDown();
+    return;
+  }
+
+  // Check if we are above the target.
+  if (dy > 0 && canMoveUp)
+  {
+    MoveUp();
+    return;
   }
 }
 
+void AIRoaming::MoveLeft()
+{
+  result.action = AIResult::Move;
+  result.x = ox - 1;
+  result.y = oy;
+}
 
+void AIRoaming::MoveRight()
+{
+  result.action = AIResult::Move;
+  result.x = ox + 1;
+  result.y = oy;
+}
+
+void AIRoaming::MoveUp()
+{
+  result.action = AIResult::Move;
+  result.x = ox;
+  result.y = oy + 1;
+}
+
+void AIRoaming::MoveDown()
+{
+  result.action = AIResult::Move;
+  result.x = ox;
+  result.y = oy - 1;
+}

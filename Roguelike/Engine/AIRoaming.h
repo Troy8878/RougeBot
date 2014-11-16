@@ -5,6 +5,9 @@
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
+// This is a test AI behaviour! It is written like shit, and works even shittier. Don't use it in production!
+
+
 #pragma once
 
 #include "AIBehaviour.h"
@@ -20,7 +23,10 @@ public:
 
 private:
   void MoveTowards(const WorldSnapshot &world);
-  
+  void MoveLeft();
+  void MoveRight();
+  void MoveUp();
+  void MoveDown();
 
   Entity *owner;
   Entity *target;

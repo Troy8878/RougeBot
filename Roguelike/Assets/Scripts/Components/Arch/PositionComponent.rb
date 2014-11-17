@@ -60,5 +60,5 @@ class PositionComponent < ComponentBase
     @tpos.y += diff.y
   end
 
-  register_component
+  #register_component
 end

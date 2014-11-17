@@ -11,6 +11,10 @@
 
 // ----------------------------------------------------------------------------
 
+static void mrb_clipboard_init(mrb_state *mrb);
+
+// ----------------------------------------------------------------------------
+
 #define DEF_INT_CONST(lit, val) mrb_define_const(mrb, rclass, lit, mrb_fixnum_value(val))
 
 static mrb_data_type mrb_kse_data_type;
@@ -56,8 +60,10 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
 
   // ruby can't make new ones, only Input can
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
-
   mrb_define_method(mrb, rclass, "position", mrb_me_position, ARGS_NONE());
+
+  // Init clipboard
+  mrb_clipboard_init(mrb);
 }
 
 // ----------------------------------------------------------------------------
@@ -162,5 +168,68 @@ static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self)
 
   return ruby::create_new_vector(state->position.get());
 }
+
+// ----------------------------------------------------------------------------
+
+struct Clipboard
+{
+  Clipboard();
+  ~Clipboard();
+};
+
+static mrb_data_type mrb_clipboard_dt;
+
+static mrb_value mrb_clipboard_alloc(mrb_state *mrb, Clipboard *clip);
+static mrb_value mrb_clipboard_new(mrb_state *mrb, mrb_value self);
+
+static mrb_value mrb_clipboard_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_clipboard_put(mrb_state *mrb, mrb_value self);
+
+// ----------------------------------------------------------------------------
+
+Clipboard::Clipboard()
+{
+  OpenClipboard(GetGame()->GameDevice->GetContextWindow());
+}
+
+// ----------------------------------------------------------------------------
+
+Clipboard::~Clipboard()
+{
+  std::cout << "Clipboard deleted" << std::endl;
+  CloseClipboard();
+}
+
+// ----------------------------------------------------------------------------
+
+static void mrb_clipboard_init(mrb_state *mrb)
+{
+  ruby::data_type_init<Clipboard>(mrb_clipboard_dt, ruby::data_scalar_delete<Clipboard>);
+
+  auto cls = mrb_define_class(mrb, "Clipboard", mrb->object_class);
+  mrb_define_class_method(mrb, cls, "new", mrb_clipboard_new, ARGS_NONE());
+
+  
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_clipboard_alloc(mrb_state *mrb, Clipboard *clip)
+{
+  auto cls = mrb_class_get(mrb, "Clipboard");
+  auto data = mrb_data_object_alloc(mrb, cls, clip, &mrb_clipboard_dt);
+  return mrb_obj_value(data);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_clipboard_new(mrb_state *mrb, mrb_value)
+{
+  return mrb_clipboard_alloc(mrb, new Clipboard);
+}
+
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------

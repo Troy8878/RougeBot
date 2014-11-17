@@ -100,7 +100,7 @@ Model *SpriteComponent::GetSpriteModel()
   if (unitSquare)
     return unitSquare;
 
-  const UINT segments = 64;
+  const UINT segments = 4;
   const UINT vertex_count = segments * segments;
   const UINT index_count = (segments - 1) * (segments - 1) * 6;
 

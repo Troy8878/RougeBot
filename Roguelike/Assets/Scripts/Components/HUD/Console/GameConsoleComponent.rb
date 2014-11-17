@@ -150,14 +150,34 @@ class GameConsoleComponent < ComponentBase
     96, # `
     8,  # \b
     9,  # \t
-    13  # \n
+    13, # \n
+  ]
+
+  SPECIAL_KEYS = [
+    3,  # Ctrl+C
+    22, # Ctrl+V
   ]
 
   def on_char(e)
     return unless @open
     return if e.nil?
+    if SPECIAL_KEYS.include? e.char_code
+      return on_special_char e.char_code
+    end
     return if IGNORE_KEYS.include? e.char_code
+    return if e.char_code < 0x20
 
+    insert_text(e)
+  end
+
+  def on_special_char(e)
+    case e
+    when 3 # Ctrl+C
+    when 22 # Ctrl+V
+    end
+  end
+
+  def insert_text(e)
     if @cursor_pos == @textbuf.length
       @textbuf += e
     else

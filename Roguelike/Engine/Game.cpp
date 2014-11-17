@@ -15,6 +15,7 @@
 
 #include "mruby/debug.h"
 #include "mruby/variable.h"
+#include "WorldSnapshot.h"
 
 // ----------------------------------------------------------------------------
 

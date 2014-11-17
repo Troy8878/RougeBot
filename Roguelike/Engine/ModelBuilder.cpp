@@ -239,6 +239,7 @@ TilemapBuilder::~TilemapBuilder()
 
 void TilemapBuilder::AddTile(mrb_int xo, mrb_int yo, UINT texture)
 {
+  const float epsilon = 0.005f / zipSize;
   UINT vertex_offset = assert_limits<UINT>(this->vertices.size());
 
   const UINT segments = 8;
@@ -250,11 +251,17 @@ void TilemapBuilder::AddTile(mrb_int xo, mrb_int yo, UINT texture)
       auto xprog = x * (1.0f / (segments - 1));
       auto yprog = y * (1.0f / (segments - 1));
 
+      float yepsilon = 0;
+      if (y == 0)
+        yepsilon = epsilon;
+      else if (y == segments - 1)
+        yepsilon = -epsilon;
+
       TexturedVertex vertex;
       vertex.position.x = xo + -0.5f + xprog;
       vertex.position.y = yo + 0.5f - yprog;
       vertex.texture.x = xprog;
-      vertex.texture.y = (texture + yprog) / zipSize;
+      vertex.texture.y = (texture + yprog) / zipSize + yepsilon;
       vertex.color = math::Vector{1,1,1,1};
 
       vertices.push_back(vertex);

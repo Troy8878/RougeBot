@@ -129,11 +129,7 @@ void RubyComponent::OnEvent(Events::EventMessage &e)
     edata = e.Data->GetRubyWrapper();
   }
 
-  auto mid = events[e.EventId];
-
-  performance::register_guard perf(component_inst, mid);
   mrb_funcall_argv(mrb, component_inst, events[e.EventId], 1, &edata);
-
   mrb.log_and_clear_error();
 }
 
@@ -225,7 +221,7 @@ static mrb_value rb_component_initialize(mrb_state *_mrb, mrb_value self)
   static mrb_value comp_ptr_key = mrb_symbol_value(mrb_intern_cstr(mrb, "comp_ptr_v"));
   mrb_value comp_ptr_v = mrb_hash_get(mrb, data_hash, comp_ptr_key);
 
-  ruby::save_native_ptr(mrb, self, mrb_cptr(comp_ptr_v));
+  save_native_ptr(mrb, self, mrb_cptr(comp_ptr_v));
 
   return mrb_nil_value();
 }

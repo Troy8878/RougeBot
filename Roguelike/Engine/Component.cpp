@@ -71,6 +71,7 @@ void ComponentManager::ReleaseComponent(Component *component)
 {
   auto &reg = ComponentRegistrations[component->Name];
 
+  component->Cleanup();
   component->~Component();
   reg.Allocator.Free(component);
 }

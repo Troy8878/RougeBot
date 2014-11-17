@@ -12,6 +12,37 @@
 
 // ----------------------------------------------------------------------------
 
+static WorldSnapshot::Tile::ActorType GetActorType(mrb_state *mrb, mrb_value actor)
+{
+  if (mrb_nil_p(actor))
+    return WorldSnapshot::Tile::Empty;
+
+  Entity *actorEntity = ruby::data_get<Entity>(mrb, actor);
+
+  auto &actorHostility = actorEntity->Metadata["hostility"];
+  static struct
+  {
+    const char *name; 
+    WorldSnapshot::Tile::ActorType stat;
+  } const hostilities[] =
+  {
+    {"player", WorldSnapshot::Tile::Player},
+    {"friendly", WorldSnapshot::Tile::Friendly},
+    {"neutral", WorldSnapshot::Tile::Neutral},
+    {"enemy", WorldSnapshot::Tile::Enemy}
+  };
+
+  for (auto &hostility : hostilities)
+  {
+    if (actorHostility == hostility.name)
+      return hostility.stat;
+  }
+  
+  return WorldSnapshot::Tile::Neutral;
+}
+
+// ----------------------------------------------------------------------------
+
 WorldSnapshot::WorldSnapshot()
 {
   mrb_state *mrb = *mrb_inst;
@@ -20,9 +51,66 @@ WorldSnapshot::WorldSnapshot()
 
   mrb_value rows = mrb_convert_type(mrb, floor, MRB_TT_ARRAY, "Array", "to_a");
   height = mrb_ary_len(mrb, rows);
+  width = mrb_ary_len(
+    mrb, 
+    mrb_convert_type(mrb, mrb_ary_entry(rows, 0), 
+    MRB_TT_ARRAY, "Array", "to_a"));
+
+  map = new Tile[width * height];
+
+  // Ruby funcalls
+  mrb_sym solid_p = mrb_intern_lit(mrb, "solid?");
+  mrb_sym item_p = mrb_intern_lit(mrb, "item?");
+  mrb_sym actor_p = mrb_intern_lit(mrb, "actor?");
+  mrb_sym type_id = mrb_intern_lit(mrb, "type_id");
+  mrb_sym get_actor = mrb_intern_lit(mrb, "actor");
+
+  mrb_int y = 0;
+  for (auto row : ruby::array_each(mrb, rows))
+  {
+    mrb_int x = 0;
+    row = mrb_convert_type(mrb, row, MRB_TT_ARRAY, "Array", "to_a");
+
+    for (auto mrbtile : ruby::array_each(mrb, row))
+    {
+      auto &tile = GetTile(x, y);
+
+      tile.x = x;
+      tile.y = y;
+      tile.isSolid = mrb_bool(mrb_funcall_argv(mrb, mrbtile, solid_p, 0, nullptr));
+      tile.hasItem = mrb_bool(mrb_funcall_argv(mrb, mrbtile, item_p, 0, nullptr));
+      tile.type_id = mrb_fixnum(mrb_funcall_argv(mrb, mrbtile, type_id, 0, nullptr));
+      tile.hasProjectile = false; // TODO: Come up with Projectile check
+
+      if (mrb_bool(mrb_funcall_argv(mrb, mrbtile, actor_p, 0, nullptr)))
+      {
+        mrb_value actor = mrb_funcall_argv(mrb, mrbtile, get_actor, 0, nullptr);
+        tile.actor = GetActorType(mrb, actor);
+      }
+      else
+      {
+        tile.actor = Tile::Empty;
+      }
+
+      x++;
+    }
+
+    y++;
+  }
 }
 
 // ----------------------------------------------------------------------------
+
+WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
+{
+  if (y >= height || y < 0)
+    throw basic_exception("Y value out of range");
+
+  if (x >= width || x < 0)
+    throw basic_exception("X value out of range");
+
+  return map[(y * width) + x];
+}
 
 const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y) const
 {
@@ -40,7 +128,7 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y) const
 WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const
 {
   // Making sure you aren't trying to move more than one block at a time.
-  if (std::abs(dx) > 1.5 || std::abs(dy) > 1.5)
+  if (abs(dx) > 1.5 || abs(dy) > 1.5)
   {
     return BlockedByGreatDistance;
   }

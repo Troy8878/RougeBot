@@ -118,7 +118,7 @@ public:
   {
     if (dt > 0.001)
     {
-      const int update_res = 60;
+      const int update_res = 10;
 
       static float prev_fps = 60;
       static float fps = 60;

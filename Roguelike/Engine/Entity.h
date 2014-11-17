@@ -324,6 +324,13 @@ private:
   bool zombified = false;
 
 #pragma endregion
+
+#pragma region Metadata
+
+public:
+  std::unordered_map<std::string, std::string> Metadata;
+
+#pragma endregion
 };
 
 // ----------------------------------------------------------------------------

@@ -14,6 +14,12 @@ class WorldSnapshot
 public:
   WorldSnapshot();
 
+  enum class TileType
+  {
+    Empty = 0,
+    Wall = 1
+  };
+
   struct Tile
   {
     // Enum for different types of Actors that can be stored.
@@ -21,6 +27,7 @@ public:
     {
       Empty,
       Player,
+      Friendly,
       Enemy,
       Neutral,
       Destructable
@@ -48,9 +55,9 @@ public:
     BlockedByWall,
     CannotMoveDiagonally
   };
-
+  
+  Tile &GetTile(mrb_int x, mrb_int y);
   const Tile &GetTile(mrb_int x, mrb_int y) const;
-
   BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const;
 
 private:

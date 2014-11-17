@@ -9,20 +9,20 @@
 
 #include "AIBehaviour.h"
 
-class AStarPathfinding : public AIBehaviour
+class AStarPathfinding final : public AIBehaviour
 {
-
 public:
+
   void ApplyBehaviour(const WorldSnapshot& world) override;
 
-  void SetTarget(Entity *targetEntity);
-  
+  void Prepare() override;
+  void InitializeTarget(Entity* target) override;
+  void InitilizeOwner(Entity* thisEntity) override;
+  AIResult GetResult() override;
   
 private:
-
   struct Route
   {
-
 
   };
 
@@ -30,7 +30,6 @@ private:
   Entity *thisEntity;
   Entity *target;
   Route *currentRoute;
-
 
   void FindRoute();
   void MoveAlongRoute();

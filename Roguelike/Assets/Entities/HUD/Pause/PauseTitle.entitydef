@@ -1,0 +1,20 @@
+{
+  "TransformComponent": {
+    "position": [0, 0.8, 0],
+    "scale": [1, 0.5, 1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "SPECIAL/SURFACE/800:400"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "PauseLayer"
+  },
+  "TextComponent": {
+    "font": "Segoe UI",
+    "texts": ["Paused"],
+    "text_color": "White",
+    "font_size": 240
+  }
+}

@@ -40,6 +40,10 @@ class MapTile
     @item.put_down self if @item
   end
 
+  def item?
+    !@item.nil?
+  end
+
   def actor?
     !@actor.nil?
   end

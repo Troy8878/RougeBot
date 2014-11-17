@@ -1044,6 +1044,37 @@ static mrb_value rb_ent_zombify(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value rb_ent_meta_get(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
+
+  mrb_value mrbkey;
+  mrb_get_args(mrb, "S", &mrbkey);
+
+  mrbkey = mrb_convert_type(mrb, mrbkey, MRB_TT_STRING, "String", "to_s");
+
+  auto value = entity->Metadata[mrb_str_to_stdstring(mrbkey)];
+  return mrb_str_new(mrb, value.c_str(), value.size());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value rb_ent_meta_set(mrb_state *mrb, mrb_value self)
+{
+  auto * const entity = ruby::data_get<Entity>(mrb, self);
+
+  mrb_value mrbkey, mrbvalue;
+  mrb_get_args(mrb, "SS", &mrbkey, &mrbvalue);
+  
+  mrbkey = mrb_convert_type(mrb, mrbkey, MRB_TT_STRING, "String", "to_s");
+  mrbvalue = mrb_convert_type(mrb, mrbvalue, MRB_TT_STRING, "String", "to_s");
+
+  entity->Metadata[mrb_str_to_stdstring(mrbkey)] = mrb_str_to_stdstring(mrbvalue);
+  return mrbvalue;
+}
+
+// ----------------------------------------------------------------------------
+
 ruby::ruby_class Entity::GetWrapperRClass()
 {
   using namespace ruby;
@@ -1097,6 +1128,10 @@ ruby::ruby_class Entity::GetWrapperRClass()
 
   // RAWR I'M A ZOMBIE!
   rclass.define_method("zombify!", rb_ent_zombify, ARGS_NONE());
+
+  // Metadata
+  rclass.define_method("[]", rb_ent_meta_get, ARGS_REQ(1));
+  rclass.define_method("[]=", rb_ent_meta_set, ARGS_REQ(2));
 
   return rclass;
 }

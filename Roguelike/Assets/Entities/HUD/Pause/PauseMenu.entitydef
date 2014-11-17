@@ -8,6 +8,10 @@
       {
         "name": "PauseBG",
         "archetype": "HUD/Pause/PauseBG"
+      },
+      {
+        "name": "PauseTitle",
+        "archetype": "HUD/Pause/PauseTitle"
       }
     ]
   }

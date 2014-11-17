@@ -31,8 +31,8 @@ class Cheat
 end
 
 def enable_cheat_codes
-  cheat_inst = Cheat.new
+  CHEAT_INST = Cheat.new
   def cheat
-    cheat_inst
+    CHEAT_INST
   end
 end

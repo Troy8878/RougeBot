@@ -36,6 +36,8 @@ class PositionComponent < ComponentBase
   end
 
   def linear(dt)
+    return if @position.near? @tpos, 0.0001
+
     diff = @position - @tpos
     diff.z = 0
 

@@ -296,5 +296,9 @@ class GameConsoleComponent < ComponentBase
     self.toggle
   end
 
+  def finalize
+    KeybindingComponent.unlock!
+  end
+
   register_component "GameConsoleComponent"
 end

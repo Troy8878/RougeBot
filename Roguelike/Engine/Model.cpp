@@ -11,12 +11,12 @@
 
 // ----------------------------------------------------------------------------
 
-static BasicVertex *BasicVertexPtr;
+static BasicVertex* BasicVertexPtr;
 
 // ----------------------------------------------------------------------------
 
-Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount,
-             ID3D11Buffer *indexBuffer, UINT indexCount, UINT stride)
+Model::Model(ID3D11Buffer* vertexBuffer, UINT vertexCount,
+             ID3D11Buffer* indexBuffer, UINT indexCount, UINT stride)
   : _vertexBuffer(vertexBuffer), _vertexCount(vertexCount),
     _indexBuffer(indexBuffer), _indexCount(indexCount), _stride(stride)
 {
@@ -24,9 +24,9 @@ Model::Model(ID3D11Buffer *vertexBuffer, UINT vertexCount,
 
 // ----------------------------------------------------------------------------
 
-Model::Model(ID3D11Device *device,
-             void *vertices, UINT vertexCount,
-             UINT *indices, UINT indexCount,
+Model::Model(ID3D11Device* device,
+             void* vertices, UINT vertexCount,
+             UINT* indices, UINT indexCount,
              UINT stride)
   : _vertexCount(vertexCount), _indexCount(indexCount), _stride(stride)
 {
@@ -65,17 +65,17 @@ Model::Model(ID3D11Device *device,
 
 // ----------------------------------------------------------------------------
 
-static ID3D11Buffer *CreateTintResource()
+static ID3D11Buffer* CreateTintResource()
 {
   D3D11_BUFFER_DESC desc;
   desc.Usage = D3D11_USAGE_DYNAMIC;
-  desc.ByteWidth = sizeof(math::Vector);
+  desc.ByteWidth = sizeof(math::Vector) * 2;
   desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
   desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
   desc.MiscFlags = 0;
   desc.StructureByteStride = 0;
 
-  ID3D11Buffer *buffer;
+  ID3D11Buffer* buffer;
 
   HRESULT hr = GetGame()->GameDevice->Device->
                         CreateBuffer(&desc, nullptr, &buffer);
@@ -86,17 +86,24 @@ static ID3D11Buffer *CreateTintResource()
 
 // ----------------------------------------------------------------------------
 
-static void UpdateTint(ID3D11Buffer *buffer, const math::Vector &tint)
+static void UpdateTint(ID3D11Buffer* buffer, const math::Vector& tint)
 {
   D3D11_MAPPED_SUBRESOURCE map;
   HRESULT hr;
 
-  auto &context = GetGame()->GameDevice->DeviceContext;
+  static auto& time = GetGame()->Time;
+
+  auto& context = GetGame()->GameDevice->DeviceContext;
   hr = context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
   CHECK_HRESULT(hr);
 
-  math::Vector *resVect = static_cast<math::Vector *>(map.pData);
-  *resVect = tint;
+  math::Vector* resVect = static_cast<math::Vector *>(map.pData);
+  resVect[0] = tint;
+  resVect[1].x =
+    static_cast<float>(
+      time.RunningTime.count() *
+      GameTime::clock::period::num /
+      static_cast<long double>(GameTime::clock::period::den));
 
   context->Unmap(buffer, 0);
 }
@@ -105,7 +112,7 @@ static void UpdateTint(ID3D11Buffer *buffer, const math::Vector &tint)
 
 void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
-  static auto *tintRes = CreateTintResource();
+  static auto* tintRes = CreateTintResource();
 
   shader->camera->worldMatrix = worldTransform;
 
@@ -121,7 +128,7 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
   static auto nulltex = Texture2D::GetNullTexture();
 
-  ID3D11ShaderResourceView *Textures[2] =
+  ID3D11ShaderResourceView* Textures[2] =
     {
       nulltex.ShaderRes,
       nulltex.ShaderRes
@@ -143,11 +150,11 @@ void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 
 // ----------------------------------------------------------------------------
 
-bool operator==(const BasicVertex &v1, const BasicVertex &v2);
+bool operator==(const BasicVertex& v1, const BasicVertex& v2);
 
 // ----------------------------------------------------------------------------
 
-bool operator==(const TexturedVertex &v1, const TexturedVertex &v2)
+bool operator==(const TexturedVertex& v1, const TexturedVertex& v2)
 {
   using namespace DirectX;
 

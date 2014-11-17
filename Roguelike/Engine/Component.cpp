@@ -134,6 +134,7 @@ void RegisterEngineComponents()
 
 #include "Game/PositionDisplayComponent.h"
 #include "Game/MapComponent.h"
+#include "Game/PositionComponent.h"
 
 template <typename Component>
 static void RegisterComponents()
@@ -161,19 +162,20 @@ static void RegisterComponents()
 
 static void RegisterStaticComponents()
 {
-  RegisterComponents<
-    SpriteComponent,
-    TransformComponent,
-    CameraComponent,
-    CustomModelComponent,
-    TextureComponent,
-    TextComponent,
-    ParticleSystemComponent,
-    ButtonComponent,
+  RegisterComponents
+    < SpriteComponent
+    , TransformComponent
+    , CameraComponent
+    , CustomModelComponent
+    , TextureComponent
+    , TextComponent
+    , ParticleSystemComponent
+    , ButtonComponent
 
-    PositionDisplayComponent,
-    MapComponent
-  >();
+    , PositionDisplayComponent
+    , MapComponent
+    //, PositionComponent
+    >();
 }
 
 // ----------------------------------------------------------------------------

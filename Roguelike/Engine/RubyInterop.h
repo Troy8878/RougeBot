@@ -422,12 +422,33 @@ namespace ruby
 
   // ----------------------------------------------------------------------------
 
-  template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
+  template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void) const>
   mrb_value data_getter_access_integer(mrb_state *mrb, mrb_value self)
   {
-    // Sorry, I couldn't resist trying them out (the emoji)
     auto &obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
     return mrb_fixnum_value((mrb_int) (obj .* MFP)());
+  }
+
+  // ----------------------------------------------------------------------------
+
+  template <typename T, const mrb_data_type *DT, typename R, R(T::*MFP)(void)>
+  mrb_value data_getter_access_float(mrb_state *mrb, mrb_value self)
+  {
+    auto &obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
+    return mrb_float_value(mrb, (mrb_float) (obj .* MFP)());
+  }
+
+  // ----------------------------------------------------------------------------
+
+  template <typename T, const mrb_data_type *DT, typename R, void(T::*MFP)(const R &)>
+  mrb_value data_setter_access_float(mrb_state *mrb, mrb_value self)
+  {
+    mrb_float value;
+    mrb_get_args(mrb, "f", &value);
+
+    auto &obj = *(T *) mrb_data_get_ptr(mrb, self, DT);
+    (obj .* MFP)((R) value);
+    return mrb_nil_value();
   }
 
   // ----------------------------------------------------------------------------

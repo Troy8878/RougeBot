@@ -38,9 +38,9 @@ public:
   {
     return std::vector<std::string>{};
   }
-
-protected:
+  
   static ruby::ruby_module GetComponentRModule();
+protected:
   static ruby::ruby_class GetComponentRClass();
 
   friend void RegisterEngineComponents();

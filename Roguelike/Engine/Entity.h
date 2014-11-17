@@ -121,6 +121,8 @@ public:
 #endif
   }
 
+  #define TGetComponent(type) GetComponent<type>(#type)
+
   PROPERTY(get = _GetComponents) const std::unordered_map<std::string, Component *> &Components;
 
 #pragma endregion

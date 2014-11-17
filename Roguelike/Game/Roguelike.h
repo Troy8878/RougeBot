@@ -120,15 +120,23 @@ public:
     {
       const int update_res = 10;
 
-      static float prev_fps = 60;
-      static float fps = 60;
-      fps = (fps * (update_res - 1) + 1 / dt) / update_res;
+      static float fps_buffer[update_res];
+      static int buf_count = 0;
 
-      if (fps != prev_fps)
+      fps_buffer[buf_count++] = 1 / dt;
+
+      if (buf_count == update_res)
       {
-        prev_fps = fps;
+        buf_count = 0;
+        float avg = 0;
+        for (auto val : fps_buffer)
+        {
+          avg += val;
+        }
+        avg /= update_res;
 
-        auto title = _title + " [" + std::to_string(static_cast<int>(fps + 0.5f)) + " fps]";
+        auto title = 
+          _title + " [" + std::to_string(static_cast<int>(avg + 0.5f)) + " fps]";
         SetWindowText(_graphicsDevice->Window, title.c_str());
       }
     }

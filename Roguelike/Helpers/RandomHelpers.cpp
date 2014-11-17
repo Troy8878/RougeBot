@@ -278,6 +278,9 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
 
 D2D1::ColorF JsonToColor(json::value json)
 {
+  if (json.is(json::json_type::jnull))
+    return math::Vector(0, 0, 0, 0);
+
   D2D1::ColorF color(D2D1::ColorF::White);
   if (json.is(json::json_type::jstring))
   {

@@ -42,7 +42,7 @@ class PositionComponent < ComponentBase
     diff.z = 0
 
     amt = dt * @move_speed
-    if diff.length2 > amt*amt
+    if diff.length > amt
       diff.normalize!.mul amt
     end
 
@@ -60,5 +60,5 @@ class PositionComponent < ComponentBase
     @tpos.y += diff.y
   end
 
-  register_component "PositionComponent"
+  register_component
 end

@@ -7,5 +7,6 @@
 
 #pragma once
 
-#include "Engine\Common.h"
+#include "Engine/Common.h"
+#include "Engine/RubyWrappers.h"
 #include "Roguelike.h"

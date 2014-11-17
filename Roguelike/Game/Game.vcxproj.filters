@@ -68,6 +68,9 @@
     <ClCompile Include="RoomGenerator.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <ClCompile Include="PositionComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Roguelike.h">
@@ -90,6 +93,9 @@
     </ClInclude>
     <ClInclude Include="Voodoo.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

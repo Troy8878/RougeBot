@@ -59,6 +59,15 @@ namespace vect
 
 #pragma region New vector
 
+  static mrb_value valloc(mrb_state *mrb, const math::Vector &vect)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    auto nvect = vectorAlloc.Create<math::Vector>(vect);
+    auto obj = mrb_data_object_alloc(mrb, vclass, nvect, &mrb_vector_type);
+    return mrb_obj_value(obj);
+  }
+
   static mrb_value vnew(mrb_state *mrb, mrb_value)
   {
     static auto vclass = mrb_class_get(mrb, "Vector");
@@ -82,14 +91,13 @@ namespace vect
       mrb_get_args(mrb, "|ffff", &x, &y, &z, &w);
     }
 
-    auto vect = vectorAlloc.Create<math::Vector>(
+    auto vect = math::Vector(
         static_cast<float>(x),
         static_cast<float>(y),
         static_cast<float>(z),
         static_cast<float>(w)
       );
-    auto obj = mrb_data_object_alloc(mrb, vclass, vect, &mrb_vector_type);
-    return mrb_obj_value(obj);
+    return valloc(mrb, vect);
   }
 
   static mrb_value scalar(mrb_state *mrb, mrb_value)
@@ -99,14 +107,13 @@ namespace vect
     mrb_float s;
     mrb_get_args(mrb, "f", &s);
     
-    auto vect = vectorAlloc.Create<math::Vector>(
+    auto vect = math::Vector(
         static_cast<float>(s),
         static_cast<float>(s),
         static_cast<float>(s),
         static_cast<float>(s)
       );
-    auto obj = mrb_data_object_alloc(mrb, vclass, vect, &mrb_vector_type);
-    return mrb_obj_value(obj);
+    return valloc(mrb, vect);
   }
 
   static void free(mrb_state *, void *mem)
@@ -413,7 +420,7 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
 
 mrb_value ruby::create_new_vector(const math::Vector &v)
 {
-  return mrb_inst->get_class("Vector").functions["new"].call(v.x, v.y, v.z, v.w);
+  return vect::valloc(*mrb_inst, v);
 }
 
 // ----------------------------------------------------------------------------

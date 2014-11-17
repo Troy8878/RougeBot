@@ -59,6 +59,7 @@ private:
 
   math::Vector position;
   math::Vector *translation;
+  friend mrb_value mrb_pos_comp_pos(mrb_state *mrb, mrb_value self);
 
 public:
   MovementMode GetMode() { return mode; }

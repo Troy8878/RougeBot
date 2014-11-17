@@ -26,6 +26,9 @@ void PositionComponent::Initialize(Entity* owner, const std::string& name)
 {
   Component::Initialize(owner, name);
   translation = &owner->TGetComponent(TransformComponent)->Position;
+
+  Owner->AddEvent(this, mrb_intern_lit(*mrb_inst, "update"), &PositionComponent::Update);
+  Jump(0);
 }
 
 // ----------------------------------------------------------------------------
@@ -102,6 +105,8 @@ Component* PositionComponentFactory::CreateObject(
 
   // Get the initial position
   component->Position = JsonToColor(data["position"]);
+  component->Position.z = 0;
+  component->Position.w = 0;
 
   return component;
 }
@@ -130,7 +135,7 @@ void PositionComponent::SetMode(MovementMode mode)
 mrb_data_type mrb_pos_comp_dt;
 static void mrb_mruby_pos_comp_init(mrb_state *mrb, RClass *mod, RClass *base);
 static mrb_value mrb_pos_comp_new(mrb_state *mrb, PositionComponent *component);
-static mrb_value mrb_pos_comp_pos(mrb_state *mrb, mrb_value self);
+mrb_value mrb_pos_comp_pos(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_pos_comp_pos_set(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_pos_comp_jump(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_pos_comp_linear(mrb_state *mrb, mrb_value self);
@@ -189,10 +194,10 @@ static mrb_value mrb_pos_comp_new(mrb_state *mrb, PositionComponent *component)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_pos_comp_pos(mrb_state *mrb, mrb_value self)
+mrb_value mrb_pos_comp_pos(mrb_state *mrb, mrb_value self)
 {
   auto comp = ruby::data_get<PositionComponent>(mrb, self);
-  return ruby::wrap_memory_vector(&comp->Position);
+  return ruby::wrap_memory_vector(&comp->position);
 }
 
 // ----------------------------------------------------------------------------

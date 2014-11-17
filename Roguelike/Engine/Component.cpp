@@ -174,7 +174,7 @@ static void RegisterStaticComponents()
 
     , PositionDisplayComponent
     , MapComponent
-    //, PositionComponent
+    , PositionComponent
     >();
 }
 

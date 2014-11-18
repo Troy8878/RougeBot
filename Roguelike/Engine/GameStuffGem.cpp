@@ -81,23 +81,23 @@ extern "C" mrb_value ruby_message_box(mrb_state *mrb, mrb_value)
   mrb_sym result_sym = mrb_intern_cstr(mrb, "unknown_result");
   switch (result)
   {
-  case IDABORT: result_sym = mrb_intern_cstr(mrb, "abort");
+  case IDABORT: result_sym = mrb_intern_lit(mrb, "abort");
     break;
-  case IDCANCEL: result_sym = mrb_intern_cstr(mrb, "cancel");
+  case IDCANCEL: result_sym = mrb_intern_lit(mrb, "cancel");
     break;
-  case IDCONTINUE: result_sym = mrb_intern_cstr(mrb, "continue");
+  case IDCONTINUE: result_sym = mrb_intern_lit(mrb, "continue");
     break;
-  case IDIGNORE: result_sym = mrb_intern_cstr(mrb, "ignore");
+  case IDIGNORE: result_sym = mrb_intern_lit(mrb, "ignore");
     break;
-  case IDNO: result_sym = mrb_intern_cstr(mrb, "no");
+  case IDNO: result_sym = mrb_intern_lit(mrb, "no");
     break;
-  case IDOK: result_sym = mrb_intern_cstr(mrb, "ok");
+  case IDOK: result_sym = mrb_intern_lit(mrb, "ok");
     break;
-  case IDRETRY: result_sym = mrb_intern_cstr(mrb, "retry");
+  case IDRETRY: result_sym = mrb_intern_lit(mrb, "retry");
     break;
-  case IDTRYAGAIN: result_sym = mrb_intern_cstr(mrb, "try_again");
+  case IDTRYAGAIN: result_sym = mrb_intern_lit(mrb, "try_again");
     break;
-  case IDYES: result_sym = mrb_intern_cstr(mrb, "yes");
+  case IDYES: result_sym = mrb_intern_lit(mrb, "yes");
     break;
   }
 

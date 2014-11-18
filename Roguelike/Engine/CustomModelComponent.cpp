@@ -17,7 +17,7 @@ CustomModelComponentFactory CustomModelComponent::factory;
 // ----------------------------------------------------------------------------
 
 CustomModelComponent::CustomModelComponent(Shader *shader, RenderSet *set)
-  : _ModelShader(shader), renderTarget(set)
+  : _ModelShader(shader), renderTarget(set), customModel(nullptr)
 {
 }
 
@@ -34,7 +34,7 @@ void CustomModelComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
-  texture = (TextureComponent *) Owner->GetComponent("TextureComponent");
+  texture = static_cast<TextureComponent *>(Owner->GetComponent("TextureComponent"));
   renderTarget->AddDrawable(this, ModelShader);
 }
 

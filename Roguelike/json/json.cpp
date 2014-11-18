@@ -48,6 +48,13 @@ namespace json
 
   // ----------------------------------------------------------------------------
 
+  value::shared_value::~shared_value()
+  {
+    set_type(json_type::jnull);
+  }
+  
+  // ----------------------------------------------------------------------------
+
   void value::shared_value::set_type(json_type new_type, const void *copy)
   {
     // destruct types

@@ -76,13 +76,21 @@ void Input::Initialize()
                              this->OnMouseDown(bt);
                        }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
 
-  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
+  game.SetProcHandlers([this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
                        {
                          this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-                         for (auto bt : mouse_buttons)
-                           if (wp & bt)
-                             this->OnMouseUp(bt);
+                         switch (msg)
+                         {
+                           case WM_LBUTTONUP: this->OnMouseUp(MK_LBUTTON); break;
+                           case WM_MBUTTONUP: this->OnMouseUp(MK_MBUTTON); break;
+                           case WM_RBUTTONUP: this->OnMouseUp(MK_RBUTTON); break;
+                           default:
+                             for (auto bt : mouse_buttons)
+                               if (wp & bt)
+                                 this->OnMouseUp(bt);
+                         }
+
                        }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
 
   game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)

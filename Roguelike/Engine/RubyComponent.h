@@ -40,6 +40,7 @@ public:
 private:
   std::unordered_map<event_id, mrb_sym> events;
   mrb_value component_inst;
+  mrb_int gclock;
 
   friend class RubyComponentFactory;
 };

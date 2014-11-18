@@ -13,6 +13,9 @@
   },
 
   "EnemyLogicComponent": {},
+  "ButtonComponent": {
+    "render_target": "WorldLayer"
+  },
 
   "ChildHierarchy": {
     "children": [

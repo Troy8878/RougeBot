@@ -48,6 +48,10 @@ namespace json
     private:
       class shared_value
       {
+      public:
+        ~shared_value();
+
+      private:
         typedef unsigned __int8 byte_t;
 
         union data_t

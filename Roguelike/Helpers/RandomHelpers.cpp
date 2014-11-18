@@ -265,7 +265,7 @@ math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
     XMVECTOR diff = projected - planePoint;
     *distance = XMVectorGetX(XMVector3Length(diff));
 
-    if (XMVectorGetX(XMVectorAbs(XMVector3AngleBetweenVectors(diff, v))) > math::pi / 2)
+    if (XMVectorGetX(XMVectorAbs(XMVector3AngleBetweenVectors(diff, v))) < math::pi / 2)
     {
       *distance = -*distance;
     }

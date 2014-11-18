@@ -1,6 +1,6 @@
 {
   "TransformComponent": {
-    "position": [0, 0, -1]
+    "position": [0, 10, -1]
   },
   "GamePauseControllerComponent": {},
   "ChildHierarchy": {

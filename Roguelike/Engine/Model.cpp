@@ -110,6 +110,14 @@ static void UpdateTint(ID3D11Buffer* buffer, const math::Vector& tint)
 
 // ----------------------------------------------------------------------------
 
+Model::~Model()
+{
+  ReleaseDXInterface(_vertexBuffer);
+  ReleaseDXInterface(_indexBuffer);
+}
+
+// ----------------------------------------------------------------------------
+
 void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
   static auto* tintRes = CreateTintResource();

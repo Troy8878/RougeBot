@@ -31,7 +31,8 @@ static std::list<Entity *> death_row;
 
 Entity::Entity(entity_id id)
   : _id(id != UNASSIGNED_ENTITY_ID ? id : CreateEntityId()),
-    _Parent(nullptr), _Transform(DirectX::XMMatrixIdentity())
+    _Parent(nullptr), _Transform(DirectX::XMMatrixIdentity()),
+    SelfRef(std::make_shared<Entity *>(this))
 {
   if (_id >= next_ent_id)
     next_ent_id = _id + 1;
@@ -45,6 +46,8 @@ Entity::Entity(entity_id id)
 
 Entity::~Entity()
 {
+  *SelfRef = nullptr;
+
   DestroyChildren();
 
   if (!_components.empty())
@@ -1340,7 +1343,7 @@ void Entity::Zombify()
   if (Id == 0)
     mrb_raise(*mrb_inst, mrb_inst->mrb_handle()->eException_class,
               "Zombifying LevelRoot is UNACCEPTABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
-              "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+              "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
   if (zombified)
     return;
@@ -1353,9 +1356,6 @@ void Entity::Zombify()
     Events::EventMessage message(zombified, nullptr, false);
     LocalEvent(message);
   }
-
-  _events.clear();
-  proxies.clear();
 
   death_row.push_front(this);
 

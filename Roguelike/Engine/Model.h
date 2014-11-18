@@ -67,6 +67,8 @@ public:
         VertexType (&vertices)[vertexCount],
         UINT (&indices)[indexCount]);
 
+  ~Model();
+
   void XM_CALLCONV Draw(DirectX::FXMMATRIX worldTransform) const;
 
   Shader *shader;

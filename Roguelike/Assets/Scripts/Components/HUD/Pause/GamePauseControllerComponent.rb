@@ -19,8 +19,6 @@ class GamePauseControllerComponent < ComponentBase
 
   def first_update(e)
     remove_event :update
-
-    owner.raise_event :send, [:visible=, [false]]
   end
 
   def on_pause(e)
@@ -48,10 +46,10 @@ class GamePauseControllerComponent < ComponentBase
     Event.raise_event :on_pause, val
 
     if paused?
-      owner.raise_event :send, [:visible=, [true]]
+      find_entity("HUD_ROOT").transform_component.position.y = -10
       KeybindingComponent.lock!
     else
-      owner.raise_event :send, [:visible=, [false]]
+      find_entity("HUD_ROOT").transform_component.position.y = 0
       KeybindingComponent.unlock!
     end
   end

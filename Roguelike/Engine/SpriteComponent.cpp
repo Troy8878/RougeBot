@@ -341,7 +341,14 @@ static mrb_value rb_sprite_set_tint(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "o", &value);
   auto sprite = ruby::data_get<SpriteComponent>(mrb, self);
 
-  sprite->Tint = ruby::get_ruby_vector(value);
+  if (mrb_string_p(value))
+  {
+    sprite->Tint = StringToColor(mrb_str_to_stdstring(value));
+  }
+  else
+  {
+    sprite->Tint = ruby::get_ruby_vector(value);
+  }
 
   return mrb_nil_value();
 }

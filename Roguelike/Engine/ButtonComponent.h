@@ -14,6 +14,7 @@
 // ----------------------------------------------------------------------------
 
 class ButtonComponentFactory;
+class SpriteComponent;
 
 // ----------------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ public:
 
   RenderSet *RenderTarget;
   math::Vector Size;
+  SpriteComponent *Sprite;
 
   mrb_value GetRubyWrapper() override;
 

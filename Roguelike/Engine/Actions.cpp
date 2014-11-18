@@ -386,7 +386,7 @@ static mrb_value GCLockHash()
   {
     init = true;
 
-    mrb_sym lock_sym = mrb_intern_lit(*mrb_inst, "ActionSequenceLock");
+    mrb_sym lock_sym = mrb_intern_lit(*mrb_inst, "$PancakeEngineLock");
     mrb_gv_set(*mrb_inst, lock_sym, lock);
   }
 

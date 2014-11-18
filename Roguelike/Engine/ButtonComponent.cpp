@@ -11,6 +11,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "RubyWrappers.h"
+#include "SpriteComponent.h"
 
 // ----------------------------------------------------------------------------
 
@@ -33,6 +34,8 @@ void ButtonComponent::Initialize(Entity *owner, const std::string &name)
 
   DEF_EVENT_ID(button_probe);
   Owner->AddEvent(this, button_probe, &ButtonComponent::OnProbe);
+
+  Sprite = Owner->GetComponent<SpriteComponent>("SpriteComponent");
 }
 
 // ----------------------------------------------------------------------------
@@ -45,6 +48,9 @@ void ButtonComponent::OnUpdate(Events::EventMessage &)
 
 void ButtonComponent::OnProbe(Events::EventMessage &e)
 {
+  if (Sprite && !Sprite->Visible)
+    return;
+
   auto &probe = *e.GetData<ButtonProbeEvent>();
 
   auto mousepos = Input::Instance.GetMouseState().position;
@@ -68,7 +74,12 @@ void ButtonComponent::OnProbe(Events::EventMessage &e)
   XMFLOAT3 oframe[ARRAYSIZE(frame)];
   XMVector3TransformNormalStream(oframe, ARRAY_STRIDE(oframe),
                                  frame, ARRAY_STRIDE(frame),
-                                 ARRAYSIZE(frame), Owner->Transform);
+                                 ARRAYSIZE(frame),
+                                 // Hang on a sec...
+                                 // Don't I already account for that by inverting the transform?
+                                 //Owner->Transform
+                                 XMMatrixIdentity()
+                                 );
 
   auto vbwidth = XMVector3Length(XMLoadFloat3(oframe + 0) - XMLoadFloat3(oframe + 1));
   auto vbheight = XMVector3Length(XMLoadFloat3(oframe + 1) - XMLoadFloat3(oframe + 2));

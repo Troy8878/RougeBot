@@ -17,8 +17,13 @@ public:
   static ButtonManager Instance;
 
   ButtonManager();
+  void Initialize();
 
   void OnClick(Events::EventMessage &e);
+  void OnMove(Events::EventMessage &e);
+
+private:
+  std::shared_ptr<Entity *> lastMatch = nullptr;
 };
 
 // ----------------------------------------------------------------------------

@@ -8,7 +8,7 @@ static struct mrb_irep *
 get_closure_irep(mrb_state *mrb, int level)
 {
   struct REnv *e = mrb->c->ci[-1].proc->env;
-  struct RProc *proc;
+  struct RProc *proc = NULL;
 
   if (level == 0) {
     return mrb->c->ci[-1].proc->body.irep;

@@ -61,6 +61,7 @@ void Game::Run()
   ruby::ruby_engine::global_engine = &mrb;
 
   Input::Instance.Initialize();
+  ButtonManager::Instance.Initialize();
   SoundSystem.Initialize();
 
   try

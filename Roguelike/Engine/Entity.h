@@ -115,7 +115,7 @@ public:
   DerivedComponent *GetComponent(const std::string &name)
   {
 #ifdef _DEBUG
-    return dynamic_cast<DerivedComponent *>(GetComponent(name));
+    return &dynamic_cast<DerivedComponent &>(*GetComponent(name));
 #else
     return static_cast<DerivedComponent *>(GetComponent(name));
 #endif
@@ -331,6 +331,7 @@ private:
 
 public:
   std::unordered_map<std::string, std::string> Metadata;
+  std::shared_ptr<Entity *> SelfRef;
 
 #pragma endregion
 };

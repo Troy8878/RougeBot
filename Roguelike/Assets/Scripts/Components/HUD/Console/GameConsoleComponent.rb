@@ -171,10 +171,15 @@ class GameConsoleComponent < ComponentBase
   end
 
   def on_special_char(e)
+    clip = Clipboard.new
     case e
     when 3 # Ctrl+C
+      clip.put @textbuf
+      puts "Text copied to clipboard"
     when 22 # Ctrl+V
+      insert_text clip.get
     end
+    clip.close
   end
 
   def insert_text(e)

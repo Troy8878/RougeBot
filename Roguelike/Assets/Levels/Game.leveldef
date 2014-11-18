@@ -9,7 +9,7 @@
       "components": {
         "TransformComponent": {
           "rotation": [0, 0, 0],
-          "position": [0, 0, -10]
+          "position": [0, -0.5, -10]
         }
       },
       "children": [
@@ -87,7 +87,7 @@
               "archetype": "HUD/Hotbar",
               "components": {
                 "TransformComponent": {
-                  "position": [0, -1.1],
+                  "position": [0, -1.25],
                   "scale": [0.35, 0.35, 0.35]
                 }
               }

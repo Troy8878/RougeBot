@@ -171,10 +171,15 @@ static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
-struct Clipboard
+class Clipboard
 {
+public:
   Clipboard();
+  void Close();
   ~Clipboard();
+
+private:
+  bool open;
 };
 
 static mrb_data_type mrb_clipboard_dt;
@@ -184,20 +189,30 @@ static mrb_value mrb_clipboard_new(mrb_state *mrb, mrb_value self);
 
 static mrb_value mrb_clipboard_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_clipboard_put(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_clipboard_close(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
 Clipboard::Clipboard()
 {
   OpenClipboard(GetGame()->GameDevice->GetContextWindow());
+  open = true;
+}
+
+// ----------------------------------------------------------------------------
+
+void Clipboard::Close()
+{
+  CloseClipboard();
+  open = false;
 }
 
 // ----------------------------------------------------------------------------
 
 Clipboard::~Clipboard()
 {
-  std::cout << "Clipboard deleted" << std::endl;
-  CloseClipboard();
+  if (open)
+    Close();
 }
 
 // ----------------------------------------------------------------------------
@@ -209,7 +224,9 @@ static void mrb_clipboard_init(mrb_state *mrb)
   auto cls = mrb_define_class(mrb, "Clipboard", mrb->object_class);
   mrb_define_class_method(mrb, cls, "new", mrb_clipboard_new, ARGS_NONE());
 
-  
+  mrb_define_method(mrb, cls, "get", mrb_clipboard_get, ARGS_NONE());
+  mrb_define_method(mrb, cls, "put", mrb_clipboard_put, ARGS_REQ(1));
+  mrb_define_method(mrb, cls, "close", mrb_clipboard_close, ARGS_NONE());
 }
 
 // ----------------------------------------------------------------------------
@@ -230,6 +247,57 @@ static mrb_value mrb_clipboard_new(mrb_state *mrb, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_clipboard_get(mrb_state *mrb, mrb_value)
+{
+  if (IsClipboardFormatAvailable(CF_TEXT))
+  {
+    HGLOBAL htext = GetClipboardData(CF_TEXT);
+    if (htext)
+    {
+      const char *ctext = static_cast<const char *>(GlobalLock(htext));
+      if (ctext)
+      {
+        mrb_value result = mrb_str_new_cstr(mrb, ctext);
+        GlobalUnlock(htext);
+        return result;
+      }
+    }
+  }
+  
+  return mrb_nil_value();
+}
+
 // ----------------------------------------------------------------------------
+
+static mrb_value mrb_clipboard_put(mrb_state *mrb, mrb_value)
+{
+  mrb_value mrbstr;
+  mrb_get_args(mrb, "S", &mrbstr);
+
+  std::string str = mrb_str_to_stdstring(mrbstr);
+
+  EmptyClipboard();
+
+  const size_t memsize = str.size() + 1;
+  auto global = GlobalAlloc(GMEM_MOVEABLE, memsize);
+  if (!global)
+    return nil;
+
+  auto mem = GlobalLock(global);
+  memcpy_s(mem, memsize, str.c_str(), memsize);
+  GlobalUnlock(global);
+
+  SetClipboardData(CF_TEXT, global);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value mrb_clipboard_close(mrb_state* mrb, mrb_value self)
+{
+  ruby::data_get<Clipboard>(mrb, self)->Close();
+  return mrb_nil_value();
+}
 
 // ----------------------------------------------------------------------------

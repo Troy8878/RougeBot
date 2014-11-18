@@ -20,6 +20,8 @@
 // I should mention here that I'm using the snake_case naming convention
 // because that is the naming convention of Ruby.
 
+#define nil (mrb_nil_value())
+
 namespace ruby
 {
   // ----------------------------------------------------------------------------

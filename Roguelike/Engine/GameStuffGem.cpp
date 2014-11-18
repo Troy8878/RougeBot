@@ -62,6 +62,7 @@ extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
   }
 
   mrb_raise(mrb, mrb_class_get(mrb, "RuntimeError"), "Type argument must be :int or :float");
+  SHUT_UP_RESHARPER_THERE_IS_NO_WAY_THIS_FUNCTION_RETURNS_HERE(mrb_nil_value());
 }
 
 // ----------------------------------------------------------------------------
@@ -150,6 +151,14 @@ static mrb_value mrb_switch_level(mrb_state *mrb, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_reload_level(mrb_state *, mrb_value)
+{
+  GetGame()->RestartLevel();
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 static mrb_value mrb_quit_game(mrb_state *, mrb_value)
 {
   GetGame()->Stop();
@@ -179,6 +188,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
   mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));
+  mrb_define_class_method(mrb, gameClass, "reload_level", mrb_reload_level, ARGS_NONE());
   mrb_define_class_method(mrb, gameClass, "quit!", mrb_quit_game, ARGS_NONE());
 
 #pragma region MessageBox stuff

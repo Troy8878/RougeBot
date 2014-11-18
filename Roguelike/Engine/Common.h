@@ -55,4 +55,10 @@
 #include "Game.h"
 #include "Texture.h"
 
+#define SHUT_UP_RESHARPER_THERE_IS_NO_WAY_THIS_FUNCTION_RETURNS_HERE(val) \
+  __pragma(warning(push)) \
+  __pragma(warning(disable:4702)) /* unreachable code */ \
+  return (val); \
+  __pragma(warning(pop))
+
 #pragma warning(pop)

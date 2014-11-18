@@ -12,6 +12,10 @@
       {
         "name": "PauseTitle",
         "archetype": "HUD/Pause/PauseTitle"
+      },
+      {
+        "name": "Resume",
+        "archetype": "HUD/Pause/Resume"
       }
     ]
   }

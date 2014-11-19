@@ -141,7 +141,7 @@ public:
   }
 
   basic_exception(const char *what)
-    : std::exception(what), trace(stack_trace::create_trace())
+    : exception(what), trace(stack_trace::create_trace())
   {
   }
 
@@ -466,7 +466,7 @@ void variadic_push_array(T array[], size_t index,
 
 struct component_factory_data : public std::unordered_map<std::string, json::value>
 {
-  typedef std::unordered_map<std::string, json::value> base;
+  typedef unordered_map<std::string, json::value> base;
 
   component_factory_data() = default;
 
@@ -662,7 +662,7 @@ inline std::basic_string<CharType, Traits, Alloc> downcase(
   const std::basic_string<CharType, Traits, Alloc> &input)
 {
   std::basic_string<CharType, Traits, Alloc> copy = input;
-  std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+  std::transform(copy.begin(), copy.end(), copy.begin(), tolower);
   return copy;
 }
 
@@ -672,7 +672,7 @@ inline std::basic_string<CharType, Traits, Alloc> downcase(
   const CharType *str)
 {
   std::basic_string<CharType, Traits, Alloc> copy = str;
-  std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
+  std::transform(copy.begin(), copy.end(), copy.begin(), tolower);
   return copy;
 }
 
@@ -796,5 +796,46 @@ std::ostream &operator<<(std::ostream &os, const std::vector<E, A> &cont)
   os << "]";
   return os;
 }
+
+// ----------------------------------------------------------------------------
+
+class LapTimer
+{
+public:
+  typedef std::chrono::high_resolution_clock clock;
+
+  void new_lap()
+  {
+    _lap_start = clock::now();
+  }
+
+  clock::duration end_lap()
+  {
+    auto now = clock::now();
+    _last_lap = now - _lap_start;
+    _lap_start = now;
+    _total_time += _last_lap;
+    _lap_count++;
+    return _last_lap;
+  }
+
+  clock::duration lap_time() { return clock::now() - _lap_start; }
+  clock::duration last_lap() { return _last_lap; }
+  clock::duration total_time() { return _total_time; }
+
+  float time_dt()
+  {
+    return
+      last_lap().count() *
+      static_cast<float>(clock::period::num) /
+      clock::period::den;
+  }
+
+private:
+  clock::time_point _lap_start = clock::now();
+  clock::duration _last_lap = std::chrono::milliseconds(0);
+  clock::duration _total_time = std::chrono::milliseconds(0);
+  size_t _lap_count = 0;
+};
 
 // ----------------------------------------------------------------------------

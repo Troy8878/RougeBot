@@ -267,7 +267,7 @@ void WindowDevice::EndFrame()
   }
   else
   {
-    const double min_frame_time = 0.001;
+    const double min_frame_time = 1.0 / 288.0;
 
     static auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame_time)

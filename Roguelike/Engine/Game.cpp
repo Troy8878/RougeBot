@@ -16,6 +16,11 @@
 #include "mruby/debug.h"
 #include "mruby/variable.h"
 #include "WorldSnapshot.h"
+#include <PropertyAPI/PropertyServer.h>
+
+// ----------------------------------------------------------------------------
+
+PropertyServer *propviewer = nullptr;
 
 // ----------------------------------------------------------------------------
 
@@ -77,24 +82,23 @@ void Game::Run()
     {
       performance::register_guard glperf("Game Loop");
 
+      performance.wndproc.new_lap();
       _graphicsDevice->ProcessMessages();
+      performance.wndproc.end_lap();
 
 #if !PRODUCTION
+      performance.unlock_game.new_lap();
       // Provide a window for other threads to do things to the engine
-      // This will never need to happen in "Production" builds
+      if (propviewer)
       {
         GameLock.leave();
         Sleep(1);
         GameLock.enter();
       }
+      performance.unlock_game.end_lap();
 #endif
-
-      // Update
-      _gameTime.Update();
-
-      // FMOD Update
-      SoundSystem.Update();
-
+      
+      performance.load_level.new_lap();
       if (!levelChangeContext.loaded)
       {
         // Load the level
@@ -120,6 +124,14 @@ void Game::Run()
           Event::Raise(msg);
         }
       }
+      performance.load_level.end_lap();
+
+      performance.update.new_lap();
+      // Update
+      _gameTime.Update();
+
+      // FMOD Update
+      SoundSystem.Update();
 
       // Raise update event
       if (!_gameTime.Paused)
@@ -133,10 +145,13 @@ void Game::Run()
         EventMessage msg{updateId, &edata, false};
         Event::Raise(msg);
       }
-
+      performance.update.end_lap();
+      
       // Raise draw event (and draw the frame)
+      performance.draw.new_lap();
       if (_graphicsDevice->BeginFrame())
       {
+
         using namespace Events;
         static EventId drawId("draw");
         EventMessage msg{drawId, nullptr, false};
@@ -152,9 +167,11 @@ void Game::Run()
         // Run the GC while drawing
         std::thread gc_thread
         {
-          [&mrb]()
+          [&mrb, this]()
           {
+            performance.gc.new_lap();
             mrb_full_gc(mrb);
+            performance.gc.end_lap();
           }
         };
 
@@ -175,14 +192,21 @@ void Game::Run()
 
         // Done :D
         _graphicsDevice->EndFrame();
-
+        performance.draw.end_lap();
+        
+        performance.gc_join.new_lap();
         gc_thread.join();
+        performance.gc_join.end_lap();
+      }
+      else
+      {
+        performance.draw.end_lap();
       }
 
       // Oh no! Zombies!
-      {
-        Entity::ExecuteZombies();
-      }
+      performance.entity_kill.new_lap();
+      Entity::ExecuteZombies();
+      performance.entity_kill.end_lap();
     }
 
     OnFree();

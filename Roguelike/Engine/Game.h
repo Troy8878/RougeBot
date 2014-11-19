@@ -22,9 +22,15 @@
 
 // ----------------------------------------------------------------------------
 
+class PropertyServer;
 class Game;
 class Level;
+
 Game *GetGame();
+
+// ----------------------------------------------------------------------------
+
+extern PropertyServer *propviewer;
 
 // ----------------------------------------------------------------------------
 
@@ -84,6 +90,18 @@ public:
 
   critical_section GameLock;
 
+  struct Performance
+  {
+    LapTimer wndproc;
+    LapTimer unlock_game;
+    LapTimer load_level;
+    LapTimer update;
+    LapTimer draw;
+    LapTimer gc;
+    LapTimer gc_join;
+    LapTimer entity_kill;
+  } performance;
+
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;
   GameTime _gameTime;
@@ -104,7 +122,7 @@ public:
 
   SoundClass SoundSystem;
 
-  struct LevelEventProxy : public Events::EventReciever
+  struct LevelEventProxy : public EventReciever
   {
     bool CanHandle(const Events::EventMessage &e) override;
     void Handle(Events::EventMessage &e) override;

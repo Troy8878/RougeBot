@@ -14,6 +14,7 @@
 // ----------------------------------------------------------------------------
 
 #pragma region Random stuff
+#include <PropertyAPI/PropertyServer.h>
 
 extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
 {
@@ -169,6 +170,11 @@ static mrb_value mrb_quit_game(mrb_state *, mrb_value)
 
 static mrb_value mrb_browse(mrb_state *, mrb_value)
 {
+  if (!propviewer)
+  {
+    propviewer = new PropertyServer;
+  }
+
   ShellExecuteA(nullptr, "open", 
                 "http://localhost:5430/game/index.html",
                 nullptr, nullptr, SW_SHOWNORMAL);

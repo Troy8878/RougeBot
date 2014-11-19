@@ -51,10 +51,6 @@ extern "C" __declspec(noreturn) void GameRunGame()
   std::cout << console::fg::white;
   std::cout << "AVX Support: " << IsAvxSupported() << std::endl;
 
-  #if !PRODUCTION
-  PropertyServer debug_server;
-  #endif
-
   game.Run();
   _exit(0);
 }

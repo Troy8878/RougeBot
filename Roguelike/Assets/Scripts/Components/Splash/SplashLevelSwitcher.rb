@@ -23,7 +23,7 @@ class SplashLevelSwitcher < ComponentBase
     @time += e.dt
 
     if @time > 0.1
-      Game.switch_level "Game"
+      Game.switch_level "MainMenu"
     end
   end
 

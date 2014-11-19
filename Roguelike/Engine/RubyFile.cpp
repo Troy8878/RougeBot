@@ -294,7 +294,8 @@ static mrb_value mrb_file_open(mrb_state *mrb, mrb_value self)
     mode = std::ios::in | std::ios::out;
   }
 
-  file.file.open(mrb_str_to_cstr(mrb, filename_v), mode);
+  file.path = mrb_str_to_stdstring(filename_v);
+  file.file.open(file.path.file_string().c_str(), mode);
 
   return mrb_nil_value();
 }
@@ -304,6 +305,9 @@ static mrb_value mrb_file_open(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_file_read(mrb_state *mrb, mrb_value self)
 {
   auto &file = *static_cast<MrbFile *>(mrb_data_get_ptr(mrb, self, &mrb_file_dt));
+
+  if (!file.file)
+    mrb_raise(mrb, E_RUNTIME_ERROR, "Cannot read from an invalid file");
 
   std::string line;
   mrb_value str = mrb_str_new(mrb, "", 0);

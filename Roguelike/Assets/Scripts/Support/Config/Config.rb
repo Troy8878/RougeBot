@@ -5,9 +5,37 @@
 #######################
 
 module Config
+  CONFIG_DIR = Dir.appdata["DigiPen"]["Roguebot"]
+  CONFIG_PATH = CONFIG_DIR.path + "/config.rbd"
+  CONFIG_FILE = File.new
+
   @@defaulting = false
   @@defaults = {}
   @@items = {}
+  @@hooks = {}
+
+  def self.save
+    file = CONFIG_FILE
+    file.open CONFIG_PATH, :out, :truncate
+    file.write @@items.inspect
+    file.close
+  end
+
+  def self.load
+    begin
+      file = CONFIG_FILE
+      file.open CONFIG_PATH, :in
+      @@items = eval(file.read)
+      file.close
+    rescue Exception => e
+      log_error "An exception occurred reading config file", e
+      Config.save
+    end
+  end
+
+  def self.hook(key, &block)
+    @@hooks[key] = block
+  end
 
   def self.[](key)
     @@items[key]
@@ -19,6 +47,9 @@ module Config
     end
 
     @@items[key] = value
+    if @@hooks[key]
+      @@hooks[key].call value
+    end
   end
 
   def self.is_default?(key)
@@ -31,10 +62,12 @@ module Config
     @@items = {}
 
     if block_given?
+      yield
       @@default_block = block
+      Config.load
+    else
+      @@default_block.call
     end
-
-    @@default_block.call()
 
     @@defaulting = false
   end

@@ -65,11 +65,20 @@ void ButtonManager::OnMove(Events::EventMessage &)
   {
     if (data.bestMatch->SelfRef != lastMatch)
     {
+      if (lastMatch && *lastMatch)
+      {
+        DEF_EVENT_ID(mouse_leave);
+        Events::EventMessage message{mouse_leave, nullptr};
+        (*lastMatch)->RaiseEvent(message);
+      }
+
       lastMatch = data.bestMatch->SelfRef;
 
-      DEF_EVENT_ID(mouse_enter);
-      Events::EventMessage message{mouse_enter, nullptr};
-      (*lastMatch)->RaiseEvent(message);
+      {
+        DEF_EVENT_ID(mouse_enter);
+        Events::EventMessage message{mouse_enter, nullptr};
+        (*lastMatch)->RaiseEvent(message);
+      }
     }
   }
   else

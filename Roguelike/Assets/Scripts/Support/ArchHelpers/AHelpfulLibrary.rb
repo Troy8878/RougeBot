@@ -103,3 +103,14 @@ class Symbol
   end
 end
 
+module Kernel
+  ERROR_LOG_DIR = Dir.appdata["DigiPen"]["Roguebot"]["GameLogs"]
+  ERROR_LOG_PATH = ERROR_LOG_DIR.path + "/error.log"
+  ERROR_LOG_FILE = File.new
+
+  def log_error(msg, *args)
+    ERROR_LOG_FILE.open ERROR_LOG_PATH, :out, :append
+    ERROR_LOG_FILE.write "#{msg}: #{args.map(&:inspect).join ', '}\n"
+    ERROR_LOG_FILE.close
+  end
+end

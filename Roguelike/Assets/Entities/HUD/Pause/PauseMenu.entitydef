@@ -16,6 +16,10 @@
       {
         "name": "Resume",
         "archetype": "HUD/Pause/Resume"
+      },
+      {
+        "name": "Quit",
+        "archetype": "HUD/Pause/Quit"
       }
     ]
   }

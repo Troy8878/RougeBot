@@ -52,6 +52,7 @@ extern "C"
   void mrb_mruby_actions_init(mrb_state *mrb);
   void mrb_mruby_texture_init(mrb_state *mrb);
   void mrb_mruby_ary_streambuf_init(mrb_state *mrb);
+  void mrb_mruby_graphics_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -120,6 +121,9 @@ extern "C"
 
     // For the in-game console
     mrb_mruby_ary_streambuf_init(mrb);
+
+    // Graphics
+    mrb_mruby_graphics_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

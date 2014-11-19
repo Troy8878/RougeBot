@@ -14,6 +14,7 @@
 // Testing stuff, remove later
 #include "Level.h"
 #include "SpriteComponent.h"
+#include <mmintrin.h>
 
 // ----------------------------------------------------------------------------
 
@@ -260,20 +261,21 @@ bool WindowDevice::BeginFrame()
 
 void WindowDevice::EndFrame()
 {
-  static bool vsync = GetGame()->initSettings.vsync;
+  bool vsync = GetGame()->initSettings.vsync;
   if (vsync)
   {
     SwapChain->Present(1, 0);
   }
   else
   {
-    const double min_frame_time = 1.0 / 288.0;
+    SwapChain->Present(0, 0);
+    const double min_frame_time = 1.0 / 256.0;
 
     static auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame_time)
+    {
       Sleep(0);
-
-    SwapChain->Present(0, 0);
+    }
   }
 }
 

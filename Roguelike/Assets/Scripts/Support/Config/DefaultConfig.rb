@@ -71,3 +71,4 @@ Config.load_defaults do
   Config.bind_key "Game", Keys::TILDE, "toggle_console"
 
 end
+

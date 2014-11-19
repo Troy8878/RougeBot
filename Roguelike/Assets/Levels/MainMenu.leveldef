@@ -44,6 +44,16 @@
           }
         },
         {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
+        },
+        {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
@@ -53,7 +63,12 @@
           },
           "children": [
             {
-              "name": "Play"
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "Play",
+              "archetype": "Menu/Play"
             }
           ]
         }

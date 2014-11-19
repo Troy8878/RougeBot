@@ -78,6 +78,9 @@ void Game::Run()
 
     OnInit();
 
+    // Update
+    _gameTime.Update();
+
     while (_running)
     {
       performance::register_guard glperf("Game Loop");
@@ -127,8 +130,6 @@ void Game::Run()
       performance.load_level.end_lap();
 
       performance.update.new_lap();
-      // Update
-      _gameTime.Update();
 
       // FMOD Update
       SoundSystem.Update();
@@ -194,6 +195,9 @@ void Game::Run()
         _graphicsDevice->EndFrame();
         performance.draw.end_lap();
         
+        // Update
+        _gameTime.Update();
+        
         performance.gc_join.new_lap();
         gc_thread.join();
         performance.gc_join.end_lap();
@@ -201,6 +205,9 @@ void Game::Run()
       else
       {
         performance.draw.end_lap();
+        
+        // Update
+        _gameTime.Update();
       }
 
       // Oh no! Zombies!

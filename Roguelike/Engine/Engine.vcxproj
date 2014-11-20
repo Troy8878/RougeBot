@@ -212,6 +212,7 @@
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="HttpResult.cpp" />
     <ClCompile Include="HttpUri.cpp" />
+    <ClCompile Include="IdleBehaviour.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />

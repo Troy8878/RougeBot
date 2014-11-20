@@ -356,6 +356,9 @@
     <ClCompile Include="AIBehaviour.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
+    <ClCompile Include="IdleBehaviour.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

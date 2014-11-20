@@ -1,0 +1,45 @@
+{
+  "TransformComponent": {
+    "position": [0, -1.3, 0],
+    "scale": [1.2, 0.4]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer",
+    "tint": "#7F7F7FAF"
+  },
+  "ButtonComponent": {
+    "render_target": "HUDLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "Game.quit!",
+      "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
+      "mouse_enter": "owner.sprite_component.tint = 'CornflowerBlue, 0.6'",
+    }
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.01]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/600:200"]
+          },
+          "SpriteComponent": {
+            "render_target": "HUDLayer",
+          },
+          "TextComponent": {
+            "texts": ["Quit"],
+            "font_size": 96,
+            "bg_color": "#7F7F7F6F"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -93,7 +93,7 @@ class CheckboxComponent < ComponentBase
           {
             "components" => {
               "TransformComponent" => {
-                "position" => [0, 0, -0.05],
+                "position" => [0, 0, -0.0025],
                 "scale" => [0.9, 0.9, 1]
               },
               "TextureComponent" => {
@@ -109,7 +109,7 @@ class CheckboxComponent < ComponentBase
             "name" => "Checkmark",
             "components" => {
               "TransformComponent" => {
-                "position" => [0, 0, -0.1],
+                "position" => [0, 0, -0.005],
                 "scale" => [1, 1, 1]
               },
               "TextureComponent" => {

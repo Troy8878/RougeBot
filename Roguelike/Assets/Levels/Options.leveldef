@@ -1,5 +1,12 @@
 {
   "name": "MainMenu",
+  "components": {
+    "EvalOnEventComponent": {
+      "bindings": {
+        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'"
+      }
+    }
+  },
   "entities": [
     {
       "name": "CameraRoot",
@@ -57,7 +64,7 @@
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.23, 0.23, 0.23, 1],
+              "scale": [0.3, 0.3, 0.3, 1],
               "position": [0, 0, 1]
             }
           },
@@ -67,16 +74,43 @@
               "archetype": "HUD/Console/Console"
             },
             {
-              "name": "Play",
-              "archetype": "Menu/Play"
-            },
-            {
-              "name": "Options",
-              "archetype": "Menu/Options"
-            },
-            {
-              "name": "Quit",
-              "archetype": "Menu/Quit"
+              "name": "LeftColumn",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.33, 1, 0],
+                  "scale": [0.2, 0.2, 0.2]
+                }
+              },
+              "children": [
+                {
+                  "name": "Vsync",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, 0, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Vsync",
+                      "config_bind": "graphics_vsync"
+                    }
+                  }
+                },
+                {
+                  "name": "EnableConsole",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, -1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Enable Console",
+                      "config_bind": "console_enabled"
+                    }
+                  }
+                },
+              ]
             }
           ]
         }

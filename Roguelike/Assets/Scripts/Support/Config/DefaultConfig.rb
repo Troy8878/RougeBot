@@ -6,11 +6,11 @@
 
 Config.load_defaults do
 
+  Config[:touch_mode] = false
+  Config[:graphics_vsync] = false
   Config[:console_enabled] = true
 
   Config[:keybind_actions] = {}
-
-  Config[:touch_mode] = false
   Config[:key_bindings] = {}
 
   ######################

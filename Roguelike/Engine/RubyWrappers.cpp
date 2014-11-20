@@ -116,6 +116,22 @@ namespace vect
     return valloc(mrb, vect);
   }
 
+  static mrb_value scalar3(mrb_state *mrb, mrb_value)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+    
+    auto vect = math::Vector(
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(1)
+      );
+    return valloc(mrb, vect);
+  }
+
   static void free(mrb_state *, void *mem)
   {
     auto vect = static_cast<math::Vector*>(mem);
@@ -370,6 +386,17 @@ namespace vect
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_string_to_color(mrb_state *mrb, mrb_value)
+{
+  mrb_value strv;
+  mrb_get_args(mrb, "S", &strv);
+
+  auto result = StringToColor(mrb_str_to_stdstring(strv));
+  return ruby::create_new_vector(result);
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
 {
   ruby::mrb_vector_type.dfree = vect::free;
@@ -382,6 +409,9 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, vclass, "new", vect::vnew, ARGS_OPT(4));
   mrb_define_class_method(mrb, vclass, "scalar", vect::scalar, ARGS_REQ(1));
+  mrb_define_class_method(mrb, vclass, "scalar3", vect::scalar3, ARGS_REQ(1));
+  mrb_define_class_method(mrb, vclass, "string_to_color", mrb_string_to_color, ARGS_REQ(1));
+
   mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
 
   mrb_define_method(mrb, vclass, "x", vect::get_x, ARGS_NONE());

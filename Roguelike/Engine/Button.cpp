@@ -23,8 +23,8 @@ ButtonManager::ButtonManager()
 
 void ButtonManager::Initialize()
 {
-  DEF_EVENT_ID(mouse_up);
-  SetHandler(mouse_up, &ButtonManager::OnClick);
+  DEF_EVENT_ID(mouse_down);
+  SetHandler(mouse_down, &ButtonManager::OnClick);
 
   DEF_EVENT_ID(mouse_move);
   SetHandler(mouse_move, &ButtonManager::OnMove);

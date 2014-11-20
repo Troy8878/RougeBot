@@ -67,5 +67,22 @@ class Vector
   def to_s
     self.inspect
   end
+
+  def to_hex_color
+    "##{x.to_hex_color}#{y.to_hex_color}#{z.to_hex_color}#{w.to_hex_color}"
+  end
+end
+
+class Float
+  def to_hex_color
+    f = self
+    f = 0 if f < 0
+    f = 1 if f > 1
+    f = f * 255
+    f = f.to_i
+    f = f.to_s 16
+    f = "0#{f}" if f.length < 2
+    f.upcase
+  end
 end
 

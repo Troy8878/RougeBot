@@ -13,6 +13,7 @@ class HotbarComponent < ComponentBase
 
     register_event :update, :first_update
     register_event :quick_equip, :quick_equip
+    register_event :click_equip, :click_equip
   end
 
   def first_update(e)
@@ -84,6 +85,10 @@ class HotbarComponent < ComponentBase
       atk.damage = item.damage
       atk.weapon_level = item.item_level
     end
+  end
+
+  def click_equip(e)
+    owner.parent.raise_event :quick_equip, @inv_slot
   end
 
   register_component "HotbarComponent"

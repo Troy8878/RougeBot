@@ -9,6 +9,14 @@
   "HotbarComponent": {
     "target_name": "Player"
   },
+  "ButtonComponent": {
+    "render_target": "HUDLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "owner.local_event :click_equip, nil"
+    }
+  },
   "ChildHierarchy": {
     "children": [
       {

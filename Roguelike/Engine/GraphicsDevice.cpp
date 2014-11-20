@@ -269,13 +269,13 @@ void WindowDevice::EndFrame()
   else
   {
     SwapChain->Present(0, 0);
-    const double min_frame_time = 1.0 / 256.0;
+    /*const double min_frame_time = 1.0 / 256.0;
 
     static auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame_time)
     {
       Sleep(0);
-    }
+    }*/
   }
 }
 

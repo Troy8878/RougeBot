@@ -23,9 +23,15 @@ module Config
 
   def self.load
     begin
+      self.load_defaults
       file = CONFIG_FILE
       file.open CONFIG_PATH, :in
-      @@items = eval(file.read)
+      new_items = eval(file.read)
+      if new_items.is_a? Hash
+        @@items.merge! new_items
+      else
+        log_error "Config wasn't a hash!", new_items
+      end
       file.close
     rescue Exception => e
       log_error "An exception occurred reading config file", e

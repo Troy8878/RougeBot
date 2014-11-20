@@ -69,6 +69,20 @@
             {
               "name": "Play",
               "archetype": "Menu/Play"
+            },
+            {
+              "name": "Testbox",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, 0.3, 0],
+                  "scale": [0.3, 0.3, 0.3]
+                },
+                "CheckboxComponent": {
+                  "render_target": "HUDLayer",
+                  "text": "Vsync",
+                  "config_bind": "graphics_vsync"
+                }
+              }
             }
           ]
         }

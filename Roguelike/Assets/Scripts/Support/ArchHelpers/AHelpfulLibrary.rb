@@ -114,3 +114,23 @@ module Kernel
     ERROR_LOG_FILE.close
   end
 end
+
+###########
+# Merging
+
+class Hash
+  def merge!(other)
+    raise TypeError, "Types must match for merging!" unless other.is_a? Hash
+    other.each do |key, value|
+      if self.has_key? key
+        if self[key].is_a? value.class
+          if self[key].respond_to? :merge!
+            self[key].merge! value
+            next
+          end
+        end
+      end
+      self[key] = value
+    end
+  end
+end

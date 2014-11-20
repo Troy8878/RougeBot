@@ -8,7 +8,7 @@
   },
   "SpriteComponent": {
     "render_target": "HUDLayer",
-    "tint": "#7F7F7FAF"
+    "tint": "CornflowerBlue, 0.4"
   },
   "ButtonComponent": {
     "render_target": "HUDLayer"
@@ -16,8 +16,8 @@
   "EvalOnEventComponent": {
     "bindings": {
       "button_clicked": "Game.switch_level 'Game'",
-      "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
-      "mouse_enter": "owner.sprite_component.tint = 'CornflowerBlue, 0.6'",
+      "mouse_leave": "owner.children[0].text_component.text_color = 'Black'",
+      "mouse_enter": "owner.children[0].text_component.text_color = 'White'",
     }
   },
   "ChildHierarchy": {
@@ -25,18 +25,21 @@
       {
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.01]
+            "position": [0, 0, -0.01],
+            "scale": [0.833333333333, 1, 1]
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/600:200"]
+            "textures": ["SPECIAL/SURFACE/500:200"]
           },
           "SpriteComponent": {
             "render_target": "HUDLayer",
           },
           "TextComponent": {
-            "texts": ["Play"],
+            "texts": ["\uE102 Play"],
+            "font": "Segoe UI Symbol",
             "font_size": 96,
-            "bg_color": "#7F7F7F6F"
+            "bg_color": "#7F7F7F6F",
+            "text_align": "leading",
           }
         }
       }

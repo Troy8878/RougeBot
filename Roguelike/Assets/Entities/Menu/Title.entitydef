@@ -1,0 +1,20 @@
+{
+  "TransformComponent": {
+    "position": [0, 0.8, 0],
+    "scale": [2, 1, 1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "SPECIAL/SURFACE/1600:800"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer"
+  },
+  "TextComponent": {
+    "font": "Segoe UI",
+    "texts": ["Roguebot"],
+    "text_color": "White",
+    "font_size": 240
+  }
+}

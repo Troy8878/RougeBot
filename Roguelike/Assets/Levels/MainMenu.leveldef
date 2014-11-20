@@ -67,16 +67,34 @@
               "archetype": "HUD/Console/Console"
             },
             {
-              "name": "Play",
-              "archetype": "Menu/Play"
+              "name": "MenuTitle",
+              "archetype": "Menu/Title"
             },
             {
-              "name": "Options",
-              "archetype": "Menu/Options"
+              "name": "Spinbot",
+              "archetype": "Menu/Spinbot"
             },
             {
-              "name": "Quit",
-              "archetype": "Menu/Quit"
+              "name": "MenuButtons",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.2, 0, 0]
+                }
+              },
+              "children": [
+                {
+                  "name": "Play",
+                  "archetype": "Menu/Play"
+                },
+                {
+                  "name": "Options",
+                  "archetype": "Menu/Options"
+                },
+                {
+                  "name": "Quit",
+                  "archetype": "Menu/Quit"
+                }
+              ]
             },
             {
               "name": "BG",

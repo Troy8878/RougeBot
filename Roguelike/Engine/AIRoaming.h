@@ -23,17 +23,11 @@ public:
 
 private:
   void MoveTowards(const WorldSnapshot &world);
-  void MoveLeft();
-  void MoveRight();
-  void MoveUp();
-  void MoveDown();
 
-  Entity *owner;
+
+
   Entity *target;
 
-  mrb_int ox, oy;
-  mrb_int tx, ty;
 
-  AIResult result;
 
 };

@@ -6,7 +6,7 @@
       "components": {
         "TransformComponent": {
           "rotation": [0, 0, 0],
-          "position": [0, 0, -10]
+          "position": [0, 0, -1]
         }
       },
       "children": [
@@ -57,7 +57,7 @@
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.23, 0.23, 0.23, 1],
+              "scale": [0.3, 0.3, 0.3, 1],
               "position": [0, 0, 1]
             }
           },
@@ -77,6 +77,22 @@
             {
               "name": "Quit",
               "archetype": "Menu/Quit"
+            },
+            {
+              "name": "BG",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, 0, 1],
+                  "scale": [10, 10, 1]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/NULL"]
+                },
+                "SpriteComponent": {
+                  "render_target": "WorldLayer",
+                  "tint": "CornflowerBlue, 0.6"
+                }
+              }
             }
           ]
         }

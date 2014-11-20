@@ -76,6 +76,7 @@ class DefenseComponent < ComponentBase
   end
 
   def notify_death
+    return unless self.owner.parent
     transient = self.owner.parent.create_child(
       components: {
         "TransformComponent" => self.owner.transform_component.dup_for_hash
@@ -86,7 +87,7 @@ class DefenseComponent < ComponentBase
     message.delete_owner!
     message.display transient
 
-    Event.raise_event :actor_death, self.owner
+    owner.raise_event :actor_death, self.owner
   end
 
   def heal(amount)

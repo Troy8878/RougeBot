@@ -1,0 +1,45 @@
+{
+  "TransformComponent": {
+    "scale": [0.2, 0.2]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "PauseLayer",
+    "tint": "#7F7F7FAF"
+  },
+  "ButtonComponent": {
+    "render_target": "PauseLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "Event.raise_event :pause, nil",
+      "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
+      "mouse_enter": "owner.sprite_component.tint = '#FF0000AF'",
+    }
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.01]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/100:100"]
+          },
+          "SpriteComponent": {
+            "render_target": "PauseLayer",
+          },
+          "TextComponent": {
+            "texts": ["||"],
+            "font": "Consolas",
+            "font_size": 48,
+            "bg_color": "#7F7F7F6F"
+          }
+        }
+      }
+    ]
+  }
+}

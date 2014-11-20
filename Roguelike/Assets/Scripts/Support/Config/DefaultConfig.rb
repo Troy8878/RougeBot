@@ -7,8 +7,8 @@
 Config.load_defaults do
 
   Config[:touch_mode] = false
-  Config[:graphics_vsync] = false
-  Config[:console_enabled] = true
+  Config[:graphics_vsync] = true
+  Config[:console_enabled] = false
 
   Config[:keybind_actions] = {}
   Config[:key_bindings] = {}

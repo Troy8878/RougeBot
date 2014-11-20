@@ -190,6 +190,9 @@
     <ClInclude Include="WorldSnapshot.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="IdleBehaviour.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -349,6 +352,12 @@
     </ClCompile>
     <ClCompile Include="MrbGraphics.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AIBehaviour.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="IdleBehaviour.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

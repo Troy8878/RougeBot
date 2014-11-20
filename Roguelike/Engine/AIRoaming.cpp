@@ -122,31 +122,3 @@ void AIRoaming::MoveTowards(const WorldSnapshot &world)
     return;
   }
 }
-
-void AIRoaming::MoveLeft()
-{
-  result.action = AIResult::Move;
-  result.x = ox - 1;
-  result.y = oy;
-}
-
-void AIRoaming::MoveRight()
-{
-  result.action = AIResult::Move;
-  result.x = ox + 1;
-  result.y = oy;
-}
-
-void AIRoaming::MoveUp()
-{
-  result.action = AIResult::Move;
-  result.x = ox;
-  result.y = oy + 1;
-}
-
-void AIRoaming::MoveDown()
-{
-  result.action = AIResult::Move;
-  result.x = ox;
-  result.y = oy - 1;
-}

@@ -23,11 +23,28 @@ struct AIResult
   mrb_int x, y;
 };
 
-__interface AIBehaviour
+class AIBehaviour
 {
-  void ApplyBehaviour(const WorldSnapshot &world); // Called on AI thread, do not access engine
-  void Prepare(); // Called before AI thread is used
-  void InitializeTarget(Entity *target);
-  void InitilizeOwner(Entity *thisEntity);
-  AIResult GetResult();
+public:
+  virtual ~AIBehaviour() {}
+
+  virtual void ApplyBehaviour(const WorldSnapshot &world) = 0; // Called on AI thread, do not access engine
+  virtual void Prepare() = 0; // Called before AI thread is used
+  virtual void InitializeTarget(Entity *target) = 0;
+  virtual void InitilizeOwner(Entity *thisEntity) = 0;
+  virtual AIResult GetResult() = 0;
+
+protected:
+  virtual void MoveLeft();
+  virtual void MoveRight();
+  virtual void MoveUp();
+  virtual void MoveDown();
+
+  Entity *owner;
+
+  mrb_int ox, oy;
+  mrb_int tx, ty;
+
+  AIResult result;
 };
+

@@ -156,6 +156,7 @@
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="HttpClient.h" />
     <ClInclude Include="HttpClientImpl.h" />
+    <ClInclude Include="IdleBehaviour.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelDef.h" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actions.cpp" />
+    <ClCompile Include="AIBehaviour.cpp" />
     <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
@@ -210,6 +212,7 @@
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="HttpResult.cpp" />
     <ClCompile Include="HttpUri.cpp" />
+    <ClCompile Include="IdleBehaviour.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />

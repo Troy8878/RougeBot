@@ -78,7 +78,7 @@
               "name": "MenuButtons",
               "components": {
                 "TransformComponent": {
-                  "position": [-1.2, 0, 0]
+                  "position": [-1.2, 0.4, 0]
                 }
               },
               "children": [
@@ -89,6 +89,10 @@
                 {
                   "name": "Options",
                   "archetype": "Menu/Options"
+                },
+                {
+                  "name": "Help",
+                  "archetype": "Menu/Help"
                 },
                 {
                   "name": "Quit",

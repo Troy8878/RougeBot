@@ -1,6 +1,6 @@
 {
   "TransformComponent": {
-    "position": [0, -1.5, 0],
+    "position": [0, -1, 0],
     "scale": [1.2, 0.4]
   },
   "TextureComponent": {
@@ -15,7 +15,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "Game.quit!",
+      "button_clicked": "Game.switch_level 'Help'",
       "mouse_leave": "owner.children[0].text_component.text_color = 'Black'",
       "mouse_enter": "owner.children[0].text_component.text_color = 'White'",
     }
@@ -35,7 +35,7 @@
             "render_target": "HUDLayer",
           },
           "TextComponent": {
-            "texts": ["\uE10A Quit"],
+            "texts": ["\uE11B Help"],
             "font": "Segoe UI Symbol",
             "font_size": 96,
             "bg_color": "#7F7F7F6F",

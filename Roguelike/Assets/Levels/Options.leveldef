@@ -83,13 +83,52 @@
               },
               "children": [
                 {
+                  "name": "Back",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, 0.1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "ButtonHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "\uE112",
+                      "width": 1,
+                      "text_align": "center"
+                    },
+                    "EvalOnEventComponent": {
+                      "bindings": {
+                        "button_clicked": "Game.switch_level 'MainMenu'",
+                      }
+                    }
+                  },
+                },
+                {
+                  "name": "ResetDefaults",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [3, 0.1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "ButtonHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Reset Defaults",
+                      "width": 5
+                    },
+                    "EvalOnEventComponent": {
+                      "bindings": {
+                        "button_clicked": "Config.load_defaults; Config.save"
+                      }
+                    }
+                  }
+                },
+                {
                   "name": "Vsync",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, 0, 0],
+                      "position": [0, -1, 0],
                       "scale": [0.95, 0.95, 0.95]
                     },
-                    "CheckboxComponent": {
+                    "CheckboxHelperComponent": {
                       "render_target": "HUDLayer",
                       "text": "Vsync",
                       "config_bind": "graphics_vsync"
@@ -100,10 +139,10 @@
                   "name": "EnableConsole",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, -1, 0],
+                      "position": [0, -2, 0],
                       "scale": [0.95, 0.95, 0.95]
                     },
-                    "CheckboxComponent": {
+                    "CheckboxHelperComponent": {
                       "render_target": "HUDLayer",
                       "text": "Enable Console",
                       "config_bind": "console_enabled"

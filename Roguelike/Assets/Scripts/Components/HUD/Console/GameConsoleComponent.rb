@@ -15,7 +15,7 @@ class GameConsoleComponent < ComponentBase
 
   HISTORY = []
   INPUT_HISTORY = []
-  MAX_HISTORY = 25
+  MAX_HISTORY = 20
 
   def initialize(data)
     super data

@@ -19,6 +19,8 @@ module Config
     file.open CONFIG_PATH, :out, :truncate
     file.write @@items.inspect
     file.close
+
+    Event.raise_event :config_updated, self
   end
 
   def self.load

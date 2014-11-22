@@ -141,6 +141,7 @@
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="CODA.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentTemplate.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CODA.cpp" />
     <ClCompile Include="Common.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -2,6 +2,7 @@
 # ReadOnlyHash.rb
 # Connor Hilarides
 # Created 2014/09/07
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class ReadOnlyHash

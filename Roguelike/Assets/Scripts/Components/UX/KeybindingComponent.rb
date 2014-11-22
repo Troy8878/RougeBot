@@ -2,6 +2,7 @@
 # KeybindingComponent.rb
 # Jake Robsahm
 # Created 2014/10/09
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class KeybindingComponent < ComponentBase

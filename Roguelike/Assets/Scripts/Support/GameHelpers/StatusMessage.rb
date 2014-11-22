@@ -2,6 +2,7 @@
 # StatusMessage.rb
 # Leonardo Saikali
 # Created 2014/10/20
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class StatusMessage

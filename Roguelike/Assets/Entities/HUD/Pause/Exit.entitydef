@@ -1,6 +1,6 @@
 {
   "TransformComponent": {
-    "position": [0, 0, 0],
+    "position": [0, 0.25, 0],
     "scale": [0.8, 0.2]
   },
   "TextureComponent": {
@@ -15,7 +15,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "Game.quit!",
+      "button_clicked": "Game.switch_level 'MainMenu'",
       "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
       "mouse_enter": "owner.sprite_component.tint = '#FF0000AF'",
     }
@@ -34,7 +34,7 @@
             "render_target": "PauseLayer",
           },
           "TextComponent": {
-            "texts": ["Quit Game"],
+            "texts": ["Main Menu"],
             "font_size": 48,
             "bg_color": "#7F7F7F6F"
           }

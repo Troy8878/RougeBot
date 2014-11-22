@@ -18,8 +18,16 @@
         "archetype": "HUD/Pause/Resume"
       },
       {
+        "name": "Exit",
+        "archetype": "HUD/Pause/Exit"
+      },
+      {
         "name": "Quit",
         "archetype": "HUD/Pause/Quit"
+      },
+      {
+        "name": "Copyright",
+        "archetype": "HUD/Pause/Copyright"
       }
     ]
   }

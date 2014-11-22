@@ -6,6 +6,7 @@
  *********************************/
 
 #include "Common.h"
+#include "RubyWrappers.h"
 
 // ----------------------------------------------------------------------------
 
@@ -14,6 +15,7 @@ static RClass *actions_c;
 
 static mrb_value mrb_actions_delay(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_actions_enqueue(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_actions_interpolate(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -27,6 +29,7 @@ extern "C" void mrb_mruby_actions_init(mrb_state *mrb)
 
   mrb_define_method(mrb, actions, "delay", mrb_actions_delay, ARGS_REQ(1));
   mrb_define_method(mrb, actions, "enqueue", mrb_actions_enqueue, ARGS_REQ(1));
+  mrb_define_method(mrb, actions, "interpolate", mrb_actions_interpolate, ARGS_ANY());
 }
 
 // ----------------------------------------------------------------------------
@@ -98,6 +101,65 @@ static mrb_value mrb_actions_enqueue(mrb_state *mrb, mrb_value self)
   }
 
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value mrb_actions_interpolate(mrb_state* mrb, mrb_value self)
+{
+  static mrb_sym sym_over = mrb_intern_lit(mrb, "over");
+  static mrb_sym sym_from = mrb_intern_lit(mrb, "from");
+  static mrb_sym sym_to = mrb_intern_lit(mrb, "to");
+  static mrb_sym sym_by = mrb_intern_lit(mrb, "by");
+
+  math::Vector *val_vector;
+  mrb_value opts;
+  mrb_get_args(mrb, "dH", &val_vector, &ruby::mrb_vector_type, &opts);
+
+  if (!mrb_hash_p(opts))
+    mrb_raise(mrb, E_TYPE_ERROR, "Options must be a Hash");
+
+  math::Vector &vector = *val_vector;
+  math::Vector end = vector;
+
+  #pragma region Interpolate Over
+
+  mrb_value val_over = mrb_hash_get(mrb, opts, mrb_symbol_value(sym_over));
+  val_over = mrb_convert_type(mrb, val_over, MRB_TT_FLOAT, "Float", "to_f");
+  mrb_float over = mrb_float(val_over);
+  if (!mrb_float_p(val_over))
+    mrb_raise(mrb, E_ARGUMENT_ERROR, 
+              "argument ':over' must be specified and be a fixnum/float");
+
+  #pragma endregion
+
+  #pragma region Interpolate From
+
+  mrb_value val_from = mrb_hash_get(mrb, opts, mrb_symbol_value(sym_from));
+  if (val_from.tt == MRB_TT_DATA)
+    vector = ruby::get_ruby_vector(val_from);
+
+  #pragma endregion
+
+  #pragma region Interpolate To
+
+  mrb_value val_to = mrb_hash_get(mrb, opts, mrb_symbol_value(sym_to));
+  if (val_to.tt == MRB_TT_DATA)
+    end = ruby::get_ruby_vector(val_to);
+
+  #pragma endregion
+
+  #pragma region Interpolate By
+
+  mrb_value val_by = mrb_hash_get(mrb, opts, mrb_symbol_value(sym_by));
+  if (val_by.tt == MRB_TT_DATA)
+    end = vector + ruby::get_ruby_vector(val_by);
+
+  #pragma endregion
+
+  auto *manager = mrb_actions_unwrap(mrb, self);
+  manager->Queue(new VectorInterpolateAction(vector, end, over));
+  return self;
 }
 
 // ----------------------------------------------------------------------------

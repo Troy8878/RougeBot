@@ -154,53 +154,18 @@ private:
 
 // ----------------------------------------------------------------------------
 
-class VectorEaseAction : public Action
+class VectorInterpolateAction : public Action
 {
 public:
-  enum EasingMode
-  {
-    EASE_LINEAR = 1,
-    EASE_EXPONENTIAL,
-    EASE_BOUNCE,
-  };
-
-  VectorEaseAction(math::Vector *vect, math::Vector end,
-                   double time, EasingMode mode);
-
+  explicit VectorInterpolateAction(math::Vector &vector, const math::Vector &end, double time);
   bool Update(float dt) override;
 
 private:
-  bool UpdateLinear(float dt);
-  bool UpdateExponential(float dt);
-  bool UpdateBounce(float dt);
-
-  math::Vector *_vect;
-  math::Vector _begin;
-  math::Vector _end;
-  math::Vector _offset;
-  double _time;
-  double _curr_time;
-  EasingMode _ease;
-
-  static const unsigned BOUNCES_MAX = 10;
-  static const float BOUNCE_EPSILON;
-  static const float BOUNCE_HEIGHT;
-
-  union EaseData
-  {
-    struct BounceData
-    {
-      int bounces;
-      float elasticity;
-      float acceleration;
-      float durations[10];
-      float heights[10];
-      float velocities[10];
-      float duration;
-
-      float value_at(float progress);
-    } bounce_data;
-  } ed;
+  math::Vector &vector;
+  math::Vector begin;
+  math::Vector diff;
+  double time;
+  double totaltime;
 };
 
 // ----------------------------------------------------------------------------

@@ -12,19 +12,9 @@ namespace Events
 {
   // ----------------------------------------------------------------------------
 
-  bool BasicEventDispatcher::CanHandle(const EventMessage &e)
+  bool BasicEventDispatcher::CanHandle(const EventMessage &)
   {
-    bool any = false;
-
-    for (auto &hpair : recievers)
-    {
-      hpair.second = hpair.first->CanHandle(e);
-      if (hpair.second)
-        any = true;
-    }
-
-    static EventId recieverDestroyedId("event_reciever_destroyed");
-    return any || e.EventId == recieverDestroyedId;
+    return true;
   }
 
   // ----------------------------------------------------------------------------
@@ -41,7 +31,7 @@ namespace Events
 
     for (auto &hpair : recievers)
     {
-      if (!hpair.second)
+      if (!hpair.first->CanHandle(e))
         continue;
 
       hpair.first->Handle(e);

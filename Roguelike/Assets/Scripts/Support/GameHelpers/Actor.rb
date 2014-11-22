@@ -28,6 +28,7 @@ module Actor
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
     @actor_diagonal = false
+    @actor_projectile = false
 
     register_event :zombified, :actor_zombified
   end
@@ -36,6 +37,7 @@ module Actor
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
     @actor_diagonal = false
+    @actor_projectile = false
   end
 
   def actor_init?

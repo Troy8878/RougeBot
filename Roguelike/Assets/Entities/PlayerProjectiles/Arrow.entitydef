@@ -7,8 +7,8 @@
   },
   
   "DefenseComponent": {
-    "health": 9999,
-    "max_health": 9999
+    "health": 99999999,
+    "max_health": 99999999
   },
   
   "PositionComponent": {

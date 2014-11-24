@@ -65,7 +65,8 @@ void TransformComponent::UpdateMatrix()
 
   // Scale, Rotate, and Translate
   // This brings it into V^[parent space]
-  auto mat = XMMatrixScalingFromVector(Scale.get()) *
+  auto mat =
+    XMMatrixScalingFromVector(Scale.get()) *
     XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
     XMMatrixTranslationFromVector(Position.get());
 

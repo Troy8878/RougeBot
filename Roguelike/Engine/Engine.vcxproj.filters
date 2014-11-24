@@ -365,6 +365,9 @@
     <ClCompile Include="CODA.cpp">
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
+    <ClCompile Include="AStarPathfinding.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

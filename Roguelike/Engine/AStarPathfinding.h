@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include <vector>
 #include "AIBehaviour.h"
+#include "WorldSnapshot.h"
 
 class AStarPathfinding final : public AIBehaviour
 {
@@ -21,15 +23,20 @@ public:
   AIResult GetResult() override;
   
 private:
-  struct Route
+  struct Node
   {
+    Node(const WorldSnapshot::Tile *tile);
+    explicit Node(Node *previous, const WorldSnapshot::Tile *tile);
 
+    Node *previous;
+    const WorldSnapshot::Tile *tile;
+    bool evaluated;
   };
 
   const WorldSnapshot *world;
   Entity *thisEntity;
   Entity *target;
-  Route *currentRoute;
+  std::vector<Node> currentRoute;
 
   void FindRoute();
   void MoveAlongRoute();

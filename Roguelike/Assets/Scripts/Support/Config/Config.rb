@@ -2,6 +2,7 @@
 # Config.rb
 # Connor Hilarides
 # Created 2014/10/07
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 module Config
@@ -19,6 +20,8 @@ module Config
     file.open CONFIG_PATH, :out, :truncate
     file.write @@items.inspect
     file.close
+
+    Event.raise_event :config_updated, self
   end
 
   def self.load

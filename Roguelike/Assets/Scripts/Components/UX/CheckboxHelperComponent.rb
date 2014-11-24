@@ -1,10 +1,11 @@
 #########################
-# CheckboxComponent.rb
+# CheckboxHelperComponent.rb
 # Connor Hilarides
 # Created 2014/11/19
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
-class CheckboxComponent < ComponentBase
+class CheckboxHelperComponent < ComponentBase
   attr_reader :checked
 
   def initialize(data)
@@ -25,7 +26,14 @@ class CheckboxComponent < ComponentBase
         Config[key] = checked
         Config.save
       end
+
+      define_singleton_method(:on_config_updated) do
+        @checked = !!Config[key]
+        update_checkmark
+      end
+
       register_event :checkbox_toggled, :on_checkbox_toggled
+      register_event :config_updated, :on_config_updated
     end
   end
 

@@ -2,6 +2,7 @@
 # DebugDrawSwitchComponent.rb
 # Connor Hilarides
 # Created 2014/09/01
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class DebugDrawSwitchComponent < ComponentBase

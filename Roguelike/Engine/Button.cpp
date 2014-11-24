@@ -26,13 +26,13 @@ void ButtonManager::Initialize()
   DEF_EVENT_ID(mouse_down);
   SetHandler(mouse_down, &ButtonManager::OnClick);
 
-  DEF_EVENT_ID(mouse_move);
-  SetHandler(mouse_move, &ButtonManager::OnMove);
+  DEF_EVENT_ID(update);
+  SetHandler(update, &ButtonManager::OnMove);
 }
 
 // ----------------------------------------------------------------------------
 
-void ButtonManager::OnClick(Events::EventMessage &)
+void ButtonManager::OnClick(Events::EventMessage &e)
 {
   DEF_EVENT_ID(button_probe);
 
@@ -43,6 +43,8 @@ void ButtonManager::OnClick(Events::EventMessage &)
 
   if (data.bestMatch)
   {
+    e.Handled = true;
+
     DEF_EVENT_ID(button_clicked);
     Events::EventMessage message{button_clicked, nullptr};
 

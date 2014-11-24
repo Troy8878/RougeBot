@@ -1,0 +1,14 @@
+{
+  "TransformComponent": {
+    "position": [0.8, -0.5, 0],
+    "scale": [0.5, 0.5]
+  },
+  "TextureComponent": {
+    "textures": ["Robot.png"]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer"
+  },
+  "SpinnyThingComponent": {
+  }
+}

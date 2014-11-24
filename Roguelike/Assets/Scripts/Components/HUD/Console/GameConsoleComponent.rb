@@ -2,6 +2,7 @@
 # GameConsoleComponent.rb
 # Connor Hilarides
 # Created 2014/10/24
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 ###########################
 
 class GameConsoleComponent < ComponentBase
@@ -15,7 +16,7 @@ class GameConsoleComponent < ComponentBase
 
   HISTORY = []
   INPUT_HISTORY = []
-  MAX_HISTORY = 25
+  MAX_HISTORY = 20
 
   def initialize(data)
     super data

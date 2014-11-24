@@ -2,6 +2,7 @@
 # EnemyLogicComponent.rb
 # Jake Robsahm, Enrique Rodriguez
 # Created 2014/10/20
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class EnemyLogicComponent < ComponentBase
@@ -99,11 +100,13 @@ class EnemyLogicComponent < ComponentBase
     "Arrow"
   ]
 
+  # This won't do anything for the moment.  Projectiles are ghost actors.
   def resolve_player_projectiles?(x, y)
     return unless @move_tile && @move_tile.actor
     return unless PROJECTILE_NAMES.include? @move_tile.actor.name
 
     @move_tile.actor.owner.attack_component.do_attack self
+    @move_tile.actor.owner.PlayerProjectileLogicComponent.decay_sqeuence(1)
   end
 
   def move(dx, dy)

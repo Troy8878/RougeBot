@@ -2,6 +2,7 @@
 # vector.rb
 # Connor Hilarides
 # Created 2014/08/24
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class Vector
@@ -70,6 +71,18 @@ class Vector
 
   def to_hex_color
     "##{x.to_hex_color}#{y.to_hex_color}#{z.to_hex_color}#{w.to_hex_color}"
+  end
+
+  def self.from_color(p, default = nil)
+    if p.is_a? Vector
+      p
+    elsif p.is_a? String
+      Vector.string_to_color p
+    elsif p.is_a? Array
+      Vector.new *p
+    else
+      default || Vector.one
+    end
   end
 end
 

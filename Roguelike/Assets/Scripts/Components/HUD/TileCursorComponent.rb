@@ -2,6 +2,7 @@
 # TileCursor.rb
 # Connor Hilarides
 # Created 2014/09/17
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 module HUD

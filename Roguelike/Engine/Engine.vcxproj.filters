@@ -193,6 +193,9 @@
     <ClInclude Include="IdleBehaviour.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="CODA.h">
+      <Filter>Header Files\Arch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -358,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="IdleBehaviour.cpp">
       <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="CODA.cpp">
+      <Filter>Source Files\Arch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

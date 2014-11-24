@@ -2,13 +2,14 @@
 # DefaultConfig.rb
 # Connor Hilarides, Troy
 # Created 2014/10/07
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 Config.load_defaults do
 
   Config[:touch_mode] = false
-  Config[:graphics_vsync] = false
-  Config[:console_enabled] = true
+  Config[:graphics_vsync] = true
+  Config[:console_enabled] = false
 
   Config[:keybind_actions] = {}
   Config[:key_bindings] = {}

@@ -110,6 +110,26 @@ module Integral
     end
     self
   end
+
+  def miliseconds
+    self * 0.001
+  end
+  alias milisecond miliseconds
+
+  def seconds
+    self * 1.0
+  end
+  alias second seconds
+
+  def minutes
+    self * 60.0
+  end
+  alias minute minutes
+
+  def hours
+    self * 3600.0
+  end
+  alias hour hours
 end
 
 ##

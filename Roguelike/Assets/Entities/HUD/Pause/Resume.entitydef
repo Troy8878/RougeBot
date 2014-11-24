@@ -1,7 +1,7 @@
 {
   "TransformComponent": {
     "position": [0, 0.5, 0],
-    "scale": [0.6, 0.2]
+    "scale": [0.8, 0.2]
   },
   "TextureComponent": {
     "textures": ["SPECIAL/NULL"]
@@ -25,16 +25,16 @@
       {
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.01]
+            "position": [0, 0, -0.01],
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/300:100"]
+            "textures": ["SPECIAL/SURFACE/400:100"]
           },
           "SpriteComponent": {
             "render_target": "PauseLayer",
           },
           "TextComponent": {
-            "texts": ["Resume"],
+            "texts": ["Resume Game"],
             "font_size": 48,
             "bg_color": "#7F7F7F6F"
           }

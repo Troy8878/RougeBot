@@ -23,11 +23,23 @@ Config.load_defaults do
   Config.bind_action "move_right", { held: [:move, [ 1,  0]] }
   Config.bind_action "skip_turn",  { held: [:move, [ 0,  0]] }
 
-  Config.bind_key "Player", [Keys::W,    Keys::UP], "move_up"
-  Config.bind_key "Player", [Keys::A,  Keys::LEFT], "move_left"
-  Config.bind_key "Player", [Keys::S,  Keys::DOWN], "move_down"
-  Config.bind_key "Player", [Keys::D, Keys::RIGHT], "move_right"
-  Config.bind_key "Player", [Keys::SPACE         ], "skip_turn"
+  Config.bind_key "Player", [Keys::W    ], "move_up"
+  Config.bind_key "Player", [Keys::A    ], "move_left"
+  Config.bind_key "Player", [Keys::S    ], "move_down"
+  Config.bind_key "Player", [Keys::D    ], "move_right"
+  Config.bind_key "Player", [Keys::SPACE], "skip_turn"
+
+  # Player melee weapon firing
+
+  Config.bind_action "attack_up",    { held: [:attack, [ 0,  1]] }
+  Config.bind_action "attack_left",  { held: [:attack, [-1,  0]] }
+  Config.bind_action "attack_down",  { held: [:attack, [ 0, -1]] }
+  Config.bind_action "attack_right", { held: [:attack, [ 1,  0]] }
+
+  Config.bind_key "Player", [Keys::UP   ], "attack_up"
+  Config.bind_key "Player", [Keys::LEFT ], "attack_left"
+  Config.bind_key "Player", [Keys::DOWN ], "attack_down"
+  Config.bind_key "Player", [Keys::RIGHT], "attack_right"
 
   # Player ranged weapons firing
 
@@ -72,4 +84,3 @@ Config.load_defaults do
   Config.bind_key "Game", Keys::TILDE, "toggle_console"
 
 end
-

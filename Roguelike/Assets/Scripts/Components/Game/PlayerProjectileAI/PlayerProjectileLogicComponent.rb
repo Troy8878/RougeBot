@@ -42,7 +42,7 @@ class PlayerProjectileLogicComponent < ComponentBase
 
     # 0 speed just means it doesn't move.
     # This can be achieved by disabling direc instead since speed is used in the collision logic
-    # However we still want this projectile to move one tile
+    # However we still want this projectile to move one tile initially
 
     if @speed == 0
       @speed = 1
@@ -53,26 +53,27 @@ class PlayerProjectileLogicComponent < ComponentBase
 
       # First check the current tile
 
-    if true == false # Will need to change to a check for units in the current tile that isn't the player or projectiles
+    if (resolution = can_move?(0, 0)) == false # Will need to change to a check for units in the current tile that isn't the player
       if @blocked_reason == BLOCKED_BY_WALL
         decay_sequence(1)
         return
-      elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player" # && @move_tile.actor.actor_projectile == false # && @move_tile.actor != self
-        # We have to move into the enemy we're attacking
+      elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player" && @move_tile.actor != self.owner && @move_tile.actor.name != nil # && @move_tile.actor.actor_projectile == false
+        # Move the projectile while attacking.  Otherwise other projectiles will collide with it
+        @speed = 1
+        @direc[0] = 1
+        @direc[1] = 1
         move
+        @killed = @move_tile.actor.name
         self.owner.attack_component.do_attack @move_tile.actor
-        decay_sequence(1)
+        decay_sequence(0)
         return
-      elsif @blocked_reason == BLOCKED_BY_COOLDOWN
-        return
-      elsif @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player") # Ignore unknown blocks and the player & move anyways
-        move
       end
     end
 
     # Now to check for movement!
 
-    #if(@direc != [0, 0])
+    if(@direc != [0, 0])
+      #puts "goed"
       for loop in 1..@speed # Need to wait until 1st movement is done to check again!
         if(@speed == 1)
           resolution = can_move? *@direc
@@ -85,9 +86,10 @@ class PlayerProjectileLogicComponent < ComponentBase
           # Add a delay:  Don't delete until reaching the last locale that isn't a wall. Do this via  (delay until translation = @position)
             decay_sequence(loop)
             return
-          elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player" # && @move_tile.actor.actor_projectile == false # && @move_tile.actor != self
+          elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player" && @move_tile.actor != self.owner && @move_tile.actor.name != nil # && @move_tile.actor.actor_projectile == false # && @move_tile.actor != self
             # We have to move into the enemy we're attacking
             move
+            @killed = @move_tile.actor.name
             self.owner.attack_component.do_attack @move_tile.actor
             decay_sequence(loop)
             return
@@ -101,10 +103,9 @@ class PlayerProjectileLogicComponent < ComponentBase
           move
         end
       end
-    #end
+    end
 
-    # For non-moving projectiles
-
+    # Keep non-moving projectiles "moving" according to the game
 
     # Resolve 0 Speed projectiles here
     if(@zeroSpeed)
@@ -125,6 +126,11 @@ class PlayerProjectileLogicComponent < ComponentBase
   end
 
   def decay_sequence(rounds)
+    #if(@killed)
+    #  puts "killed by #{@killed}"
+    #else
+    #  puts "killed by nothing"
+    #end
     seq = self.owner.action_sequence :zombification
     seq.delay(0.15 * rounds.to_f)
     seq.once do

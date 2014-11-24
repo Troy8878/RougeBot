@@ -37,6 +37,7 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :move, :on_move
     self.register_event :fire, :fire
     self.register_event :update, :first_update
+    self.register_event :attack, :attack
 
     # Double-click should do it in either case
     # Double-click is the only way in touch mode
@@ -94,10 +95,35 @@ class PlayerControllerComponent < ComponentBase
     move *e
   end
 
-  # Stuffs Troy added for ranged combat
+  ################################
+  # Stuffs Troy added for combat #
+  ################################
+
+  def attack(e)
+    
+    return if @paused
+    return if @logic_cooldown > 0
+
+    x = e[0]
+    y = e[1]
+    
+    # For now, don't attack empty tiles.  Once AoE classes are in effect we won't need to worry
+
+    cant_attack = can_move? x, y
+    return if @blocked_reason != BLOCKED_BY_ACTOR
+    return if cant_attack
+
+    # The actual attack logic.  Will be replaced with the AoE class
+    self.owner.attack_component.do_attack @move_tile.actor
+    @logic_cooldown = 0.5
+    
+    actor_moved
+    yield_to_enemies
+  end
 
   def fire(e)
 
+    return if @paused
     return if @logic_cooldown > 0
 
     x = e[0]
@@ -110,7 +136,7 @@ class PlayerControllerComponent < ComponentBase
     # We actually don't just want to deal damage if an actor is hit.  Fireable weapons can have affects other than base damage
 
     find_entity(0).create_child(
-      archetype: "PlayerProjectiles/Bomb",          # We'll need to make this the wielded ranged weapon once wielding is implemented
+      archetype: "PlayerProjectiles/Mine",    # We'll need to make this the wielded ranged weapon once wielding is implemented
       components: {
         "PositionComponent" => {
           "position" => [@pos.x, @pos.y]
@@ -128,9 +154,11 @@ class PlayerControllerComponent < ComponentBase
     actor_moved
     yield_to_enemies
   end
-
-  # End of stuffs
-
+  
+  #################
+  # End of stuffs #
+  #################
+  
   def mouse_down(e)
     @cursor ||= find_entity("TileCursor")
     @curpos ||= @cursor.transform_component.position

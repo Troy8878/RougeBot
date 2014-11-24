@@ -67,10 +67,6 @@ void IdleBehaviour::Prepare()
   oy = static_cast<mrb_int>(ownerPos.y);
 }
 
-void IdleBehaviour::InitializeTarget(Entity* )
-{
-}
-
 void IdleBehaviour::InitilizeOwner(Entity *thisEntity)
 {
   owner = thisEntity;

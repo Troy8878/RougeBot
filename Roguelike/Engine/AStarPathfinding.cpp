@@ -95,9 +95,6 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
 
   }
 
-
-
-
 }
 
 void AStarPathfinding::Prepare()
@@ -120,12 +117,12 @@ void AStarPathfinding::Prepare()
 
 void AStarPathfinding::InitializeTarget(Entity* target)
 {
-  target;
+  this->target = target;
 }
 
 void AStarPathfinding::InitilizeOwner(Entity* thisEntity)
 {
-  thisEntity;
+  owner = thisEntity;
 }
 
 AIResult AStarPathfinding::GetResult()

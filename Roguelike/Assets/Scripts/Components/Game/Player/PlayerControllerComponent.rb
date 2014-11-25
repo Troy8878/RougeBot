@@ -42,9 +42,7 @@ class PlayerControllerComponent < ComponentBase
     # Double-click should do it in either case
     # Double-click is the only way in touch mode
     self.register_event :double_click, :mouse_down
-    unless Config[:touch_mode]
-      self.register_event :mouse_down, :mouse_down
-    end
+    self.register_event :mouse_down, :mouse_down
 
     self.register_event :mouse_move, :mouse_move
     self.register_event :on_pause, :on_pause
@@ -77,6 +75,15 @@ class PlayerControllerComponent < ComponentBase
     end
 
     yield_to_enemies
+
+    if search_entities('').select(&:enemy_logic_component).empty?
+      seq = owner.action_sequence :victory!
+      seq.delay 5
+      seq.once do
+        # TODO: Win Condition
+        Game.switch_level 'MainMenu'
+      end
+    end
   end
 
   def yield_to_enemies
@@ -227,6 +234,11 @@ class PlayerControllerComponent < ComponentBase
     return if Config[:touch_mode]
     @cursor ||= find_entity("TileCursor")
     @cursor.children[0].sprite_component.visible = true
+  end
+
+  def on_zombification(e)
+    # TODO: Lose Condition
+    Game.switch_level 'MainMenu'
   end
 
   register_component "PlayerControllerComponent"

@@ -71,6 +71,10 @@ module Actor
   def actor_zombified(e)
     @prev_tile.actor = nil if @prev_tile
     actor_minimap_delete
+
+    if self.respond_to? :on_zombification
+      self.on_zombification e
+    end
   end
 
   def actor_removed

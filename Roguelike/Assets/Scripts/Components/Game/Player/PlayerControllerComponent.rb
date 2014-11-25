@@ -143,7 +143,7 @@ class PlayerControllerComponent < ComponentBase
     # We actually don't just want to deal damage if an actor is hit.  Fireable weapons can have affects other than base damage
 
     find_entity(0).create_child(
-      archetype: "PlayerProjectiles/Mine",    # We'll need to make this the wielded ranged weapon once wielding is implemented
+      archetype: "PlayerProjectiles/Bomb",    # We'll need to make this the wielded ranged weapon once wielding is implemented
       components: {
         "PositionComponent" => {
           "position" => [@pos.x, @pos.y]

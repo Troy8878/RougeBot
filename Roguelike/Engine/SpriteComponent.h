@@ -61,11 +61,12 @@ private:
   TextureComponent *_texture = nullptr;
   bool _visible;
 
-  static Model *GetSpriteModel();
   void SpriteHide(Events::EventMessage &);
   void SpriteShow(Events::EventMessage &);
 
 public:
+  static Model *GetSpriteModel();
+
   size_t _GetTextureCount()
   {
     return _texture ? _texture->TextureCount : 0;

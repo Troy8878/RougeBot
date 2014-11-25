@@ -111,6 +111,8 @@ private:
 
   void GraphicsOnInit();
 
+  friend class GraphicsDevice;
+
 protected:
   HINSTANCE _hInstance;
   const std::string _title;

@@ -18,6 +18,14 @@ class Texture2D;
 
 // ----------------------------------------------------------------------------
 
+__interface WndProcPatch
+{
+  LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont);
+  void Update(const GameTime &time);
+};
+
+// ----------------------------------------------------------------------------
+
 class GraphicsDevice abstract
 {
 public:
@@ -33,6 +41,9 @@ public:
 
   virtual bool BeginFrame() = 0;
   virtual void EndFrame() = 0;
+  virtual void ProcessMessages() = 0;
+
+  void PatchWndProc(WndProcPatch &patch);
 
   static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions &options);
   void CreateInputLayout(byte *bytecode,
@@ -117,7 +128,7 @@ public:
   bool BeginFrame() override;
   void EndFrame() override;
 
-  void ProcessMessages();
+  void ProcessMessages() override;
 
   IR_PROPERTY(HWND, Window);
 

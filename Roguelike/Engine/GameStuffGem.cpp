@@ -15,6 +15,7 @@
 
 #pragma region Random stuff
 #include <PropertyAPI/PropertyServer.h>
+#include "CODA.h"
 
 extern "C" mrb_value ruby_rand(mrb_state *mrb, mrb_value)
 {
@@ -183,6 +184,14 @@ static mrb_value mrb_browse(mrb_state *, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_confirm_destructive_action(mrb_state *, mrb_value)
+{
+  static ConfirmationOfDestructiveAction action;
+  return mrb_bool_value(action.Confirm("Are you sure?"));
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -191,6 +200,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, kernel, "rand", ruby_rand, ARGS_OPT(3));
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
   mrb_define_method(mrb, kernel, "browse", mrb_browse, ARGS_NONE());
+  mrb_define_method(mrb, kernel, "confirm_destructive_action!", mrb_confirm_destructive_action, ARGS_ANY());
 
   mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
   mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));

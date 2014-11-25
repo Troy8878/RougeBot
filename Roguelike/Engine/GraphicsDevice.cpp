@@ -60,6 +60,33 @@ void GraphicsDevice::FreeD2DResources()
 
 // ----------------------------------------------------------------------------
 
+static WndProcPatch *wndpatch = nullptr;
+static bool patchContinue;
+
+void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
+{
+  wndpatch = &patch;
+  patchContinue = true;
+
+  // Soon™ we will take a screenshot of the game state
+  // and overlay the CODA over that. But for now, sadfaec for this
+
+  auto &time = GetGame()->_gameTime;
+  while (patchContinue)
+  {
+    time.Update();
+
+    this->BeginFrame();
+    this->ProcessMessages();
+    patch.Update(time);
+    this->EndFrame();
+  }
+
+  wndpatch = nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
 std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions &options)
 {
   auto *window = new WindowDevice(options);
@@ -70,6 +97,8 @@ std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreat
 
 HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 {
+  wndpatch = nullptr;
+
   std::string className = std::to_string(reinterpret_cast<size_t>(this));
 
   WNDCLASSEX wndc = {sizeof(wndc)};
@@ -113,7 +142,7 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 // ----------------------------------------------------------------------------
 
 WindowDevice::WindowDevice(const WindowCreationOptions &options)
-  : _size(options.size)
+  : GraphicsDevice(), _size(options.size)
 {
   Window = InitializeWindow(options);
 
@@ -132,13 +161,20 @@ LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
   }
 
   auto *_this = reinterpret_cast<WindowDevice *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-  return _this->WindowProc(hwnd, msg, wparam, lparam);
+  if (_this)
+    return _this->WindowProc(hwnd, msg, wparam, lparam);
+  return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 // ----------------------------------------------------------------------------
 
 LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+  if (GetGame()->levelChangeContext.name != "Init" && wndpatch != nullptr)
+  {
+    return wndpatch->PatchedWndProc(hwnd, msg, wparam, lparam, patchContinue);
+  }
+
   auto &game = *GetGame();
   auto iter = game._wndprocCallbacks.find(msg);
   if (iter != game._wndprocCallbacks.end())
@@ -632,19 +668,15 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 {
   assert(texture.RenderTarget);
 
-  //std::cout << "D2D::DrawTo('" << texture.Name << "');" << std::endl;
-
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
+  DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
 // ----------------------------------------------------------------------------
 
 HRESULT GraphicsDevice::D2DData::EndDraw()
 {
-  //std::cout << "D2D::EndDraw();" << std::endl;
-
-  DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
   return DeviceContext->EndDraw();
 }
 

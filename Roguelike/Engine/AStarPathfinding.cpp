@@ -25,7 +25,7 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
 
   while (!openNodes.empty())
   {
-    Node *pnext;
+    Node *pnext = nullptr;
     float currCost = powf(10, 300);
     // Find the lowest cost node in the openNode vector.
     for (auto &node : openNodes)

@@ -18,7 +18,7 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
   targetNode.tile = targetTile;
 
   startNode.prevCost = 0;
-  startNode.costToGoal = (float)(std::abs(ox - tx) + std::abs(oy - ty));
+  startNode.costToGoal = static_cast<float>(std::abs(ox - tx) + std::abs(oy - ty));
   startNode.cost = startNode.prevCost + startNode.costToGoal;
 
   openNodes.push_back(startNode);
@@ -52,27 +52,46 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
     };
 
     // Set the successors.
-    std::vector<Node> successorList;
+    std::vector<Node> successorNodes;
     for (auto offset : offsets)
     {
       const WorldSnapshot::Tile *tile;
       tile = &world.GetTile(next.tile->x + offset.x, next.tile->y + offset.y);
       Node temp(new Node(next), tile);
       temp.prevCost = next.prevCost + 1;
-      temp.costToGoal = (float)(std::abs(temp.tile->x - tx) + std::abs(temp.tile->y - ty));
+      temp.costToGoal = static_cast<float>(std::abs(temp.tile->x - tx) + std::abs(temp.tile->y - ty));
       temp.cost = temp.prevCost + temp.costToGoal;
-      successorList.push_back(temp);
+      successorNodes.push_back(temp);
     }
 
     // Find the successor we want to follow.
-    for (auto node : successorList)
+    for (auto node : successorNodes)
     {
       if (node.tile == targetNode.tile)
-      {
         break;
+      bool addToList = true;
+      for (auto open : openNodes)
+      {
+        if (node.tile == open.tile && open.cost < node.cost)
+        {
+          addToList = false;
+          break;
+        }
       }
-
+      for (auto closed : closedNodes)
+      {
+        if (node.tile == closed.tile && closed.cost < node.cost)
+        {
+          addToList = false;
+          break;
+        }
+      }
+      
+      if (addToList)
+        openNodes.push_back(node);
     }
+
+    closedNodes.push_back(next);
 
   }
 

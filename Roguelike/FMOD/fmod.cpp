@@ -330,6 +330,32 @@ int SoundClass::Sound::GetCurrentChan()
 
 // ----------------------------------------------------------------------------
 
+void SoundClass::Sound::SetVolume(double value)
+{
+  volume = value;
+
+  FMOD::SoundGroup *group;
+  CheckResult(sound->getSoundGroup(&group));
+  group->setVolume(static_cast<float>(volume * gvolume));
+}
+
+// ----------------------------------------------------------------------------
+
+void SoundClass::Sound::UpdateGVolume(double value)
+{
+  gvolume = value;
+  SetVolume(volume);
+}
+
+// ----------------------------------------------------------------------------
+
+double SoundClass::Sound::GetVolume()
+{
+  return volume;
+}
+
+// ----------------------------------------------------------------------------
+
 SoundClass::Sound::~Sound()
 {
   FMODresult = sound->release();

@@ -70,8 +70,6 @@ bool ConfirmationOfDestructiveAction::
 LRESULT ConfirmationOfDestructiveAction::
   PatchedWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, bool &cont)
 {
-  cont = true;
-
   switch (msg)
   {
     case WM_SIZING:

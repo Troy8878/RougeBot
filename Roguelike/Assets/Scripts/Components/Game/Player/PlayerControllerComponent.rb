@@ -76,14 +76,20 @@ class PlayerControllerComponent < ComponentBase
 
     yield_to_enemies
 
-    if search_entities('').select(&:enemy_logic_component).empty?
+    if enemies_be_ded?
       seq = owner.action_sequence :victory!
       seq.delay 5
       seq.once do
+        next unless enemies_be_ded?
         # TODO: Win Condition
+        puts "Enemies ded"
         Game.switch_level 'MainMenu'
       end
     end
+  end
+
+  def enemies_be_ded?
+    search_entities('').select(&:enemy_logic_component).empty?
   end
 
   def yield_to_enemies
@@ -238,6 +244,7 @@ class PlayerControllerComponent < ComponentBase
 
   def on_zombification(e)
     # TODO: Lose Condition
+    puts "Player ded"
     Game.switch_level 'MainMenu'
   end
 

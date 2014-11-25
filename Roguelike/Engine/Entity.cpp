@@ -25,7 +25,7 @@ static entity_id next_ent_id = 0;
 // ----------------------------------------------------------------------------
 
 static BucketAllocator sequenceAllocator = BucketAllocator(sizeof(ActionSequence));
-static std::list<Entity *> death_row;
+static std::deque<Entity *> death_row;
 
 // ----------------------------------------------------------------------------
 
@@ -597,8 +597,6 @@ static mrb_value rb_ent_name(mrb_state *mrb, mrb_value self)
 
 static mrb_value rb_ent_get_component(mrb_state *mrb, mrb_value self)
 {
-  ruby::ruby_engine engine{mrb};
-
   mrb_value comp_name_v;
   mrb_get_args(mrb, "S", &comp_name_v);
 

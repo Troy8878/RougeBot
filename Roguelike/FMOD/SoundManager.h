@@ -13,16 +13,13 @@ class ManagedSound
 {
 public:
   ManagedSound() = default;
-
-  ManagedSound(ManagedSound &&managed) : _sound(std::move(managed._sound))
-  {
-  }
+  ManagedSound(const ManagedSound &managed) = default;
 
   SoundClass::Sound *operator->();
   SoundClass::Sound *get();
 
 private:
-  ManagedSound(SoundClass::Sound *sound);
+  explicit ManagedSound(SoundClass::Sound *sound);
   friend class SoundManager;
 
   std::shared_ptr<SoundClass::Sound> _sound;

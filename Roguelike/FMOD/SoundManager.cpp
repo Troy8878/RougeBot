@@ -69,8 +69,6 @@ ManagedSound SoundManager::LoadDefinition(json::value definition)
   // TODO: Make some ExInfos
   std::vector<SoundClass::Sound::ExInfo> infos;
 
-  std::string tempFilename;
-
   if (map_get_check(obj, it, "sound"))
   {
     json::value filename = it->second;
@@ -81,7 +79,8 @@ ManagedSound SoundManager::LoadDefinition(json::value definition)
     auto tempFile = soundFile->GetTempFile();
     auto tempFilename = narrow(tempFile.getPath().file_string());
 
-    return SoundClass::Sound::CreateSound(tempFilename.c_str(), GetGame()->SoundSystem, infos);
+    auto sound = SoundClass::Sound::CreateSound(tempFilename.c_str(), GetGame()->SoundSystem, infos);
+    return ManagedSound(sound);
   }
   if (map_get_check(obj, it, "music"))
   {
@@ -93,7 +92,8 @@ ManagedSound SoundManager::LoadDefinition(json::value definition)
     auto tempFile = soundFile->GetTempFile();
     auto tempFilename = narrow(tempFile.getPath().file_string());
 
-    return SoundClass::Sound::CreateMusic(tempFilename.c_str(), GetGame()->SoundSystem, infos);
+    auto sound = SoundClass::Sound::CreateMusic(tempFilename.c_str(), GetGame()->SoundSystem, infos);
+    return ManagedSound(sound);
   }
 
   throw basic_exception("Sound definitions must contain either a 'sound' or 'music' field.");

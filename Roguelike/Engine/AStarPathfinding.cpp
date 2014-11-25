@@ -11,21 +11,28 @@
 
 void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
 {
+  // Find the start and end tiles.
   auto *startTile = &world.GetTile(ox, oy);
   auto *targetTile = &world.GetTile(tx, ty);
 
+  // Assign the tiles to their nodes.
   startNode.tile = startTile;
   targetNode.tile = targetTile;
 
+  // Calculate the cost of the starting node.
   startNode.prevCost = 0;
   startNode.costToGoal = static_cast<float>(std::abs(ox - tx) + std::abs(oy - ty));
   startNode.cost = startNode.prevCost + startNode.costToGoal;
 
+  // Add the starting node to the openNodes list.
   openNodes.push_back(startNode);
 
+  // While there are still open nodes
   while (!openNodes.empty())
   {
+    // Initialize some stuff.
     Node *pnext = nullptr;
+    // Basically this is the highest possible float (roughly).
     float currCost = powf(10, 300);
     // Find the lowest cost node in the openNode vector.
     for (auto &node : openNodes)
@@ -36,9 +43,13 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
         currCost = pnext->cost;
       }
     }
+    // Save the cheapest node.
     Node next = *pnext;
+
+    // Remove the cheapest node from the open list - it's been checked.
     openNodes.erase(openNodes.begin() + (pnext - &openNodes[0]));
 
+    // Temporary garbage bullshit.
     struct
     {
       int x;
@@ -55,6 +66,7 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
     std::vector<Node> successorNodes;
     for (auto offset : offsets)
     {
+      // This takes way too goddamn long.
       const WorldSnapshot::Tile *tile;
       tile = &world.GetTile(next.tile->x + offset.x, next.tile->y + offset.y);
       Node temp(new Node(next), tile);
@@ -64,12 +76,20 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
       successorNodes.push_back(temp);
     }
 
-    // Find the successor we want to follow.
+    // Find the successors we want to check after this one.
     for (auto node : successorNodes)
     {
+      // If this is the destination, we're done. Go us! Add it to the open list.
       if (node.tile == targetNode.tile)
+      {
+        openNodes.push_back(node);
         break;
+      }
+      
+      // Temporary boolean to track if we wanna add this to the open list.
       bool addToList = true;
+
+      // Find if there's already a node in the open list that's cheaper.
       for (auto open : openNodes)
       {
         if (node.tile == open.tile && open.cost < node.cost)
@@ -78,6 +98,8 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
           break;
         }
       }
+
+      // Find if there's a node in the closed list that's cheaper.
       for (auto closed : closedNodes)
       {
         if (node.tile == closed.tile && closed.cost < node.cost)
@@ -87,12 +109,15 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
         }
       }
       
+      // If it's good to go, we add it to the openNodes list.
+      // Basically, it gets checked on the next pass of the while loop.
       if (addToList)
         openNodes.push_back(node);
     }
 
+    // Finally, we can add the chosen node from before (the one we removed from the open list)
+    // to the closed list.
     closedNodes.push_back(next);
-
   }
 
 }

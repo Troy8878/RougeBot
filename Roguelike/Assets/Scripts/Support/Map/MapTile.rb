@@ -7,7 +7,7 @@
 
 class MapTile
   attr_reader :x, :y, :type_id, :item
-  attr_accessor :actor
+  attr_accessor :actor, :projectile
 
   TYPE_DATA = {
     0 => {

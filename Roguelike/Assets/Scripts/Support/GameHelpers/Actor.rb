@@ -16,6 +16,7 @@ module Actor
   BLOCKED_BY_WALL = 3
   BLOCKED_BY_COOLDOWN = 4
   CANNOT_MOVE_DIAGONALLY = 5
+  BLOCKED_BY_PROJECTILE = 5
 
   def ghost_actor!
     @ghost_actor = true

@@ -151,8 +151,6 @@ module Actor
     return res
   end
 
-# Ranged combat below here
-
   def can_move_more_than_one?(xo, yo)
     @blocked_reason = -1
 

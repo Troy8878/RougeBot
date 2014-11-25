@@ -48,4 +48,8 @@ class MapTile
   def actor?
     !@actor.nil?
   end
+
+  def projectile?
+    !@projectile.nil?
+  end
 end

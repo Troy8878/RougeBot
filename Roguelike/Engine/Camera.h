@@ -74,13 +74,13 @@ struct LookAtCamera : ICamera
   float aspectRatio = 1280.f / 720.f;
   float nearField = 0.1f, farField = 100;
 
-  void Init()
+  void Init() override
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
   }
 
-  void Update()
+  void Update() override
   {
     using namespace DirectX;
     auto pos = position.get();
@@ -103,13 +103,13 @@ struct HUDCamera final : ICamera
   math::Vector2D size = {1280.f / 720.f, 1};
   float nearField = 0.1f, farField = 100;
 
-  void Init()
+  void Init() override
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixOrthographicLH(size.x, size.y, nearField, farField);
   }
 
-  void Update()
+  void Update() override
   {
     using namespace DirectX;
     viewMatrix = XMMatrixLookToLH(position.get(), g_XMIdentityR2, g_XMIdentityR1);

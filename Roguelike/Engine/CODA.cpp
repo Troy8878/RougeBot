@@ -8,8 +8,10 @@
 #include "Common.h"
 #include "CODA.h"
 #include "Shader.h"
+#include "Level.h"
 
 #include "SpriteComponent.h"
+#include "StandardShapes.h"
 
 // ----------------------------------------------------------------------------
 
@@ -19,22 +21,18 @@ ConfirmationOfDestructiveAction::
   SpriteShader = RegisteredShaders["Textured"];
   SpriteModel = SpriteComponent::GetSpriteModel();
 
-  camera.position.z = -3;
-  camera.Init();
-  camera.Update();
-
   using namespace DirectX;
 
   BackgroundPos =
     XMMatrixScaling(10, 5, 1);
   MessagePos =
-    XMMatrixScaling(6, 3, 1);
+    XMMatrixScaling(1, 0.5f, 1);
   AffirmativePos =
-    XMMatrixTranslation(-4, -2, 0) *
-    XMMatrixScaling(3, 2, 1);
+    XMMatrixScaling(1, 2/3.0f, 1) *
+    XMMatrixTranslation(-1, -0.5, 0);
   NegatoryPos =
-    XMMatrixTranslation(4, -2, 0) *
-    XMMatrixScaling(3, 2, 1);
+    XMMatrixScaling(1, 2/3.0f, 1) *
+    XMMatrixTranslation(1, -0.5, 0);
 }
 
 // ----------------------------------------------------------------------------
@@ -53,9 +51,18 @@ bool ConfirmationOfDestructiveAction::
   ValidateFont();
   DrawMessages(message, affirmative, negatory);
 
+  WINDOWINFO info;
+  GetWindowInfo(GetGame()->GameDevice->GetContextWindow(), &info);
+
+  info.dwStyle &= ~WS_MAXIMIZEBOX;
+  SetWindowLong(GetGame()->GameDevice->GetContextWindow(), GWL_STYLE, info.dwStyle);
+
   GetGame()->GameDevice->PatchWndProc(*this);
 
-  return false;
+  info.dwStyle |= WS_MAXIMIZEBOX;
+  SetWindowLong(GetGame()->GameDevice->GetContextWindow(), GWL_STYLE, info.dwStyle);
+
+  return answer;
 }
 
 // ----------------------------------------------------------------------------
@@ -68,7 +75,31 @@ LRESULT ConfirmationOfDestructiveAction::
   switch (msg)
   {
     case WM_SIZING:
+    case WM_MOVE:
       return FixSizing(hwnd, msg, wp, lp);
+    case WM_CLOSE:
+      _exit(0);
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      BeginPaint(hwnd, &ps);
+      EndPaint(hwnd, &ps);
+      return 0;
+    }
+    case WM_LBUTTONDOWN:
+    {
+      auto mx = LOWORD(lp);
+      auto my = HIWORD(lp);
+
+      auto ww = windowSize.right - windowSize.left;
+      auto wh = windowSize.bottom - windowSize.top;
+
+      if (my > wh / 2)
+      {
+        answer = mx > ww / 2;
+        cont = false;
+      }
+    }
   }
 
   return DefWindowProc(hwnd, msg, wp, lp);
@@ -79,17 +110,31 @@ LRESULT ConfirmationOfDestructiveAction::
 void ConfirmationOfDestructiveAction::
   Update(const GameTime &)
 {
-  SpriteShader->camera = &camera;
-  SpriteModel->shader = SpriteShader;
+  using namespace DirectX;
+
+  // Draw the game
+  RenderGroup::Instance.Draw(*static_cast<Events::EventMessage *>(nullptr));
+
+  auto hudRoot = GetGame()->CurrentLevel->RootEntity->FindEntity("HUD_ROOT");
+  auto hudTransform = XMMatrixTranslation(0, 0, -1) * hudRoot->Transform;
+
+  SpriteModel->tintTexture = Texture2D();
+
+  // Draw background tinting
+  SpriteModel->texture = Texture2D();
+  SpriteModel->tint = math::Vector(0, 0, 0, 0.8f);
+  SpriteModel->Draw(BackgroundPos * hudTransform);
+
+  SpriteModel->tint = math::Vector(1, 1, 1, 1);
 
   SpriteModel->texture = Message;
-  SpriteModel->Draw(MessagePos);
+  SpriteModel->Draw(MessagePos * hudTransform);
 
   SpriteModel->texture = Affirmative;
-  SpriteModel->Draw(AffirmativePos);
+  SpriteModel->Draw(AffirmativePos * hudTransform);
 
   SpriteModel->texture = Negatory;
-  SpriteModel->Draw(NegatoryPos);
+  SpriteModel->Draw(NegatoryPos * hudTransform);
 }
 
 // ----------------------------------------------------------------------------
@@ -102,7 +147,7 @@ void ConfirmationOfDestructiveAction::
   if (!format)
   {
     d2d.WriteFactory->CreateTextFormat(
-      L"Segoe UI", nullptr,
+      L"Segoe UI Symbol", nullptr,
       DWRITE_FONT_WEIGHT_BOLD,
       DWRITE_FONT_STYLE_NORMAL,
       DWRITE_FONT_STRETCH_NORMAL,
@@ -165,10 +210,20 @@ void ConfirmationOfDestructiveAction::
 // ----------------------------------------------------------------------------
 
 LRESULT ConfirmationOfDestructiveAction::
-  FixSizing(HWND, UINT, WPARAM, LPARAM lp)
+  FixSizing(HWND, UINT msg, WPARAM, LPARAM lp)
 {
-  *reinterpret_cast<LPRECT>(lp) = windowSize;
-  return TRUE;
+  if (msg == WM_SIZING)
+  {
+    *reinterpret_cast<LPRECT>(lp) = windowSize;
+    return TRUE;
+  }
+  if (msg == WM_MOVE)
+  {
+    GetWindowRect(GetGame()->GameDevice->GetContextWindow(), &windowSize);
+    return 0;
+  }
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------------

@@ -42,6 +42,7 @@ public:
   virtual bool BeginFrame() = 0;
   virtual void EndFrame() = 0;
   virtual void ProcessMessages() = 0;
+  bool IsPatched();
 
   void PatchWndProc(WndProcPatch &patch);
 

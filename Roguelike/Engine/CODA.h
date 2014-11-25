@@ -1,8 +1,8 @@
-/*********************************
+ï»¿/*********************************
  * CODA.h
  * Connor Hilarides
  * Created 2014/11/21
- * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ * Copyright Â© 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -24,8 +24,8 @@ public:
   ~ConfirmationOfDestructiveAction();
 
   bool Confirm(const std::string &message,
-               const std::string &affirmative = "Ok",
-               const std::string &negatory = "Cancel");
+               const std::string &affirmative = "\xEE\x84\x8A",
+               const std::string &negatory = "\xEE\x84\x8B");
 
   LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont) override;
   void Update(const GameTime& time) override;
@@ -55,20 +55,15 @@ private:
   Texture2D Affirmative;
   Texture2D Negatory;
 
-  // Camera stuff
-  LookAtCamera camera;
-
   math::Matrix BackgroundPos;
   math::Matrix MessagePos;
   math::Matrix AffirmativePos;
   math::Matrix NegatoryPos;
 
-  // Soon™
-  Texture2D GameScreenshot;
-  math::Matrix ScreenshotPos;
-
   // Don't change anything, we're locking down in this mode
   RECT windowSize;
+
+  bool answer;
 };
 
 // ----------------------------------------------------------------------------

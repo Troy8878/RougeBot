@@ -59,7 +59,7 @@ public:
 private:
   RenderSet *renderTarget = nullptr;
   TextureComponent *_texture = nullptr;
-  bool _visible;
+  bool enabled = false;
 
   void SpriteHide(Events::EventMessage &);
   void SpriteShow(Events::EventMessage &);

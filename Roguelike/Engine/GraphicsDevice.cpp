@@ -63,6 +63,11 @@ void GraphicsDevice::FreeD2DResources()
 static WndProcPatch *wndpatch = nullptr;
 static bool patchContinue;
 
+bool GraphicsDevice::IsPatched()
+{
+  return wndpatch != nullptr;
+}
+
 void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
 {
   wndpatch = &patch;
@@ -76,8 +81,9 @@ void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
   {
     time.Update();
 
-    this->BeginFrame();
     this->ProcessMessages();
+
+    this->BeginFrame();
     patch.Update(time);
     this->EndFrame();
   }

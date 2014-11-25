@@ -58,6 +58,10 @@ void SpriteComponent::Initialize(Entity *owner, const std::string &name)
 
 void SpriteComponent::Draw()
 {
+  if (GetGame()->GameDevice->IsPatched() && !enabled)
+    return;
+  enabled = true;
+
   if (!Visible)
     return;
 

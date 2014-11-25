@@ -43,6 +43,7 @@ class AttackComponent < ComponentBase
     return if target == owner
 
     dmg = Random.int_range_inc *@damage
+    #puts "Attack for #{dmg} damage!"
 
     result = target.defense_component.be_attacked(dmg)
 

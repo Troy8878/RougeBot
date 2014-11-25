@@ -15,7 +15,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "Game.switch_level 'MainMenu'",
+      "button_clicked": "coda!('Are you sure you want to exit? All unsaved progress will be lost.'){Game.switch_level 'MainMenu'}",
       "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
       "mouse_enter": "owner.sprite_component.tint = '#FF0000AF'",
     }

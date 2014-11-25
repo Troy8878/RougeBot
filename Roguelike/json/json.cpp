@@ -641,7 +641,7 @@ namespace json
       if (input.peek() == ']')
         return input.get() , array;
 
-      auto value = value::parse(input);
+      auto value = parse(input);
       vector.push_back(value);
 
       skip_ws_and_comments(input);
@@ -688,6 +688,8 @@ namespace json
 
       switch (val)
       {
+        case '\n': out = "";
+          break;
         case '"': out = '"' ;
           break;
         case '\\': out = '\\';
@@ -747,7 +749,7 @@ namespace json
         break;
     }
 
-    return value::string(buffer);
+    return string(buffer);
   }
 
   // ----------------------------------------------------------------------------
@@ -764,24 +766,24 @@ namespace json
       case 'T':
         if (!input.read(buf, 4) || _strcmpi(buf, "true"))
         PARSE_ERROR("Expected 'true'");
-        return value::boolean(true);
+        return boolean(true);
 
       case 'f':
       case 'F':
         if (!input.read(buf, 5) || _strcmpi(buf, "false"))
         PARSE_ERROR("Expected 'false'");
-        return value::boolean(false);
+        return boolean(false);
 
       case 'n':
       case 'N':
         if (!input.read(buf, 4) || _strcmpi(buf, "null"))
         PARSE_ERROR("Expected 'null'");
-        return value::null();
+        return null();
 
       default:
         if (!(input >> num))
         PARSE_ERROR("Expected number");
-        return value::number(num);
+        return number(num);
     }
   }
 
@@ -897,7 +899,7 @@ namespace json
 
       next_pretty_line(out);
 
-      value::string(pair.first).serialize_string(out);
+      string(pair.first).serialize_string(out);
       out << ':';
 
       if (_pretty_print)

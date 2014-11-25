@@ -184,10 +184,20 @@ static mrb_value mrb_browse(mrb_state *, mrb_value)
 
 // ----------------------------------------------------------------------------
 
-static mrb_value mrb_confirm_destructive_action(mrb_state *, mrb_value)
+static mrb_value mrb_confirm_destructive_action(mrb_state *mrb, mrb_value)
 {
+  mrb_value text;
+  mrb_value callback = mrb_nil_value();
+  mrb_get_args(mrb, "S|&", &text, &callback);
+
   static ConfirmationOfDestructiveAction action;
-  return mrb_bool_value(action.Confirm("Are you sure?"));
+  auto answer = action.Confirm(mrb_str_to_stdstring(text));
+  auto mrbanswer = mrb_bool_value(answer);
+
+  if (!mrb_nil_p(callback) && answer)
+    mrb_yield(mrb, callback, mrbanswer);
+
+  return mrbanswer;
 }
 
 // ----------------------------------------------------------------------------
@@ -201,6 +211,7 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, kernel, "cls", ruby_clearscreen, ARGS_NONE());
   mrb_define_method(mrb, kernel, "browse", mrb_browse, ARGS_NONE());
   mrb_define_method(mrb, kernel, "confirm_destructive_action!", mrb_confirm_destructive_action, ARGS_ANY());
+  mrb_define_method(mrb, kernel, "coda!", mrb_confirm_destructive_action, ARGS_ANY());
 
   mrb_define_class_method(mrb, gameClass, "toggle_debug_draw", mrb_toggle_debug_draw, ARGS_NONE());
   mrb_define_class_method(mrb, gameClass, "switch_level", mrb_switch_level, ARGS_REQ(1));

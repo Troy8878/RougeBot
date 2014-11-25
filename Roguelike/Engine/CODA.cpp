@@ -26,7 +26,7 @@ ConfirmationOfDestructiveAction::
   BackgroundPos =
     XMMatrixScaling(10, 5, 1);
   MessagePos =
-    XMMatrixScaling(1, 0.5f, 1);
+    XMMatrixScaling(1.25f, 0.625f, 1);
   AffirmativePos =
     XMMatrixScaling(1, 2/3.0f, 1) *
     XMMatrixTranslation(-1, -0.5, 0);
@@ -115,8 +115,8 @@ void ConfirmationOfDestructiveAction::
   // Draw the game
   RenderGroup::Instance.Draw(*static_cast<Events::EventMessage *>(nullptr));
 
-  auto hudRoot = GetGame()->CurrentLevel->RootEntity->FindEntity("HUD_ROOT");
-  auto hudTransform = XMMatrixTranslation(0, 0, -1) * hudRoot->Transform;
+  auto hudRoot = GetGame()->CurrentLevel->RootEntity->FindEntity("CameraRoot");
+  auto hudTransform = XMMatrixTranslation(0, 0, 2.4f) * hudRoot->Transform;
 
   SpriteModel->tintTexture = Texture2D();
 
@@ -125,6 +125,7 @@ void ConfirmationOfDestructiveAction::
   SpriteModel->tint = math::Vector(0, 0, 0, 0.8f);
   SpriteModel->Draw(BackgroundPos * hudTransform);
 
+  // Draw all of the text
   SpriteModel->tint = math::Vector(1, 1, 1, 1);
 
   SpriteModel->texture = Message;
@@ -157,7 +158,7 @@ void ConfirmationOfDestructiveAction::
   }
 
   if (!Message)
-    Message = TextureManager::Instance.LoadTexture("SPECIAL/SURFACE/600:300");
+    Message = TextureManager::Instance.LoadTexture("SPECIAL/SURFACE/800:400");
   if (!Affirmative)
     Affirmative = TextureManager::Instance.LoadTexture("SPECIAL/SURFACE/300:200");
   if (!Negatory)

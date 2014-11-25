@@ -15,7 +15,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "Game.quit!",
+      "button_clicked": "coda!('Are you sure you want to quit? All unsaved progress will be lost.'){Game.quit!}",
       "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
       "mouse_enter": "owner.sprite_component.tint = '#FF0000AF'",
     }

@@ -14,7 +14,6 @@
 class AStarPathfinding final : public AIBehaviour
 {
 public:
-
   void ApplyBehaviour(const WorldSnapshot& world) override;
 
   void Prepare() override;
@@ -25,18 +24,26 @@ public:
 private:
   struct Node
   {
-    Node(const WorldSnapshot::Tile *tile);
+    Node() = default;
+    explicit Node(const WorldSnapshot::Tile *tile);
     explicit Node(Node *previous, const WorldSnapshot::Tile *tile);
 
     Node *previous;
     const WorldSnapshot::Tile *tile;
     bool evaluated;
+
+    float cost;
+    float prevCost;
+    float costToGoal;
   };
 
   const WorldSnapshot *world;
   Entity *thisEntity;
   Entity *target;
-  std::vector<Node> currentRoute;
+  Node startNode;
+  Node targetNode;
+  std::vector<Node> openNodes;
+  std::vector<Node> closedNodes;
 
   void FindRoute();
   void MoveAlongRoute();

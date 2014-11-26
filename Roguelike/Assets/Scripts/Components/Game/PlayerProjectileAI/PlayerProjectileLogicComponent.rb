@@ -60,7 +60,7 @@ class PlayerProjectileLogicComponent < ComponentBase
       # puts "Something is on top of me!!"
       if @blocked_reason == BLOCKED_BY_WALL
         # puts "A wall ran into me"
-        decay_sequence(0)
+        delay_sequence(0, true, false)
         # puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         return
       elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player"  && @move_tile.actor.name != nil # && @move_tile.actor.actor_projectile == false
@@ -71,8 +71,7 @@ class PlayerProjectileLogicComponent < ComponentBase
         @direc[1] = 1
         move
         @killed = @move_tile.actor.name
-        self.owner.attack_component.do_attack @move_tile.actor
-        decay_sequence(0)
+        delay_sequence(0, true, true)
         # puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         return
       elsif @blocked_reason == BLOCKED_BY_COOLDOWN || @blocked_reason == BLOCKED_BY_UNKNOWN || (@blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name == "Player")
@@ -95,7 +94,7 @@ class PlayerProjectileLogicComponent < ComponentBase
           if @blocked_reason == BLOCKED_BY_WALL || @blocked_reason == CANNOT_MOVE_DIAGONALLY
             # puts "I ran into a wall"
           # Add a delay:  Don't delete until reaching the last locale that isn't a wall. Do this via  (delay until translation = @position)
-            decay_sequence(loop)
+            delay_sequence(loop, true, false)
             # puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
             return
           elsif @blocked_reason == BLOCKED_BY_ACTOR && @move_tile.actor.name != "Player" && @move_tile.actor != self.owner && @move_tile.actor.name != nil # && @move_tile.actor.actor_projectile == false
@@ -103,8 +102,7 @@ class PlayerProjectileLogicComponent < ComponentBase
             # puts "I ran into a #{@move_tile.actor.name}"
             move
             @killed = @move_tile.actor.name
-            self.owner.attack_component.do_attack @move_tile.actor
-            decay_sequence(loop)
+            delay_sequence(loop, true, true)
             # puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
             return
           elsif @blocked_reason == BLOCKED_BY_COOLDOWN
@@ -143,16 +141,32 @@ class PlayerProjectileLogicComponent < ComponentBase
     actor_minimap_update
   end
 
-  def decay_sequence(rounds)
-    #if(@killed)
-    #  # puts "killed by #{@killed}"
-    #else
-    #  # puts "killed by nothing"
-    #end
+  def delay_sequence(rounds, kill, attack)
     seq = self.owner.action_sequence :zombification
-    seq.delay(0.15 * rounds.to_f)
-    seq.once do
-      self.owner.zombify!
+    if(@direc[0] != 0 && @direc[1] != 0)
+      seq.delay(0.20 * rounds.to_f)
+      if(attack)
+        seq.once do
+          self.owner.attack_component.do_attack @move_tile.actor
+        end
+      end
+      if(kill)
+        seq.once do
+          self.owner.zombify!
+        end
+      end
+    else
+      seq.delay(0.12 * rounds.to_f)
+      if(attack)
+        seq.once do
+          self.owner.attack_component.do_attack @move_tile.actor
+        end
+      end
+      if(kill)
+        seq.once do
+          self.owner.zombify!
+        end
+      end
     end
   end
 

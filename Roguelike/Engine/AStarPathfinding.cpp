@@ -15,6 +15,9 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
   auto *startTile = &world.GetTile(ox, oy);
   auto *targetTile = &world.GetTile(tx, ty);
 
+  openNodes.clear();
+  closedNodes.clear();
+
   // Assign the tiles to their nodes.
   startNode.tile = startTile;
   targetNode.tile = targetTile;
@@ -54,7 +57,7 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
     {
       int x;
       int y;
-    } offsets[8] =
+    } offsets[] =
     {
       {-1,  0}, // left
       { 1,  0}, // right
@@ -111,7 +114,8 @@ void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
       
       // If it's good to go, we add it to the openNodes list.
       // Basically, it gets checked on the next pass of the while loop.
-      if (addToList)
+      auto enemyType = node.tile->actor;
+      if (addToList && !node.tile->isSolid && (enemyType == WorldSnapshot::Tile::Empty || enemyType == WorldSnapshot::Tile::Enemy))
         openNodes.push_back(node);
     }
 
@@ -165,10 +169,6 @@ AStarPathfinding::Node::Node(Node* previous, const WorldSnapshot::Tile *tile)
   : previous(previous), tile(tile)
 {
   evaluated = false;
-}
-
-void AStarPathfinding::FindRoute()
-{
 }
 
 void AStarPathfinding::MoveAlongRoute()

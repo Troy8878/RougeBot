@@ -48,6 +48,5 @@ private:
   // the nodes that we will be following.
   std::vector<Node> closedNodes;
 
-  void FindRoute();
   void MoveAlongRoute();
 };

@@ -15,21 +15,21 @@ class BasicEnemySpawnerComponent < ComponentBase
   def initialize(data)
     super data
 
-    @num_enemies = data.fetch("num_enemies", 8).to_i
+    num_enemies = data.fetch("num_enemies", 8).to_i
 
-    register_event :update, :first_update
+    # Delay the spawning by 2 frames
+    seq = owner.action_sequence :spawn
+    seq.delay 0
+    seq.delay 0
+    seq.once do
+      num_enemies.times do
+        Enemy.spawn random_enemy
+      end
+    end
   end
 
   def random_enemy
     ENEMY_TYPES.random_entry
-  end
-
-  def first_update(e)
-    @num_enemies.times do
-      Enemy.spawn random_enemy
-    end
-
-    owner.remove_component "BasicEnemySpawnerComponent"
   end
 
   register_component "BasicEnemySpawnerComponent"

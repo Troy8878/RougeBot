@@ -11,6 +11,10 @@
 # attack - the chance of the object hitting (?)
 # damage - the range of damage an object can do
 ################################################################
+
+SLASH = Sound.load "SFX/Slash"
+UGH = Sound.load "SFX/Ugh"
+
 class AttackComponent < ComponentBase
   include Actor
 
@@ -42,7 +46,14 @@ class AttackComponent < ComponentBase
   def do_attack(target)
     return if target == owner
 
+    if owner.player_controller_component
+      SLASH.play
+    else
+      UGH.play
+    end
+
     dmg = Random.int_range_inc *@damage
+    #puts "Attack for #{dmg} damage!"
 
     result = target.defense_component.be_attacked(dmg)
 

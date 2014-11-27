@@ -42,9 +42,11 @@ private:
   Entity *target;
   Node startNode;
   Node targetNode;
+
+  // The nodes that we still need to check.
   std::vector<Node> openNodes;
+  // the nodes that we will be following.
   std::vector<Node> closedNodes;
 
-  void FindRoute();
   void MoveAlongRoute();
 };

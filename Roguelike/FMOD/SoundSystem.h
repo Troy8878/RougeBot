@@ -117,13 +117,23 @@ public:
     void Stop();
     int GetCurrentChan();
 
+    double GetVolume();
+    void SetVolume(double value);
+
   private:
     std::vector<ExInfo> Infos = {};
     FMOD::Sound *sound;
     FMOD::Channel *chan;
     SoundClass *Sys;
     FMOD_RESULT FMODresult;
+    double volume = 1;
+    double gvolume = 1;
+
     void CheckResult(bool isOkay);
+    void CheckResult(FMOD_RESULT res) { CheckResult(res == FMOD_OK); }
+
+    void UpdateGVolume(double value);
+    friend struct SoundRef;
   };
 
   friend class Sound;

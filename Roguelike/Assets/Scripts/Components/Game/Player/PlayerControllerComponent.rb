@@ -114,7 +114,8 @@ class PlayerControllerComponent < ComponentBase
     x = e[0]
     y = e[1]
     
-    # For now, don't attack empty tiles.  Once AoE classes are in effect we won't need to worry
+    # For now, don't attack empty tiles.
+    # Once AoE classes are in effect we won't need to worry
 
     cant_attack = can_move? x, y
     return if @blocked_reason != BLOCKED_BY_ACTOR
@@ -137,13 +138,17 @@ class PlayerControllerComponent < ComponentBase
     y = e[1]
 
     unless can_fire? x, y
-      return if @blocked_reason != BLOCKED_BY_ACTOR # KEEP THIS!!! We always want to be able to shoot (enemy) actors!
+      return if @blocked_reason != BLOCKED_BY_ACTOR
+      # KEEP THIS!!! We always want to be able to shoot (enemy) actors!
     end
 
-    # We actually don't just want to deal damage if an actor is hit.  Fireable weapons can have affects other than base damage
+    # We actually don't just want to deal damage if an actor is hit.
+    # Fireable weapons can have affects other than base damage
 
     find_entity(0).create_child(
-      archetype: "PlayerProjectiles/Mine",    # We'll need to make this the wielded ranged weapon once wielding is implemented
+      archetype: "PlayerProjectiles/Mine",
+      # We'll need to make this the wielded ranged weapon
+      # once wielding is implemented
       components: {
         "PositionComponent" => {
           "position" => [@pos.x, @pos.y]
@@ -241,5 +246,5 @@ class PlayerControllerComponent < ComponentBase
     Game.switch_level 'MainMenu'
   end
 
-  register_component "PlayerControllerComponent"
+  register_component
 end

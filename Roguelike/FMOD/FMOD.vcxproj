@@ -116,7 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ExInfoVec.cpp" />
-    <ClCompile Include="fmod.cpp" />
+    <ClCompile Include="SoundSystem.cpp" />
     <ClCompile Include="MrbSound.cpp" />
     <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>

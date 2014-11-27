@@ -117,6 +117,30 @@
                 "MapControllerComponent": {}
               },
             },
+            {
+              "name": "FloorDisplay",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.8, 0.6],
+                  "scale": [0.8, 0.2]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/400:100"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": [""],
+                  "text_color": "White"
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "level_load": "owner.raise_event :send, [:set_text_at, [0, \"Floor #{GAME_STATE[:floor]}\"]]"
+                  }
+                }
+              }
+            }
           ]
         }
       ]

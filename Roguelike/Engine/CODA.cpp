@@ -84,6 +84,31 @@ LRESULT ConfirmationOfDestructiveAction::
       EndPaint(hwnd, &ps);
       return 0;
     }
+    case WM_MOUSEMOVE:
+    {
+      auto mx = LOWORD(lp);
+      auto my = HIWORD(lp);
+
+      auto ww = windowSize.right - windowSize.left;
+      auto wh = windowSize.bottom - windowSize.top;
+
+      if (my > wh / 2)
+      {
+        if (mx > ww / 2)
+        {
+          highlight = 2;
+        }
+        else
+        {
+          highlight = 1;
+        }
+      }
+      else
+      {
+        highlight = 0;
+      }
+      break;
+    }
     case WM_LBUTTONDOWN:
     {
       auto mx = LOWORD(lp);
@@ -124,15 +149,23 @@ void ConfirmationOfDestructiveAction::
   SpriteModel->Draw(BackgroundPos * hudTransform);
 
   // Draw all of the text
-  SpriteModel->tint = math::Vector(1, 1, 1, 1);
 
   SpriteModel->texture = Message;
+  SpriteModel->tint = math::Vector(1, 1, 1, 1);
   SpriteModel->Draw(MessagePos * hudTransform);
 
   SpriteModel->texture = Affirmative;
+  SpriteModel->tint =
+    highlight == 1
+    ? math::Vector(1, 0, 0, 1)
+    : math::Vector(1, 1, 1, 1);
   SpriteModel->Draw(AffirmativePos * hudTransform);
 
   SpriteModel->texture = Negatory;
+  SpriteModel->tint =
+    highlight == 2
+    ? math::Vector(0, 1, 0, 1)
+    : math::Vector(1, 1, 1, 1);
   SpriteModel->Draw(NegatoryPos * hudTransform);
 }
 

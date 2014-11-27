@@ -63,6 +63,7 @@ private:
   // Don't change anything, we're locking down in this mode
   RECT windowSize;
 
+  int highlight = 0;
   bool answer;
 };
 

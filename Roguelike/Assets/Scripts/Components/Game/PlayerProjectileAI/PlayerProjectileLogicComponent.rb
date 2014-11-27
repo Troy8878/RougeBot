@@ -145,25 +145,21 @@ class PlayerProjectileLogicComponent < ComponentBase
     seq = self.owner.action_sequence :zombification
     if(@direc[0] != 0 && @direc[1] != 0)
       seq.delay(0.20 * rounds.to_f)
-      if(attack)
-        seq.once do
+	  seq.once do
+        if(attack && @move_tile.actor)
           self.owner.attack_component.do_attack @move_tile.actor
         end
-      end
-      if(kill)
-        seq.once do
+        if(kill)
           self.owner.zombify!
         end
       end
     else
       seq.delay(0.12 * rounds.to_f)
-      if(attack)
-        seq.once do
+	  seq.once do
+        if(attack  && @move_tile.actor)
           self.owner.attack_component.do_attack @move_tile.actor
         end
-      end
-      if(kill)
-        seq.once do
+        if(kill)
           self.owner.zombify!
         end
       end

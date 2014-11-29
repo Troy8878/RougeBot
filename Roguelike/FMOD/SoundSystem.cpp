@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <string>
 
 // ----------------------------------------------------------------------------
 
@@ -74,9 +75,9 @@ void SoundClass::CheckResult(bool isOkay)
 {
   if (!isOkay)
   {
-    auto err_str = FMOD_ErrorString(FMODresult);
-    std::cout << "FMOD error " << FMODresult << ":  " << err_str;
-    throw basic_exception("FMOD init error.");
+    //auto err_str = FMOD_ErrorString(FMODresult);
+    //std::cout << "FMOD error " << FMODresult << ":  " << err_str;
+    throw string_exception("FMOD error:" + std::string(FMOD_ErrorString(FMODresult)));
   }
 }
 
@@ -269,6 +270,9 @@ std::vector<SoundClass::Sound::ExInfo> SoundClass::Sound::GetExInfo() const
 
 void SoundClass::Sound::Play()
 {
+  if (IsPaused())
+    Unpause();
+
   FMODresult = Sys->SoundSystem->playSound(sound, nullptr, false, &chan);
   CheckResult(FMODresult == FMOD_OK);
 }
@@ -277,6 +281,9 @@ void SoundClass::Sound::Play()
 
 bool SoundClass::Sound::IsPlaying()
 {
+  if (!chan)
+    return false;
+
   bool answer;
   FMODresult = chan->isPlaying(&answer);
   CheckResult(FMODresult == FMOD_OK);
@@ -303,19 +310,24 @@ void SoundClass::Sound::Unpause()
 
 bool SoundClass::Sound::IsPaused()
 {
+  if (!chan)
+    return false;
+
   bool answer;
   FMODresult = chan->getPaused(&answer);
-  CheckResult(FMODresult == FMOD_OK);
-  return answer;
+  return answer && FMODresult == FMOD_OK;
 }
 
 // ----------------------------------------------------------------------------
 
 void SoundClass::Sound::Stop()
 {
+  if (!chan)
+    return;
+
   // Stopping is by channel, not by sound (the channel is what plays, while the sound is what the channel is playing!)
   FMODresult = chan->stop();
-  CheckResult(FMODresult == FMOD_OK);
+  chan = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -368,8 +380,8 @@ void SoundClass::Sound::CheckResult(bool isOkay)
 {
   if (!isOkay)
   {
-    std::cout << "FMOD error " << FMODresult << ":  " << FMOD_ErrorString(FMODresult);
-    throw basic_exception("FMOD init error.");
+    //std::cout << "FMOD error " << FMODresult << ":  " << FMOD_ErrorString(FMODresult) << std::endl;
+    throw string_exception("FMOD error:" + std::string(FMOD_ErrorString(FMODresult)));
   }
 }
 

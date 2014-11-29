@@ -1,7 +1,7 @@
 /*********************************
  * PositionComponent.cpp
- * YOUR NAME HERE
- * Created 2014/YOUR DATE HERE
+ * Connor Hilarides
+ * Created 2014/11/10
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 

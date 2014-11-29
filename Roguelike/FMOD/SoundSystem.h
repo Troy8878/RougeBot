@@ -123,7 +123,7 @@ public:
   private:
     std::vector<ExInfo> Infos = {};
     FMOD::Sound *sound;
-    FMOD::Channel *chan;
+    FMOD::Channel *chan = nullptr;
     SoundClass *Sys;
     FMOD_RESULT FMODresult;
     double volume = 1;

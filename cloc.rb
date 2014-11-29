@@ -119,11 +119,15 @@ def find_authors(filename)
   file.gsub!(/(\r|\n)+/, "\n")
 
   authors = []
+  lines = file.lines
 
-  if file.lines[2]
+  if lines && lines[2]
     # It's on line 3
-    authors = file.lines[2].match(pattern)[:authors]
-    authors = authors.split(',').map{|author| author.strip.downcase }
+    author_lines = lines[2].match(pattern)
+    if author_lines
+      authors = author_lines[:authors]
+      authors = authors.split(',').map{|author| author.strip.downcase }
+    end
   end
 
   if authors.empty?

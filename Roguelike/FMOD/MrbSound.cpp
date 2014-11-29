@@ -48,6 +48,13 @@ static mrb_value mrb_sound_new(mrb_state *mrb, mrb_value klass);
 
 static mrb_value mrb_sound_play(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_sound_stop(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_sound_pause(mrb_state *mrb, mrb_value self);
+
+static mrb_value mrb_sound_playing_p(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_sound_paused_p(mrb_state *mrb, mrb_value self);
+
+static mrb_value mrb_sound_volume_get(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self);
 
 static mrb_value mrb_sound_gvolume_push(mrb_state *mrb, mrb_value klass);
 static mrb_value mrb_sound_gvolume_pop(mrb_state *mrb, mrb_value klass);
@@ -65,6 +72,13 @@ EXTERN_C void mrb_mruby_sound_init(mrb_state *mrb)
 
   mrb_define_method(mrb, klass, "play", mrb_sound_play, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "stop", mrb_sound_stop, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "pause", mrb_sound_pause, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "playing?", mrb_sound_playing_p, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "paused?", mrb_sound_paused_p, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "volume", mrb_sound_volume_get, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "volume=", mrb_sound_volume_set, MRB_ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -109,6 +123,77 @@ static mrb_value mrb_sound_stop(mrb_state *mrb, mrb_value self)
   auto &sound = ref->sound;
 
   sound->Stop();
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_pause(mrb_state *mrb, mrb_value self)
+{
+  auto ref = ruby::data_get<SoundRef>(mrb, self);
+  auto &sound = ref->sound;
+
+  sound->Pause();
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_playing_p(mrb_state *mrb, mrb_value self)
+{
+  auto ref = ruby::data_get<SoundRef>(mrb, self);
+  auto &sound = ref->sound;
+
+  try
+  {
+    return mrb_bool_value(sound->IsPlaying());
+  }
+  catch (...)
+  {
+    return mrb_bool_value(false);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_paused_p(mrb_state *mrb, mrb_value self)
+{
+  auto ref = ruby::data_get<SoundRef>(mrb, self);
+  auto &sound = ref->sound;
+
+  try
+  {
+    return mrb_bool_value(sound->IsPaused());
+  }
+  catch (...)
+  {
+    return mrb_bool_value(false);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_volume_get(mrb_state *mrb, mrb_value self)
+{
+  auto ref = ruby::data_get<SoundRef>(mrb, self);
+  auto &sound = ref->sound;
+
+  return mrb_float_value(mrb, sound->GetVolume());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self)
+{
+  auto ref = ruby::data_get<SoundRef>(mrb, self);
+  auto &sound = ref->sound;
+
+  mrb_float volume;
+  mrb_get_args(mrb, "f", &volume);
+
+  sound->SetVolume(volume);
 
   return mrb_nil_value();
 }

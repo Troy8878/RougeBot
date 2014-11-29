@@ -1,6 +1,6 @@
 /*********************************
  * ParticleSystem.cpp
- * Connor Hilarides
+ * Enrique Rodriguez
  * Created 2014/09/29
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

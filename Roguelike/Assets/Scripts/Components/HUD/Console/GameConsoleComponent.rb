@@ -208,10 +208,16 @@ class GameConsoleComponent < ComponentBase
   end
 
   def first_update(e)
+    remove_event :update
+
+    unless Config[:console_enabled]
+      seq = owner.action_sequence :DIE!
+      seq.delay 0
+      seq.once { owner.zombify! }
+      return
+    end
+
     register_event :update, :on_update
-
-    owner.zombify! unless Config[:console_enabled]
-
     ary = AryStreamBuffer.game_console.peek
     ary.replace(HISTORY + ary)
   end

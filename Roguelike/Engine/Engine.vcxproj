@@ -231,6 +231,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ParticleSystemComponent.cpp" />
     <ClCompile Include="RenderSet.cpp" />
+    <ClCompile Include="RubyAsset.cpp" />
     <ClCompile Include="RubyClass.cpp" />
     <ClCompile Include="RubyComponent.cpp" />
     <ClCompile Include="RubyEngine.cpp" />

@@ -368,6 +368,9 @@
     <ClCompile Include="AStarPathfinding.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
+    <ClCompile Include="RubyAsset.cpp">
+      <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="AVXSupport.asm">

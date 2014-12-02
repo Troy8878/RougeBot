@@ -54,6 +54,7 @@ extern "C"
   void mrb_mruby_ary_streambuf_init(mrb_state *mrb);
   void mrb_mruby_graphics_init(mrb_state *mrb);
   void mrb_mruby_sound_init(mrb_state *mrb);
+  void mrb_mruby_asset_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -128,6 +129,9 @@ extern "C"
 
     // *puts on shades and starts rocking out*
     mrb_mruby_sound_init(mrb);
+
+    // Asset library
+    mrb_mruby_asset_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

@@ -31,10 +31,10 @@ Config.load_defaults do
 
   # Player melee weapon firing
 
-  Config.bind_action "attack_up",    { held: [:attack, [ 0,  1]] }
-  Config.bind_action "attack_left",  { held: [:attack, [-1,  0]] }
-  Config.bind_action "attack_down",  { held: [:attack, [ 0, -1]] }
-  Config.bind_action "attack_right", { held: [:attack, [ 1,  0]] }
+  Config.bind_action "attack_up",    { held: [:swing_weapon, :up] }
+  Config.bind_action "attack_left",  { held: [:swing_weapon, :left] }
+  Config.bind_action "attack_down",  { held: [:swing_weapon, :down] }
+  Config.bind_action "attack_right", { held: [:swing_weapon, :right] }
 
   Config.bind_key "Player", [Keys::UP   ], "attack_up"
   Config.bind_key "Player", [Keys::LEFT ], "attack_left"

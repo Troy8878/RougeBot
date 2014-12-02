@@ -86,6 +86,8 @@ class HotbarComponent < ComponentBase
       atk.damage = item.damage
       atk.weapon_level = item.item_level
     end
+
+    PLAYER_INVENTORY.equipment[:weapon] = item
   end
 
   def click_equip(e)

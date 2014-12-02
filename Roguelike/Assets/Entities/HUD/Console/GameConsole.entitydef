@@ -1,7 +1,7 @@
 {
   "TransformComponent": {
     "scale": [1.5, 1.5, 1.5],
-    "position": [0, 0, -0.5]
+    "position": [0, -3, -0.5]
   },
   "GameConsoleComponent": {},
   "ChildHierarchy": {

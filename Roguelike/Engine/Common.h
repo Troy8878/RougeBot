@@ -55,6 +55,8 @@
 #include "Game.h"
 #include "Texture.h"
 
+#include "mruby/class.h"
+
 #ifndef _DEBUG
 #define SHUT_UP_RESHARPER_THERE_IS_NO_WAY_THIS_FUNCTION_RETURNS_HERE(val) \
   __pragma(warning(push)) \

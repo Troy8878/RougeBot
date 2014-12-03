@@ -109,9 +109,9 @@ class PlayerControllerComponent < ComponentBase
     move *e
   end
 
-  ################################
-  # Stuffs Troy added for combat #
-  ################################
+  ####################################
+  # Stuffs Troy/Leo added for combat #
+  ####################################
 
   def swing_weapon(e)
 
@@ -120,7 +120,7 @@ class PlayerControllerComponent < ComponentBase
     return if @paused
     return if @logic_cooldown > 0
 
-    orientation = e[0]
+    orientation = e
 
     weapon = self.owner.inventory_component.inventory.equipment[:weapon]
     weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE

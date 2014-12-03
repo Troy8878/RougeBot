@@ -43,19 +43,27 @@ module ItemGenerate
     if result > 80
       data["damage"][0] = 6
       data["damage"][1] = 9
+      data["weaponType"] = Weapon::SPEAR_TYPE
+
       name = "Spear"
     elsif result > 50
       data["damage"][0] = 5
       data["damage"][1] = 10
+      data["weaponType"] = Weapon::SABER_TYPE
+
       name = "Saber"
     elsif result > 20
       data["damage"][0] = 4
       data["damage"][1] = 11
       data["durability"] -= 5
+      data["weaponType"] = Weapon::AXE_TYPE
+
       name = "Axe"
     else
       data["damage"][0] = 7
       data["damage"][1] = 11
+      data["weaponType"] = Weapon::DAGGER_TYPE
+
       name = "Dagger"
     end
 

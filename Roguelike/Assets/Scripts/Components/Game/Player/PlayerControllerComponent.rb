@@ -38,6 +38,7 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :fire, :fire
     self.register_event :update, :first_update
     self.register_event :attack, :attack
+    self.register_event :swing_weapon, :swing_weapon
 
     # Double-click should do it in either case
     # Double-click is the only way in touch mode
@@ -59,7 +60,7 @@ class PlayerControllerComponent < ComponentBase
   def move(x, y)
     return if @paused
 
-    unless can_move? x, y
+    unless can_move_more_than_one? x, y
       return if @blocked_reason != BLOCKED_BY_ACTOR
     end
 
@@ -112,8 +113,37 @@ class PlayerControllerComponent < ComponentBase
   # Stuffs Troy added for combat #
   ################################
 
-  def attack(e)
+  def swing_weapon(e)
+
+    puts "logic cooldown: #{@logic_cooldown}"
+
+    return if @paused
+    return if @logic_cooldown > 0
+
+    orientation = e[0]
+
+    weapon = self.owner.inventory_component.inventory.equipment[:weapon]
+    weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE
+    puts "Weapon type: #{weaponType.inspect}"
     
+    weaponType ||= Weapon::DAGGER_TYPE
+
+    attacks = Weapon::ATTACK_SQUARES[weaponType][orientation]
+    puts orientation
+    puts attacks
+
+    attacks.each do |atk|
+      attack atk
+    end
+
+    @logic_cooldown = 0.5
+    
+    actor_moved
+    yield_to_enemies
+  end
+
+  def attack(e)
+
     return if @paused
     return if @logic_cooldown > 0
 
@@ -123,12 +153,14 @@ class PlayerControllerComponent < ComponentBase
     # For now, don't attack empty tiles.
     # Once AoE classes are in effect we won't need to worry
 
-    cant_attack = can_move? x, y
+    cant_attack = can_hit? x, y
     return if @blocked_reason != BLOCKED_BY_ACTOR
     return if cant_attack
 
     # The actual attack logic.  Will be replaced with the AoE class
     self.owner.attack_component.do_attack @move_tile.actor
+
+
     @logic_cooldown = 0.5
     
     actor_moved

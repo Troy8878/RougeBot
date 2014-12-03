@@ -146,7 +146,7 @@ void Entity::HandleComponents(Events::EventMessage &e)
     component_handler handle;
   } handle_list[127];
   size_t handle_count = 0;
-
+  
   for (auto &handler : _events[e.EventId])
   {
     auto &item = handle_list[handle_count++];

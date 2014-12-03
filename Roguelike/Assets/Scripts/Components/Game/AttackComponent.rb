@@ -38,14 +38,9 @@ class AttackComponent < ComponentBase
     damage = item.damage
   end
 
-  def swing_melee_weapon(direction)
-    tile = current_tile
-
-  end
-
   def do_attack(target)
     return if target == owner
-
+    
     if owner.player_controller_component
       SLASH.play
     else
@@ -70,6 +65,10 @@ class AttackComponent < ComponentBase
     when :hit
       Event.raise_event :attack_hit, event_data
     end
+  end
+
+  def miss_attack
+    SLASH.play
   end
 
   def damage=(value)

@@ -40,10 +40,8 @@ class AttackComponent < ComponentBase
 
   def do_attack(target)
     return if target == owner
-    
-    if owner.player_controller_component
-      SLASH.play
-    else
+
+    if !owner.player_controller_component
       UGH.play
     end
 

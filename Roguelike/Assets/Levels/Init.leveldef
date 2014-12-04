@@ -1,6 +1,11 @@
 {
   "name": "Init",
   "components": {
-    "GoToSplash": {}
+    "GoToSplash": {},
+    "EvalOnEventComponent": {
+      "bindings": {
+        "level_load": "PLACEHOLDER_MUSIC = Sound.load 'Music/Creepy'; PLACEHOLDER_MUSIC.play"
+      }
+    }
   }
 }

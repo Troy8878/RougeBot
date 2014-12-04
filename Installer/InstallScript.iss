@@ -71,7 +71,7 @@ Source: .\REDIST\*; DestDir: {tmp}; Flags: ignoreversion
 ;   {group} is the start menu location that the game will install shortcuts to.
 ;   {commondesktop} is your Windows desktop directory.
 [Icons]
-Name: {group}\Roguebot; Filename: {app}\Roguebot.exe; WorkingDir: {app}; IconFilename: "{app}\Muffin.ico"
+Name: {group}\Roguebot; Filename: {app}\Game.exe; WorkingDir: {app}; IconFilename: "{app}\Robot.ico"
 Name: {group}\{cm:UninstallProgram,Roguebot}; Filename: {uninstallexe}
 Name: {commondesktop}\Roguebot; Filename: {app}\Game.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: "{app}\Robot.ico"
 

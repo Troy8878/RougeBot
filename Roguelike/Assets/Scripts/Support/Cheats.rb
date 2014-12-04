@@ -7,33 +7,21 @@
 
 class CheatState
   def initialize
-    @data = {}
-  end
-
-  def self.instance
-    @@instance
+    @data = {
+      god: :off
+    }
   end
 
   def god?
-    @data.include? :god && @data[:god] == :on
+    @data[:god] == :on
   end
 
   def god=(mode)
     @data[:god] = mode
   end
-
-  @@instance = CheatState.new
 end
 
-class Cheat
-  def god(mode)
-    CheatState.instance.god = mode
-  end
-end
-
-def enable_cheat_codes
-  CHEAT_INST = Cheat.new
-  def cheat
-    CHEAT_INST
-  end
+CHEAT_INST = CheatState.new
+def cheat
+  CHEAT_INST
 end

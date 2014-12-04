@@ -37,10 +37,10 @@ class DefenseComponent < ComponentBase
   end
 
   def be_attacked(damage)
-
     total_dmg = damage / Math.log(@armor + Math::E)
     total_dmg = total_dmg.to_i
     total_dmg = 1 if total_dmg < 1
+    total_dmg = 0 if owner.player_controller_component && cheat.god?
 
     @health -= total_dmg
 

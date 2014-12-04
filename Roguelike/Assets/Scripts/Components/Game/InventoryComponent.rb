@@ -25,7 +25,7 @@ class InventoryComponent < ComponentBase
       seq.delay 0
       5.times do
         seq.delay 0.1
-        seq.once { give_random_weapon 8 }
+        seq.once { give_random_weapon 1 }
       end
     else
       @inventory = Inventory.new

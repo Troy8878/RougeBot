@@ -31,7 +31,7 @@ class ParticleSystemComponent : public Component, public Drawable
 public:
   ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target,
     const math::Vector &scale, const math::Vector &rotation, const math::Vector &velocity,
-    const math::Vector &rotVel, float rate);
+    const math::Vector &rotVel, float rate, float fade);
   ~ParticleSystemComponent();
 
   void Initialize(Entity *owner, const std::string &name) override;
@@ -60,7 +60,7 @@ public:
   //void SetParticleRate(float rate);
 
   math::Vector scaleRange, rotationRange, velocityRange, rotVelRange;
-  float particleRate;
+  float particleRate, fadeTime;
   ParticleSystem system;
 
 private:

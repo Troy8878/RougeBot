@@ -33,20 +33,23 @@ static mrb_value mrb_particlesystem_get_scale(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_rotation(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_velocity(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_rotvel(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_particlesystem_get_particlerate(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_particlesystem_get_fadetime(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_set_scale(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_set_rotation(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_set_velocity(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_set_rotvel(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_set_particlerate(mrb_state *mrb, mrb_value self);
-static mrb_value mrb_particlesystem_get_particlerate(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_particlesystem_set_fadetime(mrb_state *mrb, mrb_value self);
+
 
 // ----------------------------------------------------------------------------
 
 ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target,
   const math::Vector &scale, const math::Vector &rotation, const math::Vector &velocity,
-  const math::Vector &rotVel, float rate)
+  const math::Vector &rotVel, float rate, float fade)
   : system(maxParticles), renderTarget(target), scaleRange(scale), rotationRange(rotation),
-  velocityRange(velocity), rotVelRange(rotVel), particleRate(rate)
+  velocityRange(velocity), rotVelRange(rotVel), particleRate(rate), fadeTime(fade)
 {
   system.model = GetUnitSquare();
   system.shader = RegisteredShaders["Textured"];
@@ -90,6 +93,7 @@ void ParticleSystemComponent::OnUpdate(Events::EventMessage &e)
     system.particleTransform.rotationRate = math::Vector{ 0, 0, random(generator, rotationRange.x, rotationRange.y), 0 };
     system.particleTransform.absoluteVelocity = math::Vector{ random(generator, velocityRange.x, velocityRange.y), random(generator, velocityRange.z, velocityRange.w), 0, 0 };
     system.particleTransform.rotationalVelocity = math::Vector{ random(generator, rotVelRange.z, rotVelRange.w), 0, random(generator, rotVelRange.x, rotVelRange.y), 0 };
+    system.particleTransform.fadeTime = fadeTime;
 
     system.SpawnParticle(Owner->Transform, 1);
     --tb;
@@ -133,7 +137,7 @@ Component *ParticleSystemComponentFactory::CreateObject(
   auto target = RenderGroup::Instance.GetSet(targetName);
 
   math::Vector scale, rotation, velocity, rotVel;
-  float rate;
+  float rate, fade;
 
   auto it = data.find("scaleRange");
   if (it != data.end())
@@ -165,7 +169,13 @@ Component *ParticleSystemComponentFactory::CreateObject(
   else
     rate = 10;
 
-  auto *comp = new(memory)ParticleSystemComponent(1000, target, scale, rotation, velocity, rotVel, rate);
+  it = data.find("fadeTime");
+  if (it != data.end())
+    fade = ParseFloat(it->second);
+  else
+    fade = 0.5;
+
+  auto *comp = new(memory)ParticleSystemComponent(1000, target, scale, rotation, velocity, rotVel, rate, fade);
 
   it = data.find("texture");
   if (it != data.end())
@@ -314,18 +324,21 @@ static void mrb_particlesystemcomponent_init(mrb_state *mrb, RClass *module, RCl
   mrb_define_method(mrb, particlesyst, "velocityRange", mrb_particlesystem_get_velocity, ARGS_NONE());
   mrb_define_method(mrb, particlesyst, "rotVelRange", mrb_particlesystem_get_rotvel, ARGS_NONE());
   mrb_define_method(mrb, particlesyst, "particleRate", mrb_particlesystem_get_particlerate, ARGS_NONE());
+  mrb_define_method(mrb, particlesyst, "fadeTime", mrb_particlesystem_get_fadetime, ARGS_NONE());
 
   mrb_define_method(mrb, particlesyst, "scaleRange=", mrb_particlesystem_set_scale, ARGS_REQ(1));
   mrb_define_method(mrb, particlesyst, "rotationRange=", mrb_particlesystem_set_rotation, ARGS_REQ(1));
   mrb_define_method(mrb, particlesyst, "velocityRange=", mrb_particlesystem_set_velocity, ARGS_REQ(1));
   mrb_define_method(mrb, particlesyst, "rotVelRange=", mrb_particlesystem_set_rotvel, ARGS_REQ(1));
   mrb_define_method(mrb, particlesyst, "particleRate=", mrb_particlesystem_set_particlerate, ARGS_REQ(1));
+  mrb_define_method(mrb, particlesyst, "fadeTime=", mrb_particlesystem_set_fadetime, ARGS_REQ(1));
 
   comp_add_property(mrb, particlesyst, "scaleRange", "vector");
   comp_add_property(mrb, particlesyst, "rotationRange", "vector");
   comp_add_property(mrb, particlesyst, "velocityRange", "vector");
   comp_add_property(mrb, particlesyst, "rotVelRange", "vector");
   comp_add_property(mrb, particlesyst, "particleRate", "float");
+  comp_add_property(mrb, particlesyst, "fadeTime", "float");
 }
 
 // ----------------------------------------------------------------------------
@@ -402,6 +415,12 @@ static mrb_value mrb_particlesystem_get_particlerate(mrb_state *mrb, mrb_value s
   return mrb_float_value(mrb, particlesyst->particleRate);
 }
 
+static mrb_value mrb_particlesystem_get_fadetime(mrb_state *mrb, mrb_value self)
+{
+  auto particlesyst = static_cast<ParticleSystemComponent *>(mrb_data_get_ptr(mrb, self, &mrb_particlesystemcomp_data_type));
+  return mrb_float_value(mrb, particlesyst->fadeTime);
+}
+
 // ----------------------------------------------------------------------------
 
 static mrb_value mrb_particlesystem_set_scale(mrb_state *mrb, mrb_value self)
@@ -460,5 +479,16 @@ static mrb_value mrb_particlesystem_set_particlerate(mrb_state *mrb, mrb_value s
   mrb_get_args(mrb, "f", &value);
 
   particlesyst->particleRate = static_cast<float>(value);
+  return mrb_float_value(mrb, value);
+}
+
+static mrb_value mrb_particlesystem_set_fadetime(mrb_state *mrb, mrb_value self)
+{
+  auto particlesyst = static_cast<ParticleSystemComponent *>(mrb_data_get_ptr(mrb, self, &mrb_particlesystemcomp_data_type));
+
+  mrb_float value;
+  mrb_get_args(mrb, "f", &value);
+
+  particlesyst->fadeTime = static_cast<float>(value);
   return mrb_float_value(mrb, value);
 }

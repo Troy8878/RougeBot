@@ -69,17 +69,51 @@
             {
               "name": "LeftCol",
               "components": {
-                "TransformComponent": {},
-                "TextureComponent": {},
+                "TransformComponent": {
+                  "scale": [2, 2.5],
+                  "position": [-1.1, 0]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/800:1000"]
+                },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
                 },
                 "TextComponent": {
-
+                  "texts": [""],
+                  "text_align": "trailing",
+                  "bg_color": "CornflowerBlue, 0.49",
+                  "font_size": 34
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
                     "level_load": "load_wall_of_text 'CreditsLeftCol.txt', owner"
+                  }
+                }
+              }
+            },
+            {
+              "name": "RightCol",
+              "components": {
+                "TransformComponent": {
+                  "scale": [2, 2.5],
+                  "position": [1.1, 0]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/800:1000"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": [""],
+                  "text_align": "leading",
+                  "bg_color": "CornflowerBlue, 0.49",
+                  "font_size": 34
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "level_load": "load_wall_of_text 'CreditsRightCol.txt', owner"
                   }
                 }
               }

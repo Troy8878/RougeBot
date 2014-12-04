@@ -136,10 +136,24 @@
                   }
                 },
                 {
-                  "name": "EnableConsole",
+                  "name": "Fullscreen",
                   "components": {
                     "TransformComponent": {
                       "position": [0, -2, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Fullscreen",
+                      "config_bind": "graphics_fullscreen"
+                    }
+                  }
+                },
+                {
+                  "name": "EnableConsole",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, -3, 0],
                       "scale": [0.95, 0.95, 0.95]
                     },
                     "CheckboxHelperComponent": {

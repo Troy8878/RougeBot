@@ -6,3 +6,7 @@ Technical Lead
 Lead Designer
 Systems Engineer
 Gameplay Architect
+
+
+FMOD Copyright © 2014 Firelight Technologies PTY.
+All Rights Reserved.

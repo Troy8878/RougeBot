@@ -195,7 +195,7 @@ static mrb_value mrb_confirm_destructive_action(mrb_state *mrb, mrb_value)
   auto mrbanswer = mrb_bool_value(answer);
 
   if (!mrb_nil_p(callback) && answer)
-    mrb_yield(mrb, callback, mrbanswer);
+    mrb_yield(mrb, callback, mrb_nil_value());
 
   return mrbanswer;
 }

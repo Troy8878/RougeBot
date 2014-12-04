@@ -133,12 +133,18 @@ public:
 
   IR_PROPERTY(HWND, Window);
 
+  bool GetFullscreen();
+  void SetFullscreen(bool value);
+
 private:
   explicit WindowDevice(const WindowCreationOptions &options);
   static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
   HWND InitializeWindow(const WindowCreationOptions &options);
   LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+  RECT pre_fullscreen_rect;
+  bool is_fullscreen;
 
   friend class GraphicsDevice;
 };

@@ -6,11 +6,12 @@
   },
   "ParticleSystemComponent": {
     "render_target": "TranslucentLayer",
-    "scaleRange": [0, 2, 0, 2],
-    "rotationRange": [0, 0, 0, 0],
-    "velocityRange": [-2, 2, -2, 2],
-    "rotVelRange": [-1, 1, -1, 1],
-    "particleRate": 100
+    "scaleRange": [0.5, 1, 0.5, 1],
+    "rotationRange": [-3, 3, 0, 0],
+    "velocityRange": [-1, 1, -1, 1],
+    "rotVelRange": [0, 0, 0, 0],
+    "particleRate": 100,
+    "texture": "PancakeFace.jpg"
   },
   "TextureComponent": {
     "textures": [

@@ -23,9 +23,11 @@ static void mrb_particlesystem_free(mrb_state *, void *)
 
 static mrb_data_type mrb_particlesystemcomp_data_type;
 
+template <typename Gen>
+static float random(Gen &generator, float min, float max);
+
 static void mrb_particlesystemcomponent_init(mrb_state *mrb, RClass *module, RClass *base);
 static mrb_value mrb_particlesystemcomponent_new(mrb_state *mrb, ParticleSystemComponent *comp);
-static float random(float min, float max);
 static mrb_value mrb_particlesystem_initialize(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_scale(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_rotation(mrb_state *mrb, mrb_value self);
@@ -77,19 +79,17 @@ void ParticleSystemComponent::OnUpdate(Events::EventMessage &e)
 {
   float dt = (float) e.GetData<Events::UpdateEvent>()->gameTime.Dt;
 
+  static std::random_device generator;
+
   static double tb = 0;
   tb += particleRate * dt;
   while (tb > 0)
   {
     //randomize particle
-    system.particleTransform.scaleRate = math::Vector{random(scaleRange.x, scaleRange.y), 0,
-      random(scaleRange.z, scaleRange.w), 0};
-    system.particleTransform.rotationRate = math::Vector{random(rotationRange.x, rotationRange.y), 0,
-      random(rotationRange.z, rotationRange.w), 0};
-    system.particleTransform.absoluteVelocity = math::Vector{random(velocityRange.x, velocityRange.y), 0,
-      random(velocityRange.z, velocityRange.w), 0};
-    system.particleTransform.rotationalVelocity = math::Vector{random(rotVelRange.x, rotVelRange.y), 0,
-      random(rotVelRange.z, rotVelRange.w), 0};
+    system.particleTransform.scaleRate = math::Vector{ random(generator, scaleRange.x, scaleRange.y), random(generator, scaleRange.z, scaleRange.w), 0, 0 };
+    system.particleTransform.rotationRate = math::Vector{ 0, 0, random(generator, rotationRange.x, rotationRange.y), 0 };
+    system.particleTransform.absoluteVelocity = math::Vector{ random(generator, velocityRange.x, velocityRange.y), random(generator, velocityRange.z, velocityRange.w), 0, 0 };
+    system.particleTransform.rotationalVelocity = math::Vector{ random(generator, rotVelRange.z, rotVelRange.w), 0, random(generator, rotVelRange.x, rotVelRange.y), 0 };
 
     system.SpawnParticle(Owner->Transform, 1);
     --tb;
@@ -145,7 +145,7 @@ Component *ParticleSystemComponentFactory::CreateObject(
   if (it != data.end())
     rotation = ParseVector(it->second);
   else
-    rotation = math::Vector{-1, 1, -1, 1};
+    rotation = math::Vector{-3, 3, 0, 0};
 
   it = data.find("velocityRange");
   if (it != data.end())
@@ -165,7 +165,11 @@ Component *ParticleSystemComponentFactory::CreateObject(
   else
     rate = 10;
 
-  auto *comp = new(memory) ParticleSystemComponent(1000, target, scale, rotation, velocity, rotVel, rate);
+  auto *comp = new(memory)ParticleSystemComponent(1000, target, scale, rotation, velocity, rotVel, rate);
+
+  it = data.find("texture");
+  if (it != data.end())
+    comp->system.texture = TextureManager::Instance.LoadTexture(it->second.as_string());
 
   return comp;
 }
@@ -349,14 +353,10 @@ mrb_value ParticleSystemComponent::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
-static float random(float min, float max)
+template <typename Gen>
+static float random(Gen &generator, float min, float max)
 {
-  // obtain a seed from the system clock:
-  unsigned seed = (unsigned) std::chrono::system_clock::now().time_since_epoch().count();
-
-  std::default_random_engine generator(seed);
   std::uniform_real_distribution<float> distribution(min, max);
-
   return distribution(generator);
 }
 

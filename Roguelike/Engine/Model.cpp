@@ -86,7 +86,7 @@ static ID3D11Buffer* CreateTintResource()
 
 // ----------------------------------------------------------------------------
 
-static void UpdateTint(ID3D11Buffer* buffer, const math::Vector& tint)
+void UpdateTint(ID3D11Buffer *buffer, const math::Vector &tint)
 {
   D3D11_MAPPED_SUBRESOURCE map;
   HRESULT hr;
@@ -118,9 +118,14 @@ Model::~Model()
 
 // ----------------------------------------------------------------------------
 
+ID3D11Buffer *tintRes = nullptr;
+
+// ----------------------------------------------------------------------------
+
 void XM_CALLCONV Model::Draw(DirectX::FXMMATRIX worldTransform) const
 {
-  static auto* tintRes = CreateTintResource();
+  if (!tintRes)
+    tintRes = CreateTintResource();
 
   shader->camera->worldMatrix = worldTransform;
 

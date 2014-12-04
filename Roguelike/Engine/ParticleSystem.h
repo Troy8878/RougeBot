@@ -25,6 +25,7 @@ public:
   Shader *shader;
   Model *model;
   Camera *camera;
+  Texture2D texture;
 
   struct ParticleTransform
   {
@@ -32,6 +33,7 @@ public:
     math::Vector rotationRate = {0, 0, 0, 0};
     math::Vector absoluteVelocity = {0, 0, 0, 0};
     math::Vector rotationalVelocity = {0, 0, 0, 0};
+    double fadeTime = 0.3;
   } particleTransform;
 
   bool SpawnParticle(DirectX::FXMMATRIX initial, double life);
@@ -42,6 +44,7 @@ public:
 private:
   struct Particle
   {
+    ParticleTransform transform;
     math::Matrix world;
     double life;
     bool inUse;

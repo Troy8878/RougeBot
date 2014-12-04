@@ -61,9 +61,9 @@ public:
 
   math::Vector scaleRange, rotationRange, velocityRange, rotVelRange;
   float particleRate;
+  ParticleSystem system;
 
 private:
-  ParticleSystem system;
   RenderSet *renderTarget = nullptr;
 
   static Model *GetUnitSquare();

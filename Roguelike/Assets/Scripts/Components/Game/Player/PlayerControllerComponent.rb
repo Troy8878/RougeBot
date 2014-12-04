@@ -1,6 +1,6 @@
 ##############################
 # PlayerControllerComponent.rb
-# Jake Robsahm
+# Jake Robsahm, Leonardo Saikali
 # Created 2014/09/05
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 ##############################
@@ -57,6 +57,14 @@ class PlayerControllerComponent < ComponentBase
     end
   end
 
+
+  MOVE_ORIENTATIONS = {
+    left: [-1, 0],
+    right: [1, 0],
+    up: [0, 1],
+    down: [0, -1]
+  }
+
   def move(x, y)
     return if @paused
 
@@ -65,7 +73,6 @@ class PlayerControllerComponent < ComponentBase
     end
 
     if @blocked_reason == BLOCKED_BY_ACTOR
-      self.owner.attack_component.do_attack @move_tile.actor
       @logic_cooldown = 0.5
     else
       @pos.x += x
@@ -115,8 +122,6 @@ class PlayerControllerComponent < ComponentBase
 
   def swing_weapon(e)
 
-    puts "logic cooldown: #{@logic_cooldown}"
-
     return if @paused
     return if @logic_cooldown > 0
 
@@ -124,8 +129,7 @@ class PlayerControllerComponent < ComponentBase
 
     weapon = self.owner.inventory_component.inventory.equipment[:weapon]
     weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE
-    puts "Weapon type: #{weaponType.inspect}"
-    
+
     weaponType ||= Weapon::DAGGER_TYPE
 
     attacks = Weapon::ATTACK_SQUARES[weaponType][orientation]
@@ -136,6 +140,9 @@ class PlayerControllerComponent < ComponentBase
       attack atk
     end
 
+    #Sound for attack
+    SLASH.play
+
     @logic_cooldown = 0.5
     
     actor_moved
@@ -143,9 +150,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def attack(e)
-
-    return if @paused
-    return if @logic_cooldown > 0
 
     x = e[0]
     y = e[1]
@@ -161,10 +165,6 @@ class PlayerControllerComponent < ComponentBase
     self.owner.attack_component.do_attack @move_tile.actor
 
 
-    @logic_cooldown = 0.5
-    
-    actor_moved
-    yield_to_enemies
   end
 
   def fire(e)

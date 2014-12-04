@@ -1,0 +1,48 @@
+{
+  "TransformComponent": {
+    "position": [1, -1.5, 0],
+    "scale": [1.2, 0.4]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer",
+    "tint": "CornflowerBlue, 0.4"
+  },
+  "ButtonComponent": {
+    "render_target": "HUDLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "Game.switch_level 'Credits'",
+      "mouse_leave": "owner.children[0].text_component.text_color = 'Black'",
+      "mouse_enter": "owner.children[0].text_component.text_color = 'White'",
+    }
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.01],
+            "scale": [0.833333333333, 1, 1]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/500:200"]
+          },
+          "SpriteComponent": {
+            "render_target": "HUDLayer",
+          },
+          "TextComponent": {
+            "texts": ["\uE15C Credits"],
+            "font": "Segoe UI Symbol",
+            "font_size": 96,
+            "bg_color": "#7F7F7F6F",
+            "text_align": "leading",
+          }
+        }
+      }
+    ]
+  }
+}

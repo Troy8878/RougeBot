@@ -6,19 +6,33 @@
 #######################
 
 class Graphics
+
+  HOOKS = [
+    :vsync,
+    :fullscreen
+  ]
+
   def self.load_config
     Config.load
-    Graphics.vsync = Config[:graphics_vsync]
+
+    HOOKS.each do |hook|
+      Graphics.send(:"#{hook}=", Config[:"graphics_#{hook}"])
+    end
   end
 
   def self.save_config
-    Config[:graphics_vsync] = Graphics.vsync
+    HOOKS.each do |hook|
+      Config.send(:[]=, :"graphics_#{hook}", Graphics.send(hook))
+    end
+
     Config.save
   end
-end
 
-Config.hook(:graphics_vsync) do |value|
-  Graphics.vsync = value
-end
+  HOOKS.each do |hook|
+    Config.hook(:"graphics_#{hook}") do |value|
+      Graphics.send(:"#{hook}=", value)
+    end
 
-Graphics.vsync = Config[:graphics_vsync] || false
+    Graphics.send(:"#{hook}=", Config[:"graphics_#{hook}"] || Graphics.send(hook))
+  end
+end

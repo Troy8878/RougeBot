@@ -75,34 +75,39 @@ public:
   void InitWMHandlers()
   {
     // Keep the window no less wide than a square
-    SetProcHandler(WM_GETMINMAXINFO, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
-                                   {
-                                     MINMAXINFO &info = *reinterpret_cast<LPMINMAXINFO>(lp);
-                                     info.ptMinTrackSize.y = 480;
-                                     info.ptMinTrackSize.x = 480;
-                                   });
-    SetProcHandler(WM_SIZING, [this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &res)
-                            {
-                              RECT &rect = *reinterpret_cast<LPRECT>(lp);
+    SetProcHandlers(
+      [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
+      {
+        MINMAXINFO &info = *reinterpret_cast<LPMINMAXINFO>(lp);
+        info.ptMinTrackSize.y = 480;
+        info.ptMinTrackSize.x = 480;
+      }, WM_GETMINMAXINFO
+    );
 
-                              auto minwidth = LONG((rect.bottom - rect.top) * (4.0 / 3.0));
-                              if (rect.right - rect.left < minwidth)
-                              {
-                                // Squarify while resizing from right
-                                if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
-                                  wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
-                                {
-                                  rect.right = rect.left + minwidth;
-                                  res = TRUE;
-                                }
-                                // Squarify while resizing from left
-                                else if (wp == WMSZ_LEFT || wp == WMSZ_TOPLEFT || wp == WMSZ_BOTTOMLEFT)
-                                {
-                                  rect.left = rect.right - minwidth;
-                                  res = TRUE;
-                                }
-                              }
-                            });
+    SetProcHandlers(
+      [this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &res)
+      {
+        RECT &rect = *reinterpret_cast<LPRECT>(lp);
+
+        auto minwidth = LONG((rect.bottom - rect.top) * (4.0 / 3.0));
+        if (rect.right - rect.left < minwidth)
+        {
+          // Squarify while resizing from right
+          if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
+              wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
+          {
+            rect.right = rect.left + minwidth;
+            res = TRUE;
+          }
+          // Squarify while resizing from left
+          else if (wp == WMSZ_LEFT || wp == WMSZ_TOPLEFT || wp == WMSZ_BOTTOMLEFT)
+          {
+            rect.left = rect.right - minwidth;
+            res = TRUE;
+          }
+        }
+      }, WM_SIZING
+    );
   }
 
   void OnUpdate(Events::EventMessage &e)

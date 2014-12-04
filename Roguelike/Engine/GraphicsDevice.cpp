@@ -73,7 +73,7 @@ void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
   wndpatch = &patch;
   patchContinue = true;
 
-  // Soon™ we will take a screenshot of the game state
+  // SoonEwe will take a screenshot of the game state
   // and overlay the CODA over that. But for now, sadfaec for this
 
   auto &time = GetGame()->_gameTime;
@@ -109,11 +109,12 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
   WNDCLASSEX wndc = {sizeof(wndc)};
   wndc.cbWndExtra = sizeof(WindowDevice *);
-  wndc.style = CS_DBLCLKS;
+  wndc.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
   wndc.hInstance = options.hInstance;
   wndc.lpfnWndProc = StaticWindowProc;
   wndc.lpszClassName = className.c_str();
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
+  wndc.hCursor = LoadCursor(nullptr, IDC_ARROW);
   RegisterClassEx(&wndc);
 
 #pragma region Fix the width and height for the client rect
@@ -131,7 +132,8 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
 #pragma endregion
 
-  HWND window = CreateWindow(wndc.lpszClassName,
+  HWND window = CreateWindow(
+    wndc.lpszClassName,
     options.gameTitle.c_str(),
     WS_OVERLAPPEDWINDOW,
     CW_USEDEFAULT, CW_USEDEFAULT,
@@ -141,6 +143,8 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
   ShowWindow(window, SW_SHOWNORMAL);
   UpdateWindow(window);
+
+  is_fullscreen = false;
 
   return window;
 }
@@ -217,7 +221,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 void WindowDevice::ProcessMessages()
 {
   MSG message;
-  while (PeekMessage(&message, Window, 0, 0, TRUE))
+  while (PeekMessage(&message, Window, 0, 0, PM_REMOVE))
   {
     TranslateMessage(&message);
     DispatchMessage(&message);
@@ -684,6 +688,46 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 HRESULT GraphicsDevice::D2DData::EndDraw()
 {
   return DeviceContext->EndDraw();
+}
+
+// ----------------------------------------------------------------------------
+
+bool WindowDevice::GetFullscreen()
+{
+  return is_fullscreen;
+}
+
+void WindowDevice::SetFullscreen(bool value)
+{
+  if (is_fullscreen == value)
+    return;
+  is_fullscreen = value;
+
+  if (is_fullscreen)
+  {
+    HMONITOR hmon = MonitorFromWindow(Window, 0);
+    MONITORINFO mi = { sizeof(mi) };
+    GetMonitorInfo(hmon, &mi);
+
+    GetWindowRect(Window, &pre_fullscreen_rect);
+    SetWindowLong(Window, GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_SYSMENU);
+    SetWindowPos(Window, HWND_TOP,
+                 mi.rcMonitor.left,
+                 mi.rcMonitor.top,
+                 mi.rcMonitor.right - mi.rcMonitor.left,
+                 mi.rcMonitor.bottom - mi.rcMonitor.top, 
+                 SWP_SHOWWINDOW);
+  }
+  else
+  {
+    SetWindowLong(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+    SetWindowPos(Window, HWND_TOP,
+                 pre_fullscreen_rect.left,
+                 pre_fullscreen_rect.top,
+                 pre_fullscreen_rect.right - pre_fullscreen_rect.left,
+                 pre_fullscreen_rect.bottom - pre_fullscreen_rect.top,
+                 SWP_SHOWWINDOW);
+  }
 }
 
 // ----------------------------------------------------------------------------

@@ -182,3 +182,6 @@ last_cloc_report.yml
 
 Roguelike/performance_data.txt
 Roguelike/Roguelike.sln.ide/*
+Installer/GAMEDIRECTORY/*
+
+Installer/INSTALLER/Roguebot_Setup.exe

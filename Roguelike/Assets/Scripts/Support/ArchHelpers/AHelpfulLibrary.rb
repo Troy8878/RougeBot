@@ -135,3 +135,8 @@ class Hash
     end
   end
 end
+
+def load_wall_of_text(asset, entity)
+  asset = Asset.load 'WallsOfText', asset
+  entity.text_component.texts[0] = asset.read_text
+end

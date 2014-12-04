@@ -8,8 +8,16 @@
 Config.load_defaults do
 
   Config[:touch_mode] = false
-  Config[:graphics_vsync] = true
   Config[:console_enabled] = false
+
+  ######################
+  # Graphics
+
+  Config[:graphics_vsync] = true
+  Config[:graphics_fullscreen] = true
+
+  ######################
+  # Key Bindings
 
   Config[:keybind_actions] = {}
   Config[:key_bindings] = {}

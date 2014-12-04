@@ -1,5 +1,5 @@
 /*********************************
- * fmod.cpp
+ * SoundSystem.cpp
  * Troy
  * Created 2014/09/26
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved

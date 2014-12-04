@@ -37,6 +37,7 @@ bool ParticleSystem::SpawnParticle(DirectX::FXMMATRIX initial, double life)
     return false;
 
   auto &particle = *freeParticle;
+  particle.transform = particleTransform;
   particle.world = initial;
   particle.life = life;
   particle.inUse = true;
@@ -54,13 +55,6 @@ void ParticleSystem::Update(float dt)
 {
   using namespace DirectX;
 
-  XMMATRIX suffixTransform =
-    XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationalVelocity * dt) *
-    XMMatrixTranslationFromVector(particleTransform.absoluteVelocity * dt);
-  XMMATRIX prefixTransform =
-    XMMatrixScalingFromVector(g_XMOne + particleTransform.scaleRate * dt) *
-    XMMatrixRotationRollPitchYawFromVector(particleTransform.rotationRate * dt);
-
   size_t iterated = 0;
   for (auto &particle : array_iterator(particles, particleCount))
   {
@@ -69,6 +63,13 @@ void ParticleSystem::Update(float dt)
 
     if (++iterated > activeParticles)
       break;
+
+    XMMATRIX suffixTransform =
+      XMMatrixRotationRollPitchYawFromVector(particle.transform.rotationalVelocity * dt) *
+      XMMatrixTranslationFromVector(particle.transform.absoluteVelocity * dt);
+    XMMATRIX prefixTransform =
+      XMMatrixScalingFromVector(g_XMOne + particle.transform.scaleRate * dt) *
+      XMMatrixRotationRollPitchYawFromVector(particle.transform.rotationRate * dt);
 
     particle.life -= dt;
     particle.world = prefixTransform * particle.world * suffixTransform;
@@ -80,8 +81,13 @@ void ParticleSystem::Update(float dt)
 
 // ----------------------------------------------------------------------------
 
+void UpdateTint(ID3D11Buffer *buffer, const math::Vector &tint);
+extern ID3D11Buffer *tintRes;
+
 void ParticleSystem::Draw()
 {
+  model->texture = texture;
+
   // I know it's copied from Model::Draw and Shader::Draw,
   // but I need to improve the performance
   // and only push this stuff once per particle system
@@ -146,6 +152,14 @@ void ParticleSystem::DrawParticle(const Particle &particle,
   mCamera->projectionMatrix = proj;
 
   context->Unmap(shader->cameraBuffer, 0);
+
+  math::Vector tint = { 1, 1, 1, 1 };
+
+  if (particle.life < particle.transform.fadeTime)
+    tint.w = tint.w * static_cast<float>(particle.life / particle.transform.fadeTime / 2 + 0.5);
+
+  UpdateTint(tintRes, tint);
+  context->PSSetConstantBuffers(0, 1, &tintRes);
 
   context->DrawIndexed(model->GetIC(), 0, 0);
 }

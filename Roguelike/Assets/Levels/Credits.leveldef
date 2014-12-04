@@ -1,0 +1,192 @@
+{
+  "name": "NAME ME!",
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
+        },
+        {
+          "name": "TranslucentLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "TranslucentLayer",
+              "layer": 2
+            }
+          }
+        },
+        {
+          "name": "HUDLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "HUDLayer",
+              "layer": 5000
+            }
+          }
+        },
+        {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "scale": [0.3, 0.3, 0.3, 1],
+              "position": [0, 0, 1]
+            }
+          },
+          "children": [
+            {
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "Back",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.4, 1, 0],
+                  "scale": [0.2, 0.2, 0.2]
+                },
+                "ButtonHelperComponent": {
+                  "render_target": "HUDLayer",
+                  "text": "\uE112",
+                  "width": 1,
+                  "text_align": "center"
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "button_clicked": "Game.switch_level 'MainMenu'",
+                  }
+                }
+              },
+            },
+            {
+              "name": "LeftCol",
+              "components": {
+                "TransformComponent": {
+                  "scale": [1.5, 2.5],
+                  "position": [-0.8, 0.3]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/600:1000"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": [""],
+                  "text_align": "trailing",
+                  "bg_color": "CornflowerBlue, 0.49",
+                  "font_size": 34
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "level_load": "load_wall_of_text 'CreditsLeftCol.txt', owner"
+                  }
+                }
+              }
+            },
+            {
+              "name": "RightCol",
+              "components": {
+                "TransformComponent": {
+                  "scale": [1.5, 2.5],
+                  "position": [0.8, 0.3]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/600:1000"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": [""],
+                  "text_align": "leading",
+                  "bg_color": "CornflowerBlue, 0.49",
+                  "font_size": 34
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "level_load": "load_wall_of_text 'CreditsRightCol.txt', owner"
+                  }
+                }
+              }
+            },
+            {
+              "name": "FMODLogo",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1, -0.75],
+                  "scale": [1, 0.34]
+                },
+                "TextureComponent": {
+                  "textures": ["Logos/fmod_logo.png"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                }
+              }
+            },
+            {
+              "name": "mrubyLogo",
+              "components": {
+                "TransformComponent": {
+                  "position": [1, -0.95],
+                  "scale": [0.9, 0.9]
+                },
+                "TextureComponent": {
+                  "textures": ["Logos/mruby_logo.png"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                }
+              }
+            },
+            {
+              "name": "BG",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, 0, 1],
+                  "scale": [10, 10, 1]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/NULL"]
+                },
+                "SpriteComponent": {
+                  "render_target": "WorldLayer",
+                  "tint": "CornflowerBlue, 0.6"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

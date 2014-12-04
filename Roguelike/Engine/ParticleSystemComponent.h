@@ -29,12 +29,13 @@ class ParticleSystemComponentFactory;
 class ParticleSystemComponent : public Component, public Drawable
 {
 public:
-  ParticleSystemComponent(size_t maxParticles, RenderSet *target, Ranges &scale, Ranges &rotation,
-                          Ranges &velocity, Ranges &rotVel, float rate);
+  ParticleSystemComponent::ParticleSystemComponent(size_t maxParticles, RenderSet *target,
+    const math::Vector &scale, const math::Vector &rotation, const math::Vector &velocity,
+    const math::Vector &rotVel, float rate, float fade);
   ~ParticleSystemComponent();
 
   void Initialize(Entity *owner, const std::string &name) override;
-  void OnUpdate(Events::EventMessage &);
+  void OnUpdate(Events::EventMessage &e);
 
   void Draw() override;
 
@@ -47,21 +48,23 @@ public:
 
   static ParticleSystemComponentFactory factory;
 
-  float GetScale(int index);
-  float GetRotation(int index);
-  float GetVelocity(int index);
-  float GetRotationVelocity(int index);
-  void SetScale(float Xmin, float Xmax, float Ymin, float Ymax);
-  void SetRotation(float Xmin, float Xmax, float Ymin, float Ymax);
-  void SetVelocity(float Xmin, float Xmax, float Ymin, float Ymax);
-  void SetRotationVelocity(float Xmin, float Xmax, float Ymin, float Ymax);
+  //float GetScale(int index);
+  //float GetRotation(int index);
+  //float GetVelocity(int index);
+  //float GetRotationVelocity(int index);
+  //float GetParticleRate();
+  //void SetScale(math::Vector ranges);
+  //void SetRotation(math::Vector ranges);
+  //void SetVelocity(math::Vector ranges);
+  //void SetRotationVelocity(math::Vector ranges);
+  //void SetParticleRate(float rate);
+
+  math::Vector scaleRange, rotationRange, velocityRange, rotVelRange;
+  float particleRate, fadeTime;
+  ParticleSystem system;
 
 private:
-  ParticleSystem system;
   RenderSet *renderTarget = nullptr;
-
-  struct Ranges scaleRange, rotationRange, velocityRange, rotVelRange;
-  float ParticleRate;
 
   static Model *GetUnitSquare();
 };
@@ -83,7 +86,7 @@ public:
 private:
   BucketAllocator allocator;
 
-  Ranges ParseRanges(json::value jv);
+  math::Vector ParseVector(json::value jv);
   float ParseFloat(json::value jv);
 };
 

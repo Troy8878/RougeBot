@@ -62,7 +62,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; The game directoy is exaclty what you want your install directory in program files to look like
 Source: .\GAMEDIRECTORY\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Include the redistributable programs and install them to the temp directory
-;Source: .\REDIST\*; DestDir: {tmp}; Flags: ignoreversion
+Source: .\REDIST\*; DestDir: {tmp}; Flags: ignoreversion
 
 ; This is the list of shortcuts that the installer will setup for you.
 ; Of note, this will create the uninstaller automatically.
@@ -73,7 +73,7 @@ Source: .\GAMEDIRECTORY\*; DestDir: {app}; Flags: ignoreversion recursesubdirs c
 [Icons]
 Name: {group}\Roguebot; Filename: {app}\Roguebot.exe; WorkingDir: {app}; IconFilename: "{app}\Muffin.ico"
 Name: {group}\{cm:UninstallProgram,Roguebot}; Filename: {uninstallexe}
-Name: {commondesktop}\Roguebot; Filename: {app}\Roguebot.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: "{app}\Muffin.ico"
+Name: {commondesktop}\Roguebot; Filename: {app}\Game.exe; Tasks: desktopicon; WorkingDir: {app}; IconFilename: "{app}\Robot.ico"
 
 ; List of items to execute in the installer.
 ; Note that this will run all executables in their silent versions as required by the TCRs.
@@ -81,6 +81,5 @@ Name: {commondesktop}\Roguebot; Filename: {app}\Roguebot.exe; Tasks: desktopicon
 ; The last item being run is the installer option to automatically launch the game after
 ;   the installer exits as required by the TCRs.
 [Run]
-;Filename: {tmp}\vcredist_2008_x86.exe; Parameters: /q; StatusMsg: Installing Visual C++ 2008 Redistributable...
-;Filename: {tmp}\dxwebsetup.exe; Parameters: /q; StatusMsg: Installing DirectX...
-Filename: {app}\Roguebot; Description: {cm:LaunchProgram,Roguebot}; Flags: nowait postinstall skipifsilent
+Filename: {tmp}\dxwebsetup.exe; Parameters: /q; StatusMsg: Installing DirectX...
+Filename: {app}\Game.exe; Description: {cm:LaunchProgram,Roguebot}; Flags: nowait postinstall skipifsilent

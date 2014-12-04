@@ -4,6 +4,14 @@
     "position": [1, 0.25, 1],
     "scale": [0.8, 0.8, 0.8]
   },
+  "ParticleSystemComponent": {
+    "render_target": "TranslucentLayer",
+    "scaleRange": [0, 2, 0, 2],
+    "rotationRange": [0, 0, 0, 0],
+    "velocityRange": [-2, 2, -2, 2],
+    "rotVelRange": [-1, 1, -1, 1],
+    "particleRate": 100
+  },
   "TextureComponent": {
     "textures": [
       "Robot.png",

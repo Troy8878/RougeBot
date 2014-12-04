@@ -151,7 +151,7 @@ Component *ParticleSystemComponentFactory::CreateObject(
   if (it != data.end())
     velocity = ParseVector(it->second);
   else
-    velocity = math::Vector{0, 1, 0, 1};
+    velocity = math::Vector{-1, 1, -1, 1};
 
   it = data.find("rotVelRange");
   if (it != data.end())
@@ -459,6 +459,6 @@ static mrb_value mrb_particlesystem_set_particlerate(mrb_state *mrb, mrb_value s
   mrb_float value;
   mrb_get_args(mrb, "f", &value);
 
-  particlesyst->particleRate = value;
+  particlesyst->particleRate = static_cast<float>(value);
   return mrb_float_value(mrb, value);
 }

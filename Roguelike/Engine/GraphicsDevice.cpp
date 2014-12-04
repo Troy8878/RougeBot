@@ -73,7 +73,7 @@ void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
   wndpatch = &patch;
   patchContinue = true;
 
-  // Soon™ we will take a screenshot of the game state
+  // SoonEwe will take a screenshot of the game state
   // and overlay the CODA over that. But for now, sadfaec for this
 
   auto &time = GetGame()->_gameTime;

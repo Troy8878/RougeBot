@@ -67,14 +67,34 @@
               "archetype": "HUD/Console/Console"
             },
             {
+              "name": "Back",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.4, 1, 0],
+                  "scale": [0.2, 0.2, 0.2]
+                },
+                "ButtonHelperComponent": {
+                  "render_target": "HUDLayer",
+                  "text": "\uE112",
+                  "width": 1,
+                  "text_align": "center"
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "button_clicked": "Game.switch_level 'MainMenu'",
+                  }
+                }
+              },
+            },
+            {
               "name": "LeftCol",
               "components": {
                 "TransformComponent": {
-                  "scale": [2, 2.5],
-                  "position": [-1.1, 0]
+                  "scale": [1.5, 2.5],
+                  "position": [-0.8, 0.3]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/800:1000"]
+                  "textures": ["SPECIAL/SURFACE/600:1000"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
@@ -96,11 +116,11 @@
               "name": "RightCol",
               "components": {
                 "TransformComponent": {
-                  "scale": [2, 2.5],
-                  "position": [1.1, 0]
+                  "scale": [1.5, 2.5],
+                  "position": [0.8, 0.3]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/800:1000"]
+                  "textures": ["SPECIAL/SURFACE/600:1000"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
@@ -115,6 +135,36 @@
                   "bindings": {
                     "level_load": "load_wall_of_text 'CreditsRightCol.txt', owner"
                   }
+                }
+              }
+            },
+            {
+              "name": "FMODLogo",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1, -0.75],
+                  "scale": [1, 0.34]
+                },
+                "TextureComponent": {
+                  "textures": ["Logos/fmod_logo.png"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                }
+              }
+            },
+            {
+              "name": "mrubyLogo",
+              "components": {
+                "TransformComponent": {
+                  "position": [1, -0.95],
+                  "scale": [0.9, 0.9]
+                },
+                "TextureComponent": {
+                  "textures": ["Logos/mruby_logo.png"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
                 }
               }
             },

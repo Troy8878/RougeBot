@@ -35,7 +35,7 @@
             "render_target": "HUDLayer",
           },
           "TextComponent": {
-            "texts": ["\uE133 Options"],
+            "texts": ["\uE15E Options"],
             "font": "Segoe UI Symbol",
             "font_size": 96,
             "bg_color": "#7F7F7F6F",

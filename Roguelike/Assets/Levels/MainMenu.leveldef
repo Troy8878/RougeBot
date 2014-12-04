@@ -97,7 +97,11 @@
                 {
                   "name": "Quit",
                   "archetype": "Menu/Quit"
-                }
+                },
+                {
+                  "name": "Credits",
+                  "archetype": "Menu/Credits"
+                },
               ]
             },
             {

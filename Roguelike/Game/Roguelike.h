@@ -108,15 +108,6 @@ public:
         }
       }, WM_SIZING
     );
-
-    SetProcHandlers(
-      [this](HWND, UINT, WPARAM, LPARAM, LRESULT &res)
-      {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-        res = TRUE;
-
-      }, WM_SETCURSOR
-    );
   }
 
   void OnUpdate(Events::EventMessage &e)

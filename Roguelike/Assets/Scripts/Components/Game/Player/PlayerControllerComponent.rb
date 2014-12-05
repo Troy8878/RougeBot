@@ -47,6 +47,7 @@ class PlayerControllerComponent < ComponentBase
 
     self.register_event :mouse_move, :mouse_move
     self.register_event :on_pause, :on_pause
+    self.register_event :player_use, :player_use
   end
 
   def on_pause(val)
@@ -57,6 +58,19 @@ class PlayerControllerComponent < ComponentBase
     end
   end
 
+  def player_use(e)
+    # Check if the player is on the stairs
+    if @pos.near? STAIR_POSITION, 0.5
+      # Make sure we aren't on the last floor already.
+      if GAME_STATE[:floor] == $DungeonLength
+        Game.switch_level "Victory"
+      # Otherwise, to the next floor!
+      else
+        GAME_STATE[:floor] += 1
+        Game.reload_level
+      end
+    end
+  end
 
   MOVE_ORIENTATIONS = {
     left: [-1, 0],
@@ -84,16 +98,19 @@ class PlayerControllerComponent < ComponentBase
 
     yield_to_enemies
 
-    if enemies_be_ded?
-      seq = owner.action_sequence :victory!
-      seq.delay 5
-      seq.once do
-        next unless enemies_be_ded?
-        # TODO: Win Condition
-        puts "Enemies ded"
-        Game.switch_level 'MainMenu'
-      end
+    if @pos.near? STAIR_POSITION, 0.5
+      display_down
+    else
+      hide_down
     end
+  end
+
+  def display_down
+    #TODO Show that the player can go down stairs
+  end
+
+  def hide_down
+    #TODO Show that the player can't go down stairs
   end
 
   def enemies_be_ded?

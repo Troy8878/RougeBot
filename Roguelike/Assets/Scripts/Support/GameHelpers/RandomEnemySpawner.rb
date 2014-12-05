@@ -25,7 +25,7 @@ module Enemy
     end
 
     # The world is full D:
-    return nil
+    return floor[0][0]
   end
 
   def self.spawn(type)
@@ -34,7 +34,7 @@ module Enemy
     slot = Enemy.find_empty_slot floor
     return if slot.nil?
 
-    find_entity(0).create_child(
+    enemy = find_entity(0).create_child(
       archetype: type,
       components: {
         "PositionComponent" => {
@@ -42,5 +42,7 @@ module Enemy
         }
       }
     )
+
+    enemy.defense_component.health *= GAME_STATE[:floor]
   end
 end

@@ -98,10 +98,12 @@ Component* PositionComponentFactory::CreateObject(
   auto &modeString = data["mode"].as_string();
   if (modeString == "jump")
     component->Mode = PositionComponent::MovementMode::Jump;
-  if (modeString == "linear")
+  else if (modeString == "linear")
     component->Mode = PositionComponent::MovementMode::Linear;
-  if (modeString == "exponential")
+  else if (modeString == "exponential")
     component->Mode = PositionComponent::MovementMode::Exponential;
+  else
+    component->Mode = PositionComponent::MovementMode::Jump;
 
   // Get the initial position
   component->Position = JsonToColor(data["position"]);

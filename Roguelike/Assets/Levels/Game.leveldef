@@ -170,5 +170,19 @@
       "name": "TileCursor",
       "archetype": "TileCursor"
     },
+    {
+      "name": "Stairs",
+      "components": {
+        "TransformComponent": {},
+        "PositionComponent": {},
+        "StairComponent": {},
+        "TextureComponent": {
+          "textures": ["Stairs.png"]
+        },
+        "SpriteComponent": {
+          "render_target": "WorldLayer"
+        }
+      }
+    },
   ]
 }

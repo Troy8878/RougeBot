@@ -78,6 +78,9 @@ class DefenseComponent < ComponentBase
 
   def notify_death
     return unless self.owner.parent
+
+    drop_random_weapon
+
     transient = self.owner.parent.create_child(
       components: {
         "TransformComponent" => self.owner.transform_component.dup_for_hash
@@ -89,6 +92,12 @@ class DefenseComponent < ComponentBase
     message.display transient
 
     owner.raise_event :actor_death, self.owner
+  end
+
+  def drop_random_weapon
+    tile = current_tile
+    weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
+    tile.drop_item weap
   end
 
   def heal(amount)

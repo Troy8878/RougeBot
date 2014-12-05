@@ -7,7 +7,7 @@
 
 class MapTile
   attr_reader :x, :y, :type_id, :item
-  attr_accessor :actor, :projectile
+  attr_accessor :actor, :projectile, :item_entity
 
   TYPE_DATA = {
     0 => {
@@ -36,9 +36,7 @@ class MapTile
   end
 
   def item=(val)
-    @item.picked_up if @item
     @item = val
-    @item.put_down self if @item
   end
 
   def item?
@@ -51,5 +49,26 @@ class MapTile
 
   def projectile?
     !@projectile.nil?
+  end
+
+  def drop_item(ditem)
+    if self.item?
+      pickup_item
+    end
+
+    self.item = ditem
+    view = ditem.view.create_entity
+    view.transform_component.position.x = self.x
+    view.transform_component.position.y = current_floor.length - 1 - self.y
+    self.item_entity = view
+  end
+
+  def pickup_item
+    self.item_entity.zombify!
+    self.item_entity = nil
+
+    ditem = self.item
+    self.item = nil
+    ditem
   end
 end

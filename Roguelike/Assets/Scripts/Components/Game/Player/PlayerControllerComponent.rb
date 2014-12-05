@@ -69,6 +69,12 @@ class PlayerControllerComponent < ComponentBase
         GAME_STATE[:floor] += 1
         Game.reload_level
       end
+      return
+    end
+
+    tile = current_tile
+    if tile.item?
+      PLAYER_INVENTORY.pickup tile.pickup_item
     end
   end
 

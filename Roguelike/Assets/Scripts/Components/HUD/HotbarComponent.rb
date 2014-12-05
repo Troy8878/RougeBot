@@ -103,6 +103,8 @@ class HotbarComponent < ComponentBase
 
   def click_equip(e)
     owner.parent.raise_event :quick_equip, @inv_slot
+
+    Event.raise_event :player_drop
   end
 
   register_component "HotbarComponent"

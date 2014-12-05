@@ -70,24 +70,20 @@ class Weapon < Item
     end
 
     WEAPON_GLOWS = {
-      "Flame"       => Vector.new(1.0, 0.6,  0.3, 1.0),
-      "Exploding"   => Vector.new(1.0, 1.0,  0.0, 1.0),
-      "Zapping"     => Vector.new(0.0, 0.76, 1.0, 1.0),
-      "Freezing"    => Vector.new(1.0, 1.0,  1.0, 1.0),
-      "Radioactive" => Vector.new(0.0, 1.0,  0.0, 1.0)
+      "Flame"       => 'Weapons/Elements/Flame.png',
+      "Exploding"   => 'Weapons/Elements/Exploding.png',
+      "Zapping"     => 'Weapons/Elements/Zapping.png',
+      "Freezing"    => 'Weapons/Elements/Freezing.png',
+      "Radioactive" => 'Weapons/Elements/Radioactive.png'
     }
 
     def mod_element(base_view, value)
       return unless WEAPON_GLOWS.include? value
 
       glow = base_view.create_child(archetype: "Items/WeaponGlow")
-      glow.sprite_component.tint = WEAPON_GLOWS[value]
 
-      if value == "Zapping"
-        glow.texture_component[0] = Texture.load 'Weapons/Zapping.png'
-        glow.sprite_component.tint = Vector.one
-        glow.transform_component.scale.mul 0.6
-      end
+      glow.texture_component[0] = Texture.load WEAPON_GLOWS[value]
+      glow.transform_component.scale.mul 0.6
     end
   end
 end

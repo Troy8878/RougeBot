@@ -119,6 +119,8 @@ module ItemGenerate
       data["attributes"] << ItemAttribute.new(:material, "Asbestos")
     elsif result > 24
       name = "Iron " + name
+
+      data["attributes"] << ItemAttribute.new(:material, "Iron")
     elsif result > 11
       name = "Plastic " + name
       data["durability"] = data["durability"] + 20

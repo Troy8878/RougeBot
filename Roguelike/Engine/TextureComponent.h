@@ -28,6 +28,7 @@ public:
 
   void AddTexture(json::value definition);
   void RemoveTexture(size_t index);
+  void ReplaceTexture(size_t index, const Texture2D &replacement);
 
   mrb_value GetRubyWrapper() override;
 

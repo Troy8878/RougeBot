@@ -47,6 +47,13 @@ void TextureComponent::RemoveTexture(size_t index)
 
 // ----------------------------------------------------------------------------
 
+void TextureComponent::ReplaceTexture(size_t index, const Texture2D& replacement)
+{
+  textures[index] = replacement;
+}
+
+// ----------------------------------------------------------------------------
+
 TextureComponentFactory::TextureComponentFactory()
   : allocator(sizeof(TextureComponent))
 {
@@ -86,6 +93,7 @@ static void mrb_texture_free(mrb_state *, void *)
 }
 
 static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_set_at(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_texture_add(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_texture_remove(mrb_state *mrb, mrb_value self);
 
@@ -116,6 +124,7 @@ static void mrb_texture_gem_init(mrb_state *mrb, RClass *module, RClass *base)
       TextureComponent, &mrb_texturecomp_dt,
       size_t, &TextureComponent::_GetTextureCount>,
     MRB_ARGS_NONE());
+  mrb_define_method(mrb, texture, "[]=", mrb_texture_set_at, MRB_ARGS_REQ(2));
 
   mrb_define_method(mrb, texture, "add", mrb_texture_add, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, texture, "remove", mrb_texture_remove, MRB_ARGS_REQ(1));
@@ -148,6 +157,22 @@ static mrb_value mrb_texture_at(mrb_state *mrb, mrb_value self)
   auto &comp = *ruby::data_get<TextureComponent>(mrb, self);
 
   return comp.Textures[static_cast<size_t>(index)].RubyWrapper;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_set_at(mrb_state *mrb, mrb_value self)
+{
+  mrb_int index;
+  mrb_value mrbtex;
+  mrb_get_args(mrb, "io", &index, &mrbtex);
+
+  auto &comp = *ruby::data_get<TextureComponent>(mrb, self);
+  auto &tex = *ruby::data_get<Texture2D>(mrb, mrbtex);
+
+  comp.ReplaceTexture(static_cast<size_t>(index), tex);
+
+  return mrb_nil_value();
 }
 
 // ----------------------------------------------------------------------------

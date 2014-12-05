@@ -42,7 +42,10 @@ class Weapon < Item
     end
 
     def mod_augment(base_view, value)
-      #TODO
+      tex = Texture.load "Weapons/Augments/#{value}.png"
+      return if tex.width == 1
+
+      base_view.sprite_component.tint_texture = tex
     end
 
     WEAPON_GLOWS = {

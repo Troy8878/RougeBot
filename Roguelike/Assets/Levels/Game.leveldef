@@ -47,6 +47,26 @@
           }
         },
         {
+          "name": "ItemGlowLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ItemGlowLayer",
+              "layer": 5001
+            }
+          }
+        },
+        {
+          "name": "ItemLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ItemLayer",
+              "layer": 5002
+            }
+          }
+        },
+        {
           "name": "ConsoleLayer",
           "components": {
             "CameraComponent": {

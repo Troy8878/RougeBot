@@ -2,6 +2,6 @@
   "TransformComponent": {},
   "TextureComponent": {},
   "SpriteComponent": {
-    "render_target": "HUDLayer",
+    "render_target": "ItemLayer",
   },
 }

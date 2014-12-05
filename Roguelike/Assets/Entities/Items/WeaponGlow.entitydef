@@ -1,0 +1,11 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, 0.01]
+  },
+  "TextureComponent": {
+    "textures": ["Weapons/WeaponGlow.png"]
+  },
+  "SpriteComponent": {
+    "render_target": "ItemGlowLayer",
+  },
+}

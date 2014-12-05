@@ -78,33 +78,45 @@ module ItemGenerate
     result = Random.die_roll 100
     #result += (itemLevel * 5)
 
+    data["attributes"] = []
+
     if result > 99
       name = "Diamond " + name
       data["durability"] = data["durability"] + 20
       data["damage"][0] = data["damage"][0] + 4
       data["damage"][1] = data["damage"][1] + 4
       data["value"] = data["value"] + 20
+
+      data["attributes"] << ItemAttribute.new(:material, "Diamond")
     elsif result > 80
       name = "Steel " + name
       data["durability"] = data["durability"] + 5
       data["damage"][0] = data["damage"][0] + 2
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] + 5
+
+      data["attributes"] << ItemAttribute.new(:material, "Steel")
     elsif result > 70
       name = "Obsidian " + name
       data["durability"] = data["durability"] - 5
       data["damage"][0] = data["damage"][0] + 1
       data["damage"][1] = data["damage"][1] + 1
+
+      data["attributes"] << ItemAttribute.new(:material, "Obsidian")
     elsif result > 60
       name = "Lead " + name
       data["durability"] = data["durability"] + 5
       data["damage"][0] = data["damage"][0] - 2
       data["damage"][1] = data["damage"][1] + 2
+
+      data["attributes"] << ItemAttribute.new(:material, "Lead")
     elsif result > 50
       name = "Asbestos " + name
       data["damage"][1] = data["damage"][1] + 1
       data["damage"][1] = data["damage"][1] - 1
       data["value"] = data["value"] - 1
+
+      data["attributes"] << ItemAttribute.new(:material, "Asbestos")
     elsif result > 24
       name = "Iron " + name
     elsif result > 11
@@ -113,6 +125,8 @@ module ItemGenerate
       data["damage"][0] = data["damage"][0] - 2
       data["damage"][1] = data["damage"][1] - 2
       # Should be of the Physical element
+
+      data["attributes"] << ItemAttribute.new(:material, "Plastic")
     elsif result > 10
       name = "Mahogany " + name
       data["durability"] = data["durability"] - 5
@@ -120,12 +134,16 @@ module ItemGenerate
       data["damage"][1] = data["damage"][1] - 1
       data["value"] = data["value"] + 10
       # Should be of the Physical element
+
+      data["attributes"] << ItemAttribute.new(:material, "Mahogany")
     elsif result > 4 && itemLevel > 3
       name = "The Alleged " + name
       data["durability"] = 0
       data["damage"][0] = 0
       data["damage"][1] = 0
       data["value"] = 0
+
+      data["attributes"] << ItemAttribute.new(:material, "Alleged")
       return name
     else
       name = "Wooden " + name
@@ -134,6 +152,8 @@ module ItemGenerate
       data["damage"][1] = data["damage"][1] - 1
       data["value"] = data["value"] - 3
       # Should be of the Zapping element
+
+      data["attributes"] << ItemAttribute.new(:material, "Wooden")
     end
 
 
@@ -147,34 +167,50 @@ module ItemGenerate
       data["damage"][0] = data["damage"][0] + 2
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] + 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Great")
     elsif result > 88
       name = "Sturdy " + name
       data["durability"] = data["durability"] + 10
       data["value"] = data["value"] + 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Sturdy")
     elsif result > 77
       name = "Shoddy " + name
       data["durability"] = data["durability"] - 10
       data["value"] = data["value"] - 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Shoddy")
     elsif result > 66
       name = "Shiny " + name
       data["value"] = data["value"] * 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Shiny")
     elsif result > 55
       name = "Rusty " + name
       data["damage"][0] = data["damage"][0] - 2
       data["value"] = data["value"] - 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Rusty")
     elsif result > 44
       name = "Sharp " + name
       data["damage"][0] = data["damage"][0] + 2
       data["value"] = data["value"] + 2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Sharp")
     elsif result > 33
       name = "Dull " + name
       data["damage"][1] = data["damage"][1] - 2
       data["value"] = data["value"] -2
+
+      data["attributes"] << ItemAttribute.new(:augment, "Dull")
     elsif result > 22
       name = "Laser-Guided " + name
       data["damage"][0] = data["damage"][0] + 1
       data["damage"][1] = data["damage"][1] + 1
       data["value"] = data["value"] + 3
+
+      data["attributes"] << ItemAttribute.new(:augment, "Laser")
     else
       name = name
     end
@@ -192,26 +228,38 @@ module ItemGenerate
       name = name + " of Radioactivity"
       data["value"] = data["value"] + 10
       data["damage_type"] = :radioactive
+
+      data["attributes"] << ItemAttribute.new(:element, "Radioactive")
     elsif result > 85
       name = name + " of Exploding"
       data["value"] = data["value"] + 8
       data["damage_type"] = :exploding
+
+      data["attributes"] << ItemAttribute.new(:element, "Exploding")
     elsif result > 73
       name = name + " of Freezing"
       data["value"] = data["value"] + 6
       data["damage_type"] = :freezing
+
+      data["attributes"] << ItemAttribute.new(:element, "Freezing")
     elsif result > 60
       name = name + " of Zapping"
       data["value"] = data["value"] + 4
       data["damage_type"] = :zapping
+
+      data["attributes"] << ItemAttribute.new(:element, "Zapping")
     elsif result > 45
       name = name + " of Flames"
       data["value"] = data["value"] + 2
       data["damage_type"] = :flame
+
+      data["attributes"] << ItemAttribute.new(:element, "Flame")
     else
       name = name
       data["damage"][0] = data["damage"][0] - 1
       data["damage"][1] = data["damage"][1] - 1
+
+      data["attributes"] << ItemAttribute.new(:element, "Physical")
     end
 
     return name

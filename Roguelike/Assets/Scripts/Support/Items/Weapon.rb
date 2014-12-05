@@ -19,6 +19,9 @@ end
 
 class Weapon < Item
   attr_reader :damage, :durability, :weaponType, :value
+  alias weapon_type weaponType
+
+  attr_reader :attributes
 
   DAGGER_TYPE = 0
   SABER_TYPE = 1
@@ -75,6 +78,7 @@ class Weapon < Item
       @durability = data.durability
       @value = data.value
       @damage_type = data.damage_type
+      @attributes = data.attributes
     else
       range = data.fetch("damage", [1, 1])
       if range.is_a?(String)
@@ -86,6 +90,7 @@ class Weapon < Item
       @damage_type = data.fetch("damage_type", :physical)
       @weaponType = data.fetch("weaponType", DAGGER_TYPE)
       @value = data.fetch("damage_type", 1)
+      @attributes = data.fetch("attributes", [])
 
       @equip_slot = :weapon
     end
@@ -95,7 +100,15 @@ class Weapon < Item
     return :weapon
   end
 
-  #def view
-  #  @view ||= View.new(self)
-  #end
+  def weapon_type_name
+    ANIM_NAMES[weapon_type]
+  end
+
+  def view
+    puts "herpderp"
+    unless @view.is_a? View
+      @view = View.new(self)
+    end
+    @view
+  end
 end

@@ -37,8 +37,21 @@ class Weapon < Item
       end
     end
 
+    MATERIAL_TINT = {
+      "Diamond"       => Vector.new(0.8, 0.8,  1.0, 0.9),
+      "Steel"   => Vector.new(1.0, 1.0,  1.0, 1.0),
+      "Obsidian"     => Vector.new(0.1, 0.1, 0.1, 1.0),
+      "Lead"    => Vector.new(0.6, 0.6,  0.8, 1.0),
+      "Asbestos" => Vector.new(1.6, 1.6,  1.6, 1.0),
+      "Iron" => Vector.new(0.8, 0.8,  0.8, 1.0),
+      "Plastic" => Vector.new(0.9, 0.9,  0.0, 1.0),
+      "Mahogany" => Vector.new(0.3, 0.15,  0.0, 1.0),
+      "Alleged" => Vector.new(0.0, 0.0,  0.0, 0.6),
+      "Wooden" => Vector.new(0.2, 0.1,  0.0, 1.0),
+    }
+
     def mod_material(base_view, value)
-      #TODO
+      base_view.sprite_component.tint = MATERIAL_TINT[value]
     end
 
     def mod_augment(base_view, value)
@@ -46,8 +59,11 @@ class Weapon < Item
     end
 
     WEAPON_GLOWS = {
-      "Flame"       => Vector.new(1.0, 0.6, 0.3, 1.0),
-      "Radioactive" => Vector.new(0.0, 1.0, 0.0, 1.0)
+      "Flame"       => Vector.new(1.0, 0.6,  0.3, 1.0),
+      "Exploding"   => Vector.new(1.0, 1.0,  0.0, 1.0),
+      "Zapping"     => Vector.new(0.0, 0.76, 1.0, 1.0),
+      "Freezing"    => Vector.new(1.0, 1.0,  1.0, 1.0),
+      "Radioactive" => Vector.new(0.0, 1.0,  0.0, 1.0)
     }
 
     def mod_element(base_view, value)

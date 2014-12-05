@@ -1,6 +1,7 @@
 {
   "TransformComponent": {
-    "position": [0, 0, 0.01]
+    "position": [0, 0, 0.01],
+    "scale": [1.7, 1.7, 1]
   },
   "TextureComponent": {
     "textures": ["Weapons/WeaponGlow.png"]

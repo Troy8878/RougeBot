@@ -1,0 +1,9 @@
+{
+  "TransformComponent": {},
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "ItemLayer",
+  },
+}

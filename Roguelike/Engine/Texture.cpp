@@ -550,7 +550,7 @@ static mrb_value mrb_texture_save(mrb_state *mrb, mrb_value self)
 
   #pragma endregion
 
-  UINT stride = nearestPO2(width) * 4;
+  UINT stride = subres.RowPitch;
   UINT bufferSize = stride * height;
   hr = frame->WritePixels(height, stride, bufferSize,
                           reinterpret_cast<BYTE *>(subres.pData));

@@ -36,7 +36,7 @@ class Weapon < Item
   ANIM_NAMES = {
     DAGGER_TYPE => "Dagger",
     SABER_TYPE => "Saber",
-    AXE_TYPE => "Dagger",
+    AXE_TYPE => "Axe",
     SPEAR_TYPE => "Spear"
   }
 
@@ -105,7 +105,6 @@ class Weapon < Item
   end
 
   def view
-    puts "herpderp"
     unless @view.is_a? View
       @view = View.new(self)
     end

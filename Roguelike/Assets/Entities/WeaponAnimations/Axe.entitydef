@@ -1,0 +1,24 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, -0.1],
+    "scale": [3, 3, 1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "Weapons/Axe_Animate/Axe0.png",
+      "Weapons/Axe_Animate/Axe1.png",
+      "Weapons/Axe_Animate/Axe2.png",
+      "Weapons/Axe_Animate/Axe3.png",
+      "Weapons/Axe_Animate/Axe4.png",
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer"
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.04,
+    "loops": false
+  },
+  "AnimationKillComponent": {}
+}

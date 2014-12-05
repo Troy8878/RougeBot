@@ -11,6 +11,7 @@
     "velocityRange": [-1, 1, -1, 1],
     "particleRate": 25,
     "fadeTime": 0.25,
+    "active": true,
     "texture": "PancakeFace.jpg"
   },
   "TextureComponent": {

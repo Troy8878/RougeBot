@@ -20,6 +20,7 @@ class AnimatedComponent < ComponentBase
   property :frame_time, :float, true
   property :frame_range, :float_pair, true
   property :paused, :bool, true
+  property :loops, :bool, true
 
   def initialize(data)
     super data
@@ -28,6 +29,7 @@ class AnimatedComponent < ComponentBase
     @paused = data.fetch("paused", "false") == "true"
     @frame_time = data.fetch("frame_time", 1 / 24).to_f
     @frame_range = data.fetch("frame_range", [0, 0xffff]).map{|f| f.to_i }
+    @loops = data.fetch("loops", true)
     @time = 0
 
     self.register_event :update, :animate
@@ -69,7 +71,11 @@ class AnimatedComponent < ComponentBase
   # and texture_count bounds
   def wrap_index(i)
     if i >= @sprite.texture_count || i > @frame_range[1]
-      i = @frame_range[0]
+      if @loops
+        i = @frame_range[0]
+      else
+        i = @frame_range[1]
+      end
     end
     return i
   end

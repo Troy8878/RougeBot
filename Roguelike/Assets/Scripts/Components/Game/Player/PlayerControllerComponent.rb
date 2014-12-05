@@ -137,6 +137,13 @@ class PlayerControllerComponent < ComponentBase
   # Stuffs Troy/Leo added for combat #
   ####################################
 
+  ATTACK_ANIM_ROTATIONS = {
+    left: -Math::PI / 2,
+    up: Math::PI,
+    right: Math::PI / 2,
+    down: 0
+  }
+
   def swing_weapon(e)
 
     return if @paused
@@ -156,6 +163,13 @@ class PlayerControllerComponent < ComponentBase
     attacks.each do |atk|
       attack atk
     end
+
+    anim_arch = "WeaponAnimations/#{Weapon::ANIM_NAMES[weaponType]}"
+    anim_entity = owner.create_child(
+      archetype: anim_arch
+    )
+    anim_entity.transform_component.rotation.z = ATTACK_ANIM_ROTATIONS[orientation]
+    anim_entity.transform_component.position += Vector.new(*MOVE_ORIENTATIONS[orientation])
 
     #Sound for attack
     SLASH.play

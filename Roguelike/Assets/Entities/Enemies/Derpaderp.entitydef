@@ -38,6 +38,22 @@
             "frame_time": 0.5
           }
         }
+      },
+      {
+        "name": "HealthBar",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0.5, 0],
+            "scale": [1, 0.5, 1],
+          },
+          "TextureComponent": {
+            "textures": ["HealthBar.png"]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          },
+          "HealthBarComponent": {}
+        }
       }
     ]
   }

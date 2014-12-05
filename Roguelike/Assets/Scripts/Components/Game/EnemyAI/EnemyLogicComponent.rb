@@ -33,11 +33,36 @@ class EnemyLogicComponent < ComponentBase
 
     if distance < 1.1
       @attack.do_attack player
-    elsif distance < 20
+    elsif distance < 3
       move_towards player
+    else
+      move_randomly
     end
   end
 
+  def move_randomly()
+    direction = Random.die_roll 4
+    
+    if(direction == 1)
+      if can_move?(1, 0)
+        move 1, 0
+      end
+    elsif(direction == 2)
+      if can_move?(-1, 0)
+        move -1, 0
+      end
+    elsif(direction == 3)
+      if can_move?(0, 1)
+        move 0, 1
+      end
+    elsif(direction == 4)
+      if can_move?(0, -1)
+        move 0, -1
+      end
+    end
+  end
+        
+  
   def move_towards(target)
     difference = @position - target.position_component.position
     difference.normalize!

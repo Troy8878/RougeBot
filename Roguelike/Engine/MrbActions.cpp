@@ -112,6 +112,7 @@ mrb_value mrb_actions_interpolate(mrb_state* mrb, mrb_value self)
   static mrb_sym sym_to = mrb_intern_lit(mrb, "to");
   static mrb_sym sym_by = mrb_intern_lit(mrb, "by");
 
+  bool deferBegin = true;
   math::Vector *val_vector;
   mrb_value opts;
   mrb_get_args(mrb, "dH", &val_vector, &ruby::mrb_vector_type, &opts);
@@ -137,7 +138,10 @@ mrb_value mrb_actions_interpolate(mrb_state* mrb, mrb_value self)
 
   mrb_value val_from = mrb_hash_get(mrb, opts, mrb_symbol_value(sym_from));
   if (val_from.tt == MRB_TT_DATA)
+  {
     vector = ruby::get_ruby_vector(val_from);
+    deferBegin = false;
+  }
 
   #pragma endregion
 
@@ -158,7 +162,7 @@ mrb_value mrb_actions_interpolate(mrb_state* mrb, mrb_value self)
   #pragma endregion
 
   auto *manager = mrb_actions_unwrap(mrb, self);
-  manager->Queue(new VectorInterpolateAction(vector, end, over));
+  manager->Queue(new VectorInterpolateAction(vector, end, over, deferBegin));
   return self;
 }
 

@@ -157,7 +157,8 @@ private:
 class VectorInterpolateAction : public Action
 {
 public:
-  explicit VectorInterpolateAction(math::Vector &vector, const math::Vector &end, double time);
+  explicit VectorInterpolateAction(math::Vector &vector, const math::Vector &end, 
+                                   double time, bool deferBegin = false);
   bool Update(float dt) override;
 
 private:
@@ -166,6 +167,7 @@ private:
   math::Vector diff;
   double time;
   double totaltime;
+  bool deferBegin;
 };
 
 // ----------------------------------------------------------------------------

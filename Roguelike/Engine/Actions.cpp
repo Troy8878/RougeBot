@@ -257,9 +257,10 @@ VectorInterpolateAction::VectorInterpolateAction
 (
   math::Vector &vector,
   const math::Vector &end,
-  double time
+  double time, 
+  bool deferBegin
 ) : vector(vector), begin(vector), diff(end - vector),
-    time(0), totaltime(time)
+    time(0), totaltime(time), deferBegin(deferBegin)
 {
 }
 
@@ -270,6 +271,12 @@ bool VectorInterpolateAction::Update
   float dt
 )
 {
+  if (deferBegin)
+  {
+    deferBegin = false;
+    begin = vector;
+  }
+
   time += dt;
   vector = begin + diff * static_cast<float>(time / totaltime);
   return time < totaltime;

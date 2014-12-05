@@ -19,13 +19,12 @@ class InventoryComponent < ComponentBase
 
     if data["is_player"] == true
       @inventory = PLAYER_INVENTORY
-      @inventory.initialize
 
-      seq = owner.action_sequence :add_items
+      # I need to delay it because otherwise the hotbar won't render it
+      seq = owner.action_sequence :give_random_weapon
       seq.delay 0
-      5.times do
-        seq.delay 0.1
-        seq.once { give_random_weapon 1 }
+      seq.once do
+        give_random_weapon GAME_STATE[:floor]
       end
     else
       @inventory = Inventory.new

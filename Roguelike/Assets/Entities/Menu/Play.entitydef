@@ -15,7 +15,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "Game.switch_level 'Game'",
+      "button_clicked": "play_dungeon!",
       "mouse_leave": "owner.children[0].sprite_component.texture_index = 0",
       "mouse_enter": "owner.children[0].sprite_component.texture_index = 1",
     }

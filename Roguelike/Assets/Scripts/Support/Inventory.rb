@@ -25,6 +25,11 @@ class Inventory
     @update_callback = nil
   end
 
+  def clear!
+    @inventory = []
+    @equipment = {}
+  end
+
   # Function to check if there is room in the inventory
   def room_in_inventory
     (1..INVENTORY_CAPACITY).each do |i|

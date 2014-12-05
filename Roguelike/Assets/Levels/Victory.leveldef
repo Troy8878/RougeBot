@@ -1,5 +1,5 @@
 {
-  "name": "Help",
+  "name": "Victory",
   "entities": [
     {
       "name": "CameraRoot",
@@ -98,17 +98,22 @@
               ]
             },
             {
-              "name": "Help",
+              "name": "Victory!",
               "components": {
                 "TransformComponent": {
                   "position": [0, 0, 0],
-                  "scale": [2.666666666666666, 2, 1]
+                  "scale": [2, 2, 1]
                 },
                 "TextureComponent": {
-                  "textures": ["HowTo/HowTo1.png"]
+                  "textures": ["SPECIAL/SURFACE/2048:2048"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": ["Victory!"],
+                  "font_size": 256,
+                  "bg_color": "CornflowerBlue, 0.49"
                 }
               }
             },
@@ -127,7 +132,7 @@
                   "tint": "CornflowerBlue, 0.6"
                 }
               }
-            }
+            },
           ]
         }
       ]

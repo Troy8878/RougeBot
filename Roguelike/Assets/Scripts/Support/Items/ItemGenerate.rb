@@ -120,20 +120,20 @@ module ItemGenerate
       data["damage"][1] = data["damage"][1] - 1
       data["value"] = data["value"] + 10
       # Should be of the Physical element
-    elsif result > 4
-      name = "Wooden " + name
-      data["durability"] = data["durability"] - 5
-      data["damage"][0] = data["damage"][0] - 1
-      data["damage"][1] = data["damage"][1] - 1
-      data["value"] = data["value"] - 3
-      # Should be of the Zapping element
-    else
+    elsif result > 4 && itemLevel > 3
       name = "The Alleged " + name
       data["durability"] = 0
       data["damage"][0] = 0
       data["damage"][1] = 0
       data["value"] = 0
       return name
+    else
+      name = "Wooden " + name
+      data["durability"] = data["durability"] - 5
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] - 1
+      data["value"] = data["value"] - 3
+      # Should be of the Zapping element
     end
 
 

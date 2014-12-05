@@ -130,4 +130,10 @@ class Inventory
   def clear_callback
     @update_callback = nil
   end
+
+  def update_all
+    @inventory.each_with_index do |item, slot|
+      on_update :slot, slot, item
+    end
+  end
 end

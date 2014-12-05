@@ -95,4 +95,7 @@ class Weapon < Item
     return :weapon
   end
 
+  #def view
+  #  @view ||= View.new(self)
+  #end
 end

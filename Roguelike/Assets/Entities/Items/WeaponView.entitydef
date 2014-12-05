@@ -1,0 +1,7 @@
+{
+  "TransformComponent": {},
+  "TextureComponent": {},
+  "SpriteComponent": {
+    "render_target": "HUDLayer",
+  },
+}

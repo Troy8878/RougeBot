@@ -19,13 +19,10 @@ class InventoryComponent < ComponentBase
 
     if data["is_player"] == true
       @inventory = PLAYER_INVENTORY
+      give_random_weapon GAME_STATE[:floor]
 
       # I need to delay it because otherwise the hotbar won't render it
-      seq = owner.action_sequence :give_random_weapon
-      seq.delay 0
-      seq.once do
-        give_random_weapon GAME_STATE[:floor]
-      end
+      refresh_hotbar
     else
       @inventory = Inventory.new
     end
@@ -43,6 +40,14 @@ class InventoryComponent < ComponentBase
 
   def finalize
     @inventory.clear_callback
+  end
+
+  def refresh_hotbar
+    seq = owner.action_sequence :refresh
+    seq.delay 0
+    seq.once do
+      @inventory.update_all
+    end
   end
 
   register_component "InventoryComponent"

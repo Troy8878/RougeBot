@@ -74,6 +74,12 @@ class Weapon < Item
 
       glow = base_view.create_child(archetype: "Items/WeaponGlow")
       glow.sprite_component.tint = WEAPON_GLOWS[value]
+
+      if value == "Zapping"
+        glow.texture_component[0] = Texture.load 'Weapons/Zapping.png'
+        glow.sprite_component.tint = Vector.one
+        glow.transform_component.scale.mul 0.6
+      end
     end
   end
 end

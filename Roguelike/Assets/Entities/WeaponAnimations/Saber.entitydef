@@ -1,0 +1,24 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, -0.1],
+    "scale": [3, 1, 1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "Weapons/Saber_Animate/Saber0.png",
+      "Weapons/Saber_Animate/Saber1.png",
+      "Weapons/Saber_Animate/Saber2.png",
+      "Weapons/Saber_Animate/Saber3.png",
+      "Weapons/Saber_Animate/Saber4.png",
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer"
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.04,
+    "loops": false
+  },
+  "AnimationKillComponent": {}
+}

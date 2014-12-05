@@ -29,6 +29,7 @@ static float random(Gen &generator, float min, float max);
 static void mrb_particlesystemcomponent_init(mrb_state *mrb, RClass *module, RClass *base);
 static mrb_value mrb_particlesystemcomponent_new(mrb_state *mrb, ParticleSystemComponent *comp);
 static mrb_value mrb_particlesystem_initialize(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_particlesystem_createParticle(mrb_state *mrb, mrb_value self);
 
 static mrb_value mrb_particlesystem_get_scale(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_particlesystem_get_rotation(mrb_state *mrb, mrb_value self);
@@ -108,6 +109,20 @@ void ParticleSystemComponent::OnUpdate(Events::EventMessage &e)
   }
 
   system.Update(dt);
+}
+
+void ParticleSystemComponent::OnCall()
+{
+  static std::random_device generator;
+
+  //randomize particle
+  system.particleTransform.scaleRate = math::Vector{ random(generator, scaleRange.x, scaleRange.y), random(generator, scaleRange.z, scaleRange.w), 0, 0 };
+  system.particleTransform.rotationRate = math::Vector{ 0, 0, random(generator, rotationRange.x, rotationRange.y), 0 };
+  system.particleTransform.absoluteVelocity = math::Vector{ random(generator, velocityRange.x, velocityRange.y), random(generator, velocityRange.z, velocityRange.w), 0, 0 };
+  system.particleTransform.rotationalVelocity = math::Vector{ random(generator, rotVelRange.z, rotVelRange.w), 0, random(generator, rotVelRange.x, rotVelRange.y), 0 };
+  system.particleTransform.fadeTime = fadeTime;
+
+  system.SpawnParticle(Owner->Transform, 1);
 }
 
 // ----------------------------------------------------------------------------
@@ -228,105 +243,125 @@ bool ParticleSystemComponentFactory::ParseBool(json::value jv)
 
 // ----------------------------------------------------------------------------
 
-//float ParticleSystemComponent::GetScale(int index)
-//{
-//  switch (index)
-//  {
-//  case 0:
-//    return scaleRange.x;
-//  case 1:
-//    return scaleRange.y;
-//  case 2:
-//    return scaleRange.z;
-//  case 3:
-//    return scaleRange.w;
-//  default:
-//    return 0;
-//  }
-//}
-//
-//float ParticleSystemComponent::GetRotation(int index)
-//{
-//  switch (index)
-//  {
-//  case 0:
-//    return rotationRange.x;
-//  case 1:
-//    return rotationRange.y;
-//  case 2:
-//    return rotationRange.z;
-//  case 3:
-//    return rotationRange.w;
-//  default:
-//    return 0;
-//  }
-//}
-//
-//float ParticleSystemComponent::GetVelocity(int index)
-//{
-//  switch (index)
-//  {
-//  case 0:
-//    return velocityRange.x;
-//  case 1:
-//    return velocityRange.y;
-//  case 2:
-//    return velocityRange.z;
-//  case 3:
-//    return velocityRange.w;
-//  default:
-//    return 0;
-//  }
-//}
-//
-//float ParticleSystemComponent::GetRotationVelocity(int index)
-//{
-//  switch (index)
-//  {
-//  case 0:
-//    return rotVelRange.x;
-//  case 1:
-//    return rotVelRange.y;
-//  case 2:
-//    return rotVelRange.z;
-//  case 3:
-//    return rotVelRange.w;
-//  default:
-//    return 0;
-//  }
-//}
-//
-//float ParticleSystemComponent::GetParticleRate()
-//{
-//  return ParticleRate;
-//}
+float ParticleSystemComponent::GetScale(int index)
+{
+  switch (index)
+  {
+  case 0:
+    return scaleRange.x;
+  case 1:
+    return scaleRange.y;
+  case 2:
+    return scaleRange.z;
+  case 3:
+    return scaleRange.w;
+  default:
+    return 0;
+  }
+}
+
+float ParticleSystemComponent::GetRotation(int index)
+{
+  switch (index)
+  {
+  case 0:
+    return rotationRange.x;
+  case 1:
+    return rotationRange.y;
+  case 2:
+    return rotationRange.z;
+  case 3:
+    return rotationRange.w;
+  default:
+    return 0;
+  }
+}
+
+float ParticleSystemComponent::GetVelocity(int index)
+{
+  switch (index)
+  {
+  case 0:
+    return velocityRange.x;
+  case 1:
+    return velocityRange.y;
+  case 2:
+    return velocityRange.z;
+  case 3:
+    return velocityRange.w;
+  default:
+    return 0;
+  }
+}
+
+float ParticleSystemComponent::GetRotationVelocity(int index)
+{
+  switch (index)
+  {
+  case 0:
+    return rotVelRange.x;
+  case 1:
+    return rotVelRange.y;
+  case 2:
+    return rotVelRange.z;
+  case 3:
+    return rotVelRange.w;
+  default:
+    return 0;
+  }
+}
+
+float ParticleSystemComponent::GetParticleRate()
+{
+  return particleRate;
+}
+
+float ParticleSystemComponent::GetFadeTime()
+{
+  return fadeTime;
+}
+
+bool ParticleSystemComponent::GetActive()
+{
+  return active;
+}
 
 // ----------------------------------------------------------------------------
 
-//void ParticleSystemComponent::SetScale(math::Vector ranges)
-//{
-//  scaleRange = ranges;
-//}
-//
-//void ParticleSystemComponent::SetRotation(math::Vector ranges)
-//{
-//  rotationRange = ranges;
-//}
-//
-//void ParticleSystemComponent::SetVelocity(math::Vector ranges)
-//{
-//  velocityRange = ranges;
-//}
-//
-//void ParticleSystemComponent::SetRotationVelocity(math::Vector ranges)
-//{
-//  rotVelRange = ranges;
-//}
-//
-//void ParticleSystemComponent::SetParticleRate(float rate)
-//{
-//  particleRate = rate;
-//}
+void ParticleSystemComponent::SetScale(math::Vector ranges)
+{
+  scaleRange = ranges;
+}
+
+void ParticleSystemComponent::SetRotation(math::Vector ranges)
+{
+  rotationRange = ranges;
+}
+
+void ParticleSystemComponent::SetVelocity(math::Vector ranges)
+{
+  velocityRange = ranges;
+}
+
+void ParticleSystemComponent::SetRotationVelocity(math::Vector ranges)
+{
+  rotVelRange = ranges;
+}
+
+void ParticleSystemComponent::SetParticleRate(float rate)
+{
+  particleRate = rate;
+}
+
+void ParticleSystemComponent::SetFadeTime(float time)
+{
+  fadeTime = time;
+}
+
+void ParticleSystemComponent::SetActive(bool _active)
+{
+  active = _active;
+}
 
 // ----------------------------------------------------------------------------
 
@@ -338,6 +373,7 @@ static void mrb_particlesystemcomponent_init(mrb_state *mrb, RClass *module, RCl
   auto particlesyst = mrb_define_class_under(mrb, module, "ParticleSystemComponent", base);
 
   mrb_define_method(mrb, particlesyst, "initialize", mrb_particlesystem_initialize, ARGS_REQ(1));
+  mrb_define_method(mrb, particlesyst, "createParticle", mrb_particlesystem_createParticle, ARGS_NONE());
 
   mrb_define_method(mrb, particlesyst, "scaleRange", mrb_particlesystem_get_scale, ARGS_NONE());
   mrb_define_method(mrb, particlesyst, "rotationRange", mrb_particlesystem_get_rotation, ARGS_NONE());
@@ -403,6 +439,13 @@ static mrb_value mrb_particlesystem_initialize(mrb_state *mrb, mrb_value self)
 
   ruby::save_native_ptr(mrb, self, mrb_ptr(psc_wrapper));
 
+  return mrb_nil_value();
+}
+
+static mrb_value mrb_particlesystem_createParticle(mrb_state *mrb, mrb_value self)
+{
+  auto particlesyst = static_cast<ParticleSystemComponent *>(mrb_data_get_ptr(mrb, self, &mrb_particlesystemcomp_data_type));
+  particlesyst->OnCall();
   return mrb_nil_value();
 }
 

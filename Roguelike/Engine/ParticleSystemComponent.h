@@ -36,6 +36,7 @@ public:
 
   void Initialize(Entity *owner, const std::string &name) override;
   void OnUpdate(Events::EventMessage &e);
+  void OnCall();
 
   void Draw() override;
 
@@ -48,16 +49,21 @@ public:
 
   static ParticleSystemComponentFactory factory;
 
-  //float GetScale(int index);
-  //float GetRotation(int index);
-  //float GetVelocity(int index);
-  //float GetRotationVelocity(int index);
-  //float GetParticleRate();
-  //void SetScale(math::Vector ranges);
-  //void SetRotation(math::Vector ranges);
-  //void SetVelocity(math::Vector ranges);
-  //void SetRotationVelocity(math::Vector ranges);
-  //void SetParticleRate(float rate);
+  float GetScale(int index);
+  float GetRotation(int index);
+  float GetVelocity(int index);
+  float GetRotationVelocity(int index);
+  float GetParticleRate();
+  float GetFadeTime();
+  bool GetActive();
+
+  void SetScale(math::Vector ranges);
+  void SetRotation(math::Vector ranges);
+  void SetVelocity(math::Vector ranges);
+  void SetRotationVelocity(math::Vector ranges);
+  void SetParticleRate(float rate);
+  void SetFadeTime(float time);
+  void SetActive(bool _active);
 
   math::Vector scaleRange, rotationRange, velocityRange, rotVelRange;
   float particleRate, fadeTime;

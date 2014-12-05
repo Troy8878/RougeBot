@@ -30,6 +30,12 @@ class Weapon < Item
   TOP = 6
   BOTTOM = 7
 
+  ANIM_NAMES = {
+    DAGGER_TYPE => "Dagger",
+    SABER_TYPE => "Saber",
+    AXE_TYPE => "Dagger",
+    SPEAR_TYPE => "Spear"
+  }
 
   ATTACK_SQUARES = {
     DAGGER_TYPE => {

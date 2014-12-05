@@ -9,19 +9,13 @@ class StatusMessageComponent < ComponentBase
   def initialize(data)
     super data
 
-    @time = 0
-    @position = self.owner.transform_component.position
-    @delete_owner = data["delete_owner"]
+    position = self.owner.transform_component.position
+    delete_owner = data["delete_owner"]
 
-    register_event :update, :on_update
-  end
-
-  def on_update(e)
-    @time += e.dt
-    @position.y += e.dt
-
-    if @time > 1
-      if @delete_owner
+    seq = owner.action_sequence :status_death
+    seq.interpolate position, by: Vector.up, over: 1.second
+    seq.once do
+      if delete_owner
         self.owner.parent.zombify!
       else
         self.owner.zombify!
@@ -29,5 +23,5 @@ class StatusMessageComponent < ComponentBase
     end
   end
 
-  register_component "StatusMessageComponent"
+  register_component
 end

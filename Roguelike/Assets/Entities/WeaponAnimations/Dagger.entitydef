@@ -1,0 +1,23 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, -0.1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "Weapons/Dagger_Animate/Dagger0.png",
+      "Weapons/Dagger_Animate/Dagger1.png",
+      "Weapons/Dagger_Animate/Dagger2.png",
+      "Weapons/Dagger_Animate/Dagger3.png",
+      "Weapons/Dagger_Animate/Dagger4.png",
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer"
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.04,
+    "loops": false
+  },
+  "AnimationKillComponent": {}
+}

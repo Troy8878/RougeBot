@@ -44,7 +44,7 @@ void ButtonManager::OnClick(Events::EventMessage &e)
   if (data.bestMatch)
   {
     DEF_EVENT_ID(button_clicked);
-    Events::EventMessage message{button_clicked, nullptr};
+    Events::EventMessage message{button_clicked, e.GetData<Events::EventData>()};
 
     Events::Event::CustomRaise(
       message, 

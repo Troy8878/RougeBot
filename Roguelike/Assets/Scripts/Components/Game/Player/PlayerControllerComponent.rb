@@ -341,7 +341,7 @@ class PlayerControllerComponent < ComponentBase
   def on_zombification(e)
     # TODO: Lose Condition
     puts "Player ded"
-    Game.switch_level 'MainMenu'
+    Game.switch_level 'GameOver'
   end
 
   register_component

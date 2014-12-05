@@ -160,7 +160,20 @@
                   }
                 }
               }
-            }
+            },
+            {
+              "name": "CombatLog",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.2, -0.8]
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "combat_log": "seq = owner.action_sequence :log; seq.once { msg = owner.create_child(archetype: 'HUD/LogMessage'); msg.text_component.texts[0] = e.to_s }; seq.delay 0.3"
+                  }
+                }
+              }
+            },
           ]
         }
       ]

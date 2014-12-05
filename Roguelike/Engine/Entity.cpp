@@ -1263,6 +1263,12 @@ Entity *EntityFactory::CreateEntity(const std::string &entdef,
   }
 
   mrb_full_gc(*mrb_inst);
+
+  // Init complete!
+  DEF_EVENT_ID(init_complete);
+  Events::EventMessage init_comp_msg{init_complete, nullptr};
+  entity->LocalEvent(init_comp_msg);
+
   return entity;
 }
 

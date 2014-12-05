@@ -78,6 +78,10 @@ class PlayerControllerComponent < ComponentBase
     end
   end
 
+  def player_drop(e)
+    
+  end
+
   MOVE_ORIENTATIONS = {
     left: [-1, 0],
     right: [1, 0],

@@ -35,7 +35,7 @@ Texture2D::Texture2D(ID3D11Device *device, const std::string &asset)
 Texture2D::Texture2D(ID3D11Device *device, ImageResource resource)
 {
   shared_array<byte> imageData = resource.data;
-  if (resource.format != ImageResource::Format::RGBA)
+  if (resource.format != ImageResource::Format::BGRA)
   {
     imageData = shared_array<byte>(resource.width * resource.height * 4);
     resource.to32BitColor(imageData);
@@ -380,6 +380,7 @@ mrb_data_type mrb_texture_2d_dt;
 mrb_value mrb_texture_init(mrb_state *mrb, const Texture2D &tex);
 
 static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_texture_save(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -418,6 +419,8 @@ extern "C" void mrb_mruby_texture_init(mrb_state *mrb)
   mrb_define_method(mrb, tex, "name", get_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, tex, "width", get_width, MRB_ARGS_NONE());
   mrb_define_method(mrb, tex, "height", get_height, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, tex, "save", mrb_texture_save, MRB_ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -450,6 +453,124 @@ static mrb_value mrb_texture_load(mrb_state *mrb, mrb_value)
 }
 
 // ----------------------------------------------------------------------------
+
+static IWICImagingFactory *GetWICFactory()
+{
+  THREAD_EXCLUSIVE_SCOPE;
+
+  static IWICImagingFactory *factory = nullptr;
+  if (factory)
+    return factory;
+  
+  HRESULT hr = CoCreateInstance(
+    CLSID_WICImagingFactory,
+    nullptr,
+    CLSCTX_INPROC_SERVER,
+    IID_IWICImagingFactory,
+    reinterpret_cast<LPVOID*>(&factory));
+  CHECK_HRESULT(hr);
+
+  return factory;
+}
+
+// ----------------------------------------------------------------------------
+
+UINT nearestPO2(UINT value)
+{
+  UINT po2 = 1;
+  while (po2 < value)
+    po2 *= 2;
+  return po2;
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_texture_save(mrb_state *mrb, mrb_value self)
+{
+  auto tex = ruby::data_get<Texture2D>(mrb, self);
+
+  mrb_value mrbfilename;
+  mrb_get_args(mrb, "S", &mrbfilename);
+  auto filename = widen(mrb_str_to_stdstring(mrbfilename));
+  
+  static auto *factory = GetWICFactory();
+  HRESULT hr;
+
+  IWICStream *stream = nullptr;
+  hr = factory->CreateStream(&stream);
+  CHECK_HRESULT(hr);
+
+  hr = stream->InitializeFromFilename(filename.c_str(), GENERIC_WRITE);
+  CHECK_HRESULT(hr);
+
+  IWICBitmapEncoder *encoder = nullptr;
+  hr = factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder);
+  CHECK_HRESULT(hr);
+
+  hr = encoder->Initialize(stream, WICBitmapEncoderNoCache);
+  CHECK_HRESULT(hr);
+
+  IWICBitmapFrameEncode *frame = nullptr;
+  IPropertyBag2 *propbag = nullptr;
+  hr = encoder->CreateNewFrame(&frame, &propbag);
+  CHECK_HRESULT(hr);
+
+  hr = frame->Initialize(propbag);
+  CHECK_HRESULT(hr);
+
+  const UINT width = tex->_res->width;
+  const UINT height = tex->_res->height;
+
+  hr = frame->SetSize(width, height);
+  CHECK_HRESULT(hr);
+
+  WICPixelFormatGUID formatGUID = GUID_WICPixelFormat32bppBGRA;
+  hr = frame->SetPixelFormat(&formatGUID);
+  CHECK_HRESULT(hr);
+  
+  #pragma region Setup Copy Texture
+
+  auto graphics = GetGame()->GameDevice;
+
+  ID3D11Texture2D *newTexture = nullptr;
+  D3D11_TEXTURE2D_DESC newdesc;
+  tex->Texture->GetDesc(&newdesc);
+  newdesc.BindFlags = 0;
+  newdesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+  newdesc.Usage = D3D11_USAGE_STAGING;
+
+  hr = graphics->Device->CreateTexture2D(&newdesc, nullptr, &newTexture);
+  CHECK_HRESULT(hr);
+  
+  graphics->DeviceContext->CopyResource(newTexture, tex->Texture);
+
+  D3D11_MAPPED_SUBRESOURCE subres;
+  hr = graphics->DeviceContext->Map(newTexture, 0, D3D11_MAP_READ, 0, &subres);
+  CHECK_HRESULT(hr);
+
+  #pragma endregion
+
+  UINT stride = nearestPO2(width) * 4;
+  UINT bufferSize = stride * height;
+  hr = frame->WritePixels(height, stride, bufferSize,
+                          reinterpret_cast<BYTE *>(subres.pData));
+  CHECK_HRESULT(hr);
+
+  hr = frame->Commit();
+  CHECK_HRESULT(hr);
+
+  hr = encoder->Commit();
+  CHECK_HRESULT(hr);
+
+  frame->Release();
+  encoder->Release();
+  stream->Release();
+
+  graphics->DeviceContext->Unmap(newTexture, 0);
+  newTexture->Release();
+
+  return mrb_nil_value();
+}
 
 // ----------------------------------------------------------------------------
 

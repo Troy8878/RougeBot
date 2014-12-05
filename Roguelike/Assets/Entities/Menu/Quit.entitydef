@@ -16,8 +16,8 @@
   "EvalOnEventComponent": {
     "bindings": {
       "button_clicked": "Game.quit!",
-      "mouse_leave": "owner.children[0].text_component.text_color = 'Black'",
-      "mouse_enter": "owner.children[0].text_component.text_color = 'White'",
+      "mouse_leave": "owner.children[0].sprite_component.texture_index = 0",
+      "mouse_enter": "owner.children[0].sprite_component.texture_index = 1",
     }
   },
   "ChildHierarchy": {
@@ -29,18 +29,18 @@
             "scale": [0.833333333333, 1, 1]
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/500:200"]
+            "textures": ["MenuPrerender/Quit.png", "MenuPrerender/QuitWhite.png"]
           },
           "SpriteComponent": {
             "render_target": "HUDLayer",
           },
-          "TextComponent": {
+          /*"TextComponent": {
             "texts": ["\uE10A Quit"],
             "font": "Segoe UI Symbol",
             "font_size": 96,
             "bg_color": "#7F7F7F6F",
             "text_align": "leading",
-          }
+          }*/
         }
       }
     ]

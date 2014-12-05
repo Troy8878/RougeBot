@@ -191,7 +191,7 @@ static mrb_value mrb_confirm_destructive_action(mrb_state *mrb, mrb_value)
   mrb_get_args(mrb, "S|&", &text, &callback);
 
   static ConfirmationOfDestructiveAction action;
-  auto answer = action.Confirm(mrb_str_to_stdstring(text));
+  auto answer = action.Confirm(mrb_str_to_stdstring(text), "No", "Yes");
   auto mrbanswer = mrb_bool_value(answer);
 
   if (!mrb_nil_p(callback) && answer)

@@ -171,6 +171,7 @@ public:
 
   friend class TextureManager;
   friend class TextureZip;
+  friend static mrb_value mrb_texture_save(mrb_state *mrb, mrb_value self);
 };
 
 // ----------------------------------------------------------------------------

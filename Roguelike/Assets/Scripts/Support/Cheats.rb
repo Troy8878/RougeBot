@@ -19,6 +19,10 @@ class CheatState
   def god=(mode)
     @data[:god] = mode
   end
+
+  def its_over_9000
+    find_entity("Player").inventory_component.give_random_weapon 9001
+  end
 end
 
 CHEAT_INST = CheatState.new

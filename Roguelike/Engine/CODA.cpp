@@ -122,6 +122,8 @@ LRESULT ConfirmationOfDestructiveAction::
         answer = mx > ww / 2;
         cont = false;
       }
+
+      return 0;
     }
   }
 
@@ -139,7 +141,7 @@ void ConfirmationOfDestructiveAction::
   RenderGroup::Instance.Draw(*static_cast<Events::EventMessage *>(nullptr));
 
   auto hudRoot = GetGame()->CurrentLevel->RootEntity->FindEntity("CameraRoot");
-  auto hudTransform = XMMatrixTranslation(0, 0, 2.4f) * hudRoot->Transform;
+  auto hudTransform = XMMatrixScaling(0.5, 0.5, 1) * XMMatrixTranslation(0, 0, 1.5f) * hudRoot->Transform;
 
   SpriteModel->tintTexture = Texture2D();
 

@@ -4,4 +4,12 @@
   "SpriteComponent": {
     "render_target": "ItemLayer",
   },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Tooltip",
+        "archetype": "Items/Tooltip"
+      }
+    ]
+  }
 }

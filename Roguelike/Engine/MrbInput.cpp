@@ -34,6 +34,7 @@ static mrb_value mrb_me_new(mrb_state *mrb, const MouseState *state);
 static void mrb_me_free(mrb_state *mrb, void *mem);
 
 static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_me_button(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -61,6 +62,11 @@ extern "C" void mrb_mruby_keystate_init(mrb_state *mrb)
   // ruby can't make new ones, only Input can
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
   mrb_define_method(mrb, rclass, "position", mrb_me_position, ARGS_NONE());
+  mrb_define_method(mrb, rclass, "button", mrb_me_button, ARGS_NONE());
+
+  mrb_define_const(mrb, rclass, "LBUTTON", mrb_fixnum_value(MK_LBUTTON));
+  mrb_define_const(mrb, rclass, "MBUTTON", mrb_fixnum_value(MK_MBUTTON));
+  mrb_define_const(mrb, rclass, "RBUTTON", mrb_fixnum_value(MK_RBUTTON));
 
   // Init clipboard
   mrb_clipboard_init(mrb);
@@ -164,9 +170,20 @@ static void mrb_me_free(mrb_state *, void *)
 
 static mrb_value mrb_me_position(mrb_state *mrb, mrb_value self)
 {
-  const MouseState *state = static_cast<const MouseState *>(mrb_data_get_ptr(mrb, self, &mrb_me_data_type));
+  const MouseState *state = static_cast<const MouseState *>(
+    mrb_data_get_ptr(mrb, self, &mrb_me_data_type));
 
   return ruby::create_new_vector(state->position.get());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_me_button(mrb_state *mrb, mrb_value self)
+{
+  const MouseState *state = static_cast<const MouseState *>(
+    mrb_data_get_ptr(mrb, self, &mrb_me_data_type));
+
+  return mrb_fixnum_value(state->lastButton);
 }
 
 // ----------------------------------------------------------------------------

@@ -19,7 +19,7 @@ class PlayerHealthComponent < ComponentBase
     level = owner.parent.attack_component.weapon_level
 
     text = self.owner.text_component
-    text.texts = ["Health: #{health.to_i}\nDamage: #{dmg}\nItem Level: #{level}"]
+    text.texts = ["Health: #{health.to_i}"]
   end
 
   register_component "PlayerHealthComponent"

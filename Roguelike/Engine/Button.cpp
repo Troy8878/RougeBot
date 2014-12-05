@@ -43,12 +43,19 @@ void ButtonManager::OnClick(Events::EventMessage &e)
 
   if (data.bestMatch)
   {
-    e.Handled = true;
-
     DEF_EVENT_ID(button_clicked);
     Events::EventMessage message{button_clicked, nullptr};
 
-    data.bestMatch->RaiseEvent(message);
+    Events::Event::CustomRaise(
+      message, 
+      [data](Events::EventMessage &e)
+      {
+        data.bestMatch->RaiseEvent(e);
+      }
+    );
+
+    if (!message.Handled)
+      e.Handled = true;
   }
 }
 

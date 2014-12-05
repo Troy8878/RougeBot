@@ -128,7 +128,7 @@
                   "position": [1.4, 0.8]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/SURFACE/770:770"]
+                  "textures": ["SPECIAL/SURFACE/520:520"]
                 },
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
@@ -169,7 +169,7 @@
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
-                    "combat_log": "seq = owner.action_sequence :log; seq.once { msg = owner.create_child(archetype: 'HUD/LogMessage'); msg.text_component.texts[0] = e.to_s }; seq.delay 0.3"
+                    "combat_log": "seq = owner.action_sequence :log; seq.once { msg = owner.create_child(archetype: 'HUD/LogMessage'); msg.text_component.texts[0] = e.to_s }; seq.delay 0.4"
                   }
                 }
               }

@@ -48,6 +48,7 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :mouse_move, :mouse_move
     self.register_event :on_pause, :on_pause
     self.register_event :player_use, :player_use
+    self.register_event :player_drop, :player_drop
   end
 
   def on_pause(val)
@@ -74,12 +75,14 @@ class PlayerControllerComponent < ComponentBase
 
     tile = current_tile
     if tile.item?
-      PLAYER_INVENTORY.pickup tile.pickup_item
+      item = tile.pickup_item
+      PLAYER_INVENTORY.pickup item
+      Event.raise_event :combat_log, "Picked up #{item.name}"
     end
   end
 
   def player_drop(e)
-    
+    find_entity("Hotbar").raise_event :drop_selected, current_tile
   end
 
   MOVE_ORIENTATIONS = {
@@ -93,7 +96,7 @@ class PlayerControllerComponent < ComponentBase
     return if @paused
 
     unless can_move_more_than_one? x, y
-      return if @blocked_reason != BLOCKED_BY_ACTOR
+      return unless x == 0 && y == 0
     end
 
     if @blocked_reason == BLOCKED_BY_ACTOR
@@ -182,7 +185,7 @@ class PlayerControllerComponent < ComponentBase
     anim_entity.transform_component.position += Vector.new(*MOVE_ORIENTATIONS[orientation])
 
     #Sound for attack
-    SLASH.play
+    SFX::SLASH.play
 
     @logic_cooldown = 0.5
     
@@ -256,8 +259,23 @@ class PlayerControllerComponent < ComponentBase
 
     dx = Math.round(@curpos.x - @pos.x)
     dy = Math.round(@curpos.y - @pos.y)
+    dir = Vector.new(dx, dy)
 
-    move dx, dy
+    if e.button == MouseState::LBUTTON
+      move dx, dy
+    elsif e.button == MouseState::RBUTTON
+      if dir.near? Vector.up, 0.1
+        swing_weapon :up
+      elsif dir.near? Vector.down, 0.1
+        swing_weapon :down
+      elsif dir.near? Vector.left, 0.1
+        swing_weapon :left
+      elsif dir.near? Vector.right, 0.1
+        swing_weapon :right
+      elsif dir.near? Vector.zero, 0.1
+        player_use nil
+      end
+    end
   end
 
   def first_update(e)

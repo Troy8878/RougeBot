@@ -5,7 +5,7 @@
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
-$DungeonLength = 3
+$DungeonLength = 5
 
 def current_floor
   FloorGeneratorComponent.instance.floor

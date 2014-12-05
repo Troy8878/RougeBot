@@ -28,6 +28,21 @@
       {
         "name": "Copyright",
         "archetype": "HUD/Pause/Copyright"
+      },
+      {
+        "name": "HowToPlay",
+        "components": {
+          "TransformComponent": {
+            "scale": [1.25, 0.9375],
+            "position": [-1, -0.3]
+          },
+          "TextureComponent": {
+            "textures": ["HowTo/HowTo1White.png"]
+          },
+          "SpriteComponent": {
+            "render_target": "PauseLayer"
+          }
+        }
       }
     ]
   }

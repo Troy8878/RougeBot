@@ -11,11 +11,12 @@
   "TextComponent": {
     "texts": [""],
     "text_color": "White",
-    "text_align": "leading"
+    "text_align": "leading",
+    "font_size": 40
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "init_complete": "seq = owner.action_sequence :float; seq.interpolate owner.transform_component.position, by: Vector.up, over: 2.seconds; seq.once { owner.zombify! }; seq = owner.action_sequence :fade; seq.delay 1.2; seq.interpolate owner.sprite_component.tint, to: Vector.new(1, 1, 1, 0), over: 0.6.seconds"
+      "init_complete": "seq = owner.action_sequence :float; seq.interpolate owner.transform_component.position, by: Vector.up, over: 3.seconds; seq.once { owner.zombify! }; seq = owner.action_sequence :fade; seq.delay 2.2; seq.interpolate owner.sprite_component.tint, to: Vector.new(1, 1, 1, 0), over: 0.7.seconds"
     }
   }
 }

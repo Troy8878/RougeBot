@@ -10,7 +10,7 @@ class FloorGeneratorComponent < ComponentBase
 
   EMPTY_VALUE = 0
   WALL_VALUE = 1
-  ROOM_SIZE = 75
+  ROOM_SIZE = 50
   TEXTURE_COUNT = 3
 
   TEX_WALL = 0

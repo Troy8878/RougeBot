@@ -80,6 +80,7 @@ class CheckboxHelperComponent < ComponentBase
     owner.add_component "ButtonComponent", {
       "render_target" => data["render_target"]
     }
+    owner.add_component "ButtonSoundsComponent", {}
   end
 
   private

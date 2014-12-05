@@ -95,6 +95,7 @@
                       "width": 1,
                       "text_align": "center"
                     },
+                    "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {
                       "bindings": {
                         "button_clicked": "Game.switch_level 'MainMenu'",
@@ -114,9 +115,10 @@
                       "text": "Reset Defaults",
                       "width": 5
                     },
+                    "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {
                       "bindings": {
-                        "button_clicked": "Config.load_defaults; Config.save"
+                        "button_clicked": "coda!('Are you sure you want to reset all of your settings?') { Config.load_defaults; Config.save }"
                       }
                     }
                   }
@@ -169,8 +171,8 @@
               "name": "BG",
               "components": {
                 "TransformComponent": {
-                  "position": [0, 0, 1],
-                  "scale": [10, 10, 1]
+                  "position": [0, 0, 2],
+                  "scale": [10, 10, 10]
                 },
                 "TextureComponent": {
                   "textures": ["SPECIAL/NULL"]

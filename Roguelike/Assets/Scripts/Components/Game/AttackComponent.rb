@@ -12,9 +12,6 @@
 # damage - the range of damage an object can do
 ################################################################
 
-SLASH = Sound.load "SFX/Slash"
-UGH = Sound.load "SFX/Ugh"
-
 class AttackComponent < ComponentBase
   include Actor
 
@@ -42,7 +39,7 @@ class AttackComponent < ComponentBase
     return if target == owner
 
     if !owner.player_controller_component
-      UGH.play
+      SFX::UGH.play
     end
 
     dmg = Random.int_range_inc *@damage
@@ -66,7 +63,7 @@ class AttackComponent < ComponentBase
   end
 
   def miss_attack
-    SLASH.play
+    SFX::SLASH.play
   end
 
   def damage=(value)

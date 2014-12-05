@@ -14,7 +14,7 @@
   },
   "EvalOnEventComponent": {
     "bindings": {
-      "button_clicked": "owner.local_event :click_equip, nil"
+      "button_clicked": "owner.local_event :click_equip, nil; Event.handled = true"
     }
   },
   "ChildHierarchy": {

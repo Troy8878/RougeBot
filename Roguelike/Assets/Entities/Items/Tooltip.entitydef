@@ -1,0 +1,68 @@
+{
+  "ButtonComponent": {
+    "render_target": "ItemLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "Event.handled = true; forward_to_hotbar owner, e",
+      "mouse_enter": "wrap=owner.local_find('TooltipWrapper');if wrap;wrap.transform_component.scale.y = 1;end",
+      "mouse_leave": "wrap=owner.local_find('TooltipWrapper');if wrap;wrap.transform_component.scale.y = 0;end"
+    }
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "TooltipWrapper",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 1, -0.3],
+            "scale": [1, 0]
+          },
+          "ChildHierarchy": {
+            "children": [
+              {
+                "name": "TooltipBG",
+                "components": {
+                  "TransformComponent": {
+                    "scale": [2, 1.3333333333333],
+                    "position": [0, 0.5]
+                  },
+                  "TextureComponent": {
+                    "textures": ["HUD/Tooltip.png"]
+                  },
+                  "SpriteComponent": {
+                    "render_target": "ItemGlowLayer"
+                  },
+                  "ChildHierarchy": {
+                    "children": [
+                      {
+                        "name": "TooltipText",
+                        "components": {
+                          "TransformComponent": {
+                            "scale": [0.95, 0.95, 0.95]
+                          },
+                          "TextureComponent": {
+                            "textures": ["SPECIAL/SURFACE/384:256"]
+                          },
+                          "SpriteComponent": {
+                            "render_target": "ItemLayer"
+                          },
+                          "TextComponent": {
+                            "texts": [""],
+                            "font_size": 36,
+                            "text_color": "White, 0.6",
+                            "bg_color": "#0010907F",
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+              }
+            ]
+          }
+        },
+      }
+    ]
+  }
+}

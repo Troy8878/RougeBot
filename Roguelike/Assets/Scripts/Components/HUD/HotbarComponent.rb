@@ -15,6 +15,7 @@ class HotbarComponent < ComponentBase
     register_event :update, :first_update
     register_event :quick_equip, :quick_equip
     register_event :click_equip, :click_equip
+    register_event :drop_selected, :drop_selected
   end
 
   def first_update(e)
@@ -77,6 +78,7 @@ class HotbarComponent < ComponentBase
     atk = @target.attack_component
     inv = @target.inventory_component.inventory
     item = inv[slot]
+    @item = item
     if item.nil?
       puts "Weapon Unequipped"
       atk.damage = [1,1]
@@ -90,9 +92,26 @@ class HotbarComponent < ComponentBase
     PLAYER_INVENTORY.equipment[:weapon] = item
   end
 
+  def drop_selected(tile)
+    return unless @is_selected
+    return unless @item
+
+    tile.drop_item @item
+    PLAYER_INVENTORY.inventory[@inv_slot] = nil
+    PLAYER_INVENTORY.update_all
+  end
+
   def click_equip(e)
     owner.parent.raise_event :quick_equip, @inv_slot
   end
 
   register_component "HotbarComponent"
+end
+
+def forward_to_hotbar(ent, ev)
+  while ent && !ent.hotbar_component
+    ent = ent.parent
+  end
+  return unless ent
+  ent.local_event :click_equip, ev
 end

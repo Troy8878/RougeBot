@@ -36,27 +36,27 @@ void Input::Initialize()
   auto &game = *GetGame();
 
   game.SetProcHandler(WM_KILLFOCUS, [this] (HWND, UINT, WPARAM, LPARAM, LRESULT &)
-                                  {
-                                    AllKeysUp();
-                                    AllMouseUp();
-                                  });
+                                    {
+                                      AllKeysUp();
+                                      AllMouseUp();
+                                    });
 
   game.SetProcHandler(WM_KEYDOWN, [this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
-                                {
-                                  auto signal = TranslateSignal(msg, wp, lp);
-                                  OnKeyDown(signal);
-                                });
+                                  {
+                                    auto signal = TranslateSignal(msg, wp, lp);
+                                    OnKeyDown(signal);
+                                  });
 
   game.SetProcHandler(WM_KEYUP, [this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
-                              {
-                                auto signal = TranslateSignal(msg, wp, lp);
-                                OnKeyUp(signal);
-                              });
+                                {
+                                  auto signal = TranslateSignal(msg, wp, lp);
+                                  OnKeyUp(signal);
+                                });
 
   game.SetProcHandler(WM_MOUSEMOVE, [this] (HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
-                                  {
-                                    this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
-                                  });
+                                    {
+                                      this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+                                    });
 
   static const virtual_key mouse_buttons[] =
     {
@@ -67,51 +67,75 @@ void Input::Initialize()
       MK_XBUTTON2
     };
 
-  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
-                       {
-                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+  game.SetProcHandlers(
+    [this] (HWND, UINT msg, WPARAM, LPARAM lp, LRESULT &)
+    {
+      this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-                         for (auto bt : mouse_buttons)
-                           if (wp & bt)
-                             this->OnMouseDown(bt);
-                       }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
+      switch (msg)
+      {
+        case WM_LBUTTONDOWN:
+          this->OnMouseDown(MK_LBUTTON);
+          break;
+        case WM_MBUTTONDOWN:
+          this->OnMouseDown(MK_MBUTTON);
+          break;
+        case WM_RBUTTONDOWN:
+          this->OnMouseDown(MK_RBUTTON);
+          break;
+      }
+    }, WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN);
 
-  game.SetProcHandlers([this] (HWND, UINT msg, WPARAM wp, LPARAM lp, LRESULT &)
-                       {
-                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+  game.SetProcHandlers(
+    [this] (HWND, UINT msg, WPARAM, LPARAM lp, LRESULT &)
+    {
+      this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
 
-                         switch (msg)
-                         {
-                           case WM_LBUTTONUP: this->OnMouseUp(MK_LBUTTON); break;
-                           case WM_MBUTTONUP: this->OnMouseUp(MK_MBUTTON); break;
-                           case WM_RBUTTONUP: this->OnMouseUp(MK_RBUTTON); break;
-                           default:
-                             for (auto bt : mouse_buttons)
-                               if (wp & bt)
-                                 this->OnMouseUp(bt);
-                         }
+      switch (msg)
+      {
+        case WM_LBUTTONUP:
+          this->OnMouseUp(MK_LBUTTON);
+          break;
+        case WM_MBUTTONUP:
+          this->OnMouseUp(MK_MBUTTON);
+          break;
+        case WM_RBUTTONUP:
+          this->OnMouseUp(MK_RBUTTON);
+          break;
+      }
+    }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
 
-                       }, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP, WM_XBUTTONUP);
+  game.SetProcHandlers(
+    [this] (HWND, UINT msg, WPARAM, LPARAM lp, LRESULT &)
+    {
+      this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+      
+      switch (msg)
+      {
+        case WM_LBUTTONDBLCLK:
+          this->OnMouseDown(MK_LBUTTON);
+          break;
+        case WM_MBUTTONDBLCLK:
+          this->OnMouseDown(MK_MBUTTON);
+          break;
+        case WM_RBUTTONDBLCLK:
+          this->OnMouseDown(MK_RBUTTON);
+          break;
+      }
+    }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
 
-  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &)
-                       {
-                         this->OnMouseMove(*reinterpret_cast<COORD *>(&lp));
+  game.SetProcHandlers(
+    [this] (HWND, UINT, WPARAM wp, LPARAM, LRESULT &)
+    {
+      wchar_t buf[2] = {static_cast<wchar_t>(wp), 0};
+      ruby::ruby_gc_guard guard{*mrb_inst};
+      DEF_EVENT_ID(key_char);
 
-                         for (auto bt : mouse_buttons)
-                           if (wp & bt)
-                             this->OnDoubleClick(bt);
-                       }, WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_XBUTTONDBLCLK);
-  game.SetProcHandlers([this] (HWND, UINT, WPARAM wp, LPARAM, LRESULT &)
-                       {
-                         wchar_t buf[2] = { static_cast<wchar_t>(wp), 0 };
-                         ruby::ruby_gc_guard guard{*mrb_inst};
-                         DEF_EVENT_ID(key_char);
-
-                         auto str = narrow(buf);
-                         Events::RubyEvent data(mrb_str_new(*mrb_inst, str.c_str(), str.size()));
-                         Events::EventMessage msg(key_char, &data);
-                         Events::Event::Raise(msg);
-                       }, WM_CHAR);
+      auto str = narrow(buf);
+      Events::RubyEvent data(mrb_str_new(*mrb_inst, str.c_str(), str.size()));
+      Events::EventMessage msg(key_char, &data);
+      Events::Event::Raise(msg);
+    }, WM_CHAR);
 }
 
 // ----------------------------------------------------------------------------

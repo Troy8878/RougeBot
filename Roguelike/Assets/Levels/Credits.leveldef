@@ -79,6 +79,7 @@
                   "width": 1,
                   "text_align": "center"
                 },
+                "ButtonSoundsComponent": {},
                 "EvalOnEventComponent": {
                   "bindings": {
                     "button_clicked": "Game.switch_level 'MainMenu'",

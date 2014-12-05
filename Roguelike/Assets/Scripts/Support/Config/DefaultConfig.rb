@@ -25,12 +25,13 @@ Config.load_defaults do
   ######################
   # Player movement
 
-  Config.bind_action "move_up",    { held: [:move, [ 0,  1]] }
-  Config.bind_action "move_left",  { held: [:move, [-1,  0]] }
-  Config.bind_action "move_down",  { held: [:move, [ 0, -1]] }
-  Config.bind_action "move_right", { held: [:move, [ 1,  0]] }
-  Config.bind_action "skip_turn",  { held: [:move, [ 0,  0]] }
-  Config.bind_action "player_use", { down: [:player_use, nil] }
+  Config.bind_action "move_up",     { held: [:move,  [ 0,  1] ] }
+  Config.bind_action "move_left",   { held: [:move,  [-1,  0] ] }
+  Config.bind_action "move_down",   { held: [:move,  [ 0, -1] ] }
+  Config.bind_action "move_right",  { held: [:move,  [ 1,  0] ] }
+  Config.bind_action "skip_turn",   { held: [:move,  [ 0,  0] ] }
+  Config.bind_action "player_use",  { down: [:player_use, nil ] }
+  Config.bind_action "player_drop", { down: [:player_drop, nil] }
 
   Config.bind_key "Player", [Keys::W    ], "move_up"
   Config.bind_key "Player", [Keys::A    ], "move_left"
@@ -38,6 +39,7 @@ Config.load_defaults do
   Config.bind_key "Player", [Keys::D    ], "move_right"
   Config.bind_key "Player", [Keys::SPACE], "skip_turn"
   Config.bind_key "Player", [Keys::E    ], "player_use"
+  Config.bind_key "Player", [Keys::Q    ], "player_drop"
 
   # Player melee weapon firing
 

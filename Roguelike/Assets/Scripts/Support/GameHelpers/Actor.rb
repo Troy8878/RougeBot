@@ -90,7 +90,7 @@ module Actor
 
     new_tile = current_tile
     new_tile.actor = self.owner
-    @prev_tile = new_tile
+    @prev_tile = new_tile || @prev_tile
 
     actor_minimap_update
   end
@@ -98,6 +98,11 @@ module Actor
   def current_tile
     pos = actor_position
     room = current_floor
+    if pos.nil?
+      pos = self.owner.transform_component.position.dup
+      pos.x = Math.round(pos.x)
+      pos.y = Math.round(pos.y)
+    end
     room[room.size - 1 - pos.y][pos.x]
   end
 

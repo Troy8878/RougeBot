@@ -177,7 +177,7 @@
         "PositionComponent": {},
         "StairComponent": {},
         "TextureComponent": {
-          "textures": ["Stairs.png"]
+          "textures": ["World/Stairs.png"]
         },
         "SpriteComponent": {
           "render_target": "WorldLayer"

@@ -297,6 +297,16 @@ module ProjectileItemGenerate
         data["speed"] = data["speed"] + 0
       end
       data["element2"] = Projectile::NONE
+    elsif result > 55
+      name = "Tin " + name
+      data["durability"] = data["durability"] - 0
+      data["damage"][0] = data["damage"][0] + 0
+      data["damage"][1] = data["damage"][1] - 2
+      data["value"] = data["value"] - 1
+      if(data["speed"] > MIN_SPEED)
+        data["speed"] = data["speed"] + 0
+      end
+      data["element2"] = Projectile::NONE
     elsif result > 50
       name = "Uranium " + name
       data["durability"] = data["durability"] - 5
@@ -326,6 +336,7 @@ module ProjectileItemGenerate
       data["value"] = data["value"] - 0
       if(data["speed"] > MIN_SPEED)
         data["speed"] = data["speed"] + 0
+      data["element2"] = Projectile::PHYSICAL_ELEM
       end
     elsif result > 30
       name = "Gold " + name
@@ -336,7 +347,16 @@ module ProjectileItemGenerate
       if(data["speed"] > MIN_SPEED)
         data["speed"] = data["speed"] + 0
       end
-      data["element2"] = Projectile::PHYSICAL_ELEM
+      data["element2"] = Projectile::NONE
+    elsif result > 20
+      name = "Brick " + name
+      data["durability"] = data["durability"] + 4
+      data["damage"][0] = data["damage"][0] - 2
+      data["damage"][1] = data["damage"][1] - 1
+      data["value"] = data["value"] - 3
+      if(data["speed"] > MIN_SPEED)
+        data["speed"] = data["speed"] + 0
+      end
     elsif result > 10
       name = "Plastic " + name
       data["durability"] = data["durability"] + 8
@@ -466,6 +486,11 @@ module ProjectileItemGenerate
     # There should also be at least one element
     if(data["element1"] == NONE && data["element2"] == NONE)
       data["element1"] = PHYSICAL_ELEM
+    end
+
+    #Don't let max damage be below min damage
+    if(data["damage"][1] < data["damage"][0])
+      data["damage"][1] = data["damage"][0] + 1
     end
 
     #Unlike Weapons, Projectiles set element1 in their type

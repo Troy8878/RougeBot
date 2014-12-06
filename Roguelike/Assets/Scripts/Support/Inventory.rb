@@ -136,4 +136,8 @@ class Inventory
       on_update :slot, slot, item
     end
   end
+
+  def update_slot(slot)
+    on_update :slot, slot, @inventory[slot]
+  end
 end

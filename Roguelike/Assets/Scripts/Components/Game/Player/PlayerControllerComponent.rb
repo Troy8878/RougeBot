@@ -170,8 +170,6 @@ class PlayerControllerComponent < ComponentBase
     weaponType ||= Weapon::DAGGER_TYPE
 
     attacks = Weapon::ATTACK_SQUARES[weaponType][orientation]
-    puts orientation
-    puts attacks
 
     attacks.each do |atk|
       attack atk

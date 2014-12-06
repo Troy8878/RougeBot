@@ -27,7 +27,6 @@ class Weapon < Item
       seq = base_view.action_sequence :delay_tooltip
       seq.once do
         tooltip_text = base_view.local_find "TooltipText"
-        puts tooltip_text.inspect
         texts = tooltip_text.text_component.texts
         texts[0] = "#{@item.name}\nDamage #{@item.damage}\nItem Level #{@item.item_level}"
       end

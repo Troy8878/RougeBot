@@ -210,23 +210,13 @@ class GameConsoleComponent < ComponentBase
   def first_update(e)
     remove_event :update
 
-    unless Config[:console_enabled]
-      seq = owner.action_sequence :DIE!
-      seq.delay 0
-      seq.once do
-        owner.parent.add_component "ConsoleBeGone", {}
-        owner.zombify!
-      end
-      return
-    end
-
     register_event :update, :on_update
     ary = AryStreamBuffer.game_console.peek
     ary.replace(HISTORY + ary)
   end
 
   def process_output
-    ary = AryStreamBuffer.game_console.peek
+    ary = AryStreamBuffer.game_console.flush
     if ary.length > 10
       AryStreamBuffer.game_console.peek.replace(ary[10..-1])
     end
@@ -315,6 +305,8 @@ class GameConsoleComponent < ComponentBase
   end
 
   def toggle
+    return unless Config[:console_enabled]
+
     if @open
       @open = false
       KeybindingComponent.unlock!

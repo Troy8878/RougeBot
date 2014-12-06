@@ -46,38 +46,26 @@ module Actor
   end
 
   def actor_minimap_create(shape, color)
-    seq = owner.action_sequence :minimap
-    seq.once do
-      @actor_minimap = find_entity("Minimap")
+    @actor_minimap = find_entity("Minimap")
 
-      @actor_map_item = @actor_minimap.map_component.create_item
-      @actor_map_item.shape = shape
-      @actor_map_item.color = color
-    end
+    @actor_map_item = @actor_minimap.map_component.create_item
+    @actor_map_item.shape = shape
+    @actor_map_item.color = color
   end
 
   def actor_minimap_update
-    seq = owner.action_sequence :minimap
-    seq.once do
-      @actor_map_item.x = actor_position.x
-      @actor_map_item.y = actor_position.y
-      actor_minimap_refresh
-    end
+    @actor_map_item.x = actor_position.x
+    @actor_map_item.y = actor_position.y
+    actor_minimap_refresh
   end
 
   def actor_minimap_refresh
-    seq = owner.action_sequence :minimap
-    seq.once do
-      @actor_minimap.local_event :map_update, nil
-    end
+    @actor_minimap.local_event :map_update, nil
   end
 
   def actor_minimap_delete
-    seq = owner.action_sequence :minimap
-    seq.once do
-      @actor_minimap.map_component.delete_item @actor_map_item
-      actor_minimap_refresh
-    end
+    @actor_minimap.map_component.delete_item @actor_map_item
+    actor_minimap_refresh
   end
 
   def actor_zombified(e)

@@ -29,6 +29,10 @@
                 "name": "Quit",
                 "archetype": "HUD/Pause/Quit"
               },
+              {
+                "name": "Restart",
+                "archetype": "HUD/Pause/Restart"
+              }
             ]
           }
         }

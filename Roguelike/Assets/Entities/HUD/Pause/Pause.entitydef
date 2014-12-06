@@ -27,16 +27,10 @@
             "position": [0, 0, -0.01]
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/100:100"]
+            "textures": ["MenuPrerender/Pause.png"]
           },
           "SpriteComponent": {
             "render_target": "PauseLayer",
-          },
-          "TextComponent": {
-            "texts": ["\uE103"],
-            "font": "Segoe UI Symbol",
-            "font_size": 48,
-            "bg_color": "#7F7F7F6F"
           }
         }
       }

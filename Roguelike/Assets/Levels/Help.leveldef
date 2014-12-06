@@ -84,9 +84,8 @@
                     },
                     "ButtonHelperComponent": {
                       "render_target": "HUDLayer",
-                      "text": "\uE112",
                       "width": 1,
-                      "text_align": "center"
+                      "image": "MenuPrerender/Back.png"
                     },
                     "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {

@@ -66,8 +66,8 @@ Config.load_defaults do
 
   Config.bind_key "Player", [Keys::I,          Keys::NUMPAD8], "fire_up"
   Config.bind_key "Player", [Keys::J,          Keys::NUMPAD4], "fire_left"
-  Config.bind_key "Player", [Keys::L,          Keys::NUMPAD2], "fire_down"
-  Config.bind_key "Player", [Keys::OEM_COMMA,  Keys::NUMPAD6], "fire_right"
+  Config.bind_key "Player", [Keys::OEM_COMMA,  Keys::NUMPAD2], "fire_down"
+  Config.bind_key "Player", [Keys::L,          Keys::NUMPAD6], "fire_right"
   Config.bind_key "Player", [Keys::U,          Keys::NUMPAD7], "fire_ul"
   Config.bind_key "Player", [Keys::O,          Keys::NUMPAD9], "fire_ur"
   Config.bind_key "Player", [Keys::M,          Keys::NUMPAD1], "fire_dl"

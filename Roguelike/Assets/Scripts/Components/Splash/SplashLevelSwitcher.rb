@@ -23,7 +23,7 @@ class SplashLevelSwitcher < ComponentBase
   def on_update(e)
     @time += e.dt
 
-    if @time > 0.1
+    if @time > 4
       Game.switch_level "MainMenu"
     end
   end

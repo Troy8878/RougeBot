@@ -48,6 +48,8 @@ module Actor
   def actor_minimap_create(shape, color)
     @actor_minimap = find_entity("Minimap")
 
+    raise RuntimeError, "#{search_entities('Minimap')}"
+
     @actor_map_item = @actor_minimap.map_component.create_item
     @actor_map_item.shape = shape
     @actor_map_item.color = color

@@ -213,7 +213,10 @@ class GameConsoleComponent < ComponentBase
     unless Config[:console_enabled]
       seq = owner.action_sequence :DIE!
       seq.delay 0
-      seq.once { owner.zombify! }
+      seq.once do
+        owner.parent.add_component "ConsoleBeGone", {}
+        owner.zombify!
+      end
       return
     end
 
@@ -223,7 +226,7 @@ class GameConsoleComponent < ComponentBase
   end
 
   def process_output
-    ary = AryStreamBuffer.game_console.flush
+    ary = AryStreamBuffer.game_console.peek
     if ary.length > 10
       AryStreamBuffer.game_console.peek.replace(ary[10..-1])
     end

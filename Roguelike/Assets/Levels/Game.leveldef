@@ -124,6 +124,8 @@
             {
               "name": "Minimap",
               "components": {
+                "MapComponent": {},
+                "MapControllerComponent": {},
                 "TransformComponent": {
                   "position": [1.4, 0.8]
                 },
@@ -133,8 +135,6 @@
                 "SpriteComponent": {
                   "render_target": "HUDLayer"
                 },
-                "MapComponent": {},
-                "MapControllerComponent": {}
               },
             },
             {

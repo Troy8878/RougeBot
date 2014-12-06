@@ -14,6 +14,8 @@
 ################################################################
 class MapControllerComponent < ComponentBase
 
+  dependency "TransformComponent"
+
   def initialize(data)
     super data
 

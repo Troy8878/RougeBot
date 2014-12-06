@@ -49,6 +49,9 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :on_pause, :on_pause
     self.register_event :player_use, :player_use
     self.register_event :player_drop, :player_drop
+
+    self.register_event :skip_floor, :skip_floor
+    self.register_event :skip_to_win, :skip_to_win
   end
 
   def on_pause(val)
@@ -83,6 +86,13 @@ class PlayerControllerComponent < ComponentBase
 
   def player_drop(e)
     find_entity("Hotbar").raise_event :drop_selected, current_tile
+  end
+
+  def skip_floor(e)
+  end
+
+  def skip_to_win(e)
+    Game.switch_level "Victory"
   end
 
   MOVE_ORIENTATIONS = {

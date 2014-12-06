@@ -23,6 +23,16 @@ class CheatState
   def its_over_9000
     find_entity("Player").inventory_component.give_random_weapon 9001
   end
+
+  def skip_level
+    pos = find_entity("Player").position_component.position
+    pos.x = STAIR_POSITION.x
+    pos.y = STAIR_POSITION.y
+  end
+
+  def victory
+    Game.switch_level 'Victory'
+  end
 end
 
 CHEAT_INST = CheatState.new

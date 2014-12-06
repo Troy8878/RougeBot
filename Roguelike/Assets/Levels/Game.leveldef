@@ -156,7 +156,7 @@
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
-                    "level_load": "owner.raise_event :send, [:set_text_at, [0, \"Floor #{GAME_STATE[:floor]}\\nGet to the stairs!\"]]"
+                    "level_load": "owner.raise_event :send, [:set_text_at, [0, \"Floor #{GAME_STATE[:floor]} / #{$DungeonLength}\\nGet to the stairs!\"]]"
                   }
                 }
               }

@@ -258,6 +258,15 @@ module ProjectileItemGenerate
         data["speed"] = data["speed"] + 1
       end
       data["element2"] = Projectile::ELECTRIC_ELEM
+    elsif result > 75
+      name = "Steel " + name
+      data["durability"] = data["durability"] + 5
+      data["damage"][0] = data["damage"][0] + 1
+      data["damage"][1] = data["damage"][1] + 1
+      data["value"] = data["value"] + 3
+      if(data["speed"] > MIN_SPEED)
+        data["speed"] = data["speed"] + 0
+      end
     elsif result > 70
       name = "Lead " + name
       data["durability"] = data["durability"] + 0
@@ -265,7 +274,7 @@ module ProjectileItemGenerate
       data["damage"][1] = data["damage"][1] + 2
       data["value"] = data["value"] - 1
       if(data["speed"] > MIN_SPEED)
-        data["speed"] = data["speed"] + 1
+        data["speed"] = data["speed"] - 1
       end
       data["element2"] = Projectile::PHYSICAL_ELEM
     elsif result > 65

@@ -317,13 +317,22 @@ module ProjectileItemGenerate
         data["speed"] = data["speed"] + 0
       end
       data["element2"] = Projectile::EXPLOSIVE_ELEM
-    elsif result > 30
+    elsif result > 33
       name = "Iron " + name
       # These & all zeros are here in case we need to quickly change values
       data["durability"] = data["durability"] + 0
       data["damage"][0] = data["damage"][0] - 0
       data["damage"][1] = data["damage"][1] - 0
       data["value"] = data["value"] - 0
+      if(data["speed"] > MIN_SPEED)
+        data["speed"] = data["speed"] + 0
+      end
+    elsif result > 30
+      name = "Gold " + name
+      data["durability"] = data["durability"] - 5
+      data["damage"][0] = data["damage"][0] - 1
+      data["damage"][1] = data["damage"][1] - 1
+      data["value"] = data["value"] + 10
       if(data["speed"] > MIN_SPEED)
         data["speed"] = data["speed"] + 0
       end

@@ -353,8 +353,6 @@ void GraphicsDevice::InitializeD3DContext()
 
   D3D_FEATURE_LEVEL FeatureLevelsRequested[] =
     {
-      D3D_FEATURE_LEVEL_10_0,
-      D3D_FEATURE_LEVEL_10_1,
       D3D_FEATURE_LEVEL_11_0,
     };
   UINT numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);

@@ -62,7 +62,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; The game directoy is exaclty what you want your install directory in program files to look like
 Source: .\GAMEDIRECTORY\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Include the redistributable programs and install them to the temp directory
-Source: .\REDIST\*; DestDir: {tmp}; Flags: ignoreversion
+;Source: .\REDIST\*; DestDir: {tmp}; Flags: ignoreversion
 
 ; This is the list of shortcuts that the installer will setup for you.
 ; Of note, this will create the uninstaller automatically.
@@ -81,5 +81,12 @@ Name: {commondesktop}\Roguebot; Filename: {app}\Game.exe; Tasks: desktopicon; Wo
 ; The last item being run is the installer option to automatically launch the game after
 ;   the installer exits as required by the TCRs.
 [Run]
-Filename: {tmp}\dxwebsetup.exe; Parameters: /q; StatusMsg: Installing DirectX...
+;Filename: {tmp}\dxwebsetup.exe; Parameters: /q; StatusMsg: Installing DirectX...
 Filename: {app}\Game.exe; Description: {cm:LaunchProgram,Roguebot}; Flags: nowait postinstall skipifsilent
+
+
+
+
+
+
+

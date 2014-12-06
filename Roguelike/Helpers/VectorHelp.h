@@ -250,6 +250,17 @@ inline std::ostream& XM_CALLCONV operator<<(std::ostream& os, DirectX::CXMMATRIX
 namespace DirectX
 {
   inline XMMATRIX XM_CALLCONV
+    operator+(FXMMATRIX m1, CXMMATRIX m2)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0];
+    m.r[1] = m1.r[1] + m2.r[1];
+    m.r[2] = m1.r[2] + m2.r[2];
+    m.r[3] = m1.r[3] + m2.r[3];
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
     operator-(FXMMATRIX m1, CXMMATRIX m2)
   {
     XMMATRIX m;

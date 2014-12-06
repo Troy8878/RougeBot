@@ -1,6 +1,6 @@
 /*********************************
  * RubyWrappers.cpp
- * Connor Hilarides
+ * Connor Hilarides, Enrique Rodriguez, Leonardo Saikali
  * Created 2014/08/29
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -26,6 +26,8 @@
 
 BucketAllocator vectorAlloc = BucketAllocator(sizeof(math::Vector), 4096);
 
+BucketAllocator matrixAlloc = BucketAllocator(sizeof(math::Matrix), 4096);
+
 // ----------------------------------------------------------------------------
 
 #pragma region MemoryVector
@@ -37,6 +39,20 @@ namespace memvect
     auto vclass = mrb_class_get(mrb, "Vector");
     static mrb_sym vnew = mrb_intern_cstr(mrb, "new");
     return mrb_funcall_argv(mrb, mrb_obj_value(vclass), vnew, 1, &self);
+  }
+}
+
+#pragma endregion
+
+#pragma region MemoryMatrix
+
+namespace memmatrix
+{
+  static mrb_value dup(mrb_state *mrb, mrb_value self)
+  {
+    auto mclass = mrb_class_get(mrb, "Matrix");
+    static mrb_sym mnew = mrb_intern_cstr(mrb, "new");
+    return mrb_funcall_argv(mrb, mrb_obj_value(mclass), mnew, 1, &self);
   }
 }
 
@@ -467,6 +483,210 @@ mrb_value ruby::wrap_memory_vector(math::Vector *vect)
 {
   static auto rclass = mrb_inst->get_class("Vector");
   auto data = mrb_data_object_alloc(*mrb_inst, rclass, vect, &mrb_mvector_type);
+  return mrb_obj_value(data);
+}
+
+// ----------------------------------------------------------------------------
+
+#pragma region Matrix
+
+// ----------------------------------------------------------------------------
+
+mrb_data_type ruby::mrb_matrix_type;
+mrb_data_type ruby::mrb_mmatrix_type;
+
+// ----------------------------------------------------------------------------
+
+namespace matrix
+{
+  using namespace ruby;
+
+#pragma region New matrix
+
+  static mrb_value matalloc(mrb_state *mrb, const math::Matrix &mat)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    auto nmatrix = matrixAlloc.Create<math::Matrix>(mat);
+    auto obj = mrb_data_object_alloc(mrb, mclass, nmatrix, &mrb_matrix_type);
+    return mrb_obj_value(obj);
+  }
+
+  static mrb_value mnew(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value first = mrb_nil_value();
+    mrb_get_args(mrb, "|o", &first);
+
+    math::Matrix mat{ DirectX::XMMatrixIdentity() };
+    if (!mrb_nil_p(first))
+    {
+      mat = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, first, &mrb_matrix_type));
+    }
+
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value identity(mrb_state *mrb, mrb_value)
+  {
+    auto mat = DirectX::XMMatrixIdentity();
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value scalar(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+
+    auto mat = DirectX::XMMatrixScaling(static_cast<float>(s), static_cast<float>(s), static_cast<float>(s));
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value scale(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_float s1, s2, s3;
+    mrb_get_args(mrb, "f", &s1, &s2, &s3);
+
+    auto mat = DirectX::XMMatrixScaling(static_cast<float>(s1), static_cast<float>(s2), static_cast<float>(s3));
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value translation(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value value;
+    mrb_get_args(mrb, "o", &value);
+    auto vect = ruby::get_ruby_vector(value);
+
+    auto mat = DirectX::XMMatrixTranslationFromVector(vect);
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value rotation(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value value;
+    mrb_get_args(mrb, "o", &value);
+    auto vect = ruby::get_ruby_vector(value);
+
+    auto mat = DirectX::XMMatrixRotationRollPitchYawFromVector(vect);
+    return matalloc(mrb, mat);
+  }
+
+  static void free(mrb_state *, void *mem)
+  {
+    auto mat = static_cast<math::Matrix*>(mem);
+    matrixAlloc.Destroy(mat);
+  }
+
+#pragma endregion
+
+#pragma region Basic Operators
+
+  //static mrb_value op_add(mrb_state *mrb, mrb_value self)
+  //{
+  //  mrb_value oval;
+  //  mrb_get_args(mrb, "o", &oval);
+
+  //  auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+  //  auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+  //
+  //  sv = sv + ov;
+
+  //  return self;
+  //}
+
+  //static mrb_value op_sub(mrb_state *mrb, mrb_value self)
+  //{
+  //  mrb_value oval;
+  //  mrb_get_args(mrb, "o", &oval);
+
+  //  auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+  //  auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+
+  //  sv = sv - ov;
+
+  //  return self;
+  //}
+
+  static mrb_value op_mul(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+    auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+
+    sv = sv * ov;
+
+    return self;
+  }
+
+#pragma endregion
+}
+
+//extern "C" void mrb_mruby_matrix_init(mrb_state *mrb)
+//{
+//  ruby::mrb_matrix_type.dfree = matrix::free;
+//  ruby::mrb_matrix_type.struct_name = "math::Matrix";
+//
+//  ruby::mrb_mmatrix_type.dfree = ruby::data_nop_delete;
+//  ruby::mrb_mmatrix_type.struct_name = "math::Matrix";
+//
+//  auto mclass = mrb_define_class(mrb, "Matrix", mrb->object_class);
+//
+//  mrb_define_class_method(mrb, mclass, "new", matrix::mnew, ARGS_OPT(4));
+//
+//  static mrb_value identity(mrb_state *mrb, mrb_value)
+//
+//  mrb_define_class_method(mrb, mclass, "scalar", matrix::scalar, ARGS_REQ(1));
+//
+//  static mrb_value scale(mrb_state *mrb, mrb_value)
+//
+//
+//  static mrb_value translation(mrb_state *mrb, mrb_value)
+//
+//  static mrb_value rotation(mrb_state *mrb, mrb_value)
+//
+//  mrb_define_class_method(mrb, mclass, "string_to_color", mrb_string_to_color, ARGS_REQ(1));
+//
+//  mrb_define_method(mrb, mclass, "dup", memmatrix::dup, ARGS_NONE());
+//
+//  mrb_define_method(mrb, mclass, "add", matrix::op_add, ARGS_REQ(1));
+//  mrb_define_method(mrb, mclass, "sub", matrix::op_sub, ARGS_REQ(1));
+//  mrb_define_method(mrb, mclass, "mul", matrix::op_mul, ARGS_REQ(1));
+//}
+//
+//#pragma endregion
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby::create_new_matrix(const math::Matrix &m)
+{
+  return matrix::matalloc(*mrb_inst, m);
+}
+
+// ----------------------------------------------------------------------------
+
+math::Matrix &ruby::get_ruby_matrix(mrb_value value)
+{
+  auto ptr = mrb_data_get_ptr(*mrb_inst, value, &mrb_mmatrix_type);
+  return *static_cast<math::Matrix *>(ptr);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby::wrap_memory_matrix(math::Matrix *mat)
+{
+  static auto rclass = mrb_inst->get_class("Matrix");
+  auto data = mrb_data_object_alloc(*mrb_inst, rclass, mat, &mrb_mmatrix_type);
   return mrb_obj_value(data);
 }
 

@@ -372,6 +372,8 @@ mrb_value ruby_engine::json_to_value(json::value jv)
   case json_type::jstring:
     {
       auto &str = jv.as_string();
+      if (str.empty())
+        return mrb_str_new_lit(mrb, "");
       return mrb_str_new(mrb, &*str.begin(), str.size());
     }
 

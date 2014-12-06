@@ -61,10 +61,19 @@ module ProjectileItemGenerate
       data["damage"][0] = 13
       data["damage"][1] = 23
       data["durability"] -= 10
-      data["speed"] = 2
+      data["speed"] = 3
       data["value"] += 10
       data["element1"] = Projectile::EXPLOSIVE_ELEM
       name = "Missile"
+      
+    elsif result > 95
+      data["damage"][0] = 13
+      data["damage"][1] = 19
+      data["durability"] -= 5
+      data["speed"] = 2
+      data["value"] += 4
+      data["element1"] = Projectile::EXPLOSIVE_ELEM
+      name = "Mine"
       
     elsif result > 90
       data["damage"][0] = 9
@@ -75,6 +84,15 @@ module ProjectileItemGenerate
       data["element1"] = Projectile::EXPLOSIVE_ELEM
       name = "Bomb"
       
+    elsif result > 85
+      data["damage"][0] = 12
+      data["damage"][1] = 16
+      data["durability"] += 0
+      data["speed"] = 4
+      data["value"] += 3
+      data["element1"] = Projectile::RADIOACTIVE_ELEM
+      name = "Macro Pulsewave"
+      
     elsif result > 80
       data["damage"][0] = 8
       data["damage"][1] = 18
@@ -84,8 +102,17 @@ module ProjectileItemGenerate
       data["element1"] = Projectile::FIRE_ELEM
       name = "Fireball"
       
+    elsif result > 75
+      data["damage"][0] = 9
+      data["damage"][1] = 16
+      data["durability"] -= 5
+      data["speed"] = 5
+      data["value"] += 3
+      data["element1"] = Projectile::ELECTRIC_ELEM
+      name = "Ball Lightning"
+      
     elsif result > 70
-      data["damage"][0] = 5
+      data["damage"][0] = 7
       data["damage"][1] = 17
       data["durability"] -= 0
       data["speed"] = 2
@@ -102,6 +129,15 @@ module ProjectileItemGenerate
       data["element1"] = Projectile::ELECTRIC_ELEM
       name = "Electric Bolt"
       
+    elsif result > 55
+      data["damage"][0] = 7
+      data["damage"][1] = 11
+      data["durability"] += 5
+      data["speed"] = 4
+      data["value"] += 1
+      data["element1"] = Projectile::RADIOACTIVE_ELEM
+      name = "Micro Pulsewave"
+      
     elsif result > 50
       data["damage"][0] = 5
       data["damage"][1] = 13
@@ -110,6 +146,15 @@ module ProjectileItemGenerate
       data["value"] += 0
       data["element1"] = Projectile::RADIOACTIVE_ELEM
       name = "Glowing Blob"
+      
+    elsif result > 40
+      data["damage"][0] = 5
+      data["damage"][1] = 17
+      data["durability"] -= 5
+      data["speed"] = 4
+      data["value"] += 2
+      data["element1"] = Projectile::FIRE_ELEM
+      name = "Fire Arrow"
       
     elsif result > 35
       data["damage"][0] = 6
@@ -120,12 +165,21 @@ module ProjectileItemGenerate
       data["element1"] = Projectile::PHYSICAL_ELEM
       name = "Shiruken"
       
+    elsif result > 30
+      data["damage"][0] = 6
+      data["damage"][1] = 15
+      data["durability"] -= 5
+      data["speed"] = 4
+      data["value"] += 0
+      data["element1"] = Projectile::ICE_ELEM
+      name = "Ice Arrow"
+      
     elsif result > 20
       data["damage"][0] = 5
       data["damage"][1] = 16
       data["durability"] -= 0
-      data["value"] -= 0
       data["speed"] = 4
+      data["value"] -= 0
       data["element1"] = Projectile::PHYSICAL_ELEM
       name = "Arrow"
       

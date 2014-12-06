@@ -167,6 +167,15 @@ class PlayerControllerComponent < ComponentBase
     down: 0
   }
 
+  ELEMENT_TINT = {
+    "flame"       => Vector.new(1.0, 0.6,  0.6, 1.0),
+    "freezing"    => Vector.new(1.0, 1.0,  1.0, 1.0),
+    "radioactive" => Vector.new(0.6, 1.0, 0.6, 1.0),
+    "exploding"   => Vector.new(1.0, 1.0,  0.6, 1.0),
+    "zapping"     => Vector.new(0.6, 1.0,  1.0, 1.0),
+    "physical"    => Vector.new(0.8, 0.8,  0.8, 1.0)
+  }
+
   def swing_weapon(e)
 
     return if @paused
@@ -175,7 +184,12 @@ class PlayerControllerComponent < ComponentBase
     orientation = e
 
     weapon = self.owner.inventory_component.inventory.equipment[:weapon]
+
+    element = weapon ? weapon.element : "physical"
     weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE
+
+    puts element
+    element ||= "physical"
 
     weaponType ||= Weapon::DAGGER_TYPE
 
@@ -191,6 +205,7 @@ class PlayerControllerComponent < ComponentBase
     )
     anim_entity.transform_component.rotation.z = ATTACK_ANIM_ROTATIONS[orientation]
     anim_entity.transform_component.position += Vector.new(*MOVE_ORIENTATIONS[orientation])
+    anim_entity.sprite_component.tint = ELEMENT_TINT["#{element}"]
 
     #Sound for attack
     SFX::SLASH.play

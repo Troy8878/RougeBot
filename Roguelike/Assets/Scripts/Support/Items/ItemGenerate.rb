@@ -229,37 +229,38 @@ module ItemGenerate
     if result > 95
       name = name + " of Radioactivity"
       data["value"] = data["value"] + 10
-      data["damage_type"] = :radioactive
+      data["element"] = "radioactive"
 
       data["attributes"] << ItemAttribute.new(:element, "Radioactive")
     elsif result > 85
       name = name + " of Exploding"
       data["value"] = data["value"] + 8
-      data["damage_type"] = :exploding
+      data["element"] = "exploding"
 
       data["attributes"] << ItemAttribute.new(:element, "Exploding")
     elsif result > 73
       name = name + " of Freezing"
       data["value"] = data["value"] + 6
-      data["damage_type"] = :freezing
+      data["element"] = "freezing"
 
       data["attributes"] << ItemAttribute.new(:element, "Freezing")
     elsif result > 60
       name = name + " of Zapping"
       data["value"] = data["value"] + 4
-      data["damage_type"] = :zapping
+      data["element"] = "zapping"
 
       data["attributes"] << ItemAttribute.new(:element, "Zapping")
     elsif result > 45
       name = name + " of Flames"
       data["value"] = data["value"] + 2
-      data["damage_type"] = :flame
+      data["element"] = "flame"
 
       data["attributes"] << ItemAttribute.new(:element, "Flame")
     else
       name = name
       data["damage"][0] = data["damage"][0] - 1
       data["damage"][1] = data["damage"][1] - 1
+      data["element"] = "physical"
 
       data["attributes"] << ItemAttribute.new(:element, "Physical")
     end

@@ -18,7 +18,7 @@ class Item
 end
 
 class Weapon < Item
-  attr_reader :damage, :durability, :weaponType, :value
+  attr_reader :damage, :durability, :weaponType, :value, :element
   alias weapon_type weaponType
 
   attr_reader :attributes
@@ -77,7 +77,7 @@ class Weapon < Item
       @damage = data.damage
       @durability = data.durability
       @value = data.value
-      @damage_type = data.damage_type
+      @element = data.element
       @attributes = data.attributes
     else
       range = data.fetch("damage", [1, 1])
@@ -87,9 +87,9 @@ class Weapon < Item
       end
       @damage = range
       @durability = data.fetch("durability", 1).to_f
-      @damage_type = data.fetch("damage_type", :physical)
+      @element = data.fetch("element", "physical")
       @weaponType = data.fetch("weaponType", DAGGER_TYPE)
-      @value = data.fetch("damage_type", 1)
+      @value = data.fetch("value", 1)
       @attributes = data.fetch("attributes", [])
 
       @equip_slot = :weapon

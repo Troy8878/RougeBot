@@ -87,11 +87,11 @@ public:
   }
 
   int publicVariable;
-  void publicMemberFunction();
+  void PublicMemberFunction();
   
 private:
   int _privateVariable;
-  void privateMemberFunction();
+  void PrivateMemberFunction();
 };
 
 -- EXCEPTION TO NAMING CONVENTIONS --

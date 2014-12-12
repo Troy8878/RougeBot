@@ -1,5 +1,8 @@
 {
   "name": "Splash",
+  "components": {
+    "MenuQuitBlocker": {}
+  },
   "entities": [
     {
       "name": "CameraRoot",

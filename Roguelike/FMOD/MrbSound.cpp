@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 
 static std::list<ManagedSound> allSounds;
-std::stack<double> gvolumeStack = std::stack<double>(std::deque<double>{1.0});
+double gvolume;
 
 struct SoundRef
 {
@@ -22,7 +22,7 @@ struct SoundRef
     : sound(sound)
   {
     allSounds.push_front(sound);
-    iterator = allSounds.begin();
+    iter = allSounds.begin();
   }
 
   NO_ASSIGNMENT_OPERATOR(SoundRef);
@@ -32,11 +32,17 @@ struct SoundRef
 
   ~SoundRef()
   {
-    allSounds.erase(iterator);
+    allSounds.erase(iter);
+  }
+
+  static void UpdateGV(ManagedSound s, double vol)
+  {
+    s->UpdateGVolume(vol);
   }
 
 private:
-  decltype(allSounds)::iterator iterator;
+  typedef decltype(allSounds) SC;
+  SC::iterator iter;
 };
 
 // ----------------------------------------------------------------------------
@@ -56,8 +62,7 @@ static mrb_value mrb_sound_paused_p(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_sound_volume_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self);
 
-static mrb_value mrb_sound_gvolume_push(mrb_state *mrb, mrb_value klass);
-static mrb_value mrb_sound_gvolume_pop(mrb_state *mrb, mrb_value klass);
+void SetMrbGVolume(double vol);
 
 // ----------------------------------------------------------------------------
 
@@ -196,6 +201,17 @@ static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self)
   sound->SetVolume(volume);
 
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+void SetMrbGVolume(double vol)
+{
+  gvolume = vol;
+  for (auto &sound : allSounds)
+  {
+    SoundRef::UpdateGV(sound, gvolume);
+  }
 }
 
 // ----------------------------------------------------------------------------

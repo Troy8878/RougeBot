@@ -1,6 +1,6 @@
 /*********************************
  * Entity.cpp
- * Jake Robsahm, Connor Hilarides, Leonardo Saikali
+ * Claire Robsahm, Connor Hilarides, Leonardo Saikali
  * Created 2014/08/11
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

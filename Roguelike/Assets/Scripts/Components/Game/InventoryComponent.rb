@@ -1,6 +1,6 @@
 #######################
 # InventoryComponent.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/09/11
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################

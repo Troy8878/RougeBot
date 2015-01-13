@@ -23,6 +23,6 @@
 #Just kidding. Please just do it or you will make me sad panda.#
 
 #Sincerely, 
-#Jake Robsahm
+#Claire Robsahm
 #The person in charge of the Ruby
 

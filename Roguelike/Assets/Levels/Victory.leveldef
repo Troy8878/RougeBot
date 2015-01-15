@@ -1,5 +1,12 @@
 {
   "name": "Victory",
+  "components": {
+    "EvalOnEventComponent": {
+      "bindings": {
+        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'"
+      }
+    }
+  },
   "entities": [
     {
       "name": "CameraRoot",

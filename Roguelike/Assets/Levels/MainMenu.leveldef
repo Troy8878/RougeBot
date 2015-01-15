@@ -1,12 +1,15 @@
 {
   "name": "MainMenu",
+  "components": {
+    "MenuQuitBlocker": {}
+  },
   "entities": [
     {
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
           "rotation": [0, 0, 0],
-          "position": [0, 0, -1]
+          "position": [0, 0, -10]
         }
       },
       "children": [

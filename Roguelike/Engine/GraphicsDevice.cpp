@@ -178,6 +178,8 @@ LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
 
 // ----------------------------------------------------------------------------
 
+void SetMrbGVolume(double vol);
+
 LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   if (GetGame()->levelChangeContext.name != "Init" && wndpatch != nullptr)
@@ -193,12 +195,14 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
     LRESULT result = 0;
     handler(hwnd, msg, wparam, lparam, result);
-    return result;
+
+    if (msg != WM_KILLFOCUS)
+      return result;
   }
 
   switch (msg)
   {
-  case WM_PAINT:
+    case WM_PAINT:
     {
       PAINTSTRUCT ps;
       BeginPaint(hwnd, &ps);
@@ -206,10 +210,26 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       return 0;
     }
 
-  case WM_CLOSE:
+    case WM_CLOSE:
     {
       GetGame()->Stop();
       return 0;
+    }
+
+    case WM_KILLFOCUS:
+    {
+      SetMrbGVolume(0);
+      if (GetFullscreen())
+      {
+        ShowWindow(hwnd, SW_MINIMIZE);
+      }
+      break;
+    }
+
+    case WM_SETFOCUS:
+    {
+      SetMrbGVolume(1);
+      break;
     }
   }
 

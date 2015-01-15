@@ -1,6 +1,6 @@
 /*********************************
  * AIBehaviour.cpp
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/24
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

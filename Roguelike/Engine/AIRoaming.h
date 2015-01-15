@@ -1,6 +1,6 @@
 /*********************************
  * AIRoaming.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/05
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

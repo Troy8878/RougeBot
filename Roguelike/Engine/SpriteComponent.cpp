@@ -1,6 +1,6 @@
 /*********************************
  * SpriteComponent.cpp
- * Jake Robsahm, Leonardo Saikali
+ * Claire Robsahm, Leonardo Saikali
  * Created 2014/08/19
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

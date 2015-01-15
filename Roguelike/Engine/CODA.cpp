@@ -140,6 +140,13 @@ void ConfirmationOfDestructiveAction::
   // Draw the game
   RenderGroup::Instance.Draw(*static_cast<Events::EventMessage *>(nullptr));
 
+  // Clear the depth buffer
+  GetGame()->GameDevice->DeviceContext->ClearDepthStencilView(
+    GetGame()->GameDevice->DepthStencilView,
+    D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL,
+    1.0f, 0
+  );
+
   auto hudRoot = GetGame()->CurrentLevel->RootEntity->FindEntity("CameraRoot");
   auto hudTransform = XMMatrixScaling(0.5, 0.5, 1) * XMMatrixTranslation(0, 0, 1.5f) * hudRoot->Transform;
 

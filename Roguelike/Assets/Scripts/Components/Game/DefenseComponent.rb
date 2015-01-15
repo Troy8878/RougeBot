@@ -1,6 +1,6 @@
 #######################
 # DefenseComponent.rb
-# Jake Robsahm, Leonardo Saikali
+# Claire Robsahm, Leonardo Saikali
 # Created 2014/09/05
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
@@ -81,11 +81,9 @@ class DefenseComponent < ComponentBase
 
     drop_random_weapon
 
-    transient = self.owner.parent.create_child(
-      components: {
-        "TransformComponent" => self.owner.transform_component.dup_for_hash
-      }
-    )
+    transient = self.owner.parent.create_child components: {
+      "TransformComponent" => self.owner.transform_component.dup_for_hash
+    }
 
     message = StatusMessage.new("👻", 2, "Cyan")
     message.delete_owner!

@@ -139,6 +139,7 @@
     <ClInclude Include="Actions.h" />
     <ClInclude Include="AIBehaviour.h" />
     <ClInclude Include="AIRoaming.h" />
+    <ClInclude Include="AISystem.h" />
     <ClInclude Include="AStarPathfinding.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Actions.cpp" />
     <ClCompile Include="AIBehaviour.cpp" />
     <ClCompile Include="AIRoaming.cpp" />
+    <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="AStarPathfinding.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
@@ -234,6 +236,7 @@
     <ClCompile Include="RubyAsset.cpp" />
     <ClCompile Include="RubyClass.cpp" />
     <ClCompile Include="RubyComponent.cpp" />
+    <ClCompile Include="RubyD2D.cpp" />
     <ClCompile Include="RubyEngine.cpp" />
     <ClCompile Include="RubyFile.cpp" />
     <ClCompile Include="RubyInit.cpp" />

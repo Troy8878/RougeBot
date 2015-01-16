@@ -18,5 +18,5 @@ class SplashZoomComponent < ComponentBase
     @transform.position.z -= e.dt * 2
   end
 
-  register_component "SplashZoomComponent"
+  register_component
 end

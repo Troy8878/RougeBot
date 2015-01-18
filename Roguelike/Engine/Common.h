@@ -37,6 +37,7 @@
 #include <queue>
 #include <forward_list>
 #include <unordered_set>
+#include <atomic>
 
 #include "Helpers\FixedWindows.h"
 #include "Helpers\UseDirectX.h"

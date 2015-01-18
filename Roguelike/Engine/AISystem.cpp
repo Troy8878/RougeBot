@@ -10,4 +10,38 @@
 
 // ----------------------------------------------------------------------------
 
+static std::unordered_map<std::string, AIFactory *> factories;
+
+void AIFactory::Register(std::string name, AIFactory *factory)
+{
+  factories[name] = factory;
+}
+
 // ----------------------------------------------------------------------------
+
+AIDecisionRef AIDecision::New(AIFactory &factory)
+{
+  return AIDecisionRef(new AIDecision(factory));
+}
+
+// ----------------------------------------------------------------------------
+
+option<AIResult> AIDecision::GetResult()
+{
+  if (hasResult)
+  {
+    return result;
+  }
+
+  return {};
+}
+
+// ----------------------------------------------------------------------------
+
+AIDecision::AIDecision(AIFactory &factory)
+  : behaviour(factory.Create()), hasResult(false)
+{
+}
+
+// ----------------------------------------------------------------------------
+

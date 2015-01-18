@@ -8,6 +8,40 @@
 #pragma once
 
 #include "Common.h"
+#include "AIBehaviour.h"
+
+// ----------------------------------------------------------------------------
+
+class AIFactory
+{
+public:
+  virtual AIBehaviour *Create() = 0;
+
+  virtual ~AIFactory()
+  {
+  }
+
+  static void Register(std::string name, AIFactory *factory);
+};
+
+// ----------------------------------------------------------------------------
+
+class AIDecision;
+typedef std::shared_ptr<AIDecision> AIDecisionRef;
+
+class AIDecision
+{
+public:
+  static AIDecisionRef New(AIFactory &factory);
+  option<AIResult> GetResult();
+
+private:
+  AIDecision(AIFactory &factory);
+
+  AIBehaviour *behaviour;
+  AIResult result;
+  std::atomic<bool> hasResult;
+};
 
 // ----------------------------------------------------------------------------
 
@@ -15,6 +49,8 @@ class AISystem
 {
 public:
 private:
+  std::list<AIDecisionRef> pendingDecisions;
 };
 
 // ----------------------------------------------------------------------------
+

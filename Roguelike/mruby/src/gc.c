@@ -242,7 +242,7 @@ mrb_free(mrb_state *mrb, void *p)
 }
 
 #ifndef MRB_HEAP_PAGE_SIZE
-#define MRB_HEAP_PAGE_SIZE 1024
+#define MRB_HEAP_PAGE_SIZE 65536
 #endif
 
 struct heap_page {

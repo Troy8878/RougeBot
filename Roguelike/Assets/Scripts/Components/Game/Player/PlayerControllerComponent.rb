@@ -40,8 +40,6 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :attack, :attack
     self.register_event :swing_weapon, :swing_weapon
 
-    # Double-click should do it in either case
-    # Double-click is the only way in touch mode
     self.register_event :double_click, :mouse_down
     self.register_event :mouse_down, :mouse_down
 

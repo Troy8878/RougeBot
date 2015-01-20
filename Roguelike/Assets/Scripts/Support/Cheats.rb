@@ -33,6 +33,17 @@ class CheatState
   def victory
     Game.switch_level 'Victory'
   end
+
+  def help
+    puts "       Cheat help       "
+    puts "========================"
+    puts "> cheat.skip_level      "
+    puts "> cheat.its_over_9000   "
+    puts "> cheat.victory         "
+    puts "> cheat.god = :on       "
+    puts "> cheat.god = :off      "
+    puts "========================"
+  end
 end
 
 CHEAT_INST = CheatState.new

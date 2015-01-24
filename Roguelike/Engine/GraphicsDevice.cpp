@@ -127,12 +127,12 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
   AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-  UINT width = UINT(rect.right - rect.left);
-  UINT height = UINT(rect.bottom - rect.top);
+  auto width = UINT(rect.right - rect.left);
+  auto height = UINT(rect.bottom - rect.top);
 
 #pragma endregion
 
-  HWND window = CreateWindow(
+  auto window = CreateWindow(
     wndc.lpszClassName,
     options.gameTitle.c_str(),
     WS_OVERLAPPEDWINDOW,
@@ -143,6 +143,8 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
   ShowWindow(window, SW_SHOWNORMAL);
   UpdateWindow(window);
+
+  SwitchToThisWindow(window, TRUE);
 
   is_fullscreen = false;
 

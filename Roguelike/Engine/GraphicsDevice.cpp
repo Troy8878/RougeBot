@@ -153,6 +153,18 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
 // ----------------------------------------------------------------------------
 
+template <typename Container>
+class Iterator
+{
+  Container container;
+
+public:
+  auto begin() -> decltype(container.begin())
+  {
+    return container.begin();
+  }
+};
+
 WindowDevice::WindowDevice(const WindowCreationOptions &options)
   : GraphicsDevice(), _size(options.size)
 {

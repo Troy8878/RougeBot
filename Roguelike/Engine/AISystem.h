@@ -35,8 +35,11 @@ public:
   static AIDecisionRef New(AIFactory &factory);
   option<AIResult> GetResult();
 
+  NO_COPY_CONSTRUCTOR(AIDecision);
+  NO_ASSIGNMENT_OPERATOR(AIDecision);
+
 private:
-  AIDecision(AIFactory &factory);
+  explicit AIDecision(AIFactory &factory);
 
   AIBehaviour *behaviour;
   AIResult result;

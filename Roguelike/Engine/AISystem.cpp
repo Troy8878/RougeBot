@@ -21,7 +21,21 @@ void AIFactory::Register(std::string name, AIFactory *factory)
 
 AIDecisionRef AIDecision::New(AIFactory &factory)
 {
-  return AIDecisionRef(new AIDecision(factory));
+  AIDecision *decision = nullptr;
+  AIDecisionRef ref;
+
+  try
+  {
+    decision = new AIDecision(factory);
+    ref = AIDecisionRef(decision);
+  }
+  catch (...)
+  {
+    delete decision;
+    throw;
+  }
+
+  return ref;
 }
 
 // ----------------------------------------------------------------------------

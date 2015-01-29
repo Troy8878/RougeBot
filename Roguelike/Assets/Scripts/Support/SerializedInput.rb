@@ -94,3 +94,16 @@ class ComponentBase
     @component_list << sub_class unless @component_list.include? sub_class
   end
 end
+
+def dump_serialization_maps
+  h = ComponentBase.component_list.inject(Hash.new) do |h, c|
+    h[c.to_s] = c.serialization_input.data
+  end
+
+  # TODO: JSON API
+  f = File.new
+  f.open "serialize.rbd", :out, :truncate
+  f.write h.to_s
+  f.close
+end
+

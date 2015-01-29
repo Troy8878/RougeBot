@@ -283,7 +283,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   _size = size;
 
   // Release D2D stuff
-  FreeD2DResources();
+  //FreeD2DResources();
 
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -314,7 +314,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
 
-  InitializeD2DContext();
+  //InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------

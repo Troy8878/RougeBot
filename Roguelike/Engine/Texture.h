@@ -86,6 +86,7 @@ private:
     UINT width, height;
     clock::time_point timestamp;
     clock::time_point brush_timestamp;
+
     TextureZip *zip;
 
     TextureResource() = default;
@@ -105,6 +106,7 @@ private:
       std::swap(width, moving.width);
       std::swap(height, moving.height);
       std::swap(timestamp, moving.timestamp);
+      std::swap(bitmap, moving.bitmap);
     }
 
     void ValidateSpecialSurface();

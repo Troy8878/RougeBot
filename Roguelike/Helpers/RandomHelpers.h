@@ -220,7 +220,7 @@ inline void ReleaseDXInterface(Interface *&interfaceToRelease)
   {
     interfaceToRelease->Release();
     interfaceToRelease = nullptr;
-}
+  }
 }
 
 // ----------------------------------------------------------------------------

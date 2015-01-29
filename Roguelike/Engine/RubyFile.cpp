@@ -261,7 +261,7 @@ std::ios::openmode parse_modeopt(mrb_state *mrb, mrb_value opt)
     return std::ios::in;
   if (strcmp(name, "out") == 0)
     return std::ios::out;
-  if (strcmp(name, "atend") == 0)
+  if (strcmp(name, "at_end") == 0)
     return std::ios::ate;
   if (strcmp(name, "append") == 0)
     return std::ios::app;

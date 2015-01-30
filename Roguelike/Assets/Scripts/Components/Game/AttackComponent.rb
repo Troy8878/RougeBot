@@ -19,6 +19,10 @@ class AttackComponent < ComponentBase
 
   property :damage, :float_pair, true
 
+  serialized_input do |p|
+    p.vector :damage, dimms: 2
+  end
+
   def initialize(data)
     super data
 

@@ -6,16 +6,14 @@
 #########################
 
 class SplashLevelSwitcher < ComponentBase
+
+  serialized_input do |p|
+  end
+  
   def initialize(data)
     super data
 
     @time = 0.0
-
-    # Prime the GC
-    ary = []
-    1000.times do
-      ary << Object.new
-    end
 
     register_event :update, :on_update
   end

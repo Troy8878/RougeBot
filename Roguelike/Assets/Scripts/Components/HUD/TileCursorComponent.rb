@@ -7,6 +7,13 @@
 
 module HUD
   class TileCursorComponent < ComponentBase
+    dependency "TransformComponent"
+
+    serialized_input do |p|
+      p.dependency "TransformComponent"
+      p.string :camera, required: true, semantics: :entity_name
+    end
+
     def initialize(data)
       super data
 

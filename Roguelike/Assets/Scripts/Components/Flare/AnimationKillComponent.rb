@@ -6,12 +6,12 @@
 #######################
 
 class AnimationKillComponent < ComponentBase
-  dependency "TransformComponent"
+  
+  serialized_input do |p|
+  end
 
   def initialize(data)
     super data
-
-    position = self.owner.transform_component.position
 
     seq = owner.action_sequence :status_death
     seq.delay 0.2

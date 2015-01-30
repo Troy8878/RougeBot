@@ -8,6 +8,9 @@
 class GamePauseControllerComponent < ComponentBase
   property :paused, :bool, true
 
+  serialized_input do |p|
+  end
+
   def initialize(data)
     super data
 

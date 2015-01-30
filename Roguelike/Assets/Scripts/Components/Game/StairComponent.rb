@@ -10,6 +10,10 @@ STAIR_POSITION = Vector.new
 class StairComponent < ComponentBase
   dependency "PositionComponent"
 
+  serialized_input do |p|
+    p.dependency "PositionComponent"
+  end
+
   def initialize(data)
     super data
 

@@ -24,6 +24,11 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+    p.dependency "PositionComponent"
+  end
+
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data

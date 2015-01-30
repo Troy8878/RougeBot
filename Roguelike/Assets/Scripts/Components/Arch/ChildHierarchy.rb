@@ -7,6 +7,10 @@
 
 class ChildHierarchy < ComponentBase
 
+  serialized_input do |p|
+    p.array :children, contained: :entity, required: true
+  end
+
   def initialize(data)
     super data
 

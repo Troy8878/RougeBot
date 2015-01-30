@@ -6,8 +6,15 @@
 #######################
 
 class SpinnyThingComponent < ComponentBase
+  dependency "TransformComponent"
   attr_accessor :speed
   attr_reader :axis
+
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+    p.float :speed, default: 1
+    p.enum  :axis, options: ["x", "y", "z"]
+  end
 
   def initialize(data)
     super data

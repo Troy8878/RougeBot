@@ -21,6 +21,10 @@ class DefenseComponent < ComponentBase
   property :health, :int, true
   property :armor, :float, true
 
+  serialized_input do |p|
+    p.float :health, default: 10.0
+  end
+
   def initialize(data)
     super data
 

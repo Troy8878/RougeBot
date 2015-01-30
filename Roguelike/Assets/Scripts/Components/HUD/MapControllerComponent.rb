@@ -13,8 +13,11 @@
 # maximized - boolean to store if the map is maximized or not.
 ################################################################
 class MapControllerComponent < ComponentBase
-
   dependency "TransformComponent"
+
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+  end
 
   def initialize(data)
     super data

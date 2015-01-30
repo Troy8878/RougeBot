@@ -8,6 +8,23 @@
 class CheckboxHelperComponent < ComponentBase
   attr_reader :checked
 
+  serialized_input do |p|
+    p.string :render_target, semantics: :render_target
+    p.bool   :is_checked, required: true, default: false
+    
+    p.string :box_color, semantics: :color, default: "#AFAFAFFF"
+    p.string :alt_color, semantics: :color, default: "#007FCFFF"
+    p.string :text_color, semantics: :color, default: "White"
+
+    p.float  :text_width, default: 3
+    p.float  :text_scale, default: 48
+
+    p.string :font, semantics: :font
+    p.string :text, required: true, default: ""
+
+    p.string :config_bind, default: nil
+  end
+
   def initialize(data)
     super data
 

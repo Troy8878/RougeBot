@@ -14,6 +14,10 @@
 class InventoryComponent < ComponentBase
   attr_reader :inventory
 
+  serialized_input do |p|
+    p.bool :is_player, required: true, default: false
+  end
+
   def initialize(data)
     super data
 

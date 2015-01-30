@@ -12,6 +12,10 @@ class BasicEnemySpawnerComponent < ComponentBase
     "Enemies/Derpaderp"
   ]
 
+  serialized_input do |p|
+    p.integer :num_enemies
+  end
+
   def initialize(data)
     super data
 

@@ -11,6 +11,10 @@ class ConsoleTextComponent < ComponentBase
   SHIFT_DY = 0.0375
   MAX_LINES = 25
 
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+  end
+
   def initialize(data)
     super data
 

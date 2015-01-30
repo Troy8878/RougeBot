@@ -7,6 +7,20 @@
 
 class ButtonHelperComponent < ComponentBase
 
+  serialized_input do |p|
+    p.string :render_target, semantics: :render_target
+    p.float  :width, default: 3
+    p.string :bg_color, semantics: :color, default: "White, 0.6"
+    p.string :bg_hover, semantics: :color, default: nil
+    p.float  :text_scale, default: 48
+    p.string :image, default: nil
+    p.string :text_color, semantics: :color, default: "White"
+    p.string :text_alt_color, semantics: :color, default: nil
+    p.string :font, semantics: :font
+    p.string :text, required: true, default: ""
+    p.enum   :text_align, options: ["center", "justified", "leading", "trailing"]
+  end
+
   def initialize(data)
     super data
     build_components data

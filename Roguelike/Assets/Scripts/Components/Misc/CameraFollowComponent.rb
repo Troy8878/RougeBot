@@ -6,7 +6,16 @@
 #######################
 
 class CameraFollowComponent < ComponentBase
+  dependency "TransformComponent"
   attr_accessor :offset, :lag
+
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+    p.vector  :offset, dimms: 3
+    p.float   :speed
+    p.float   :superspeed
+    p.integer :follows, semantics: :entity_id
+  end
 
   def initialize(data)
     super data

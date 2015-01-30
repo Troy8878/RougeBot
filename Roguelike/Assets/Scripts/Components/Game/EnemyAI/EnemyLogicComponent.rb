@@ -7,6 +7,12 @@
 
 class EnemyLogicComponent < ComponentBase
   include Actor
+  dependency "PositionComponent", "AttackComponent"
+
+  serialized_input do |p|
+    p.dependency "PositionComponent"
+    p.dependency "AttackComponent"
+  end
 
   def initialize(data)
     super data

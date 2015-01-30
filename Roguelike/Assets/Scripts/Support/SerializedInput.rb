@@ -15,30 +15,35 @@ class SerializedInput
   # Data Types
 
   def bool(prop, opts = {})
+    opts[:default] ||= false
     @data[:properties][prop] = with_opts opts, {
       type: :bool
     }
   end
 
   def string(prop, opts = {})
+    opts[:default] ||= ""
     @data[:properties][prop] = with_opts opts, {
       type: :string
     }
   end
 
   def float(prop, opts = {})
+    opts[:default] ||= 0.0
     @data[:properties][prop] = with_opts opts, {
       type: :float
     }
   end
 
   def integer(prop, opts = {})
+    opts[:default] ||= 0
     @data[:properties][prop] = with_opts opts, {
       type: :integer
     }
   end
 
   def enum(prop, opts = {})
+    opts[:default] ||= opts[:options][0]
     @data[:properties][prop] = with_opts opts, {
       type: :enum,
       options: opts[:options]
@@ -47,13 +52,8 @@ class SerializedInput
 
   # Compound types
 
-  def float_pair(prop, opts = {})
-    @data[:properties][prop] = with_opts opts, {
-      type: :float_pair
-    }
-  end
-
   def vector(prop, opts = {})
+    opts[:default] ||= [0,0,0,0]
     @data[:properties][prop] = with_opts opts, {
       type: :vector,
       dimmensions: opts[:dimms] || 4
@@ -61,9 +61,33 @@ class SerializedInput
   end
 
   def array(prop, opts = {})
+    opts[:default] ||= []
     @data[:properties][prop] = with_opts opts, {
       type: :array,
       contained: opts[:contained] || "string"
+    }
+  end
+
+  def map(prop, opts = {})
+    opts[:default] ||= {}
+    @data[:properties][prop] = with_opts opts, {
+      type: :array,
+      key: opts[:key] || "string",
+      value: opts[:value] || "string"
+    }
+  end
+
+  def entity(prop, opts = {})
+    opts[:default] ||= {}
+    @data[:properties][prop] = with_opts opts, {
+      type: :entity
+    }
+  end
+
+  def direction(prop, opts = {})
+    opts[:default] ||= [1,0]
+    @data[:properties][prop] = with_opts opts, {
+      type: :direction
     }
   end
 

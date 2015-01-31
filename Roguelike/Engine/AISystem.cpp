@@ -7,6 +7,7 @@
 
 #include "Common.h"
 #include "AISystem.h"
+#include "WorldSnapshot.h"
 
 // ----------------------------------------------------------------------------
 
@@ -19,14 +20,14 @@ void AIFactory::Register(std::string name, AIFactory *factory)
 
 // ----------------------------------------------------------------------------
 
-AIDecisionRef AIDecision::New(AIFactory &factory)
+AIDecisionRef AIDecision::New(AIFactory &factory, json::value params)
 {
   AIDecision *decision = nullptr;
   AIDecisionRef ref;
 
   try
   {
-    decision = new AIDecision(factory);
+    decision = new AIDecision(factory, params);
     ref = AIDecisionRef(decision);
   }
   catch (...)
@@ -52,10 +53,100 @@ option<AIResult> AIDecision::GetResult()
 
 // ----------------------------------------------------------------------------
 
-AIDecision::AIDecision(AIFactory &factory)
-  : behaviour(factory.Create()), hasResult(false)
+void AIDecision::Init(Entity *owner, Entity *target)
+{
+  behavior->InitilizeOwner(owner);
+  behavior->InitializeTarget(target);
+}
+
+// ----------------------------------------------------------------------------
+
+void AIDecision::Run(const WorldSnapshot& snap, json::value params)
+{
+  behavior->ApplyBehaviour(snap, params);
+}
+
+// ----------------------------------------------------------------------------
+
+AIDecision::AIDecision(AIFactory &factory, json::value params)
+  : behavior(factory.Create(params)), hasResult(false)
 {
 }
 
 // ----------------------------------------------------------------------------
 
+AISystem::AISystem(size_t threadCount)
+{
+  while (threadCount)
+  {
+    decisionThreads.emplace_back(std::bind(&AISystem::RunThread, this));
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+AISystem::~AISystem()
+{
+  quit = true;
+
+  for (auto &thread : decisionThreads)
+  {
+    thread.join();
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+AIDecisionRef AISystem::QueueBehavior(AIFactory& factory, json::value params,
+                                      Entity *owner, Entity *target)
+{
+  auto decision = AIDecision::New(factory, params);
+  decision->Init(owner, target);
+
+  auto queue = decisionQueue.deref_mut();
+  queue->push(decision);
+}
+
+// ----------------------------------------------------------------------------
+
+void AISystem::UpdateSnapshot()
+{
+  auto snapshot = this->snapshot.write();
+  *snapshot = WorldSnapshot();
+}
+
+// ----------------------------------------------------------------------------
+
+void AISystem::RunThread()
+{
+  while (!quit)
+  {
+    auto decision = GetDecision();
+    auto snapshot = this->snapshot.read();
+
+    decision->Run(*snapshot, decision->params);
+
+    decision->result = decision->behavior->GetResult();
+    decision->hasResult = true;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+AIDecisionRef AISystem::GetDecision()
+{
+  for(;;)
+  {
+    Sleep(1);
+
+    auto queue = decisionQueue.deref_mut();
+    if (!queue->empty())
+    {
+      auto decision = queue->front();
+      queue->pop();
+      return decision;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------

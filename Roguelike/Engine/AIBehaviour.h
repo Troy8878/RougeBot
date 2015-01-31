@@ -7,6 +7,7 @@
 
 #pragma once
 #include "mruby.h"
+#include "json/json.h"
 
 class WorldSnapshot;
 class Entity;
@@ -28,7 +29,7 @@ class AIBehaviour
 public:
   virtual ~AIBehaviour() {}
 
-  virtual void ApplyBehaviour(const WorldSnapshot &world) = 0; // Called on AI thread, do not access engine
+  virtual void ApplyBehaviour(const WorldSnapshot &world, json::value params) = 0; // Called on AI thread, do not access engine
   virtual void Prepare() = 0; // Called before AI thread is used
   virtual void InitializeTarget(Entity *target) = 0;
   virtual void InitilizeOwner(Entity *thisEntity) = 0;

@@ -15,7 +15,7 @@
 
 // ----------------------------------------------------------------------------
 
-void AIRoaming::ApplyBehaviour(const WorldSnapshot &world)
+void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 {
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 

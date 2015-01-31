@@ -15,7 +15,7 @@
 class AIRoaming final : public AIBehaviour
 {
 public:
-  void ApplyBehaviour(const WorldSnapshot &world) override;
+  void ApplyBehaviour(const WorldSnapshot &world, json::value params) override;
   void Prepare() override;
   void InitializeTarget(Entity *target) override;
   void InitilizeOwner(Entity *thisEntity) override;

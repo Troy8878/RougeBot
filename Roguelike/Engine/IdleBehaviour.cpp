@@ -11,7 +11,7 @@
 #include "WorldSnapshot.h"
 
 
-void IdleBehaviour::ApplyBehaviour(const WorldSnapshot& world)
+void IdleBehaviour::ApplyBehaviour(const WorldSnapshot& world, json::value params)
 {
   // Randomly generate a number from 1 to 4 to determine direction.
   std::random_device rng;

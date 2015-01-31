@@ -9,7 +9,7 @@
 #include "AStarPathfinding.h"
 #include "RubyWrappers.h"
 
-void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
+void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world, json::value params)
 {
   // Find the start and end tiles.
   auto *startTile = &world.GetTile(ox, oy);

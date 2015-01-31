@@ -9,13 +9,14 @@
 
 #include "Common.h"
 #include "AIBehaviour.h"
+#include "WorldSnapshot.h"
 
 // ----------------------------------------------------------------------------
 
 class AIFactory
 {
 public:
-  virtual AIBehaviour *Create() = 0;
+  virtual AIBehaviour *Create(json::value params) = 0;
 
   virtual ~AIFactory()
   {
@@ -32,27 +33,49 @@ typedef std::shared_ptr<AIDecision> AIDecisionRef;
 class AIDecision
 {
 public:
-  static AIDecisionRef New(AIFactory &factory);
+  static AIDecisionRef New(AIFactory &factory, json::value params);
   option<AIResult> GetResult();
 
   NO_COPY_CONSTRUCTOR(AIDecision);
   NO_ASSIGNMENT_OPERATOR(AIDecision);
 
-private:
-  explicit AIDecision(AIFactory &factory);
+  void Init(Entity *owner, Entity *target);
+  void Run(const WorldSnapshot &snap, json::value params);
 
-  AIBehaviour *behaviour;
+private:
+  explicit AIDecision(AIFactory &factory, json::value params);
+
+  json::value params;
+  AIBehaviour *behavior;
   AIResult result;
   std::atomic<bool> hasResult;
+
+  friend class AISystem;
 };
 
 // ----------------------------------------------------------------------------
 
-class AISystem
+class AISystem final
 {
 public:
+  AISystem(size_t threadCount);
+  ~AISystem();
+
+  AIDecisionRef QueueBehavior(AIFactory &factory, json::value params,
+                              Entity *owner, Entity *target);
+  void UpdateSnapshot();
+
+  NO_COPY_CONSTRUCTOR(AISystem);
+  NO_ASSIGNMENT_OPERATOR(AISystem);
+
 private:
-  std::list<AIDecisionRef> pendingDecisions;
+  rwlock<WorldSnapshot> snapshot;
+  object_lock<std::queue<AIDecisionRef>> decisionQueue;
+  std::vector<std::thread> decisionThreads;
+  std::atomic<bool> quit = true;
+
+  void RunThread();
+  AIDecisionRef GetDecision();
 };
 
 // ----------------------------------------------------------------------------

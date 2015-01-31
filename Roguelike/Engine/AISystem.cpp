@@ -105,6 +105,8 @@ AIDecisionRef AISystem::QueueBehavior(AIFactory& factory, json::value params,
 
   auto queue = decisionQueue.deref_mut();
   queue->push(decision);
+
+  return decision;
 }
 
 // ----------------------------------------------------------------------------

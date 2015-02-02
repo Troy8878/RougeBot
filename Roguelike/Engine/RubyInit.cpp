@@ -56,6 +56,7 @@ extern "C"
   void mrb_mruby_sound_init(mrb_state *mrb);
   void mrb_mruby_asset_init(mrb_state *mrb);
   void mrb_mruby_d2d_cxt_init(mrb_state *mrb);
+  void mrb_mruby_aisys_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -136,6 +137,9 @@ extern "C"
 
     // DRAWING FROM RUBY BECAUSE FUCK DA POLICE
     mrb_mruby_d2d_cxt_init(mrb);
+
+    // AI! KSFGOIWSHEFOUIJERF
+    mrb_mruby_aisys_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

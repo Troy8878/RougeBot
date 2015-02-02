@@ -19,6 +19,7 @@
 #include "ResourceReader\ResourcePack.h"
 #include "Helpers\AsyncTask.h"
 #include "FMOD\SoundSystem.h"
+#include "AISystem.h"
 
 // ----------------------------------------------------------------------------
 
@@ -101,6 +102,8 @@ public:
     LapTimer gc_join;
     LapTimer entity_kill;
   } performance;
+
+  IR_PROPERTY(AISystem *, AI);
 
 private:
   std::unordered_map<UINT, wndproc_callback> _wndprocCallbacks;

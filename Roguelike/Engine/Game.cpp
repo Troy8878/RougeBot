@@ -36,6 +36,8 @@ Game *GetGame()
 Game::Game(const std::string &title, HINSTANCE hInstance)
   : BasicClassEventReciever(this), _title(title), _hInstance(hInstance)
 {
+  AI = new AISystem(std::min(std::thread::hardware_concurrency() - 2, 2u));
+
   GameLock.enter();
 
   Events::Event::GlobalDispatcher = &globalEventDispatcher;

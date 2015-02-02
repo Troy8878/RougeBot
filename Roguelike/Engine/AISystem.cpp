@@ -77,7 +77,7 @@ AIDecision::AIDecision(AIFactory &factory, json::value params)
 
 AISystem::AISystem(size_t threadCount)
 {
-  while (threadCount)
+  while (threadCount--)
   {
     decisionThreads.emplace_back(std::bind(&AISystem::RunThread, this));
   }
@@ -149,6 +149,33 @@ AIDecisionRef AISystem::GetDecision()
       return decision;
     }
   }
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_data_type mrb_aisys_dt;
+
+static mrb_value mrb_aisys_instance(mrb_state *mrb, mrb_value klass);
+
+// ----------------------------------------------------------------------------
+
+EXTERN_C void mrb_mruby_aisys_init(mrb_state *mrb)
+{
+  ruby::data_type_init<AISystem>(mrb_aisys_dt);
+  auto aclass = mrb_define_class(mrb, "AISystem", mrb->object_class);
+
+  mrb_define_class_method(mrb, aclass, "instance", mrb_aisys_instance, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, aclass, "new", mrb_nop, MRB_ARGS_NONE());
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_aisys_instance(mrb_state *mrb, mrb_value klass)
+{
+  auto klassp = mrb_class_ptr(klass);
+  auto datap = GetGame()->AI;
+  auto data = mrb_data_object_alloc(mrb, klassp, datap, &mrb_aisys_dt);
+  return mrb_obj_value(data);
 }
 
 // ----------------------------------------------------------------------------

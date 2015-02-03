@@ -14,17 +14,26 @@
 
 #include "mruby/array.h"
 #include "Engine/RubyWrappers.h"
+#include "Engine/TransformComponent.h"
 
 #pragma warning (disable : 4127) // This doesn't even need to be a warning really :/
+
+
 
 // ----------------------------------------------------------------------------
 
 MapComponentFactory MapComponent::factory;
 
+static const int vp_width = 3;
+static const int vp_height = 3;
+
 // Ruby stuff for MapComponent
 static void mrb_mapcomponent_init(mrb_state *mrb);
 static mrb_value mrb_mapcomponent_new(mrb_state *mrb, MapComponent *map);
-static void mrb_mapcomponent_free(mrb_state *, void *) {};
+
+static void mrb_mapcomponent_free(mrb_state *, void *)
+{
+};
 
 // Define the ruby functions for MapComponent
 static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self);
@@ -36,7 +45,10 @@ static mrb_data_type mrb_mapcomponent_data_type;
 
 // Ruby stuff for MapItem
 static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item);
-static void mrb_mapitem_free(mrb_state *, void *) {};
+
+static void mrb_mapitem_free(mrb_state *, void *)
+{
+};
 
 // Define the ruby functions for MapItem
 static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self);
@@ -47,6 +59,8 @@ static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_getstairs(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapitem_setstairs(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_getvisible(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapitem_setvisible(mrb_state *mrb, mrb_value self);
 
@@ -71,7 +85,7 @@ MapComponent::~MapComponent()
 
 // ----------------------------------------------------------------------------
 
-void MapComponent::Initialize(Entity *owner, const std::string& name)
+void MapComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
@@ -87,7 +101,7 @@ void MapComponent::Initialize(Entity *owner, const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-void MapComponent::OnUpdate(Events::EventMessage&)
+void MapComponent::OnUpdate(Events::EventMessage &)
 {
   // If we haven't found the floor yet, find it and store it.
   if (!_floor)
@@ -100,28 +114,69 @@ void MapComponent::OnUpdate(Events::EventMessage&)
 
     // Initialize explored vector.
     mrb_int rows = ruby::enumerable_length(mrb, _map_obj);
-    _explored.resize((size_t) rows);
+    _explored.resize(static_cast<size_t>(rows));
 
     mrb_value rubyRow = ruby::enumerable_first(mrb, _map_obj);
     mrb_int cols = ruby::enumerable_length(mrb, rubyRow);
 
     // Initialize each inividual row.
-    for (auto& row : _explored)
+    for (auto &row : _explored)
     {
-      row.resize((size_t) cols);
+      row.resize(static_cast<size_t>(cols));
+
+      for (auto it = row.begin(); it != row.end(); ++it)
+      {
+        *it = false;
+      }
     }
   }
 
   // This will only draw if it needs to be redrawn (ie the window has been resized).
-  if (_drawing.Validate())
+  if (_drawing.Validate() && !_first_draw)
   {
+    GetPlayerPosition(_px, _py);
+
+    for (int i = _py - vp_height; i <= _py + vp_height; ++i)
+    {
+      if (i < 0 || i >= _explored.size())
+        continue;
+
+      auto &row = _explored[i];
+      for (int j = _px - vp_width; j <= _px + vp_width; ++j)
+      {
+        if (j < 0 || j >= row.size())
+          continue;
+
+        row[j] = true;
+      }
+    }
+
+    _revealed_items.clear();
+
+    for (auto &item : _items)
+    {
+      auto is_close_enough =
+        std::abs(_px - item->X) <= vp_width &&
+        std::abs((static_cast<int>(_explored.size()) - 1 - _py) - item->Y) <= vp_height;
+      auto is_stairs = item->Stairs && _stairs_found;
+
+      if (is_close_enough || is_stairs)
+      {
+        _revealed_items.push_back(item);
+
+        if (item->Stairs)
+          _stairs_found = true;
+      }
+    }
     DrawMap();
   }
+
+  _first_draw = false;
 }
 
 // ----------------------------------------------------------------------------
 
-void MapComponent::OnMapUpdate(Events::EventMessage&)
+void MapComponent::OnMapUpdate(Events::EventMessage &)
 {
   _drawing.timestamp = DrawingResources::clock::from_time_t(0);
   //_drawing.Validate();
@@ -138,7 +193,7 @@ void MapComponent::DrawMap()
   auto texture = texture_comp->Textures[0];
 
   // Initialize all of the Direct2D stuff
-  auto& d2d = GetGame()->GameDevice->D2D;
+  auto &d2d = GetGame()->GameDevice->D2D;
   // This basically says what we're drawing to - in this case, the texture
   d2d.DrawTo(texture);
   // Clear any previous transform
@@ -165,21 +220,36 @@ void MapComponent::DrawMap()
     // Now we need to loop over every value in this row.
     for (mrb_int x = 0; x < row_len; ++x)
     {
-      // Retrieve the current index value of the row array.
-      static mrb_sym type_id = mrb_intern_lit(mrb, "type_id");
 
-      mrb_value tile = ruby::enumerable_at(mrb, row, x);
-      mrb_int val = mrb_fixnum(mrb_funcall_argv(mrb, tile, type_id, 0, nullptr));
+      ID2D1Brush *brush = nullptr;
+      // Create a rectangle using our coordinates.
+      auto rectangle = D2D1::RectF((x + 1) * mapScale, (y + 1) * mapScale,
+                                    (x + 2) * mapScale, (y + 2) * mapScale);
 
-      // If the val is 1, it means there's a wall. Draw.
-      if (val == 1)
+      if (!_explored[y][x])
       {
-        // Create a rectangle using our coordinates.
-        auto rectangle = D2D1::RectF((x + 1) * mapScale, (y + 1) * mapScale,
-                                     (x + 2) * mapScale, (y + 2) * mapScale);
-        // Now we actually draw the Rectangle.
-        d2d.DeviceContext->FillRectangle(rectangle, _drawing.wallBrush);
+        brush = _drawing.unexploredBrush;
       }
+      else
+      {
+        // Retrieve the current index value of the row array.
+        static mrb_sym type_id = mrb_intern_lit(mrb, "type_id");
+
+        mrb_value tile = ruby::enumerable_at(mrb, row, x);
+        mrb_int val = mrb_fixnum(mrb_funcall_argv(mrb, tile, type_id, 0, nullptr));
+
+        // If the val is 1, it means there's a wall. Draw.
+        if (val == 1)
+        {
+          brush = _drawing.wallBrush;
+          if (abs(x - _px) > vp_width || abs(y - _py) > vp_height)
+            brush = _drawing.desatBrush;
+        }
+      }
+
+      // Now we actually draw the Rectangle.
+      if (brush)
+        d2d.DeviceContext->FillRectangle(rectangle, brush);
     }
   }
 
@@ -196,7 +266,7 @@ void MapComponent::DrawMap()
   d2d.DeviceContext->FillRectangle(topRectangle, _drawing.wallBrush);
   d2d.DeviceContext->FillRectangle(botRectangle, _drawing.wallBrush);
 
-  for(auto *item : _items)
+  for (auto *item : _revealed_items)
     item->Draw(mapScale, len);
 
   HRESULT hr = d2d.EndDraw();
@@ -205,12 +275,21 @@ void MapComponent::DrawMap()
 
 // ----------------------------------------------------------------------------
 
+void MapComponent::GetPlayerPosition(int &x, int &y)
+{
+  auto player = GetGame()->CurrentLevel->RootEntity->FindEntity("Player");
+  auto transform = player->GetComponent<TransformComponent>("TransformComponent");
+
+  x = static_cast<int>(transform->Position.x);
+  y = static_cast<int>(_explored.size()) - 1 - static_cast<int>(transform->Position.y);
+}
+
 bool MapComponent::DrawingResources::Validate()
 {
   using namespace D2D1;
 
   // Get a reference to direct2D
-  auto& d2d = GetGame()->GameDevice->D2D;
+  auto &d2d = GetGame()->GameDevice->D2D;
   // Make sure the timestamp is okay
   if (timestamp >= d2d.ResourceTimestamp)
     return false;
@@ -231,6 +310,16 @@ bool MapComponent::DrawingResources::Validate()
   CHECK_HRESULT(hr);
   playerBrush = scBrush;
 
+  // Create the desaturated brush
+  hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::CornflowerBlue, 0.51), &scBrush);
+  CHECK_HRESULT(hr);
+  desatBrush = scBrush;
+
+  // Create the unexplored brush
+  hr = d2d.DeviceContext->CreateSolidColorBrush(ColorF(ColorF::Black, 0.8), &scBrush);
+  CHECK_HRESULT(hr);
+  unexploredBrush = scBrush;
+
   // Update the timestamp
   timestamp = clock::now();
 
@@ -243,6 +332,8 @@ void MapComponent::DrawingResources::Release()
 {
   ReleaseDXInterface(wallBrush);
   ReleaseDXInterface(playerBrush);
+  ReleaseDXInterface(desatBrush);
+  ReleaseDXInterface(unexploredBrush);
 }
 
 // ----------------------------------------------------------------------------
@@ -272,12 +363,11 @@ MapComponentFactory::MapComponentFactory()
 
 // ----------------------------------------------------------------------------
 
-Component *MapComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+Component *MapComponentFactory::CreateObject(void *memory, component_factory_data &data)
 {
   (data); // do something with the serialization data
 
-  auto *component = new (memory) MapComponent;
+  auto *component = new(memory)MapComponent;
 
   // do something to the component
 
@@ -297,21 +387,22 @@ mrb_value MapComponent::GetRubyWrapper()
 void MapItem::Draw(float mapScale, mrb_int mapSize)
 {
   // Make sure we even want to draw this.
-  if(!Visible)
+  if (!Visible)
     return;
 
   Validate();
 
-  auto& d2d = GetGame()->GameDevice->D2D;
+  auto &d2d = GetGame()->GameDevice->D2D;
 
   // Set the scale and translation.
   auto scale = D2D1::Matrix3x2F::Scale(mapScale, mapScale);
-  auto translation = D2D1::Matrix3x2F::Translation((float) _x + 1, (float) mapSize - _y);
+  auto translation = D2D1::Matrix3x2F::Translation((float)_x + 1, (float)mapSize - _y);
   d2d.DeviceContext->SetTransform(translation * scale);
 
   // Draw the thing
   d2d.DeviceContext->FillGeometry(_geometry, _brush);
 }
+
 // ----------------------------------------------------------------------------
 
 void MapItem::Validate()
@@ -319,7 +410,7 @@ void MapItem::Validate()
   using namespace D2D1;
 
   // Get a reference to direct2D
-  auto& d2d = GetGame()->GameDevice->D2D;
+  auto &d2d = GetGame()->GameDevice->D2D;
   // Make sure the timestamp is okay
   if (_timestamp >= d2d.ResourceTimestamp)
     return;
@@ -338,7 +429,7 @@ void MapItem::Validate()
   _brush = scBrush;
 
   // Create the shape
-  switch(_shape)
+  switch (_shape)
   {
   case RECTANGLE:
     d2d.Factory->CreateRectangleGeometry(D2D1::RectF(0, 0, 1, 1), &rectangle);
@@ -399,6 +490,8 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   mrb_define_method(mrb, iclass, "shape=", mrb_mapitem_setshape, ARGS_REQ(1));
   mrb_define_method(mrb, iclass, "visible?", mrb_mapitem_getvisible, ARGS_NONE());
   mrb_define_method(mrb, iclass, "visible=", mrb_mapitem_setvisible, ARGS_REQ(1));
+  mrb_define_method(mrb, iclass, "stairs?", mrb_mapitem_getstairs, ARGS_NONE());
+  mrb_define_method(mrb, iclass, "stairs=", mrb_mapitem_setstairs, ARGS_REQ(1));
 
   // Constants
   mrb_define_const(mrb, iclass, "RECTANGLE", mrb_fixnum_value(MapItem::Shapes::RECTANGLE));
@@ -418,7 +511,7 @@ static mrb_value mrb_mapcomponent_new(mrb_state *mrb, MapComponent *map)
 
 static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self)
 {
-  auto *map = (MapComponent *) mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type);
+  auto *map = static_cast<MapComponent *>(mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type));
   auto *item = map->CreateMapItem();
 
   return mrb_mapitem_new(mrb, item);
@@ -428,10 +521,10 @@ static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self)
 {
-  auto *map = (MapComponent *) mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type);
+  auto *map = static_cast<MapComponent *>(mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type));
   mrb_value item;
   mrb_get_args(mrb, "o", &item);
-  map->DeleteMapItem((MapItem *) mrb_data_get_ptr(mrb, item, &mrb_mapitem_data_type));
+  map->DeleteMapItem(static_cast<MapItem *>(mrb_data_get_ptr(mrb, item, &mrb_mapitem_data_type)));
 
   return mrb_nil_value();
 }
@@ -449,7 +542,7 @@ static mrb_value mrb_mapitem_new(mrb_state *mrb, MapItem *item)
 
 static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   return mrb_fixnum_value(item->X);
 }
 
@@ -457,10 +550,10 @@ static mrb_value mrb_mapitem_getx(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   mrb_int x;
   mrb_get_args(mrb, "i", &x);
-  item->X = (int) x;
+  item->X = static_cast<int>(x);
   return mrb_nil_value();
 }
 
@@ -468,7 +561,7 @@ static mrb_value mrb_mapitem_setx(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_gety(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   return mrb_fixnum_value(item->Y);
 }
 
@@ -476,10 +569,10 @@ static mrb_value mrb_mapitem_gety(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   mrb_int y;
   mrb_get_args(mrb, "i", &y);
-  item->Y = (int) y;
+  item->Y = static_cast<int>(y);
   return mrb_nil_value();
 }
 
@@ -487,7 +580,7 @@ static mrb_value mrb_mapitem_sety(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   return ruby::create_new_vector(item->Color);
 }
 
@@ -495,7 +588,7 @@ static mrb_value mrb_mapitem_getcolor(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
 
   // Get the color arguments.
   mrb_value rcolor;
@@ -520,21 +613,40 @@ static mrb_value mrb_mapitem_setcolor(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_getshape(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
 
-  return mrb_fixnum_value((mrb_int) item->Shape);
+  return mrb_fixnum_value(static_cast<mrb_int>(item->Shape));
 }
 
 // ----------------------------------------------------------------------------
 
 static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
-  
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
+
   mrb_int shape;
   mrb_get_args(mrb, "i", &shape);
 
-  item->Shape = (MapItem::Shapes)shape;
+  item->Shape = static_cast<MapItem::Shapes>(shape);
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value mrb_mapitem_getstairs(mrb_state* mrb, mrb_value self)
+{
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
+  return mrb_bool_value(item->Stairs);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value mrb_mapitem_setstairs(mrb_state* mrb, mrb_value self)
+{
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
+  mrb_bool value;
+  mrb_get_args(mrb, "b", &value);
+  item->Stairs = !!value;
   return mrb_nil_value();
 }
 
@@ -542,7 +654,7 @@ static mrb_value mrb_mapitem_setshape(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_getvisible(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   return mrb_bool_value(item->Visible);
 }
 
@@ -550,7 +662,7 @@ static mrb_value mrb_mapitem_getvisible(mrb_state *mrb, mrb_value self)
 
 static mrb_value mrb_mapitem_setvisible(mrb_state *mrb, mrb_value self)
 {
-  auto *item = (MapItem *) mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type);
+  auto *item = static_cast<MapItem *>(mrb_data_get_ptr(mrb, self, &mrb_mapitem_data_type));
   mrb_bool visible;
   mrb_get_args(mrb, "b", &visible);
   item->Visible = !!visible;
@@ -558,5 +670,4 @@ static mrb_value mrb_mapitem_setvisible(mrb_state *mrb, mrb_value self)
 }
 
 // ----------------------------------------------------------------------------
-
 

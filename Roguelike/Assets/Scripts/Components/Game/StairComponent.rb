@@ -41,6 +41,7 @@ class StairComponent < ComponentBase
     @actor_map_item.color = "Purple, 0.9"
     @actor_map_item.x = STAIR_POSITION.x
     @actor_map_item.y = STAIR_POSITION.y
+    @actor_map_item.stairs = true
     @actor_minimap.local_event :map_update, nil
   end
 

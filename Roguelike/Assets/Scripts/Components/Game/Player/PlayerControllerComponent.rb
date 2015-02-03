@@ -153,9 +153,8 @@ class PlayerControllerComponent < ComponentBase
     if enemies_nearby?
       @logic_cooldown += 0.3
       seq.delay(0.3)
-      puts "enemies nearby!"
     else
-      puts "no enemies"
+      return
     end
 
     seq.delay(0) # ensure at _minimum_ 2 frames go by
@@ -174,8 +173,6 @@ class PlayerControllerComponent < ComponentBase
   def enemies_nearby?
     enemies = find_entity(0).children.select(&:enemy_logic_component)
 
-
-
     enemies.each do |enemy|
       epos = enemy.transform_component.position
       if Math.abs(@pos.x - epos.x) <= @vp_width && Math.abs(@pos.y - epos.y) <= @vp_height
@@ -184,12 +181,6 @@ class PlayerControllerComponent < ComponentBase
     end
 
     return false
-
-    #No idea what enemies is....
-
-    #The idea is check every enemy and their position based on player
-    #if the radius is larger than the space between an enemy and a player,
-    #then return true. If not then return false.
   end
 
   ####################################

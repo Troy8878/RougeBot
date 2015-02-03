@@ -57,6 +57,15 @@ class DefenseComponent < ComponentBase
       return :kill
     end
 
+    default_tint = Vector.new(1, 1, 1, 1)
+    high_tint = Vector.new(5, 0.5, 0.5, 1)
+
+    sprite = self.owner.sprite_component || self.owner.local_find("Sprite").sprite_component
+    tint = sprite.tint
+    seq = self.owner.action_sequence :hit_flash
+    seq.interpolate tint, from: default_tint, to: high_tint, over: (0.1).seconds
+    seq.interpolate tint, from: high_tint, to: default_tint, over: (0.1).seconds
+
     message = StatusMessage.new("#{total_dmg}", 1, "Red, 0.8")
     message.display self.owner
 

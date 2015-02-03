@@ -24,10 +24,10 @@
           },
           "TextureComponent": {
             "textures": [
-              "Enemies/Derpaderp/Idle0.png",
-              "Enemies/Derpaderp/Idle1.png",
-              "Enemies/Derpaderp/Idle2.png",
-              "Enemies/Derpaderp/Idle3.png",
+              "Enemies/Wizard/Wizard0.png",
+              "Enemies/Wizard/Wizard1.png",
+              "Enemies/Wizard/Wizard2.png",
+              "Enemies/Wizard/Wizard3.png",
             ]
           },
           "SpriteComponent": {

@@ -1,6 +1,6 @@
 #########################
 # BasicEnemySpawnerComponent.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/10/20
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
@@ -11,6 +11,10 @@ class BasicEnemySpawnerComponent < ComponentBase
     "Enemies/Slime",
     "Enemies/Derpaderp"
   ]
+
+  serialized_input do |p|
+    p.integer :num_enemies
+  end
 
   def initialize(data)
     super data

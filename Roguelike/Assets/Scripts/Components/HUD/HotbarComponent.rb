@@ -6,6 +6,12 @@
 #######################
 
 class HotbarComponent < ComponentBase
+
+  serialized_input do |p|
+    p.integer :slot,        required: true
+    p.string  :target_name, required: true, semantics: :entity_name
+  end
+
   def initialize(data)
     super data
 

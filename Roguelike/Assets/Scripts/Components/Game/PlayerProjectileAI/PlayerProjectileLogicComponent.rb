@@ -10,6 +10,11 @@ class PlayerProjectileLogicComponent < ComponentBase
 
   attr_accessor :direc, :speed
 
+  serialized_input do |p|
+    p.direction :direc
+    p.float     :speed
+  end
+
   def initialize(data)
     super data  # Saving files from corruption since 1996!
 

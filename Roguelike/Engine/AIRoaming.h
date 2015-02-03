@@ -1,6 +1,6 @@
 /*********************************
  * AIRoaming.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/05
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -15,7 +15,7 @@
 class AIRoaming final : public AIBehaviour
 {
 public:
-  void ApplyBehaviour(const WorldSnapshot &world) override;
+  void ApplyBehaviour(const WorldSnapshot &world, json::value params) override;
   void Prepare() override;
   void InitializeTarget(Entity *target) override;
   void InitilizeOwner(Entity *thisEntity) override;

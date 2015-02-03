@@ -196,6 +196,9 @@
     <ClInclude Include="CODA.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
+    <ClInclude Include="AISystem.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -370,6 +373,12 @@
     </ClCompile>
     <ClCompile Include="RubyAsset.cpp">
       <Filter>Source Files\Ruby</Filter>
+    </ClCompile>
+    <ClCompile Include="RubyD2D.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AISystem.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

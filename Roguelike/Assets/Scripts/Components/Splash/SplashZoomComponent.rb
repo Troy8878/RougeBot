@@ -6,6 +6,10 @@
 #########################
 
 class SplashZoomComponent < ComponentBase
+
+  serialized_input do |p|
+  end
+  
   def initialize(data)
     super data
 
@@ -18,5 +22,5 @@ class SplashZoomComponent < ComponentBase
     @transform.position.z -= e.dt * 2
   end
 
-  register_component "SplashZoomComponent"
+  register_component
 end

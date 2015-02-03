@@ -6,6 +6,11 @@
 #######################
 
 class StatusMessageComponent < ComponentBase
+
+  serialized_input do |p|
+    p.bool :delete_owner
+  end
+
   def initialize(data)
     super data
 

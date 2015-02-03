@@ -14,6 +14,9 @@ end
 class FloorGeneratorComponent < ComponentBase
   attr_accessor :floor
 
+  serialized_input do |p|
+  end
+
   def initialize(data)
     super data
 

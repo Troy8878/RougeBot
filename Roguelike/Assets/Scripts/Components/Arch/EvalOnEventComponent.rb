@@ -7,6 +7,10 @@
 
 class EvalOnEventComponent < ComponentBase
 
+  serialized_input do |p|
+    p.map :bindings # default is map<string, string>
+  end
+
   def initialize(data)
     super data
 

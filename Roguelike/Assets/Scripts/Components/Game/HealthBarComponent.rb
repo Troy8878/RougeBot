@@ -6,6 +6,10 @@
 #######################
 
 class HealthBarComponent < ComponentBase
+
+  serialized_input do |p|
+  end
+  
   def initialize(data)
     super data
     

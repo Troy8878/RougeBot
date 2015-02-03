@@ -1,6 +1,6 @@
 #######################
 # InventoryComponent.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/09/11
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
@@ -13,6 +13,10 @@
 
 class InventoryComponent < ComponentBase
   attr_reader :inventory
+
+  serialized_input do |p|
+    p.bool :is_player, required: true, default: false
+  end
 
   def initialize(data)
     super data

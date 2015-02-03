@@ -1,6 +1,6 @@
 /*********************************
  * WorldSnapshot.cpp
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/09
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -45,6 +45,9 @@ static WorldSnapshot::Tile::ActorType GetActorType(mrb_state *mrb, mrb_value act
 
 WorldSnapshot::WorldSnapshot()
 {
+  if (mrb_inst == nullptr)
+    return;
+
   mrb_state *mrb = *mrb_inst;
   mrb_value floor = mrb_funcall_argv(mrb, mrb_obj_value(mrb->top_self), 
                                      mrb_intern_lit(mrb, "current_floor"), 0, nullptr);

@@ -7,6 +7,13 @@
 
 class SpinnyCameraComponent < ComponentBase
   attr_accessor :speed
+  dependency "CameraComponent"
+
+  serialized_input do |p|
+    p.dependency "CameraComponent"
+    p.float :speed, default: 1
+    p.float :distance, default: 1
+  end
 
   def initialize(data)
     super data

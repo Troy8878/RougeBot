@@ -202,6 +202,37 @@ static mrb_value mrb_confirm_destructive_action(mrb_state *mrb, mrb_value)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_json_parse(mrb_state *mrb, mrb_value)
+{
+  ruby::ruby_engine engine{mrb};
+  mrb_value mrb_str;
+  mrb_get_args(mrb, "S", &mrb_str);
+
+  return engine.json_to_value(json::value::parse(mrb_str_to_stdstring(mrb_str)));
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_json_stringify(mrb_state *mrb, mrb_value)
+{
+  ruby::ruby_engine engine{mrb};
+  mrb_value obj;
+  mrb_get_args(mrb, "o", &obj);
+
+  try
+  {
+    auto json = engine.value_to_json(obj);
+    auto str = json.pretty_print();
+    return mrb_str_new(mrb, str.c_str(), str.size());
+  }
+  catch (basic_exception &e)
+  {
+    mrb_raise(mrb, E_RUNTIME_ERROR, e.what());
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
 {
   auto gameClass = mrb_define_class(mrb, "Game", mrb->object_class);
@@ -258,6 +289,15 @@ extern "C" void mrb_mruby_gamestuff_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, levelWrapper, "root_entity", mrb_level_root_entity, ARGS_NONE());
 
 #pragma endregion
+
+#pragma region JSON
+  auto json = mrb_define_module(mrb, "JSON");
+
+  mrb_define_module_function(mrb, json, "parse", mrb_json_parse, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, json, "stringify", mrb_json_stringify, MRB_ARGS_REQ(1));
+
+#pragma endregion
+
 }
 
 // ----------------------------------------------------------------------------

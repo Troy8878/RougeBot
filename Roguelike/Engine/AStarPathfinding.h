@@ -1,6 +1,6 @@
 /*********************************
  * AIBehaviour.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/10/29
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -14,7 +14,7 @@
 class AStarPathfinding final : public AIBehaviour
 {
 public:
-  void ApplyBehaviour(const WorldSnapshot& world) override;
+  void ApplyBehaviour(const WorldSnapshot& world, json::value params) override;
 
   void Prepare() override;
   void InitializeTarget(Entity* target) override;

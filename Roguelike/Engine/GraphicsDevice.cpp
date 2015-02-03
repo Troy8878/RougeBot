@@ -127,12 +127,12 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
 
   AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-  UINT width = UINT(rect.right - rect.left);
-  UINT height = UINT(rect.bottom - rect.top);
+  auto width = UINT(rect.right - rect.left);
+  auto height = UINT(rect.bottom - rect.top);
 
 #pragma endregion
 
-  HWND window = CreateWindow(
+  auto window = CreateWindow(
     wndc.lpszClassName,
     options.gameTitle.c_str(),
     WS_OVERLAPPEDWINDOW,
@@ -144,12 +144,26 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
   ShowWindow(window, SW_SHOWNORMAL);
   UpdateWindow(window);
 
+  SwitchToThisWindow(window, TRUE);
+
   is_fullscreen = false;
 
   return window;
 }
 
 // ----------------------------------------------------------------------------
+
+template <typename Container>
+class Iterator
+{
+  Container container;
+
+public:
+  auto begin() -> decltype(container.begin())
+  {
+    return container.begin();
+  }
+};
 
 WindowDevice::WindowDevice(const WindowCreationOptions &options)
   : GraphicsDevice(), _size(options.size)
@@ -269,7 +283,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   _size = size;
 
   // Release D2D stuff
-  FreeD2DResources();
+  //FreeD2DResources();
 
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -300,7 +314,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
 
-  InitializeD2DContext();
+  //InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -330,7 +344,7 @@ void WindowDevice::EndFrame()
   bool vsync = GetGame()->initSettings.vsync;
   if (vsync)
   {
-    SwapChain->Present(1, 0);
+    SwapChain->Present(2, 0);
   }
   else
   {
@@ -359,8 +373,8 @@ void GraphicsDevice::InitializeD3DContext()
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  sd.BufferDesc.RefreshRate.Numerator = 60;
-  sd.BufferDesc.RefreshRate.Denominator = 1;
+  sd.BufferDesc.RefreshRate.Numerator = 1;
+  sd.BufferDesc.RefreshRate.Denominator = 120;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   sd.OutputWindow = _window;
   sd.SampleDesc.Count = 1;

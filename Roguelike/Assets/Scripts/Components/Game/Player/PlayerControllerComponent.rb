@@ -1,6 +1,6 @@
 ##############################
 # PlayerControllerComponent.rb
-# Jake Robsahm, Leonardo Saikali
+# Claire Robsahm, Leonardo Saikali
 # Created 2014/09/05
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 ##############################
@@ -24,6 +24,11 @@ class PlayerControllerComponent < ComponentBase
 
   MIN_MOVE_TIME = 0.2
 
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+    p.dependency "PositionComponent"
+  end
+
   # Initialize the properties of the PlayerController
   def initialize(data)
     super data
@@ -40,8 +45,6 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :attack, :attack
     self.register_event :swing_weapon, :swing_weapon
 
-    # Double-click should do it in either case
-    # Double-click is the only way in touch mode
     self.register_event :double_click, :mouse_down
     self.register_event :mouse_down, :mouse_down
 

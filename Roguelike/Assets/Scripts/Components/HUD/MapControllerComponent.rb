@@ -1,6 +1,6 @@
 ###########################
 # MapControllerComponent.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/09/24
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 ###########################
@@ -13,8 +13,11 @@
 # maximized - boolean to store if the map is maximized or not.
 ################################################################
 class MapControllerComponent < ComponentBase
-
   dependency "TransformComponent"
+
+  serialized_input do |p|
+    p.dependency "TransformComponent"
+  end
 
   def initialize(data)
     super data

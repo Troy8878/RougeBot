@@ -1,6 +1,6 @@
 /*********************************
  * AIBehaviour.cpp
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/24
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -9,7 +9,7 @@
 #include "AStarPathfinding.h"
 #include "RubyWrappers.h"
 
-void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world)
+void AStarPathfinding::ApplyBehaviour(const WorldSnapshot& world, json::value params)
 {
   // Find the start and end tiles.
   auto *startTile = &world.GetTile(ox, oy);

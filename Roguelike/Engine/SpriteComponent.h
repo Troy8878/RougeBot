@@ -1,6 +1,6 @@
 /*********************************
  * SpriteComponent.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/08/19
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/

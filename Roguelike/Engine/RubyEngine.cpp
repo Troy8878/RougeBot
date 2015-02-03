@@ -276,7 +276,7 @@ json::value ruby_engine::value_to_json(mrb_value value)
   {
     return array_to_json(value);
   }
-  if (mrb_string_p(value))
+  if (mrb_string_p(value) || mrb_symbol_p(value))
   {
     mrb_value value_s = mrb_funcall(mrb, value, "to_s", 0);
     return json::value::string(mrb_str_to_stdstring(value_s));

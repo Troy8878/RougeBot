@@ -204,7 +204,7 @@ struct fps_item
 
 inline void Roguelike::UpdateTitleFPS(float dt)
 {
-  if (dt > 0.001)
+  if (dt > 0.0001)
   {
     const int update_res = 20;
     static fps_item fps_buffer[update_res];

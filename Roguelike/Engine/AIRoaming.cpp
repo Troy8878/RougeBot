@@ -1,6 +1,6 @@
 /*********************************
  * AIRoaming.cpp
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/11/09
  * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
@@ -15,7 +15,7 @@
 
 // ----------------------------------------------------------------------------
 
-void AIRoaming::ApplyBehaviour(const WorldSnapshot &world)
+void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 {
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 

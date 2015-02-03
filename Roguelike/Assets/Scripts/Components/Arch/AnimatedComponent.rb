@@ -17,10 +17,20 @@
 class AnimatedComponent < ComponentBase
   attr_accessor :paused, :frame_time, :frame_range, :time
 
+  dependency "SpriteComponent"
+
   property :frame_time, :float, true
   property :frame_range, :float_pair, true
   property :paused, :bool, true
   property :loops, :bool, true
+
+  serialized_input do |p|
+    p.dependency "SpriteComponent"
+    p.string :paused
+    p.float  :frame_time
+    p.vector :frame_range, dimms: 2
+    p.bool   :loops
+  end
 
   def initialize(data)
     super data

@@ -43,18 +43,18 @@ template <typename Elem>
 inline std::basic_string<Elem> chomp(std::basic_string<Elem> str)
 {
   if (str.empty())
-    return str;
+  return str;
 
   std::locale loc("en-US");
   size_t pos = 0;
 
   while (pos < str.size() && std::isspace(str[pos], loc))
-    pos++;
+  pos++;
 
   str = str.substr(pos);
 
   while (!str.empty() && std::isspace(*str.rbegin(), loc))
-    str.pop_back();
+  str.pop_back();
 
   return str;
 }
@@ -73,15 +73,15 @@ split(const std::basic_string<Elem> &str, Delim &&delim)
     items.push_back(str.substr(pos, next - pos));
 
     if (next != str.npos)
-      pos = str.find_first_not_of(delim, next);
+    pos = str.find_first_not_of(delim, next);
 
     if (pos == str.npos)
-      return items;
-  }
+    return items;
+}
 
-  items.push_back(str.substr(pos));
+items.push_back(str.substr(pos));
 
-  return items;
+return items;
 }
 
 // ----------------------------------------------------------------------------
@@ -107,20 +107,20 @@ inline std::string GetLastErrorString(DWORD error = 0)
   LPSTR pBuffer = nullptr;
 
   if (error == 0)
-    error = GetLastError();
+  error = GetLastError();
 
   FormatMessage(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                                  FORMAT_MESSAGE_FROM_SYSTEM |
-                                  FORMAT_MESSAGE_IGNORE_INSERTS,
-                                  nullptr,
-                                  error,
-                                  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                  reinterpret_cast<LPTSTR>(&pBuffer),
-                                  0, nullptr);
+    FORMAT_MESSAGE_FROM_SYSTEM |
+    FORMAT_MESSAGE_IGNORE_INSERTS,
+    nullptr,
+    error,
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+  reinterpret_cast<LPTSTR>(&pBuffer),
+  0, nullptr);
 
   if (pBuffer == 0)
-    return "UNKNOWN ERROR";
+  return "UNKNOWN ERROR";
 
   std::string result = pBuffer;
   LocalFree(pBuffer);
@@ -134,51 +134,51 @@ class basic_exception : public std::exception
 {
   stack_trace trace;
 
-public:
+  public:
   basic_exception()
-    : trace(stack_trace::create_trace())
+  : trace(stack_trace::create_trace())
   {
-  }
+}
 
-  basic_exception(const char *what)
-    : exception(what), trace(stack_trace::create_trace())
-  {
-  }
+basic_exception(const char *what)
+: exception(what), trace(stack_trace::create_trace())
+{
+}
 
-  void print_trace(std::ostream &out) const
-  {
-    trace.print(out);
-  }
+void print_trace(std::ostream &out) const
+{
+  trace.print(out);
+}
 };
 
 // ----------------------------------------------------------------------------
 
 class DXFatalError : public basic_exception
 {
-public:
+  public:
 
   DXFatalError(HRESULT hr)
-    : _error(hr)
+  : _error(hr)
   {
-  }
+}
 
-  const char *what() const override
-  {
-    return reinterpret_cast<const char *>(_error.ErrorMessage());
-  }
+const char *what() const override
+{
+  return reinterpret_cast<const char *>(_error.ErrorMessage());
+}
 
-  COMError &error()
-  {
-    return _error;
-  }
+COMError &error()
+{
+  return _error;
+}
 
-  const COMError &error() const
-  {
-    return _error;
-  }
+const COMError &error() const
+{
+  return _error;
+}
 
 private:
-  COMError _error;
+COMError _error;
 };
 
 // ----------------------------------------------------------------------------
@@ -187,27 +187,27 @@ class string_exception : public basic_exception
 {
   std::string message;
 
-public:
+  public:
   string_exception(const std::string &message)
-    : message(message)
+  : message(message)
   {
-  }
+}
 
-  const char *what() const override
-  {
-    return message.c_str();
-  }
+const char *what() const override
+{
+  return message.c_str();
+}
 };
 
 // ----------------------------------------------------------------------------
 
 class win32_exception : public string_exception
 {
-public:
+  public:
   win32_exception()
-    : string_exception(GetLastErrorString())
+  : string_exception(GetLastErrorString())
   {
-  }
+}
 };
 
 // ----------------------------------------------------------------------------
@@ -228,21 +228,21 @@ inline void ReleaseDXInterface(Interface *&interfaceToRelease)
 template <class Interface>
 class DXReleaser
 {
-public:
+  public:
   DXReleaser(Interface *&itr)
-    : itr(itr)
+  : itr(itr)
   {
-  }
+}
 
-  ~DXReleaser()
-  {
-    ReleaseDXInterface(itr);
-  }
+~DXReleaser()
+{
+  ReleaseDXInterface(itr);
+}
 
-  DXReleaser &operator=(const DXReleaser &) = delete;
+DXReleaser &operator=(const DXReleaser &) = delete;
 
 private:
-  Interface *&itr;
+Interface *&itr;
 };
 
 // ----------------------------------------------------------------------------
@@ -260,7 +260,7 @@ private:
 inline void CheckHRESULT(HRESULT hr)
 {
   if (FAILED(hr))
-    throw DXFatalError(hr);
+  throw DXFatalError(hr);
 }
 
 // ----------------------------------------------------------------------------
@@ -277,8 +277,8 @@ template <typename Interface>
 void setDXDebugName(Interface *object, const std::string &name)
 {
   HRESULT result = object->SetPrivateData(WKPDID_D3DDebugObjectName,
-                                          static_cast<UINT>(name.length()),
-                                          name.c_str());
+    static_cast<UINT>(name.length()),
+  name.c_str());
   CHECK_HRESULT(result);
 }
 
@@ -301,7 +301,7 @@ void variadic_push_container(Container &container, const Arg &param)
 
 template <typename Container, typename Arg, typename... Args>
 void variadic_push_container(Container &container, const Arg &param,
-                             const Args &&... params)
+  const Args &&... params)
 {
   container.push_back(param);
   variadic_push_container(container, params...);
@@ -318,7 +318,7 @@ void variadic_push_array(T [], size_t)
 
 template <typename T, typename First, typename... Rest>
 void variadic_push_array(T array[], size_t index,
-                         const First &param, const Rest &... params)
+  const First &param, const Rest &... params)
 {
   array[index] = param;
   variadic_push_array(array, index + 1, params...);
@@ -471,14 +471,14 @@ struct component_factory_data : public std::unordered_map<std::string, json::val
   component_factory_data() = default;
 
   component_factory_data(const base &b)
-    : base(b)
+  : base(b)
   {
-  }
+}
 
-  component_factory_data(const std::initializer_list<value_type> &list)
-    : base(list)
-  {
-  }
+component_factory_data(const std::initializer_list<value_type> &list)
+: base(list)
+{
+}
 };
 
 // ----------------------------------------------------------------------------
@@ -486,14 +486,14 @@ struct component_factory_data : public std::unordered_map<std::string, json::val
 template <typename CharT, typename TraitsT = std::char_traits<CharT>>
 class ibufferstream : public std::basic_streambuf<CharT, TraitsT>
 {
-public:
+  public:
   ibufferstream() = default;
 
   ibufferstream(const CharT *start, size_t size)
   {
     CharT *s = const_cast<CharT *>(start);
     setg(s, s, s + size);
-  }
+}
 };
 
 // ----------------------------------------------------------------------------
@@ -501,12 +501,12 @@ public:
 template <typename Map, typename DefType>
 typename Map::mapped_type
 map_fetch(const Map &map,
-          const typename Map::key_type &key,
-          const DefType &def)
+  const typename Map::key_type &key,
+  const DefType &def)
 {
   auto it = map.find(key);
   if (it != map.end())
-    return it->second;
+  return it->second;
 
   return static_cast<typename Map::mapped_type>(def);
 }
@@ -520,15 +520,15 @@ inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out, FwIt first, Fw
   {
     out.put(*first);
     ++first;
-  }
+}
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename FwIt, typename CharT, typename CharTraits = std::char_traits<CharT>,
-          typename Arg, typename... Args>
+typename Arg, typename... Args>
 inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
-                      FwIt first, FwIt last, const Arg &value, Args &&... rest)
+  FwIt first, FwIt last, const Arg &value, Args &&... rest)
 {
   while (first != last)
   {
@@ -545,16 +545,16 @@ inline void svtprintf(std::basic_ostream<CharT, CharTraits> &out,
         out << value;
         svtprintf(out, first, last, std::forward(rest)...);
         return;
-      }
-      
-      if (n != '%')
-      {
-        throw std::logic_error("An unknown format specifier was encountered (not % or v)");
-      }
-    }
+}
 
-    out.put(c);
-  }
+if (n != '%')
+{
+  throw std::logic_error("An unknown format specifier was encountered (not % or v)");
+}
+}
+
+out.put(c);
+}
 }
 
 // ----------------------------------------------------------------------------
@@ -602,7 +602,7 @@ json::value ParseJsonAsset(const std::string &containerName, const std::string &
   thread may end before the function returns.
 */
 bool getline_async(std::string &str,
-                   std::chrono::system_clock::duration timeout);
+  std::chrono::system_clock::duration timeout);
 extern bool stop_getline_async;
 
 // ----------------------------------------------------------------------------
@@ -616,9 +616,9 @@ namespace math
 struct Camera;
 
 math::Vector __vectorcall ScreenToPlane(DirectX::FXMVECTOR point,
-                                        DirectX::FXMVECTOR planeOrigin,
-                                        DirectX::FXMVECTOR planeNormal,
-                                        Camera *camera, float *distance = nullptr);
+  DirectX::FXMVECTOR planeOrigin,
+  DirectX::FXMVECTOR planeNormal,
+  Camera *camera, float *distance = nullptr);
 
 // ----------------------------------------------------------------------------
 
@@ -629,17 +629,17 @@ D2D1::ColorF StringToColor(const std::string &name);
 
 class DebugMessage
 {
-public:
+  public:
 #ifdef _DEBUG
   inline DebugMessage(const std::string& str)
   {
     std::cerr << str << std::endl;
-  }
+}
 #else
-  template <typename... A>
-  inline DebugMessage(A...)
-  {
-  }
+template <typename... A>
+inline DebugMessage(A...)
+{
+}
 #endif
 };
 
@@ -657,7 +657,7 @@ public:
 // ----------------------------------------------------------------------------
 
 template <typename CharType, typename Traits = std::char_traits<CharType>,
-          typename Alloc = std::allocator<CharType>>
+typename Alloc = std::allocator<CharType>>
 inline std::basic_string<CharType, Traits, Alloc> downcase(
   const std::basic_string<CharType, Traits, Alloc> &input)
 {
@@ -667,7 +667,7 @@ inline std::basic_string<CharType, Traits, Alloc> downcase(
 }
 
 template <typename CharType, typename Traits = std::char_traits<CharType>,
-          typename Alloc = std::allocator<CharType>>
+typename Alloc = std::allocator<CharType>>
 inline std::basic_string<CharType, Traits, Alloc> downcase(
   const CharType *str)
 {
@@ -683,20 +683,20 @@ struct array_iterator_t
 {
   array_iterator_t(T *a, size_t c) : c(c), a(a)
   {
-  }
+}
 
-  size_t c;
-  T *a;
+size_t c;
+T *a;
 
-  T *begin()
-  {
-    return a;
-  }
+T *begin()
+{
+  return a;
+}
 
-  T *end()
-  {
-    return a + c;
-  }
+T *end()
+{
+  return a + c;
+}
 };
 
 template <typename T>
@@ -721,9 +721,9 @@ bool map_get_check(const Cont &container, Iter &iter, Key &key)
   {
     iter = it;
     return true;
-  }
+}
 
-  return false;
+return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -736,8 +736,8 @@ std::vector<PredRet> map_to_vector(
   for (auto &item : cont)
   {
     items.push_back(pred(item));
-  }
-  return items;
+}
+return items;
 }
 
 // ----------------------------------------------------------------------------
@@ -755,7 +755,7 @@ template <typename T, typename U>
 T assert_limits(const U val)
 {
   assert(val <= std::numeric_limits<T>::max() &&
-    val >= std::numeric_limits<T>::min());
+  val >= std::numeric_limits<T>::min());
   return T(val);
 }
 
@@ -765,14 +765,14 @@ template <typename T>
 T assert_limits_mrb(mrb_state *mrb, const mrb_int val)
 {
   if (!(static_cast<T>(val) <= std::numeric_limits<T>::max()) ||
-      !(val >= static_cast<mrb_int>(std::numeric_limits<T>::min())))
+  !(val >= static_cast<mrb_int>(std::numeric_limits<T>::min())))
   {
     mrb_raisef(mrb, E_RUNTIME_ERROR, "Value %S is out of range for type %S",
-               mrb_obj_as_string(mrb, mrb_fixnum_value(val)),
-               mrb_str_new_cstr(mrb, typeid(T).name()));
-  }
+      mrb_obj_as_string(mrb, mrb_fixnum_value(val)),
+    mrb_str_new_cstr(mrb, typeid(T).name()));
+}
 
-  return static_cast<T>(val);
+return static_cast<T>(val);
 }
 
 // ----------------------------------------------------------------------------
@@ -786,56 +786,91 @@ std::ostream &operator<<(std::ostream &os, const std::vector<E, A> &cont)
   for (auto &elem : cont)
   {
     if (first)
-      first = false;
+    first = false;
     else
-      os << ", ";
+    os << ", ";
 
     os << elem;
-  }
+}
 
-  os << "]";
-  return os;
+os << "]";
+return os;
 }
 
 // ----------------------------------------------------------------------------
 
 class LapTimer
 {
-public:
+  public:
   typedef std::chrono::high_resolution_clock clock;
 
   void new_lap()
   {
     _lap_start = clock::now();
-  }
+}
 
-  clock::duration end_lap()
-  {
-    auto now = clock::now();
-    _last_lap = now - _lap_start;
-    _lap_start = now;
-    _total_time += _last_lap;
-    _lap_count++;
-    return _last_lap;
-  }
+clock::duration end_lap()
+{
+  auto now = clock::now();
+  _last_lap = now - _lap_start;
+  _lap_start = now;
+  _total_time += _last_lap;
+  _lap_count++;
+  return _last_lap;
+}
 
-  clock::duration lap_time() { return clock::now() - _lap_start; }
-  clock::duration last_lap() { return _last_lap; }
-  clock::duration total_time() { return _total_time; }
+clock::duration lap_time() { return clock::now() - _lap_start; }
+clock::duration last_lap() { return _last_lap; }
+clock::duration total_time() { return _total_time; }
 
-  float time_dt()
-  {
-    return
-      last_lap().count() *
-      static_cast<float>(clock::period::num) /
-      clock::period::den;
-  }
+float time_dt()
+{
+  return
+  last_lap().count() *
+  static_cast<float>(clock::period::num) /
+  clock::period::den;
+}
 
 private:
-  clock::time_point _lap_start = clock::now();
-  clock::duration _last_lap = std::chrono::milliseconds(0);
-  clock::duration _total_time = std::chrono::milliseconds(0);
-  size_t _lap_count = 0;
+clock::time_point _lap_start = clock::now();
+clock::duration _last_lap = std::chrono::milliseconds(0);
+clock::duration _total_time = std::chrono::milliseconds(0);
+size_t _lap_count = 0;
 };
 
 // ----------------------------------------------------------------------------
+
+template <typename T>
+class option
+{
+  T data;
+  bool set;
+
+  public:
+  option()
+  : set(false)
+  {
+  }
+
+  option(const T &t)
+  : set(true)
+  {
+    data = t;
+  }
+
+  option(T &&t)
+  : set(true)
+  {
+    data = std::move(t);
+  }
+
+  bool is_set() const { return set; }
+  const T &get() const { assert(set); return *reinterpret_cast<const T *>(&data); }
+  T &get() { assert(set); return *reinterpret_cast<T *>(&data); }
+
+
+};
+
+// ----------------------------------------------------------------------------
+
+

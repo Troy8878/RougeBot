@@ -1,12 +1,15 @@
 #########################
 # KeybindingComponent.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/10/09
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class KeybindingComponent < ComponentBase
   @@locked_input = false
+
+  serialized_input do |p|
+  end
 
   def initialize(data)
     super data

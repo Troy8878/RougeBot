@@ -36,6 +36,9 @@ class PlayerControllerComponent < ComponentBase
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
+    @vp_width = 3
+    @vp_height = 3
+
     @logic_initialized = false
     @logic_cooldown = 0
 
@@ -117,7 +120,7 @@ class PlayerControllerComponent < ComponentBase
     else
       @pos.x += x
       @pos.y += y
-      @logic_cooldown = 0.2
+      @logic_cooldown = 0.1
 
       actor_moved
     end
@@ -146,9 +149,13 @@ class PlayerControllerComponent < ComponentBase
   def yield_to_enemies
     seq = self.owner.action_sequence :delay_logic
 
-    if true#enemies_nearby
-      @logic_cooldown += 0.2
+
+    if enemies_nearby?
+      @logic_cooldown += 0.3
       seq.delay(0.3)
+      puts "enemies nearby!"
+    else
+      puts "no enemies"
     end
 
     seq.delay(0) # ensure at _minimum_ 2 frames go by
@@ -164,8 +171,19 @@ class PlayerControllerComponent < ComponentBase
     move *e
   end
 
-  def enemies_nearby?(radius)
+  def enemies_nearby?
     enemies = find_entity(0).children.select(&:enemy_logic_component)
+
+
+
+    enemies.each do |enemy|
+      epos = enemy.transform_component.position
+      if Math.abs(@pos.x - epos.x) <= @vp_width && Math.abs(@pos.y - epos.y) <= @vp_height
+        return true
+      end
+    end
+
+    return false
 
     #No idea what enemies is....
 

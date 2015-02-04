@@ -138,6 +138,8 @@
   <ItemGroup>
     <ClInclude Include="Actions.h" />
     <ClInclude Include="AIBehaviour.h" />
+    <ClInclude Include="AiComponent.h" />
+    <ClInclude Include="AIDerp.h" />
     <ClInclude Include="AIRoaming.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="AStarPathfinding.h" />
@@ -192,6 +194,8 @@
   <ItemGroup>
     <ClCompile Include="Actions.cpp" />
     <ClCompile Include="AIBehaviour.cpp" />
+    <ClCompile Include="AiComponent.cpp" />
+    <ClCompile Include="AIDerp.cpp" />
     <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="AStarPathfinding.cpp" />

@@ -24,12 +24,12 @@ static void CreateConsole()
   //std::ios::sync_with_stdio();
 }
 
-Roguelike game("Roguebot", GetModuleHandle(nullptr));
-
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()
 {
   performance::register_guard glperf("The Game");
+
+  Roguelike game("Roguebot", GetModuleHandle(nullptr));
 
   #if !defined(AVX_BUILD) && PRODUCTION
   if (IsAvxSupported())

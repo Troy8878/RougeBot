@@ -18,11 +18,21 @@ struct AIResult
   {
     Nil,
     Move,
-    Attack
+    Attack,
+    Custom,
   } action;
 
   mrb_int x, y;
+  std::string custom;
 };
+
+// In rust I would do this :(
+// pub enum AIResult {
+//     Nil,
+//     Move(i32, i32),
+//     Attack(i32, i32),
+//     Custom(String),
+// }
 
 class AIBehaviour
 {

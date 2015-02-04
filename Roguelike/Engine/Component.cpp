@@ -131,6 +131,7 @@ void RegisterEngineComponents()
 #include "TextComponent.h"
 #include "ParticleSystemComponent.h"
 #include "ButtonComponent.h"
+#include "AiComponent.h"
 
 #include "Game/PositionDisplayComponent.h"
 #include "Game/MapComponent.h"
@@ -175,6 +176,8 @@ static void RegisterStaticComponents()
     , PositionDisplayComponent
     , MapComponent
     , PositionComponent
+
+    , AiComponent
     >();
 }
 

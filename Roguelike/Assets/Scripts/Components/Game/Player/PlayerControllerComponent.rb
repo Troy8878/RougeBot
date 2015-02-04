@@ -36,6 +36,9 @@ class PlayerControllerComponent < ComponentBase
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
+    @vp_width = 4
+    @vp_height = 4
+
     @logic_initialized = false
     @logic_cooldown = 0
 
@@ -145,7 +148,15 @@ class PlayerControllerComponent < ComponentBase
 
   def yield_to_enemies
     seq = self.owner.action_sequence :delay_logic
-    seq.delay(0.05)
+
+
+    if enemies_nearby?
+      @logic_cooldown += 0.3
+      seq.delay(0.3)
+    else
+      return
+    end
+
     seq.delay(0) # ensure at _minimum_ 2 frames go by
     seq.once do
       if @logic_initialized
@@ -157,6 +168,19 @@ class PlayerControllerComponent < ComponentBase
   def on_move(e)
     set_kb_mode
     move *e
+  end
+
+  def enemies_nearby?
+    enemies = find_entity(0).children.select(&:enemy_logic_component)
+
+    enemies.each do |enemy|
+      epos = enemy.transform_component.position
+      if Math.abs(@pos.x - epos.x) <= @vp_width && Math.abs(@pos.y - epos.y) <= @vp_height
+        return true
+      end
+    end
+
+    return false
   end
 
   ####################################

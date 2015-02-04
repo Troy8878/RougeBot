@@ -278,6 +278,12 @@ bool VectorInterpolateAction::Update
   }
 
   time += dt;
+
+  if (time >= totaltime)
+  {
+    time = totaltime;
+  }
+
   vector = begin + diff * static_cast<float>(time / totaltime);
   return time < totaltime;
 }

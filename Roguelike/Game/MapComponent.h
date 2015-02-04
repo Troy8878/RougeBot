@@ -36,6 +36,7 @@ public:
   PROPERTY(get = _GetShape, put = _SetShape) Shapes Shape;
   PROPERTY(get = _GetGeometry) ID2D1Geometry *Geometry;
   PROPERTY(get = _GetBrush) ID2D1Brush *Brush;
+  PROPERTY(get = _GetStairs, put = _SetStairs) bool Stairs;
 
   bool Visible = true;
 
@@ -49,6 +50,8 @@ private:
   Shapes _shape = Shapes::RECTANGLE; // Shape to use
   ID2D1Geometry *_geometry = nullptr; // The Direct2D shape
   ID2D1Brush *_brush = nullptr; // The brush to use
+
+  bool _is_stairs = false;
 
   typedef GraphicsDevice::D2DData::clock clock;
   // Timestamp which says when we last updated.
@@ -109,6 +112,16 @@ public:
   {
     return _brush;
   }
+
+  bool _GetStairs()
+  {
+    return _is_stairs;
+  }
+
+  void _SetStairs(bool value)
+  {
+    _is_stairs = value;
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -142,11 +155,23 @@ private:
   mrb_value _map_obj;
   mrb_value _player_controller;
 
+  // The player position
+  int _px;
+  int _py;
+
+  // Track if we've found the stairs
+  bool _stairs_found = false;
+
   // We need Vector to store where we've explored
   std::vector<std::vector<bool>> _explored;
 
   // We need another Vector for everything that wants to be drawn.
   std::vector<MapItem *> _items;
+  std::vector <MapItem *> _revealed_items;
+
+  bool _first_draw = true;
+
+  void GetPlayerPosition(int &x, int &y);
 
   // Drawing resources
   struct DrawingResources
@@ -159,7 +184,9 @@ private:
 
     Brush *wallBrush = nullptr;
     Brush *playerBrush = nullptr;
-
+    Brush *desatBrush = nullptr;
+    Brush *unexploredBrush = nullptr;
+    
     bool Validate();
     void Release();
 

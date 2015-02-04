@@ -36,8 +36,8 @@ class PlayerControllerComponent < ComponentBase
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
-    @vp_width = 3
-    @vp_height = 3
+    @vp_width = 4
+    @vp_height = 4
 
     @logic_initialized = false
     @logic_cooldown = 0
@@ -120,7 +120,7 @@ class PlayerControllerComponent < ComponentBase
     else
       @pos.x += x
       @pos.y += y
-      @logic_cooldown = 0.1
+      @logic_cooldown = 0.2
 
       actor_moved
     end

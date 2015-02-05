@@ -25,10 +25,10 @@ module ItemGenerate
       data["damage"][1] = data["damage"][0]
     end
 
-    data["value"] = data["value"]
+    data["value"] = data["value"] * itemLevel
 
-    data["damage"][0] = data["damage"][0]
-    data["damage"][1] = data["damage"][1]
+    data["damage"][0] = data["damage"][0] * itemLevel
+    data["damage"][1] = data["damage"][1] * itemLevel
     
     wep = Weapon.new data
     wep.item_level = itemLevel

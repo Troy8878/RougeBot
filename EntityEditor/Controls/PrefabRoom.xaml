@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer MaxHeight="600" MaxWidth="600"
+        <ScrollViewer MaxHeight="510" MaxWidth="510"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
             <ItemsControl x:Name="Items">

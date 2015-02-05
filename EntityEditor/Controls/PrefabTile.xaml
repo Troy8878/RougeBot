@@ -6,7 +6,7 @@
              xmlns:entityEditor="clr-namespace:EntityEditor"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="50">
-    <Grid Width="50" Height="50" Margin="5"
+    <Grid Width="50" Height="50" Margin="0.5" MouseDown="UIElement_OnMouseDown"
           d:DataContext="{d:DesignInstance entityEditor:PrefabTileData}">
         <Border Background="{Binding Path=Color}">
             <Grid>

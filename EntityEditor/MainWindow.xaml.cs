@@ -18,7 +18,7 @@ namespace EntityEditor
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public static MainWindow Instance;
 
@@ -26,6 +26,11 @@ namespace EntityEditor
         {
             Instance = this;
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("DID I TELL YOU TO CLICK ME?! Oh, nevermind.");
         }
     }
 }

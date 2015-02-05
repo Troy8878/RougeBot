@@ -9,6 +9,6 @@ namespace EntityEditor.API
 {
     public class Component
     {
-        Dictionary<string, IVariant> Keys;
+        public Dictionary<string, IVariant> Keys;
     }
 }

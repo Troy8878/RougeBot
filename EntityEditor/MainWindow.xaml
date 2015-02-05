@@ -3,7 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="500" Width="525">
     <Grid>
-        <TextBlock Width="250" Height ="100"  FontFamily="comic sans ms" FontSize ="25">Roguebot is best bot</TextBlock>
-        <Button Content ="Click Me!" Width ="100" Height ="100"></Button>
+        <TabControl>
+            <TabItem Header="Entities">
+                <Grid>
+                    <TextBlock Width="250" Height="100" FontFamily="comic sans ms" FontSize="25">Roguebot is best bot</TextBlock>
+                    <Button Content="Click Me!" Width="100" Height="100" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Prefabs">
+                <Frame NavigationUIVisibility="Hidden" Source="PrefabEditor.xaml" x:Name="PrefabTab" />
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

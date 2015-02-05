@@ -9,7 +9,13 @@ class BasicEnemySpawnerComponent < ComponentBase
 
   ENEMY_TYPES = [
     "Enemies/Slime",
-    "Enemies/Derpaderp"
+    "Enemies/Derpaderp",
+    "Enemies/Wizard_Red",
+    "Enemies/Wizard_Orange",
+    "Enemies/Wizard_Yellow",
+    "Enemies/Wizard_Green",
+    "Enemies/Wizard_Blue",
+    "Enemies/Wizard_Purple"
   ]
 
   serialized_input do |p|

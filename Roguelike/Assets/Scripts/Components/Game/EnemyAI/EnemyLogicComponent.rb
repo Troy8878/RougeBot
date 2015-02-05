@@ -38,7 +38,7 @@ class EnemyLogicComponent < ComponentBase
     distance = @position.distance position_player
 
     if distance < 1.1
-      @attack.do_attack player
+      @attack.do_attack player if @attack
     elsif distance < 3
       move_towards player
     else

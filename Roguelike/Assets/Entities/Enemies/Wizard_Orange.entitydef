@@ -1,0 +1,60 @@
+{
+  "TransformComponent": {
+    "rotation": [0, 0, 0],
+  },
+  "DefenseComponent": {
+    "health": 25,
+    "max_health": 25
+  },
+  "AttackComponent": {},
+  
+  "PositionComponent": {
+    "mode": "linear"
+  },
+
+  "EnemyLogicComponent": {},
+
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Sprite",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
+          "TextureComponent": {
+            "textures": [
+              "Enemies/Wizard_Orange/Wizard0.png",
+              "Enemies/Wizard_Orange/Wizard1.png",
+              "Enemies/Wizard_Orange/Wizard2.png",
+              "Enemies/Wizard_Orange/Wizard3.png",
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "WorldLayer"
+          },
+          "AnimatedComponent": {
+            "frame_range": [0, 4],
+            "frame_time": 0.3
+          }
+        }
+      },
+      {
+        "name": "HealthBar",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0.5, 0],
+            "scale": [1, 0.5, 1],
+          },
+          "TextureComponent": {
+            "textures": ["HealthBar.png"]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer"
+          },
+          "HealthBarComponent": {}
+        }
+      }
+    ]
+  }
+}

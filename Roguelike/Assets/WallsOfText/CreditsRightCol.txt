@@ -8,5 +8,5 @@ Claire (Jake) Robsahm
 Enrique Rodriguez
 
 
-mruby Copyright © 2014 mruby developers.
+mruby Copyright © 2015 mruby developers.
 Licensed under MIT License.

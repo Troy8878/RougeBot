@@ -13,9 +13,18 @@
 
 static std::unordered_map<std::string, AIFactory *> factories;
 
-void AIFactory::Register(std::string name, AIFactory *factory)
+// ----------------------------------------------------------------------------
+
+void AIFactory::Register(const std::string &name, AIFactory *factory)
 {
-  factories[name] = factory;
+  factories.emplace(std::make_pair(name, factory));
+}
+
+// ----------------------------------------------------------------------------
+
+AIFactory *AIFactory::GetFactory(const std::string &name)
+{
+  return factories[name];
 }
 
 // ----------------------------------------------------------------------------
@@ -69,7 +78,7 @@ void AIDecision::Run(const WorldSnapshot& snap, json::value params)
 // ----------------------------------------------------------------------------
 
 AIDecision::AIDecision(AIFactory &factory, json::value params)
-  : behavior(factory.Create(params)), hasResult(false)
+  : behavior(factory.Create()), hasResult(false), params(params)
 {
 }
 
@@ -77,6 +86,8 @@ AIDecision::AIDecision(AIFactory &factory, json::value params)
 
 AISystem::AISystem(size_t threadCount)
 {
+  AIFactory::RegisterDefaultFactories();
+
   while (threadCount--)
   {
     decisionThreads.emplace_back(std::bind(&AISystem::RunThread, this));
@@ -176,6 +187,15 @@ static mrb_value mrb_aisys_instance(mrb_state *mrb, mrb_value klass)
   auto datap = GetGame()->AI;
   auto data = mrb_data_object_alloc(mrb, klassp, datap, &mrb_aisys_dt);
   return mrb_obj_value(data);
+}
+
+// ----------------------------------------------------------------------------
+
+#include "AIDerp.h"
+
+void AIFactory::RegisterDefaultFactories()
+{
+  Register("AIDerp", new DefaultAIFactory<AIDerp>);
 }
 
 // ----------------------------------------------------------------------------

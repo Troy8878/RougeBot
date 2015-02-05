@@ -16,13 +16,16 @@
 class AIFactory
 {
 public:
-  virtual AIBehaviour *Create(json::value params) = 0;
+  virtual AIBehaviour *Create() = 0;
 
   virtual ~AIFactory()
   {
   }
 
-  static void Register(std::string name, AIFactory *factory);
+  static void Register(const std::string &name, AIFactory *factory);
+  static AIFactory *GetFactory(const std::string &name);
+
+  static void RegisterDefaultFactories();
 };
 
 // ----------------------------------------------------------------------------
@@ -72,11 +75,24 @@ private:
   rwlock<WorldSnapshot> snapshot;
   object_lock<std::queue<AIDecisionRef>> decisionQueue;
   std::vector<std::thread> decisionThreads;
-  std::atomic<bool> quit = true;
+  std::atomic<bool> quit = false;
 
   void RunThread();
   AIDecisionRef GetDecision();
 };
 
 // ----------------------------------------------------------------------------
+
+template <typename T>
+class DefaultAIFactory final : public AIFactory
+{
+public:
+  virtual AIBehaviour *Create() override
+  {
+    return new T;
+  }
+};
+
+// ----------------------------------------------------------------------------
+
 

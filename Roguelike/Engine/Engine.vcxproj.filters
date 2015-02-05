@@ -199,6 +199,12 @@
     <ClInclude Include="AISystem.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="AiComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AIDerp.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -378,6 +384,12 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="AISystem.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AiComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AIDerp.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>

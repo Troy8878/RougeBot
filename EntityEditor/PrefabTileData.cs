@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Media;
 using EntityEditor.Annotations;
 
@@ -11,6 +11,7 @@ namespace EntityEditor
     {
         private static readonly Random Lolrandom = new Random();
         private SolidColorBrush _color;
+        private string _name;
 
         public PrefabTileData()
         {
@@ -28,14 +29,28 @@ namespace EntityEditor
             }
         }
 
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (value == _name) return;
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Randomize()
         {
             var colors = typeof (Colors).GetProperties();
             var index = Lolrandom.Next(colors.Length);
+            var name = new byte[10];
+            Lolrandom.NextBytes(name);
 
             Color = new SolidColorBrush((Color) colors[index].GetValue(null));
+            Name = Encoding.BigEndianUnicode.GetString(name);
         }
 
         [NotifyPropertyChangedInvocator]

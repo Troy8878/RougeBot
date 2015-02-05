@@ -10,6 +10,7 @@
           d:DataContext="{d:DesignInstance entityEditor:PrefabTileData}">
         <Border Background="{Binding Path=Color}">
             <Grid>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=Name}" />
             </Grid>
         </Border>
     </Grid>

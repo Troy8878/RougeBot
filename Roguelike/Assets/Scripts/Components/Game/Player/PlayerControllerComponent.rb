@@ -115,6 +115,10 @@ class PlayerControllerComponent < ComponentBase
       return unless x == 0 && y == 0
     end
 
+    if x == 0 && y == 0 && @logic_cooldown > 0
+      return
+    end
+
     if @blocked_reason == BLOCKED_BY_ACTOR
       @logic_cooldown = 0.5
     else

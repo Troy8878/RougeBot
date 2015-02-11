@@ -13,15 +13,9 @@ class SplashLevelSwitcher < ComponentBase
   def initialize(data)
     super data
 
-    @time = 0.0
-
-    register_event :update, :on_update
-  end
-
-  def on_update(e)
-    @time += e.dt
-
-    if @time > 4
+    seq = owner.action_sequence :next_level
+    seq.delay 4.0
+    seq.once do
       Game.switch_level "MainMenu"
     end
   end

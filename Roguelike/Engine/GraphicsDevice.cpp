@@ -342,7 +342,7 @@ bool WindowDevice::BeginFrame()
 void WindowDevice::EndFrame()
 {
   bool vsync = GetGame()->initSettings.vsync;
-  if (vsync)
+  if (vsync && GetFullscreen())
   {
     SwapChain->Present(1, 0);
   }
@@ -350,7 +350,7 @@ void WindowDevice::EndFrame()
   {
     SwapChain->Present(0, 0);
 
-    const double min_frame = 0.002;
+    const double min_frame = 1 / 120.0;
     auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame)
       Sleep(0);

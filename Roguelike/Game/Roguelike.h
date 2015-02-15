@@ -140,7 +140,7 @@ public:
 
 struct fps_item
 {
-  float fps = 0;
+  double fps = 0;
   float wndproc_part = 0;
   float unlock_part = 0;
   float load_part = 0;
@@ -175,7 +175,7 @@ struct fps_item
 
   void pull_performance(Roguelike *game, float dt)
   {
-    fps = 1 / dt;
+    fps = dt;
     wndproc_part = game->performance.wndproc.time_dt() / dt;
     unlock_part = game->performance.unlock_game.time_dt() / dt;
     load_part = game->performance.load_level.time_dt() / dt;
@@ -187,7 +187,7 @@ struct fps_item
 
   void print(std::ostream &out)
   {
-    out << static_cast<int>(fps + 0.5f) << " fps";
+    out << static_cast<int>(1 / fps + 0.5f) << " fps";
 
     // Detailed performance
     out << ", ";

@@ -35,7 +35,9 @@ class InventoryComponent < ComponentBase
   end
 
   def give_random_weapon(level)
-    @inventory.pickup ItemGenerate.generate_weapon({}, level)
+    if PLAYER_INVENTORY.room_in_inventory == true
+      @inventory.pickup ItemGenerate.generate_weapon({}, level)
+    end
   end
 
   def do_update(*args)

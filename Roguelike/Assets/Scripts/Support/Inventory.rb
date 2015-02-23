@@ -17,7 +17,7 @@ class Inventory
   # Constant array containing all valid equipment slots.
   EQUIPMENT_SLOTS = [:weapon, :chest, :shield]
 
-  INVENTORY_CAPACITY = 30
+  INVENTORY_CAPACITY = 9
 
   def initialize
     @inventory = []

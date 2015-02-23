@@ -1,22 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Media;
 using EntityEditor.Annotations;
 
-namespace EntityEditor
+namespace EntityEditor.Prefabs
 {
-    public class PrefabTileData : INotifyPropertyChanged
+    public class PrefabTileData : INotifyPropertyChanged, ICloneable
     {
         private static readonly Random Lolrandom = new Random();
         private SolidColorBrush _color;
         private string _name;
-
-        public PrefabTileData()
-        {
-            Randomize();
-        }
+        private string _metadata;
 
         public SolidColorBrush Color
         {
@@ -40,24 +35,32 @@ namespace EntityEditor
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void Randomize()
+        public string Metadata
         {
-            var colors = typeof (Colors).GetProperties();
-            var index = Lolrandom.Next(colors.Length);
-            var name = new byte[10];
-            Lolrandom.NextBytes(name);
-
-            Color = new SolidColorBrush((Color) colors[index].GetValue(null));
-            Name = Encoding.BigEndianUnicode.GetString(name);
+            get { return _metadata; }
+            set
+            {
+                if (value == _metadata) return;
+                _metadata = value;
+                OnPropertyChanged();
+            }
         }
+
+        public TilePrefab Base { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public object Clone()
+        {
+            var item = (PrefabTileData) Tiles.Prefabs[Base.Id];
+            item.Metadata = Metadata;
+            return item;
         }
     }
 }

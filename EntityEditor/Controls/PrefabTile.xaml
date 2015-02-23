@@ -3,15 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:entityEditor="clr-namespace:EntityEditor"
+             xmlns:prefabs="clr-namespace:EntityEditor.Prefabs"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="50">
-    <Grid Width="50" Height="50" Margin="0.5" MouseDown="UIElement_OnMouseDown"
-          d:DataContext="{d:DesignInstance entityEditor:PrefabTileData}">
+    <Grid Width="50" Height="50" Margin="0.5" MouseLeftButtonDown="UIElement_OnMouseDown"
+          d:DataContext="{d:DesignInstance prefabs:PrefabTileData}">
         <Border Background="{Binding Path=Color}">
-            <Grid>
+            <StackPanel Margin="1">
                 <TextBlock TextWrapping="Wrap" Text="{Binding Path=Name}" />
-            </Grid>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=Metadata}" Foreground="DeepPink" />
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

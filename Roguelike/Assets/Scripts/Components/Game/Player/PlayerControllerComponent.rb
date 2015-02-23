@@ -84,9 +84,13 @@ class PlayerControllerComponent < ComponentBase
 
     tile = current_tile
     if tile.item?
-      item = tile.pickup_item
-      PLAYER_INVENTORY.pickup item
-      Event.raise_event :combat_log, "Picked up #{item.name}"
+      if PLAYER_INVENTORY.room_in_inventory == true
+        item = tile.pickup_item
+        PLAYER_INVENTORY.pickup item
+        Event.raise_event :combat_log, "Picked up #{item.name}"
+      else
+        Event.raise_event :combat_log, "INVENTORY FULL"
+      end
     end
   end
 

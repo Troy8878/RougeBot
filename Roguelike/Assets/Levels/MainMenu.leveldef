@@ -112,14 +112,13 @@
               "components": {
                 "TransformComponent": {
                   "position": [0, 0, 1],
-                  "scale": [10, 10, 1]
+                  "scale": [6.5, 3.5, 1]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/NULL"]
+                  "textures": ["HUBWorldPrototype.png"]
                 },
                 "SpriteComponent": {
-                  "render_target": "WorldLayer",
-                  "tint": "CornflowerBlue, 0.6"
+                  "render_target": "WorldLayer"
                 }
               }
             }

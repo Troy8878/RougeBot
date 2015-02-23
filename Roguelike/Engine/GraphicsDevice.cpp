@@ -342,15 +342,15 @@ bool WindowDevice::BeginFrame()
 void WindowDevice::EndFrame()
 {
   bool vsync = GetGame()->initSettings.vsync;
-  if (vsync)
+  if (vsync && GetFullscreen())
   {
-    SwapChain->Present(2, 0);
+    SwapChain->Present(1, 0);
   }
   else
   {
     SwapChain->Present(0, 0);
 
-    const double min_frame = 0.002;
+    const double min_frame = 1 / 120.0;
     auto &time = GetGame()->Time;
     while (time.CurrFrameTime < min_frame)
       Sleep(0);
@@ -395,6 +395,7 @@ void GraphicsDevice::InitializeD3DContext()
   // this is a big function call >.> just go to
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ff476879(v=vs.85).aspx
   // if you have no idea, because it's too complex to describe here
+  IDXGISwapChain *swapChain;
   HRESULT hr = D3D11CreateDeviceAndSwapChain(
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
@@ -404,11 +405,13 @@ void GraphicsDevice::InitializeD3DContext()
     numLevelsRequested,
     D3D11_SDK_VERSION,
     &sd,
-    &SwapChain,
+    &swapChain,
     &Device,
     &FeatureLevelSupported,
     &DeviceContext);
   CHECK_HRESULT(hr);
+
+  swapChain->QueryInterface(&SwapChain);
 
   hr = ConvertInterface<IDXGIDevice>(Device, &FactoryDevice);
   CHECK_HRESULT(hr);

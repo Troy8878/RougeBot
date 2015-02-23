@@ -109,6 +109,9 @@
                   "bindings": {
                     "level_load": "load_wall_of_text 'CreditsLeftCol.txt', owner"
                   }
+                },
+                "SpinnyThingComponent": {
+                  "axis": "y"
                 }
               }
             },
@@ -135,6 +138,9 @@
                   "bindings": {
                     "level_load": "load_wall_of_text 'CreditsRightCol.txt', owner"
                   }
+                },
+                "SpinnyThingComponent": {
+                  "axis": "y"
                 }
               }
             },

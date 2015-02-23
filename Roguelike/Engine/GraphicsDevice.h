@@ -54,7 +54,7 @@ public:
                          ID3D11InputLayout **layout);
 
   // 3D stuff
-  IR_PROPERTY(IDXGISwapChain *, SwapChain);
+  IR_PROPERTY(IDXGISwapChain1 *, SwapChain);
   IR_PROPERTY(IDXGIAdapter *, FactoryAdapter);
   IR_PROPERTY(IDXGIDevice *, FactoryDevice);
   IR_PROPERTY(IDXGIFactory2 *, DeviceFactory);

@@ -1,9 +1,9 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using EntityEditor.Helpers;
-using EntityEditor.Prefabs;
+using EntityEditor.PrefabEditor.Prefabs;
 
-namespace EntityEditor.Controls
+namespace EntityEditor.PrefabEditor.Controls
 {
     /// <summary>
     ///     Interaction logic for PrefabTile.xaml
@@ -31,7 +31,8 @@ namespace EntityEditor.Controls
             if (data == null)
                 return;
 
-            var paintData = this.GetParent<PrefabRoom>().PaintTile.DataContext as PrefabTileData;
+            var room = this.GetParent<PrefabRoom>();
+            var paintData = room.PaintTile.DataContext as PrefabTileData;
             if (paintData == null)
                 return;
 
@@ -44,13 +45,18 @@ namespace EntityEditor.Controls
 
             var newValue = (PrefabTileData) data.Clone();
 
+            if (room.HasFile())
+                room.Save();
+
             if (paintData.Base.Id != 0)
                 EditHistory.PushUndo(new PrefabChangeHistory
                 {
+                    Room = room,
                     Data = data,
                     Prev = prevValue,
                     Next = newValue
                 }.Undo);
+
         }
     }
 }

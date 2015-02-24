@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace EntityEditor.Prefabs
+namespace EntityEditor.PrefabEditor.Prefabs
 {
     public class Tiles
     {

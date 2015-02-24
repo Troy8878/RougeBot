@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace EntityEditor
+namespace EntityEditor.PrefabEditor
 {
     /// <summary>
     ///     Interaction logic for PrefabEditor.xaml

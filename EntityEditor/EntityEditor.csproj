@@ -60,19 +60,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\PrefabLib.xaml">
+    <Page Include="PrefabEditor\Controls\PrefabLib.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PrefabRoom.xaml">
+    <Page Include="PrefabEditor\Controls\PrefabRoom.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PrefabTile.xaml">
+    <Page Include="PrefabEditor\Controls\PrefabTile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SetMetadata.xaml">
+    <Page Include="PrefabEditor\Controls\SetMetadata.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -87,30 +87,30 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\LibraryMenu.cs" />
-    <Compile Include="Controls\PrefabLib.xaml.cs">
+    <Compile Include="PrefabEditor\Controls\LibraryMenu.cs" />
+    <Compile Include="PrefabEditor\Controls\PrefabLib.xaml.cs">
       <DependentUpon>PrefabLib.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PrefabRoom.xaml.cs">
+    <Compile Include="PrefabEditor\Controls\PrefabRoom.xaml.cs">
       <DependentUpon>PrefabRoom.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PrefabTile.xaml.cs">
+    <Compile Include="PrefabEditor\Controls\PrefabTile.xaml.cs">
       <DependentUpon>PrefabTile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SetMetadata.xaml.cs">
+    <Compile Include="PrefabEditor\Controls\SetMetadata.xaml.cs">
       <DependentUpon>SetMetadata.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TileContext.cs" />
-    <Compile Include="EditHistory.cs" />
+    <Compile Include="PrefabEditor\Controls\TileContext.cs" />
+    <Compile Include="PrefabEditor\EditHistory.cs" />
     <Compile Include="Helpers\Helpers.cs" />
-    <Compile Include="Prefabs\TilePrefab.cs" />
-    <Compile Include="Prefabs\Tiles.cs" />
-    <Compile Include="Prefabs\PrefabTileData.cs" />
+    <Compile Include="PrefabEditor\Prefabs\TilePrefab.cs" />
+    <Compile Include="PrefabEditor\Prefabs\Tiles.cs" />
+    <Compile Include="PrefabEditor\Prefabs\PrefabTileData.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PrefabEditor.xaml">
+    <Page Include="PrefabEditor\PrefabEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -120,7 +120,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PrefabEditor.xaml.cs">
+    <Compile Include="PrefabEditor\PrefabEditor.xaml.cs">
       <DependentUpon>PrefabEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />

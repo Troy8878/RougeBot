@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using EntityEditor.Prefabs;
+﻿using System.IO;
+using EntityEditor.PrefabEditor.Prefabs;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace EntityEditor.Controls
+namespace EntityEditor.PrefabEditor.Controls
 {
     /// <summary>
     ///     Interaction logic for PrefabRoom.xaml
     /// </summary>
     public partial class PrefabRoom
     {
+        private string _file;
+
         private readonly OpenFileDialog _openDlg = new OpenFileDialog
         {
             Filter = "Prefab JSON File|*.prefab.json"
@@ -32,6 +32,8 @@ namespace EntityEditor.Controls
 
         public void SetEmpty()
         {
+            _file = null;
+
             var data = new PrefabTileData[10][];
             for (var i = 0; i < 10; ++i)
             {
@@ -46,8 +48,14 @@ namespace EntityEditor.Controls
 
         public void SetFile(string name)
         {
+            _file = name;
             _openDlg.FileName = name;
             _saveDlg.FileName = name;
+        }
+
+        public bool HasFile()
+        {
+            return _file != null;
         }
 
         public void Load()
@@ -62,6 +70,7 @@ namespace EntityEditor.Controls
                 Load(file);
             }
 
+            _file = _openDlg.FileName;
             _saveDlg.FileName = _openDlg.FileName;
         }
 
@@ -88,6 +97,15 @@ namespace EntityEditor.Controls
 
         public void Save()
         {
+            if (_file != null)
+            {
+                using (var file = File.OpenWrite(_file))
+                {
+                    Save(file);
+                }
+                return;
+            }
+
             if (_saveDlg.ShowDialog() != true)
             {
                 return;
@@ -97,7 +115,8 @@ namespace EntityEditor.Controls
             {
                 Save(file);
             }
-
+            
+            _file = _openDlg.FileName;
             _openDlg.FileName = _saveDlg.FileName;
 
             Lib.Refresh(null, null);

@@ -30,7 +30,12 @@ namespace EntityEditor
 
         private void ButtonPrefab(object sender, RoutedEventArgs e)
         {
-            new PrefabEditor().Show();
+            new PrefabEditor.PrefabEditor().Show();
+        }
+
+        private void ButtonEntity(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

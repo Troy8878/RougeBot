@@ -5,5 +5,8 @@
     <Setting Name="Library" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="RepoPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Source/Repos/Game200-Project</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

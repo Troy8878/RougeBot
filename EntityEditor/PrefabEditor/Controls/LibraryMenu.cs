@@ -3,13 +3,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using EntityEditor.Helpers;
-using EntityEditor.Prefabs;
+using EntityEditor.PrefabEditor.Prefabs;
 using EntityEditor.Properties;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace EntityEditor.Controls
+namespace EntityEditor.PrefabEditor.Controls
 {
     public class LibraryMenu : MenuItem
     {
@@ -112,7 +112,7 @@ namespace EntityEditor.Controls
                 var item = new MenuItem
                 {
                     Header = data.Name,
-                    Background = data.Color
+                    Icon = new Border {Background = data.Color}
                 };
 
                 var use = new MenuItem {Header = "_Use"};

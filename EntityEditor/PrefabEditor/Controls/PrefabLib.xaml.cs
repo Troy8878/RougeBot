@@ -3,13 +3,14 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using EntityEditor.Helpers;
+using EntityEditor.Properties;
 
-namespace EntityEditor.Controls
+namespace EntityEditor.PrefabEditor.Controls
 {
     /// <summary>
     ///     Interaction logic for PrefabLib.xaml
     /// </summary>
-    public partial class PrefabLib : UserControl
+    public partial class PrefabLib
     {
         public PrefabLib()
         {
@@ -22,9 +23,13 @@ namespace EntityEditor.Controls
             Tree.Items.Clear();
 
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var libdir = Path.Combine(home, "Source/Repos/Game200-Project/Roguelike/Assets/Prefabs");
+            var repoPath = Settings.Default.RepoPath;
+            const string repoDir = "Roguelike/Assets/Prefabs";
+            var libdir = Path.Combine(home, repoPath, repoDir);
             if (!Directory.Exists(libdir))
+            {
                 return;
+            }
 
             foreach (var dir in new DirectoryInfo(libdir).GetDirectories())
             {

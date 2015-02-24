@@ -1,4 +1,4 @@
-﻿<Window x:Class="EntityEditor.Controls.SetMetadata"
+﻿<Window x:Class="EntityEditor.PrefabEditor.Controls.SetMetadata"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Set Metadata" Height="75" Width="400" ResizeMode="NoResize"

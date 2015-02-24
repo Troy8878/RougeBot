@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 using EntityEditor.Helpers;
-using EntityEditor.Prefabs;
+using EntityEditor.PrefabEditor.Prefabs;
 
-namespace EntityEditor.Controls
+namespace EntityEditor.PrefabEditor.Controls
 {
     /// <summary>
     ///     Follow steps 1a or 1b and then 2 to use this custom control in a XAML file.
@@ -76,6 +76,9 @@ namespace EntityEditor.Controls
                 var room = PlacementTarget.GetParent<PrefabRoom>();
 
                 ((PrefabTileData) room.PaintTile.DataContext).Reassign(prefabTile.DataContext as PrefabTileData);
+
+                if (room.HasFile())
+                    room.Save();
             };
             AddChild(item);
         }
@@ -85,7 +88,7 @@ namespace EntityEditor.Controls
             var item = new MenuItem
             {
                 Header = prefab.Name,
-                Background = new SolidColorBrush(prefab.EditColor)
+                Icon = new Border {Background = new SolidColorBrush(prefab.EditColor)}
             };
             item.Click += delegate
             {

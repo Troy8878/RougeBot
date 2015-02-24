@@ -3,9 +3,10 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using EntityEditor.Annotations;
+using EntityEditor.PrefabEditor.Controls;
 using Newtonsoft.Json.Linq;
 
-namespace EntityEditor.Prefabs
+namespace EntityEditor.PrefabEditor.Prefabs
 {
     public class PrefabTileData : INotifyPropertyChanged, ICloneable
     {
@@ -89,6 +90,7 @@ namespace EntityEditor.Prefabs
 
     public class PrefabChangeHistory
     {
+        public PrefabRoom Room { get; set; }
         public PrefabTileData Data { get; set; }
         public PrefabTileData Prev { get; set; }
         public PrefabTileData Next { get; set; }
@@ -96,12 +98,20 @@ namespace EntityEditor.Prefabs
         public EditHistory.RedoAction Undo()
         {
             Data.Reassign(Prev);
+
+            if (Room.HasFile())
+                Room.Save();
+
             return Redo;
         }
 
         public EditHistory.UndoAction Redo()
         {
             Data.Reassign(Next);
+            
+            if (Room.HasFile())
+                Room.Load();
+
             return Undo;
         }
     }

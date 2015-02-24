@@ -1,19 +1,15 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using EntityEditor.Helpers;
 using EntityEditor.Prefabs;
 
 namespace EntityEditor.Controls
 {
     /// <summary>
-    /// Interaction logic for PrefabTile.xaml
+    ///     Interaction logic for PrefabTile.xaml
     /// </summary>
     public partial class PrefabTile : UserControl
     {
-        public bool StartWall { get; set; }
-
         public PrefabTile()
         {
             InitializeComponent();
@@ -23,6 +19,8 @@ namespace EntityEditor.Controls
                     DataContext = (PrefabTileData) Tiles.Prefabs[1];
             };
         }
+
+        public bool StartWall { get; set; }
 
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -50,7 +48,7 @@ namespace EntityEditor.Controls
             {
                 Data = data,
                 Prev = prevValue,
-                Next = newValue,
+                Next = newValue
             }.Undo);
         }
     }

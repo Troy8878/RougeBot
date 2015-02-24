@@ -9,8 +9,8 @@ namespace EntityEditor.Prefabs
     public class PrefabTileData : INotifyPropertyChanged, ICloneable
     {
         private SolidColorBrush _color;
-        private string _name;
         private string _metadata;
+        private string _name;
 
         public SolidColorBrush Color
         {
@@ -46,6 +46,14 @@ namespace EntityEditor.Prefabs
         }
 
         public TilePrefab Base { get; set; }
+
+        public object Clone()
+        {
+            var item = (PrefabTileData) Tiles.Prefabs[Base.Id];
+            item.Metadata = Metadata;
+            return item;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -53,13 +61,6 @@ namespace EntityEditor.Prefabs
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public object Clone()
-        {
-            var item = (PrefabTileData) Tiles.Prefabs[Base.Id];
-            item.Metadata = Metadata;
-            return item;
         }
 
         public void Reassign(PrefabTileData other)

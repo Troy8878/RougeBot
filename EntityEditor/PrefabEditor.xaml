@@ -7,14 +7,14 @@
         mc:Ignorable="d"
         d:DesignHeight="300" d:DesignWidth="300"
         Title="PrefabEditor">
-    
+
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OnOpen" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Save" Executed="OnSave" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Undo" Executed="OnUndo" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Redo" Executed="OnRedo" CanExecute="AlwaysExecute" />
     </Window.CommandBindings>
-    
+
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="O" Command="Open" />
         <KeyBinding Modifiers="Control" Key="S" Command="Save" />

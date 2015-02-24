@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -33,7 +32,7 @@ namespace EntityEditor.Controls
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
-            
+
             AddMeta();
 
             IEnumerable<KeyValuePair<int, TilePrefab>> prefabs = Tiles.Prefabs;
@@ -47,7 +46,7 @@ namespace EntityEditor.Controls
 
         private void AddMeta()
         {
-            var item = new MenuItem()
+            var item = new MenuItem
             {
                 Header = "Set Metadata"
             };
@@ -78,7 +77,7 @@ namespace EntityEditor.Controls
                 if (prefabTile == null)
                     return;
 
-                ((PrefabTileData)prefabTile.DataContext).Reassign((PrefabTileData) prefab);
+                ((PrefabTileData) prefabTile.DataContext).Reassign((PrefabTileData) prefab);
             };
             AddChild(item);
         }

@@ -65,11 +65,7 @@ namespace EntityEditor.Controls
                     {
                         var jtile = (JObject) jrow[x];
                         var tile = tiles[y][x];
-                        tile.Reassign((PrefabTileData) Tiles.Prefabs[(int) jtile["id"]]);
-
-                        var meta = jtile["meta"];
-                        if (meta != null)
-                            tile.Metadata = (string) meta;
+                        tile.FromSerialized(jtile);
                     }
                 }
             }
@@ -104,10 +100,7 @@ namespace EntityEditor.Controls
                 var jrow = new JArray();
                 foreach (var tile in row)
                 {
-                    var jtile = new JObject();
-                    jtile["id"] = tile.Base.Id;
-                    jtile["meta"] = tile.Metadata;
-                    jrow.Add(jtile);
+                    jrow.Add(tile.Serialize());
                 }
                 tiles.Add(jrow);
             }

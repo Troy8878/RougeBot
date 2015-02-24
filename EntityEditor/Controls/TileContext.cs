@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
+using EntityEditor.Helpers;
 using EntityEditor.Prefabs;
 
 namespace EntityEditor.Controls
@@ -60,6 +61,21 @@ namespace EntityEditor.Controls
                     return;
 
                 tileData.Metadata = SetMetadata.GetString(tileData.Metadata);
+            };
+            AddChild(item);
+
+            item = new MenuItem
+            {
+                Header = "Pull Value"
+            };
+            item.Click += delegate
+            {
+                var prefabTile = PlacementTarget as PrefabTile;
+                if (prefabTile == null)
+                    return;
+                var room = PlacementTarget.GetParent<PrefabRoom>();
+
+                ((PrefabTileData) room.PaintTile.DataContext).Reassign(prefabTile.DataContext as PrefabTileData);
             };
             AddChild(item);
         }

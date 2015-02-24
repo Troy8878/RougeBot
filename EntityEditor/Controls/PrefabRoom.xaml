@@ -49,7 +49,7 @@
                 HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <controls:PrefabTile x:Name="PaintTile" StartWall="True">
                 <controls:PrefabTile.ContextMenu>
-                    <controls:TileContext SkipEmpty="True" />
+                    <controls:TileContext />
                 </controls:PrefabTile.ContextMenu>
             </controls:PrefabTile>
         </Border>

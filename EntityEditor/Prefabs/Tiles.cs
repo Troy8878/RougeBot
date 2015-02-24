@@ -13,6 +13,8 @@ namespace EntityEditor.Prefabs
             AddBase(1, "Wall", Colors.DimGray);
             AddBase(2, "Enemy", Colors.DarkViolet);
             AddBase(3, "Bork Wall", Colors.SlateGray);
+            AddBase(4, "Player Start", Colors.Firebrick);
+            AddBase(5, "Item Spawn", Colors.DodgerBlue);
         }
 
         private static void AddBase(int id, string name, Color color)

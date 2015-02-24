@@ -32,6 +32,7 @@
                 <MenuItem Header="_Undo" Command="Undo" />
                 <MenuItem Header="_Redo" Command="Redo" />
             </MenuItem>
+            <controls:LibraryMenu Header="Library" />
         </Menu>
         <controls:PrefabRoom DataContext="{Binding}" x:Name="Room" />
     </DockPanel>

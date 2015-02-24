@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using EntityEditor.Annotations;
+using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Prefabs
 {
@@ -69,6 +70,20 @@ namespace EntityEditor.Prefabs
             Name = other.Name;
             Metadata = other.Metadata;
             Base = other.Base;
+        }
+
+        public JObject Serialize()
+        {
+            var obj = new JObject();
+            obj["id"] = Base.Id;
+            obj["meta"] = Metadata;
+            return obj;
+        }
+
+        public void FromSerialized(JObject jtile)
+        {
+            Reassign((PrefabTileData) Tiles.Prefabs[(int) jtile["id"]]);
+            Metadata = (string) jtile["meta"];
         }
     }
 

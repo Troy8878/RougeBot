@@ -44,12 +44,13 @@ namespace EntityEditor.Controls
 
             var newValue = (PrefabTileData) data.Clone();
 
-            EditHistory.PushUndo(new PrefabChangeHistory
-            {
-                Data = data,
-                Prev = prevValue,
-                Next = newValue
-            }.Undo);
+            if (paintData.Base.Id != 0)
+                EditHistory.PushUndo(new PrefabChangeHistory
+                {
+                    Data = data,
+                    Prev = prevValue,
+                    Next = newValue
+                }.Undo);
         }
     }
 }

@@ -78,7 +78,7 @@ namespace EntityEditor.Controls
                 if (prefabTile == null)
                     return;
 
-                prefabTile.DataContext = (PrefabTileData) prefab;
+                ((PrefabTileData)prefabTile.DataContext).Reassign((PrefabTileData) prefab);
             };
             AddChild(item);
         }

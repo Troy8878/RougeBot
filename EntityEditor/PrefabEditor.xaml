@@ -1,14 +1,38 @@
-﻿<Page x:Class="EntityEditor.PrefabEditor"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:controls="clr-namespace:EntityEditor.Controls"
-      mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-	  Title="PrefabEditor">
+﻿<Window x:Class="EntityEditor.PrefabEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:controls="clr-namespace:EntityEditor.Controls"
+        mc:Ignorable="d"
+        d:DesignHeight="300" d:DesignWidth="300"
+        Title="PrefabEditor">
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OnOpen" CanExecute="AlwaysExecute" />
+        <CommandBinding Command="Save" Executed="OnSave" CanExecute="AlwaysExecute" />
+        <CommandBinding Command="Undo" Executed="OnUndo" CanExecute="AlwaysExecute" />
+        <CommandBinding Command="Redo" Executed="OnRedo" CanExecute="AlwaysExecute" />
+    </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="O" Command="Open" />
+        <KeyBinding Modifiers="Control" Key="S" Command="Save" />
+        <KeyBinding Modifiers="Control" Key="Z" Command="Undo" />
+        <KeyBinding Modifiers="Control" Key="Y" Command="Redo" />
+    </Window.InputBindings>
 
-    <Grid>
-        <controls:PrefabRoom DataContext="{Binding}" />
-    </Grid>
-</Page>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Command="Open" />
+                <MenuItem Header="_Save" Command="Save" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo" Command="Undo" />
+                <MenuItem Header="_Redo" Command="Redo" />
+            </MenuItem>
+        </Menu>
+        <controls:PrefabRoom DataContext="{Binding}" x:Name="Room" />
+    </DockPanel>
+</Window>

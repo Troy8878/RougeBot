@@ -8,7 +8,6 @@ namespace EntityEditor.Prefabs
 {
     public class PrefabTileData : INotifyPropertyChanged, ICloneable
     {
-        private static readonly Random Lolrandom = new Random();
         private SolidColorBrush _color;
         private string _name;
         private string _metadata;
@@ -61,6 +60,33 @@ namespace EntityEditor.Prefabs
             var item = (PrefabTileData) Tiles.Prefabs[Base.Id];
             item.Metadata = Metadata;
             return item;
+        }
+
+        public void Reassign(PrefabTileData other)
+        {
+            Color = other.Color;
+            Name = other.Name;
+            Metadata = other.Metadata;
+            Base = other.Base;
+        }
+    }
+
+    public class PrefabChangeHistory
+    {
+        public PrefabTileData Data { get; set; }
+        public PrefabTileData Prev { get; set; }
+        public PrefabTileData Next { get; set; }
+
+        public EditHistory.RedoAction Undo()
+        {
+            Data.Reassign(Prev);
+            return Redo;
+        }
+
+        public EditHistory.UndoAction Redo()
+        {
+            Data.Reassign(Next);
+            return Undo;
         }
     }
 }

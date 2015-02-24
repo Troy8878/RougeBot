@@ -37,10 +37,21 @@ namespace EntityEditor.Controls
             if (paintData == null)
                 return;
 
+            var prevValue = (PrefabTileData) data.Clone();
+
             if (data.Base.Id == paintData.Base.Id)
-                DataContext = (PrefabTileData) Tiles.Prefabs[0];
+                data.Reassign((PrefabTileData) Tiles.Prefabs[0]);
             else
-                DataContext = paintData.Clone();
+                data.Reassign(paintData);
+
+            var newValue = (PrefabTileData) data.Clone();
+
+            EditHistory.PushUndo(new PrefabChangeHistory
+            {
+                Data = data,
+                Prev = prevValue,
+                Next = newValue,
+            }.Undo);
         }
     }
 }

@@ -28,9 +28,9 @@ namespace EntityEditor
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonPrefab(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("DID I TELL YOU TO CLICK ME?! Oh, nevermind.");
+            new PrefabEditor().Show();
         }
     }
 }

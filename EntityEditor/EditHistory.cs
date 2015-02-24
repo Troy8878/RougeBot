@@ -15,6 +15,23 @@ namespace EntityEditor
         public static void PushUndo(UndoAction action)
         {
             UndoStack.Push(action);
+            RedoStack.Clear();
+        }
+
+        public static void ClearHistory()
+        {
+            UndoStack.Clear();
+            RedoStack.Clear();
+        }
+
+        public static bool CanUndo()
+        {
+            return UndoStack.Any();
+        }
+
+        public static bool CanRedo()
+        {
+            return RedoStack.Any();
         }
 
         public static void Undo()
@@ -22,7 +39,9 @@ namespace EntityEditor
             if (!UndoStack.Any())
                 return;
 
-            RedoStack.Push(UndoStack.Pop()());
+            var next = UndoStack.Pop()();
+            if (next != null)
+                RedoStack.Push(next);
         }
 
         public static void Redo()
@@ -30,7 +49,9 @@ namespace EntityEditor
             if (!RedoStack.Any())
                 return;
 
-            UndoStack.Push(RedoStack.Pop()());
+            var next = RedoStack.Pop()();
+            if (next != null)
+                UndoStack.Push(next);
         }
     }
 }

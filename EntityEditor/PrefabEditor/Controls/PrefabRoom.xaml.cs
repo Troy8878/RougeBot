@@ -76,6 +76,8 @@ namespace EntityEditor.PrefabEditor.Controls
 
         public void Load(Stream file)
         {
+            EditHistory.ClearHistory();
+
             using (var reader = new StreamReader(file))
             {
                 var tiles = (PrefabTileData[][]) Items.ItemsSource;
@@ -116,8 +118,7 @@ namespace EntityEditor.PrefabEditor.Controls
                 Save(file);
             }
             
-            _file = _openDlg.FileName;
-            _openDlg.FileName = _saveDlg.FileName;
+            SetFile(_saveDlg.FileName);
 
             Lib.Refresh(null, null);
         }

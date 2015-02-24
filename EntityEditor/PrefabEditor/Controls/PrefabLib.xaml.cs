@@ -53,6 +53,7 @@ namespace EntityEditor.PrefabEditor.Controls
                         }
                     };
                     node.Items.Add(item);
+                    node.ExpandSubtree();
                 }
                 Tree.Items.Add(node);
             }

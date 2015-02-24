@@ -60,6 +60,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\PrefabLib.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PrefabRoom.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -84,6 +88,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\LibraryMenu.cs" />
+    <Compile Include="Controls\PrefabLib.xaml.cs">
+      <DependentUpon>PrefabLib.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PrefabRoom.xaml.cs">
       <DependentUpon>PrefabRoom.xaml</DependentUpon>
     </Compile>

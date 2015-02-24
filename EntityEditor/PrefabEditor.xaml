@@ -9,6 +9,7 @@
         Title="PrefabEditor">
 
     <Window.CommandBindings>
+        <CommandBinding Command="New" Executed="OnNew" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Open" Executed="OnOpen" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Save" Executed="OnSave" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Undo" Executed="OnUndo" CanExecute="AlwaysExecute" />
@@ -16,6 +17,7 @@
     </Window.CommandBindings>
 
     <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="N" Command="New" />
         <KeyBinding Modifiers="Control" Key="O" Command="Open" />
         <KeyBinding Modifiers="Control" Key="S" Command="Save" />
         <KeyBinding Modifiers="Control" Key="Z" Command="Undo" />
@@ -25,6 +27,7 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
+                <MenuItem Header="_New" Command="New" />
                 <MenuItem Header="_Open" Command="Open" />
                 <MenuItem Header="_Save" Command="Save" />
             </MenuItem>

@@ -1,0 +1,15 @@
+[
+  "{\"id\":5,\"meta\":\"$ctx[:level] + 1\"}",
+  "{\"id\":1,\"meta\":\":empty unless $ctx[:door][:top].closed?\"}",
+  "{\"id\":1,\"meta\":\":empty unless $ctx[:door][:left].closed?\"}",
+  "{\"id\":1,\"meta\":\":empty unless $ctx[:door][:bottom].closed?\"}",
+  "{\"id\":1,\"meta\":\":empty unless $ctx[:door][:right].closed?\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Blue\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Green\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Red\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Orange\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Yellow\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Wizard_Purple\\\"\"}",
+  "{\"id\":2,\"meta\":\"\\\"Slime\\\"\"}",
+  "{\"id\":2,\"meta\":\"[\\\"Wizard_Red\\\",\\\"Wizard_Green\\\",\\\"Wizard_Blue\\\",\\\"Wizard_Purple\\\",\\\"Wizard_Orange\\\"].rand_item\"}"
+]

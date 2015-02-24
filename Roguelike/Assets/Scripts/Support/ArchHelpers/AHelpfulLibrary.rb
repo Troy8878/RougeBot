@@ -50,6 +50,12 @@ class Array
   def average
     sum / count
   end
+
+  def rand_item
+    return nil if empty?
+
+    self[(rand * length).to_i]
+  end
 end
 
 module Enumerable

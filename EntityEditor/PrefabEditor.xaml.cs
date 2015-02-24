@@ -43,5 +43,10 @@ namespace EntityEditor
         {
             e.CanExecute = true;
         }
+
+        private void OnNew(object sender, ExecutedRoutedEventArgs e)
+        {
+            Room.SetEmpty();
+        }
     }
 }

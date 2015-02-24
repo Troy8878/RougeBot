@@ -44,6 +44,12 @@ namespace EntityEditor.Controls
             Items.ItemsSource = data;
         }
 
+        public void SetFile(string name)
+        {
+            _openDlg.FileName = name;
+            _saveDlg.FileName = name;
+        }
+
         public void Load()
         {
             if (_openDlg.ShowDialog() != true)
@@ -52,6 +58,15 @@ namespace EntityEditor.Controls
             }
 
             using (var file = _openDlg.OpenFile())
+            {
+                Load(file);
+            }
+
+            _saveDlg.FileName = _openDlg.FileName;
+        }
+
+        public void Load(Stream file)
+        {
             using (var reader = new StreamReader(file))
             {
                 var tiles = (PrefabTileData[][]) Items.ItemsSource;
@@ -69,8 +84,6 @@ namespace EntityEditor.Controls
                     }
                 }
             }
-
-            _saveDlg.FileName = _openDlg.FileName;
         }
 
         public void Save()
@@ -81,13 +94,22 @@ namespace EntityEditor.Controls
             }
 
             using (var file = _saveDlg.OpenFile())
+            {
+                Save(file);
+            }
+
+            _openDlg.FileName = _saveDlg.FileName;
+
+            Lib.Refresh(null, null);
+        }
+
+        public void Save(Stream file)
+        {
             using (var writer = new StreamWriter(file))
             {
                 var data = Serialize().ToString(Formatting.Indented);
                 writer.Write(data);
             }
-
-            _openDlg.FileName = _saveDlg.FileName;
         }
 
         public JObject Serialize()

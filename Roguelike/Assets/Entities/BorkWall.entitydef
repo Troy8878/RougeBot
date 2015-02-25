@@ -1,0 +1,38 @@
+{
+  "TransformComponent": {
+    "rotation": [0, 0, 0],
+  },
+  "DefenseComponent": {
+    "health": 25,
+    "max_health": 25
+  },
+  
+  "PositionComponent": {
+    "mode": "linear"
+  },
+
+  "EnemyLogicComponent": {
+    "stationary": true
+  },
+
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Sprite",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
+          "TextureComponent": {
+            "textures": [
+              "BorkWall.png",
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "WorldLayer"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -7,11 +7,14 @@
 
 class EnemyLogicComponent < ComponentBase
   include Actor
+  attr_accessor :stationary
+
   dependency "PositionComponent", "AttackComponent"
 
   serialized_input do |p|
     p.dependency "PositionComponent"
     p.dependency "AttackComponent"
+    p.bool :stationary, required: false, default: false
   end
 
   def initialize(data)
@@ -20,12 +23,20 @@ class EnemyLogicComponent < ComponentBase
     @position = self.owner.position_component.position
     @attack = self.owner.attack_component
 
+    @stationary = !!data["stationary"]
+
     register_event :logic_update, :on_update
     register_event :update, :first_update
   end
 
   def first_update(e)
-    actor_init(MapItem::ELLIPSE, "Red")
+    maptype = [MapItem::ELLIPSE, "Red"]
+
+    if @stationary
+      maptype = [MapItem::RECTANGLE, "CornflowerBlue, 0.7"]
+    end
+
+    actor_init(maptype[0], maptype[1])
     actor_minimap_update
 
     actor_moved
@@ -34,6 +45,8 @@ class EnemyLogicComponent < ComponentBase
   end
 
   def on_update(player)
+    return if @stationary
+
     position_player = player.position_component.position
     distance = @position.distance position_player
 

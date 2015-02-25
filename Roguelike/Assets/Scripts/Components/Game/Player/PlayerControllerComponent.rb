@@ -180,6 +180,9 @@ class PlayerControllerComponent < ComponentBase
 
   def enemies_nearby?
     enemies = find_entity(0).children.select(&:enemy_logic_component)
+    enemies = enemies.select do |enemy|
+      !enemy.enemy_logic_component.stationary
+    end
 
     enemies.each do |enemy|
       epos = enemy.transform_component.position

@@ -30,6 +30,16 @@ namespace EntityEditor.PrefabEditor.Controls
             SetEmpty();
         }
 
+        public Stream OpenFileWrite(string name)
+        {
+            return File.Open(name, FileMode.Create, FileAccess.Write);
+        }
+
+        public Stream OpenFileRead(string name)
+        {
+            return File.Open(name, FileMode.Open, FileAccess.Read);
+        }
+
         public void SetEmpty()
         {
             _file = null;
@@ -65,7 +75,7 @@ namespace EntityEditor.PrefabEditor.Controls
                 return;
             }
 
-            using (var file = _openDlg.OpenFile())
+            using (var file = OpenFileRead(_openDlg.FileName))
             {
                 Load(file);
             }
@@ -101,7 +111,7 @@ namespace EntityEditor.PrefabEditor.Controls
         {
             if (_file != null)
             {
-                using (var file = File.OpenWrite(_file))
+                using (var file = OpenFileWrite(_file))
                 {
                     Save(file);
                 }
@@ -113,7 +123,7 @@ namespace EntityEditor.PrefabEditor.Controls
                 return;
             }
 
-            using (var file = _saveDlg.OpenFile())
+            using (var file = OpenFileWrite(_saveDlg.FileName))
             {
                 Save(file);
             }

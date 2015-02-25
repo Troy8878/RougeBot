@@ -213,6 +213,7 @@
     <ClCompile Include="MapComponent.cpp" />
     <ClCompile Include="PositionComponent.cpp" />
     <ClCompile Include="PositionDisplayComponent.cpp" />
+    <ClCompile Include="PrefabGenerator.cpp" />
     <ClCompile Include="RoomGenerator.cpp" />
     <ClCompile Include="Voodoo.cpp" />
   </ItemGroup>

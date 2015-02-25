@@ -873,4 +873,12 @@ class option
 
 // ----------------------------------------------------------------------------
 
+template <typename Container>
+auto random_item(Container &cont) -> decltype((Container{})[0])
+{
+  static std::random_device rng;
+  return cont[std::uniform_int_distribution<size_t>(0, cont.size() - 1)(rng)];
+}
+
+// ----------------------------------------------------------------------------
 

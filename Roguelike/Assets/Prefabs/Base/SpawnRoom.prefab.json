@@ -19,53 +19,11 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -103,11 +61,53 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless CTX[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -145,11 +145,11 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless CTX[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -171,19 +171,19 @@
     [
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 4,
@@ -195,37 +195,37 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       }
     ],
     [
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless CTX[:door][:left].closed?"
       },
       {
         "id": 0,
@@ -237,19 +237,19 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless CTX[:door][:right].closed?"
       }
     ],
     [
@@ -271,53 +271,11 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,
@@ -355,11 +313,11 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,
@@ -397,11 +355,53 @@
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless CTX[:door][:bottom].closed?"
       },
       {
         "id": 1,

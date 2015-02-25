@@ -9,13 +9,24 @@
 
 #include "Engine/Common.h"
 
+enum class TileType
+{
+  Floor = 0,
+  Wall = 1,
+  Enemy = 2,
+  BorkWall = 3,
+  PlayerStart = 4,
+  ItemSpawn = 5,
+  Stairs = 6,
+};
+
 // The generator pattern is designed for ruby interfaces.
 __interface Generator
 {
   mrb_value Generate(mrb_state *mrb, mrb_value options);
 };
 
-class RoomGenerator : public Generator
+class RoomGenerator final : public Generator
 {
 public:
   mrb_value Generate(mrb_state *mrb, mrb_value options) override;
@@ -72,6 +83,40 @@ private:
 
   size_t _RandWidth();
   size_t _RandHeight();
+};
+
+class PrefabGenerator final : public Generator
+{
+public:
+  mrb_value Generate(mrb_state *mrb, mrb_value options) override;
+
+private:
+  mrb_int Level;
+
+  mrb_int Width, Height;
+  mrb_int PlayerX, PlayerY;
+  mrb_int StairX, StairY;
+
+  size_t MapTiles;
+  mrb_int *Map;
+
+  std::vector<std::tuple<TileType, size_t, size_t, json::value>> Entities;
+
+  inline mrb_int& TileAt(size_t x, size_t y)
+  {
+    return *(Map + (y * Width) + x);
+  }
+
+  void ParseOptions(mrb_state *mrb, mrb_value options);
+
+  void MakeSpawn(size_t x, size_t y);
+  void MakeStairs(size_t x, size_t y);
+  void MakeRoom(size_t x, size_t y);
+  void MakeRoom(json::value room, size_t x, size_t y);
+
+  void MakeBarriers();
+
+  mrb_value MakeContext(size_t x, size_t y);
 };
 
 class FloorDoOverException : public basic_exception

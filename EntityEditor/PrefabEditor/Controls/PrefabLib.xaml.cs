@@ -47,7 +47,7 @@ namespace EntityEditor.PrefabEditor.Controls
                     {
                         var room = this.GetParent<PrefabRoom>();
                         room.SetFile(file.FullName);
-                        using (var stream = File.OpenRead(file.FullName))
+                        using (var stream = room.OpenFileRead(file.FullName))
                         {
                             room.Load(stream);
                         }

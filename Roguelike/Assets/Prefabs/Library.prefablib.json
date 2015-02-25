@@ -11,5 +11,5 @@
   "{\"id\":2,\"meta\":\"\\\"Wizard_Yellow\\\"\"}",
   "{\"id\":2,\"meta\":\"\\\"Wizard_Purple\\\"\"}",
   "{\"id\":2,\"meta\":\"\\\"Slime\\\"\"}",
-  "{\"id\":2,\"meta\":\"[\\\"Wizard_Red\\\",\\\"Wizard_Green\\\",\\\"Wizard_Blue\\\",\\\"Wizard_Purple\\\",\\\"Wizard_Orange\\\"].rand_item\"}"
+  "{\"id\":2,\"meta\":\"[[\\\"Wizard_Red\\\", {health: 100}],[\\\"Wizard_Green\\\", {health: 100}],[\\\"Wizard_Blue\\\", {health: 100}],[\\\"Wizard_Purple\\\", {health: 100}],[\\\"Wizard_Orange\\\", {health: 100}]].rand_item\"}"
 ]

@@ -18,7 +18,7 @@ static mrb_value mrb_floor_generate(mrb_state *mrb, mrb_value)
   mrb_value options;
   mrb_get_args(mrb, "H", &options);
   
-  return RoomGenerator().Generate(mrb, options);
+  return PrefabGenerator().Generate(mrb, options);
 }
 
 // ----------------------------------------------------------------------------

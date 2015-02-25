@@ -21,11 +21,6 @@ class StairComponent < ComponentBase
   end
 
   def build_it(e)
-    floor = current_floor
-    tile = Enemy.find_empty_slot(floor)
-
-    STAIR_POSITION.x = tile.x
-    STAIR_POSITION.y = floor.length - 1 - tile.y
     owner.position_component.position = STAIR_POSITION
 
     put_on_minimap

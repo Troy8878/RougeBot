@@ -223,7 +223,7 @@ void PrefabGenerator::MakeRoom(json::value room, size_t rx, size_t ry)
       case TileType::ItemSpawn:
       case TileType::BorkWall:
       case TileType::Enemy:
-        Entities.push_back(std::make_tuple(type, x, y, metajson));
+        Entities.push_back(std::make_tuple(type, px, py, metajson));
         break;
 
       case TileType::PlayerStart:

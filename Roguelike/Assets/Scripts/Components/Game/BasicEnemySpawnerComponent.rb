@@ -9,7 +9,6 @@ class BasicEnemySpawnerComponent < ComponentBase
 
   ENEMY_TYPES = [
     "Enemies/Slime",
-    "Enemies/Derpaderp",
     "Enemies/Wizard_Red",
     "Enemies/Wizard_Orange",
     "Enemies/Wizard_Yellow",
@@ -25,16 +24,20 @@ class BasicEnemySpawnerComponent < ComponentBase
   def initialize(data)
     super data
 
-    num_enemies = data.fetch("num_enemies", 8).to_i
+    GENERATE_ENTITIES.lazy.select{|t| t[0] == 2}.each do |tuple|
+      type, x, y, meta = tuple
+      data = {}
 
-    # Delay the spawning by 2 frames
-    seq = owner.action_sequence :spawn
-    seq.delay 0
-    seq.delay 0
-    seq.once do
-      num_enemies.times do
-        Enemy.spawn random_enemy
+      if meta.is_a? String
+        meta = "Enemies/#{meta}"
+      elsif meta.is_a? Array
+        data = meta[1] || data
+        meta = "Enemies/#{meta[0]}"
+      else
+        meta = ENEMY_TYPES.rand_item
       end
+
+      Enemy.spawn_at(meta, x, y)
     end
   end
 

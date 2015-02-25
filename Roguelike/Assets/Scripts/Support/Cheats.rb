@@ -34,6 +34,11 @@ class CheatState
     Game.switch_level 'Victory'
   end
 
+  def seemap
+    find_entity("Minimap").map_component.remove_fow
+    find_entity("Minimap").raise_event :map_update, nil
+  end
+
   def help
     puts "       Cheat help       "
     puts "========================"
@@ -42,6 +47,7 @@ class CheatState
     puts "> cheat.victory         "
     puts "> cheat.god = :on       "
     puts "> cheat.god = :off      "
+    puts "> cheat.seemap          "
     puts "========================"
   end
 end

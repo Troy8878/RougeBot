@@ -34,6 +34,11 @@ module Enemy
     slot = Enemy.find_empty_slot floor
     return if slot.nil?
 
+    spawn_in(type, slot)
+  end
+
+  def self.spawn_in(type, slot)
+    floor = current_floor
     enemy = find_entity(0).create_child(
       archetype: type,
       components: {
@@ -44,5 +49,12 @@ module Enemy
     )
 
     enemy.defense_component.health *= GAME_STATE[:floor]
+    enemy
+  end
+
+  def self.spawn_at(type, x, y)
+    floor = current_floor
+    slot = floor[y][x]
+    spawn_in(type, slot)
   end
 end

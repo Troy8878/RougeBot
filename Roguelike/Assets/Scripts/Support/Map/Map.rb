@@ -5,16 +5,22 @@
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
+GENERATE_ENTITIES = []
+
 class Map
   attr_reader :player_start
 
   def generate(opts = {})
-    tiles, px, py = Floor.generate(opts)
+    tiles, px, py, sx, sy, entities = Floor.generate(opts)
     @rows = tiles.map.with_index do |row, y|
       row.map.with_index do |tile, x|
         MapTile.new x, y, tile
       end
     end
+
+    STAIR_POSITION.x = sx
+    STAIR_POSITION.y = sy
+    GENERATE_ENTITIES.replace entities
 
     @player_start = [px, py]
   end

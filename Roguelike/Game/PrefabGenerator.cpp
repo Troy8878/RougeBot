@@ -55,7 +55,7 @@ mrb_value PrefabGenerator::Generate(mrb_state *mrb, mrb_value options)
     for (size_t x = 0; x < 4; ++x)
     {
       if (x == spawnx && y == spawny ||
-        x == stairx && y == stairy)
+          x == stairx && y == stairy)
         continue;
 
       MakeRoom(x, y);

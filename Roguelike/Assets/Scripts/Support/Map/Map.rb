@@ -11,6 +11,7 @@ class Map
   attr_reader :player_start
 
   def generate(opts = {})
+    opts[:level] = GAME_STATE[:floor]
     tiles, px, py, sx, sy, entities = Floor.generate(opts)
     @rows = tiles.map.with_index do |row, y|
       row.map.with_index do |tile, x|

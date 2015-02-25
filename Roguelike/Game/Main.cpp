@@ -27,6 +27,8 @@ static void CreateConsole()
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()
 {
+  SetProcessDPIAware();
+
   performance::register_guard glperf("The Game");
 
   Roguelike game("Roguebot", GetModuleHandle(nullptr));

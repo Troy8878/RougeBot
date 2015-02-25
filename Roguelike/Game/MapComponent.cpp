@@ -38,6 +38,7 @@ static void mrb_mapcomponent_free(mrb_state *, void *)
 // Define the ruby functions for MapComponent
 static mrb_value mrb_mapcomponent_create_item(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_mapcomponent_remove_fow(mrb_state *mrb, mrb_value self);
 
 // Stuff for creating component instances.
 static RClass *cbase;
@@ -478,6 +479,7 @@ static void mrb_mapcomponent_init(mrb_state *mrb)
   // Define the methods for MapComponent.
   mrb_define_method(mrb, cclass, "create_item", mrb_mapcomponent_create_item, ARGS_NONE());
   mrb_define_method(mrb, cclass, "delete_item", mrb_mapcomponent_delete_item, ARGS_REQ(1));
+  mrb_define_method(mrb, cclass, "remove_fow", mrb_mapcomponent_remove_fow, ARGS_NONE());
 
   // Define the methods for MapItem
   mrb_define_method(mrb, iclass, "x", mrb_mapitem_getx, ARGS_NONE());
@@ -525,6 +527,19 @@ static mrb_value mrb_mapcomponent_delete_item(mrb_state *mrb, mrb_value self)
   mrb_value item;
   mrb_get_args(mrb, "o", &item);
   map->DeleteMapItem(static_cast<MapItem *>(mrb_data_get_ptr(mrb, item, &mrb_mapitem_data_type)));
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value mrb_mapcomponent_remove_fow(mrb_state* mrb, mrb_value self)
+{
+  auto *map = static_cast<MapComponent *>(mrb_data_get_ptr(mrb, self, &mrb_mapcomponent_data_type));
+  auto &explored = map->GetExplored();
+  for (auto &row : explored)
+    for (auto val = row.begin(); val != row.end(); ++val)
+      *val = true;
 
   return mrb_nil_value();
 }

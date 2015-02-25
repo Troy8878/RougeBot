@@ -148,6 +148,8 @@ public:
 
   static MapComponentFactory factory;
 
+  std::vector<std::vector<bool>> &GetExplored() { return _explored; }
+
 private:
   Texture2D _texture;
   Entity *_floor = nullptr;
@@ -167,7 +169,7 @@ private:
 
   // We need another Vector for everything that wants to be drawn.
   std::vector<MapItem *> _items;
-  std::vector <MapItem *> _revealed_items;
+  std::vector<MapItem *> _revealed_items;
 
   bool _first_draw = true;
 

@@ -2,6 +2,7 @@
 #include "Floor.h"
 
 #define var auto
+#include <mruby/include/mruby/irep.h>
 static std::random_device rng;
 
 static bool TTIsEntity(TileType type)
@@ -76,10 +77,40 @@ mrb_value PrefabGenerator::Generate(mrb_state *mrb, mrb_value options)
   }
 
   var return_params = mrb_ary_new(mrb);
+  /* fn generate(opts) -> (
+   *   map: [[Fixnum]], 
+   *   px: Fixnum,
+   *   py: Fixnum,
+   *   sx: Fixnum,
+   *   sy: Fixnum,
+   *   entities: [(
+   *     type: Fixnum,
+   *     x: Fixnum,
+   *     y: Fixnum,
+   *     data: enum(nil,Hash,Array,Fixnum,Float,String,Boolean)
+   *   )],
+   * )
+   */
 
   mrb_ary_push(mrb, return_params, map);
   mrb_ary_push(mrb, return_params, mrb_fixnum_value(PlayerX));
   mrb_ary_push(mrb, return_params, mrb_fixnum_value(PlayerY));
+  mrb_ary_push(mrb, return_params, mrb_fixnum_value(StairX));
+  mrb_ary_push(mrb, return_params, mrb_fixnum_value(StairY));
+
+  var entities = mrb_ary_new(mrb);
+  for (const var &entity : Entities)
+  {
+    var tuple = mrb_ary_new(mrb);
+    {
+      mrb_ary_push(mrb, tuple, mrb_fixnum_value(static_cast<mrb_int>(std::get<0>(entity))));
+      mrb_ary_push(mrb, tuple, mrb_fixnum_value(static_cast<mrb_int>(std::get<1>(entity))));
+      mrb_ary_push(mrb, tuple, mrb_fixnum_value(static_cast<mrb_int>(std::get<2>(entity))));
+      mrb_ary_push(mrb, tuple, mrb_inst->json_to_value(std::get<3>(entity)));
+    }
+    mrb_ary_push(mrb, entities, tuple);
+  }
+  mrb_ary_push(mrb, return_params, entities);
 
   delete[] Map;
 
@@ -148,7 +179,11 @@ void PrefabGenerator::MakeRoom(size_t x, size_t y)
 void PrefabGenerator::MakeRoom(json::value room, size_t rx, size_t ry)
 {
   static mrb_state *mrb = *mrb_inst;
-  mrb_define_global_const(mrb, "CTX", MakeContext(rx, ry));
+  mrb_full_gc(mrb);
+  ruby::ruby_gc_guard{mrb};
+
+  var ctx_sym = mrb_intern_lit(mrb, "$ctx");
+  mrb_gv_set(mrb, ctx_sym, MakeContext(rx, ry));
 
   var tiles = room["tiles"];
   for (size_t y = 0; y < 10; ++y)
@@ -159,11 +194,20 @@ void PrefabGenerator::MakeRoom(json::value room, size_t rx, size_t ry)
       var px = rx * 11 + 1 + x;
 
       var id = static_cast<int>(tiles[y][x]["id"].as_number());
-      //var meta = "def mapgen_eval;" + tiles[y][x]["meta"].as_string() + ";end;mapgen_eval";
-      //var metastr = mrb_str_new(mrb, meta.c_str(), meta.size());
-      var metares = mrb_nil_value();//mrb_funcall(mrb, mrb_obj_value(mrb->kernel_module), "eval", 1, metastr);
+      var meta = "begin;" + tiles[y][x]["meta"].as_string() + ";rescue Exception => e;e;end";
+      var metares = mrb_load_nstring(mrb, meta.c_str(), static_cast<int>(meta.size()));
+      var metajson = json::value::null();
 
-      switch (static_cast<TileType>(id))
+      try
+      {
+        metajson = mrb_inst->value_to_json(metares);
+      }
+      catch (...)
+      {
+      }
+
+      var type = static_cast<TileType>(id);
+      switch (type)
       {
       case TileType::Floor: 
           TileAt(px, py) = static_cast<mrb_int>(TileType::Floor);
@@ -175,29 +219,25 @@ void PrefabGenerator::MakeRoom(json::value room, size_t rx, size_t ry)
         else
           TileAt(px, py) = static_cast<mrb_int>(TileType::Wall);
         break;
-
-      case TileType::Enemy: break;
-
-      case TileType::BorkWall: break;
+        
+      case TileType::ItemSpawn:
+      case TileType::BorkWall:
+      case TileType::Enemy:
+        Entities.push_back(std::make_tuple(type, x, y, metajson));
+        break;
 
       case TileType::PlayerStart:
         PlayerX = px;
         PlayerY = Height - 1 - py;
         break;
 
-      case TileType::ItemSpawn: break;
-
       case TileType::Stairs:
         StairX = px;
         StairY = Height - 1 - py;
         break;
-
-      default: break;
       }
     }
   }
-
-
 }
 
 void PrefabGenerator::MakeBarriers()
@@ -268,6 +308,5 @@ mrb_value PrefabGenerator::MakeContext(size_t x, size_t y)
   }
   mrb_hash_set(mrb, context, mrb_symbol_value(mrb_intern_lit(mrb, "door")), door_data);
 
-
-  return mrb_nil_value();
+  return context;
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using EntityEditor.Entities.Project;
 
 namespace EntityEditor.Entities.Representations
 {
     /// <summary>
-    /// Interaction logic for EntityView.xaml
+    /// Interaction logic for ArchetypeView.xaml
     /// </summary>
-    public partial class EntityView
+    public partial class ArchetypeView : UserControl
     {
-        public EntityView()
+        public ArchetypeView()
         {
             InitializeComponent();
         }

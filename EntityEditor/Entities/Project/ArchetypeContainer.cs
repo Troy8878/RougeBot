@@ -48,5 +48,17 @@ namespace EntityEditor.Entities.Project
             // ReSharper disable once PossibleMultipleEnumeration
             get { return new IEnumerable<object>[] {Directories, Archetypes}.SelectMany(l => l); }
         }
+
+        public Archetype Find(string arch)
+        {
+            var split = arch.Split('/');
+            if (split.Length == 1)
+            {
+                return Archetypes.FirstOrDefault(a => a.Name == split[0] + ".entitydef");
+            }
+
+            var dir = Directories.FirstOrDefault(a => a.Name == split[0]);
+            return dir == null ? null : dir.Find(string.Join("/", split.Skip(1)));
+        }
     }
 }

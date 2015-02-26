@@ -98,6 +98,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Entities\Representations\ArchetypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entities\Representations\ComponentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -146,6 +150,9 @@
     <Compile Include="Entities\Project\Entity.cs" />
     <Compile Include="Entities\Project\ITreeOwner.cs" />
     <Compile Include="Entities\Project\Level.cs" />
+    <Compile Include="Entities\Representations\ArchetypeView.xaml.cs">
+      <DependentUpon>ArchetypeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Representations\ComponentView.xaml.cs">
       <DependentUpon>ComponentView.xaml</DependentUpon>
     </Compile>

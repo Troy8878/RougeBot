@@ -9,7 +9,28 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance project:Entity}">
     <Grid>
-        <ItemsControl ItemsSource="{Binding Path=Components}" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="18" Margin="5">
+                <Run Text="{Binding Path=Name}" />
+                <Run Text="    " />
+                <Run Text="{Binding Path=Type}" />
+                <Run Text="    " />
+            </TextBlock>
+            <Button Width="175" FontSize="16" Grid.Column="1" HorizontalAlignment="Left">
+                Open Archetype
+            </Button>
+        </Grid>
+        
+        <ItemsControl ItemsSource="{Binding Path=Components}" Margin="10" Grid.Row="1">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>

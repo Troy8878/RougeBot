@@ -23,10 +23,7 @@
         </DataTemplate>
         <DataTemplate x:Key="ArchetypeView">
             <Grid>
-                <TextBlock VerticalAlignment="Center"
-                           HorizontalAlignment="Center">
-                    Archetype goes here!
-                </TextBlock>
+                <representations:ArchetypeView DataContext="{Binding}" />
             </Grid>
         </DataTemplate>
 
@@ -37,7 +34,7 @@
 
         <HierarchicalDataTemplate x:Key="OwnerTemplate" DataType="project:ITreeOwner"
                                   ItemsSource="{Binding Path=OwnedItems}">
-            <TextBlock Foreground="White">
+            <TextBlock Foreground="Tomato">
                 <Run Text="{Binding Path=Name, Mode=OneWay}" />
                 (<Run Text="{Binding Path=Type, Mode=OneWay}" />)
             </TextBlock>
@@ -52,7 +49,8 @@
 
         <TreeView x:Name="ProjectView" ItemsSource="{Binding Path=DisplayItems}"
                   SelectedItemChanged="OnSelected" Width="350"
-                  ItemTemplate="{StaticResource OwnerTemplate}" />
+                  ItemTemplate="{StaticResource OwnerTemplate}">
+        </TreeView>
 
         <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}">
             <ContentPresenter Content="{Binding}"

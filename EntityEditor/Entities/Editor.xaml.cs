@@ -15,7 +15,8 @@ namespace EntityEditor.Entities
         public static ComponentDefinition[] ComponentDefinitions;
         public static Dictionary<string, ComponentDefinition> ComponentDefinitionsMap;
 
-        public ProjectTree Project;
+        public static Editor Instance;
+        public static ProjectTree Project;
 
         static Editor()
         {
@@ -30,6 +31,8 @@ namespace EntityEditor.Entities
 
         public Editor()
         {
+            Instance = this;
+
             InitializeComponent();
             DataContext = Project = new ProjectTree();
         }

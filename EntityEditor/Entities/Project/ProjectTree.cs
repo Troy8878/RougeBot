@@ -18,6 +18,8 @@ namespace EntityEditor.Entities.Project
                 MainWindow.Instance.RepoDir,
                 "Roguelike\\Assets\\Levels");
 
+            Archetypes = new ArchetypeContainer();
+
             foreach (var file in new DirectoryInfo(leveldir).GetFiles())
             {
                 Levels.Add(new Level(file.Name, file.FullName));
@@ -25,6 +27,7 @@ namespace EntityEditor.Entities.Project
         }
 
         public List<Level> Levels { get; set; }
+        public ArchetypeContainer Archetypes { get; set; }
 
         public object DisplayedItem
         {
@@ -41,7 +44,7 @@ namespace EntityEditor.Entities.Project
         {
             get
             {
-                var objects = new List<object> {new ArchetypeContainer()};
+                var objects = new List<object> {Archetypes};
                 objects.AddRange(Levels);
                 return objects;
             }

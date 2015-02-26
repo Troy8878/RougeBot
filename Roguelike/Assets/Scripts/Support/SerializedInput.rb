@@ -4,7 +4,7 @@ class SerializedInput
   def initialize
     @data = {
       dependencies: [],
-      properties: {},
+      properties: [],
     }
   end
 
@@ -16,79 +16,79 @@ class SerializedInput
 
   def bool(prop, opts = {})
     opts[:default] ||= false
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :bool
-    }
+    })
   end
 
   def string(prop, opts = {})
     opts[:default] ||= ""
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :string
-    }
+    })
   end
 
   def float(prop, opts = {})
     opts[:default] ||= 0.0
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :float
-    }
+    })
   end
 
   def integer(prop, opts = {})
     opts[:default] ||= 0
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :integer
-    }
+    })
   end
 
   def enum(prop, opts = {})
     opts[:default] ||= opts[:options][0]
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :enum,
       options: opts[:options]
-    }
+    })
   end
 
   # Compound types
 
   def vector(prop, opts = {})
     opts[:default] ||= [0,0,0,0]
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :vector,
-      dimmensions: opts[:dimms] || 4
-    }
+      dimensions: opts[:dimms] || 4
+    })
   end
 
   def array(prop, opts = {})
     opts[:default] ||= []
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :array,
       contained: opts[:contained] || "string"
-    }
+    })
   end
 
   def map(prop, opts = {})
     opts[:default] ||= {}
-    @data[:properties][prop] = with_opts opts, {
-      type: :array,
+    add_prop prop, (with_opts opts, {
+      type: :map,
       key: opts[:key] || "string",
       value: opts[:value] || "string"
-    }
+    })
   end
 
   def entity(prop, opts = {})
     opts[:default] ||= {}
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :entity
-    }
+    })
   end
 
   def direction(prop, opts = {})
     opts[:default] ||= [1,0]
-    @data[:properties][prop] = with_opts opts, {
+    add_prop prop, (with_opts opts, {
       type: :direction
-    }
+    })
   end
 
   private
@@ -98,6 +98,13 @@ class SerializedInput
     hsh[:locked] = opts[:locked] || false
     hsh[:default] = opts[:default]
     hsh
+  end
+
+  def add_prop(prop, usg)
+    @data[:properties] << {
+      property: prop,
+      usage: usg,
+    }
   end
 end
 
@@ -120,9 +127,13 @@ class ComponentBase
 end
 
 def dump_serialization_maps
-  h = ComponentBase.component_list.inject(Hash.new) do |h, c|
+  h = ComponentBase.component_list.inject([]) do |h, c|
     input = c.serialization_input
-    h[c.to_s] = input ? input.data : nil
+    if input
+      data = input.data.dup
+      data[:name] = c.to_s
+      h << data
+    end
     h
   end
 

@@ -144,7 +144,7 @@ private:
   LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
   RECT pre_fullscreen_rect;
-  bool is_fullscreen;
+  bool is_fullscreen = false;
 
   friend class GraphicsDevice;
 };

@@ -184,7 +184,7 @@ LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
     return 0;
   }
 
-  auto *_this = reinterpret_cast<WindowDevice *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+  auto *_this = static_cast<WindowDevice *>(GetGame()->GameDevice);
   if (_this)
     return _this->WindowProc(hwnd, msg, wparam, lparam);
   return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -233,7 +233,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
     case WM_KILLFOCUS:
     {
       SetMrbGVolume(0);
-      if (GetFullscreen())
+      if (is_fullscreen)
       {
         ShowWindow(hwnd, SW_MINIMIZE);
       }

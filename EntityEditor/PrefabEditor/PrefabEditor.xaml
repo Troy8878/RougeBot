@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:controls1="clr-namespace:EntityEditor.PrefabEditor.Controls"
+        xmlns:controls="clr-namespace:EntityEditor.PrefabEditor.Controls"
         mc:Ignorable="d"
         d:DesignHeight="300" d:DesignWidth="300"
         Title="PrefabEditor">
@@ -35,8 +35,8 @@
                 <MenuItem Header="_Undo" Command="Undo" />
                 <MenuItem Header="_Redo" Command="Redo" />
             </MenuItem>
-            <controls1:LibraryMenu Header="Library" />
+            <controls:LibraryMenu Header="Library" />
         </Menu>
-        <controls1:PrefabRoom DataContext="{Binding}" x:Name="Room" />
+        <controls:PrefabRoom DataContext="{Binding}" x:Name="Room" />
     </DockPanel>
 </Window>

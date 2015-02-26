@@ -23,7 +23,7 @@ namespace EntityEditor.PrefabEditor.Controls
             Tree.Items.Clear();
 
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var repoPath = Settings.Default.RepoPath;
+            var repoPath = MainWindow.Instance.RepoDir;
             const string repoDir = "Roguelike/Assets/Prefabs";
             var libdir = Path.Combine(home, repoPath, repoDir);
             if (!Directory.Exists(libdir))

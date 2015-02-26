@@ -7,6 +7,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -21,5 +22,13 @@
                 FontSize="30" Click="ButtonEntity">
             Entity Editor
         </Button>
+
+        <StackPanel Grid.Row="2" Grid.Column="0">
+            <Button Margin="10" Width="200" Height="35"
+                    FontSize="20" Click="ChangeDirClick">
+                Change Repo Dir</Button>
+            <TextBlock x:Name="RepoDirDisplay" TextWrapping="Wrap"
+                       Margin="20" HorizontalAlignment="Center" />
+        </StackPanel>
     </Grid>
 </Window>

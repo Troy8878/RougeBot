@@ -8,7 +8,9 @@
         xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
         mc:Ignorable="d"
         Title="Editor" Height="480" Width="800"
-        d:DataContext="{d:DesignInstance project:ProjectTree}">
+        d:DataContext="{d:DesignInstance project:ProjectTree}"
+        Background="Black"
+        Foreground="White">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">
@@ -16,10 +18,7 @@
         </DataTemplate>
         <DataTemplate x:Key="EntityView">
             <Grid>
-                <TextBlock VerticalAlignment="Center"
-                           HorizontalAlignment="Center">
-                    Entity goes here!
-                </TextBlock>
+                <representations:EntityView DataContext="{Binding}" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="ArchetypeView">
@@ -38,7 +37,7 @@
 
         <HierarchicalDataTemplate x:Key="OwnerTemplate" DataType="project:ITreeOwner"
                                   ItemsSource="{Binding Path=OwnedItems}">
-            <TextBlock>
+            <TextBlock Foreground="White">
                 <Run Text="{Binding Path=Name, Mode=OneWay}" />
                 (<Run Text="{Binding Path=Type, Mode=OneWay}" />)
             </TextBlock>

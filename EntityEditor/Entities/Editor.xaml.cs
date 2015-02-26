@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using EntityEditor.Entities.Project;
 using EntityEditor.Entities.Serialization;
@@ -12,6 +13,7 @@ namespace EntityEditor.Entities
     public partial class Editor
     {
         public static ComponentDefinition[] ComponentDefinitions;
+        public static Dictionary<string, ComponentDefinition> ComponentDefinitionsMap;
 
         public ProjectTree Project;
 
@@ -19,6 +21,11 @@ namespace EntityEditor.Entities
         {
             ComponentDefinitions = JsonConvert.DeserializeObject<ComponentDefinition[]>
                 (File.ReadAllText("Entities/serialize.json"));
+            ComponentDefinitionsMap = new Dictionary<string, ComponentDefinition>();
+            foreach (var definition in ComponentDefinitions)
+            {
+                ComponentDefinitionsMap[definition.Name] = definition;
+            }
         }
 
         public Editor()

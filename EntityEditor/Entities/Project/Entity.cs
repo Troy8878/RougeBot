@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
@@ -29,12 +31,45 @@ namespace EntityEditor.Entities.Project
                     Children.Add(new Entity((JObject) child));
                 }
             }
+
+            Components = new List<Component>();
+
+            // TODO: Merge in archetype
+            var arch = new Archetype(new FileInfo(Path.Combine(
+                MainWindow.Instance.RepoDir, "Roguelike", "Assets", "Entities", Type + ".entitydef")));
+
+            foreach (var jcomp in arch.Definition)
+            {
+                var component = new Component(jcomp.Key, (JObject) jcomp.Value);
+                Components.Add(component);
+            }
+
+            var jcomponents = definition["components"];
+            if (jcomponents != null)
+            {
+                foreach (var jcomp in (JObject)jcomponents)
+                {
+                    var existing = Components.FirstOrDefault(c => c.Name == jcomp.Key);
+                    if (existing != null)
+                    {
+                        existing.Merge((JObject) jcomp.Value);
+                    }
+                    else
+                    {
+                        var component = new Component(jcomp.Key, (JObject) jcomp.Value);
+                        Components.Add(component);
+                    }
+                }
+            }
         }
 
-        public List<Entity> Children { get; set; }
         public string Name { get; set; }
 
         public string Type { get; set; }
+
+        public List<Entity> Children { get; set; }
+
+        public List<Component> Components { get; set; } 
 
         public IEnumerable<object> OwnedItems
         {

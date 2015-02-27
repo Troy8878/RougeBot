@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Media;
 
 namespace EntityEditor.Helpers
@@ -39,6 +40,12 @@ namespace EntityEditor.Helpers
 
                 fobj = fobj.Parent as FrameworkElement;
             }
+        }
+
+        public static T Apply<T>(this T obj, Action<T> action)
+        {
+            action(obj);
+            return obj;
         }
     }
 }

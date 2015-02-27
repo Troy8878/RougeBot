@@ -10,7 +10,7 @@
         Title="Editor" Height="480" Width="800"
         d:DataContext="{d:DesignInstance project:ProjectTree}"
         Background="Black"
-        Foreground="White">
+        Foreground="SpringGreen">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">
@@ -34,7 +34,7 @@
 
         <HierarchicalDataTemplate x:Key="OwnerTemplate" DataType="project:ITreeOwner"
                                   ItemsSource="{Binding Path=OwnedItems}">
-            <TextBlock Foreground="Tomato">
+            <TextBlock Foreground="SpringGreen">
                 <Run Text="{Binding Path=Name, Mode=OneWay}" />
                 (<Run Text="{Binding Path=Type, Mode=OneWay}" />)
             </TextBlock>

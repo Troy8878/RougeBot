@@ -24,6 +24,10 @@ namespace EntityEditor.Entities.Representations
                 case "bool":
                     return ConstructBool(prop, value);
 
+                case "vector":
+                    // TODO: Handle different semantics
+                    return ConstructVector(prop, value);
+
                 default:
                     return null;
             }
@@ -57,6 +61,23 @@ namespace EntityEditor.Entities.Representations
             }
                     
             return new Bool {Value = bvalue};
+        }
+
+        static IPropertyValue ConstructVector(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var ary = value as JArray;
+            var def = prop.Usage.Default as JArray;
+
+            if (prop.Usage.Required)
+            {
+                if (ary == null)
+                    ary = def;
+            }
+
+            if (ary == null)
+                ary = new JArray();
+
+            return new Vector(ary, prop.Usage.VectorDimensions ?? 4);
         }
     }
 }

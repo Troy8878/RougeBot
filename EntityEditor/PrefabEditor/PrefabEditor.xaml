@@ -8,7 +8,7 @@
         d:DesignHeight="300" d:DesignWidth="300"
         Title="PrefabEditor"
         Background="Black"
-        Foreground="White">
+        Foreground="SpringGreen">
 
     <Window.CommandBindings>
         <CommandBinding Command="New" Executed="OnNew" CanExecute="AlwaysExecute" />
@@ -27,7 +27,7 @@
     </Window.InputBindings>
 
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
+        <Menu DockPanel.Dock="Top" >
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Command="New" />
                 <MenuItem Header="_Open" Command="Open" />

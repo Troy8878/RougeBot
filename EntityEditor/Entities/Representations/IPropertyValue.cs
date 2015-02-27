@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using EntityEditor.Annotations;
+using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations
 {
-    public interface IPropertyValue : INotifyPropertyChanged
+    public interface IPropertyValue
     {
         DataTemplate RenderTemplate { get; }
+        JToken Serialize();
     }
 }

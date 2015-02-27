@@ -1,42 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using EntityEditor.Annotations;
+﻿using System.Windows;
+using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations.Properties
 {
     public class Bool : IPropertyValue
     {
-        private bool? _value;
-
-        public bool? Value
-        {
-            get { return _value; }
-            set
-            {
-                if (value.Equals(_value)) return;
-                _value = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool? Value { get; set; }
 
         public DataTemplate RenderTemplate
         {
             get { return (DataTemplate) Application.Current.FindResource("PropBoolTemplate"); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public JToken Serialize()
         {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            return Value == null ? JValue.CreateNull() : new JValue(Value);
         }
     }
 }

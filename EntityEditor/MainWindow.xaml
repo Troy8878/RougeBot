@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="480" Width="800"
         Background="Black"
-        Foreground="White">
+        Foreground="SpringGreen">
 
     <Grid>
         <Grid.RowDefinitions>

@@ -52,7 +52,8 @@
                   ItemTemplate="{StaticResource OwnerTemplate}">
         </TreeView>
 
-        <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}">
+        <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}"
+                      HorizontalScrollBarVisibility="Auto">
             <ContentPresenter Content="{Binding}"
                               ContentTemplateSelector="{StaticResource EditorViewSelector}" />
         </ScrollViewer>

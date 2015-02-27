@@ -55,7 +55,7 @@ namespace EntityEditor.Entities.Representations.Views
             var box = new TextBox
             {
                 Margin = new Thickness(2),
-                Width = 50
+                Width = 75
             };
             var binding = new Binding(field) {Source = Field};
             BindingOperations.SetBinding(box, TextBox.TextProperty, binding);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using EntityEditor.Entities.Representations.Properties;
 using EntityEditor.Entities.Serialization;
 using Newtonsoft.Json.Linq;
@@ -24,8 +20,10 @@ namespace EntityEditor.Entities.Representations
                 case "bool":
                     return ConstructBool(prop, value);
 
+                case "string":
+                    return ConstructString(prop, value);
+
                 case "vector":
-                    // TODO: Handle different semantics
                     return ConstructVector(prop, value);
 
                 default:
@@ -33,7 +31,7 @@ namespace EntityEditor.Entities.Representations
             }
         }
 
-        static IPropertyValue ConstructBool(ComponentDefinition.ComponentProperty prop, JToken value)
+        private static IPropertyValue ConstructBool(ComponentDefinition.ComponentProperty prop, JToken value)
         {
             var def = prop.Usage.Default;
             bool? bvalue = null;
@@ -52,32 +50,39 @@ namespace EntityEditor.Entities.Representations
             {
                 if (value.Type == JTokenType.Boolean)
                 {
-                    bvalue = (bool) value; 
+                    bvalue = (bool) value;
                 }
                 else if (!prop.Usage.Required && value.Type == JTokenType.Null)
                 {
                     bvalue = null;
                 }
             }
-                    
+
             return new Bool {Value = bvalue};
         }
 
-        static IPropertyValue ConstructVector(ComponentDefinition.ComponentProperty prop, JToken value)
+        private static IPropertyValue ConstructString(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? "";
+
+            if (value == null)
+                value = def;
+
+            return new String(prop.Usage.Semantics) {Value = (string) value};
+        }
+
+        private static IPropertyValue ConstructVector(ComponentDefinition.ComponentProperty prop, JToken value)
         {
             var ary = value as JArray;
             var def = prop.Usage.Default as JArray;
 
-            if (prop.Usage.Required)
-            {
-                if (ary == null)
-                    ary = def;
-            }
+            if (ary == null)
+                ary = def;
 
             if (ary == null)
                 ary = new JArray();
 
-            return new Vector(ary, prop.Usage.VectorDimensions ?? 4);
+            return new Vector(ary, prop.Usage.VectorDimensions ?? 4, prop.Usage.Semantics);
         }
     }
 }

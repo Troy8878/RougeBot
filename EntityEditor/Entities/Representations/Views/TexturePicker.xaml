@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="EntityEditor.Entities.Representations.Views.TexturePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:properties="clr-namespace:EntityEditor.Entities.Representations.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="400">
+    <Grid Width="400" Height="30" d:DataContext="{d:DesignInstance properties:String}">
+        <StackPanel Orientation="Horizontal">
+            <TextBox Width="365" Height="25" IsReadOnly="True" Text="{Binding Path=Value}" x:Name="Box">
+                <TextBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Clear" Click="ClearTexture" />
+                    </ContextMenu>
+                </TextBox.ContextMenu>
+            </TextBox>
+            <Button Width="25" Margin="5,0,0,0" Click="SelectClick">...</Button>
+        </StackPanel>
+        <Popup PlacementTarget="{Binding ElementName=PopupPlacement}"
+               Width="400" Height="300" x:Name="Popup" StaysOpen="False">
+            <Border Background="{StaticResource PopupBackgroundBrush}">
+                <Grid>
+                    <ScrollViewer>
+                        <Image Source="http://i.imgur.com/kSqZ19P.jpg" />
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Popup>
+        <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="0" x:Name="PopupPlacement" />
+    </Grid>
+</UserControl>

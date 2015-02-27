@@ -6,7 +6,27 @@
         <CheckBox Height="25" IsChecked="{Binding Path=Value}" />
     </DataTemplate>
     
+    <DataTemplate x:Key="PropFloatTemplate">
+        
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PropStringTemplate" DataType="properties:String">
+        <TextBox Height="25" Text="{Binding Path=Value}" MinWidth="150" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="PropStringTextureTemplate" DataType="properties:String">
+        <views:TexturePicker />
+    </DataTemplate>
+
     <DataTemplate x:Key="PropVectorTemplate" DataType="properties:Vector">
         <views:VectorView Field="{Binding}" />
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PropVectorRangeTemplate" DataType="properties:Vector">
+        
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PropVectorColorTemplate" DataType="properties:Vector">
+        <views:VectorColor Field="{Binding}" />
     </DataTemplate>
 </ResourceDictionary>

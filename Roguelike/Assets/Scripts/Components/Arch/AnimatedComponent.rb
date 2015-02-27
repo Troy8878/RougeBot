@@ -28,7 +28,7 @@ class AnimatedComponent < ComponentBase
     p.dependency "SpriteComponent"
     p.string :paused
     p.float  :frame_time
-    p.vector :frame_range, dimms: 2
+    p.vector :frame_range, dimms: 2, semantics: "range"
     p.bool   :loops
   end
 

@@ -34,7 +34,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding Path=Name}" />
+                        <TextBlock Text="{Binding Path=Name}" FontSize="26" />
                         <representations:ComponentView DataContext="{Binding}" />
                     </StackPanel>
                 </DataTemplate>

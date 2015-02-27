@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Windows;
 using Newtonsoft.Json.Linq;
 
@@ -6,8 +6,27 @@ namespace EntityEditor.Entities.Representations.Properties
 {
     public class Vector : IPropertyValue
     {
-        public Vector(JArray field, int dimensions)
+        private const string DefaultTemplate = "PropVectorTemplate";
+
+        private static readonly Dictionary<string, string> Templates = new Dictionary<string, string>
         {
+            //{"range", "PropVectorRangeTemplate"},
+            {"color", "PropVectorColorTemplate"}
+        };
+
+        private readonly string _semanticTemplate;
+
+        public Vector(JArray field, int dimensions, string semanticTemplate)
+        {
+            if (semanticTemplate != null && Templates.ContainsKey(semanticTemplate))
+            {
+                _semanticTemplate = Templates[semanticTemplate];
+            }
+            else
+            {
+                _semanticTemplate = DefaultTemplate;
+            }
+
             Dimensions = dimensions;
 
             if (Dimensions > 0 && field.Count > 0)
@@ -28,7 +47,7 @@ namespace EntityEditor.Entities.Representations.Properties
 
         public DataTemplate RenderTemplate
         {
-            get { return (DataTemplate) Application.Current.FindResource("PropVectorTemplate"); }
+            get { return (DataTemplate) Application.Current.FindResource(_semanticTemplate); }
         }
 
         public JToken Serialize()

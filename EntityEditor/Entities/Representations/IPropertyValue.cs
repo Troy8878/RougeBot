@@ -14,5 +14,7 @@ namespace EntityEditor.Entities.Representations
     {
         DataTemplate RenderTemplate { get; }
         JToken Serialize();
+
+        bool Locked { get; set; }
     }
 }

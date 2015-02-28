@@ -34,7 +34,6 @@ namespace EntityEditor.Entities.Project
 
             Components = new List<Component>();
 
-            // TODO: Merge in archetype
             var arch = new Archetype(new FileInfo(Path.Combine(
                 MainWindow.Instance.RepoDir, "Roguelike", "Assets", "Entities", Type + ".entitydef")));
 
@@ -74,6 +73,11 @@ namespace EntityEditor.Entities.Project
         public IEnumerable<object> OwnedItems
         {
             get { return Children; }
+        }
+
+        public JToken Serialize()
+        {
+            return JValue.CreateNull();
         }
     }
 }

@@ -8,18 +8,23 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations.Properties
 {
-    public class Float : IPropertyValue
+    public class Entity : IPropertyValue
     {
-        public float? Value { get; set; }
+        public Entity(JObject data)
+        {
+            Value = new Project.Entity(data);
+        }
+
+        public Project.Entity Value { get; set; }
 
         public DataTemplate RenderTemplate
         {
-            get { return (DataTemplate) Application.Current.FindResource("PropFloatTemplate"); }
+            get { return (DataTemplate) Application.Current.FindResource("PropEntityTemplate"); }
         }
 
         public JToken Serialize()
         {
-            return Value == null ? JValue.CreateNull() : new JValue(Value);
+            return Value.Serialize();
         }
 
         public bool Locked { get; set; }

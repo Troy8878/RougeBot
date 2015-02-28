@@ -55,40 +55,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Controls.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Controls.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Drawing.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Drawing.Design.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Effects, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Effects.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Effects.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Prototyping.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.SketchControls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Prototyping.SketchControls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.SketchControls.design.v4">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Prototyping.SketchControls.design.v4.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Windows.Design.Extensibility">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\Blend\Microsoft.Windows.Design.Extensibility.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -108,9 +74,6 @@
       <HintPath>packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -224,21 +187,26 @@
       <DependentUpon>EntityView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\Representations\IPropertyValue.cs" />
+    <Compile Include="Entities\Representations\Properties\Array.cs" />
     <Compile Include="Entities\Representations\Properties\Bool.cs" />
+    <Compile Include="Entities\Representations\Properties\Entity.cs" />
+    <Compile Include="Entities\Representations\Properties\Enum.cs" />
     <Compile Include="Entities\Representations\Properties\Float.cs" />
     <Compile Include="Entities\Representations\Properties\String.cs" />
+    <Compile Include="Entities\Representations\Properties\Texture.cs" />
     <Compile Include="Entities\Representations\Properties\Vector.cs" />
     <Compile Include="Entities\Representations\PropertyFactory.cs" />
     <Compile Include="Entities\Representations\Views\TexturePicker.xaml.cs">
       <DependentUpon>TexturePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Representations\Views\TextureTree.cs" />
     <Compile Include="Entities\Representations\Views\VectorColor.xaml.cs">
       <DependentUpon>VectorColor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\Representations\Views\VectorView.cs" />
     <Compile Include="Entities\Serialization\ComponentDefinition.cs" />
     <Compile Include="Entities\Project\ProjectTree.cs" />
-    <Compile Include="Helpers\ScrollTrigger.cs" />
+    <Compile Include="Helpers\RepoDirConv.cs" />
     <Compile Include="PrefabEditor\Controls\LibraryMenu.cs" />
     <Compile Include="PrefabEditor\Controls\PrefabLib.xaml.cs">
       <DependentUpon>PrefabLib.xaml</DependentUpon>

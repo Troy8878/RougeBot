@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using EntityEditor.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations.Properties
 {
-    public class String : IPropertyValue
+    public class String : IPropertyValue, INotifyPropertyChanged
     {
         private const string DefaultTemplate = "PropStringTemplate";
 
@@ -18,6 +17,7 @@ namespace EntityEditor.Entities.Representations.Properties
         };
 
         private readonly string _semanticTemplate;
+        private string _value;
 
         public String(string semantics)
         {
@@ -31,7 +31,18 @@ namespace EntityEditor.Entities.Representations.Properties
             }
         }
 
-        public string Value { get; set; }
+        public string Value
+        {
+            get { return _value; }
+            set
+            {
+                if (value == _value) return;
+                _value = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public DataTemplate RenderTemplate
         {
@@ -41,6 +52,15 @@ namespace EntityEditor.Entities.Representations.Properties
         public JToken Serialize()
         {
             return Value;
+        }
+
+        public bool Locked { get; set; }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -65,5 +65,7 @@ namespace EntityEditor.Entities.Representations.Properties
 
             return ary;
         }
+
+        public bool Locked { get; set; }
     }
 }

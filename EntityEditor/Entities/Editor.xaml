@@ -9,8 +9,8 @@
         mc:Ignorable="d"
         Title="Editor" Height="480" Width="800"
         d:DataContext="{d:DesignInstance project:ProjectTree}"
-        Background="Black"
-        Foreground="SpringGreen">
+        Background="{StaticResource RbBackground}"
+        Foreground="{StaticResource RbText}">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">
@@ -34,7 +34,7 @@
 
         <HierarchicalDataTemplate x:Key="OwnerTemplate" DataType="project:ITreeOwner"
                                   ItemsSource="{Binding Path=OwnedItems}">
-            <TextBlock Foreground="SpringGreen">
+            <TextBlock Foreground="{StaticResource RbText}">
                 <Run Text="{Binding Path=Name, Mode=OneWay}" />
                 (<Run Text="{Binding Path=Type, Mode=OneWay}" />)
             </TextBlock>
@@ -53,7 +53,7 @@
         </TreeView>
 
         <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}"
-                      HorizontalScrollBarVisibility="Auto">
+                      HorizontalScrollBarVisibility="Auto" PanningMode="Both">
             <ContentPresenter Content="{Binding}"
                               ContentTemplateSelector="{StaticResource EditorViewSelector}" />
         </ScrollViewer>

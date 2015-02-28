@@ -14,7 +14,17 @@ namespace EntityEditor.Entities.Representations
             if (prop == null)
                 return null;
 
+            var pvalue = ConstructType(prop, value);
+            if (pvalue != null)
+            {
+                pvalue.Locked = prop.Usage.Locked;
+            }
 
+            return pvalue;
+        }
+
+        public static IPropertyValue ConstructType(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
             switch (prop.Usage.Type)
             {
                 case "bool":
@@ -23,8 +33,17 @@ namespace EntityEditor.Entities.Representations
                 case "string":
                     return ConstructString(prop, value);
 
+                case "array":
+                    return ConstructArray(prop, value);
+
                 case "vector":
                     return ConstructVector(prop, value);
+
+                case "texture":
+                    return ConstructTexture(prop, value);
+
+                case "entity":
+                    return ConstructEntity(prop, value);
 
                 default:
                     return null;
@@ -71,6 +90,16 @@ namespace EntityEditor.Entities.Representations
             return new String(prop.Usage.Semantics) {Value = (string) value};
         }
 
+        private static IPropertyValue ConstructArray(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? new JArray();
+
+            if (value == null)
+                value = def;
+
+            return new Array((JArray) value, prop);
+        }
+
         private static IPropertyValue ConstructVector(ComponentDefinition.ComponentProperty prop, JToken value)
         {
             var ary = value as JArray;
@@ -83,6 +112,26 @@ namespace EntityEditor.Entities.Representations
                 ary = new JArray();
 
             return new Vector(ary, prop.Usage.VectorDimensions ?? 4, prop.Usage.Semantics);
+        }
+
+        private static IPropertyValue ConstructTexture(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? "";
+
+            if (value == null)
+                value = def;
+
+            return new Texture(value);
+        }
+
+        private static IPropertyValue ConstructEntity(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? new JObject();
+
+            if (value == null)
+                value = def;
+
+            return new Entity((JObject) value);
         }
     }
 }

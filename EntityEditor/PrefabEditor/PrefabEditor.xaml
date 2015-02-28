@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         d:DesignHeight="300" d:DesignWidth="300"
         Title="PrefabEditor"
-        Background="Black"
-        Foreground="SpringGreen">
+        Background="{StaticResource RbBackground}"
+        Foreground="{StaticResource RbText}">
 
     <Window.CommandBindings>
         <CommandBinding Command="New" Executed="OnNew" CanExecute="AlwaysExecute" />

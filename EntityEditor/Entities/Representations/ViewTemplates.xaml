@@ -6,9 +6,9 @@
     <DataTemplate x:Key="PropBoolTemplate" DataType="properties:Bool">
         <CheckBox Height="25" IsChecked="{Binding Path=Value}" IsEnabled="{Binding Path=Locked}" />
     </DataTemplate>
-    
-    <DataTemplate x:Key="PropFloatTemplate">
-        
+
+    <DataTemplate x:Key="PropFloatTemplate" DataType="properties:Float">
+        <TextBox Height="25" Text="{Binding Path=Value}" MinWidth="150" IsReadOnly="{Binding Path=Locked}" />
     </DataTemplate>
     
     <DataTemplate x:Key="PropStringTemplate" DataType="properties:String">
@@ -28,6 +28,10 @@
 
     <DataTemplate x:Key="PropStringTextureTemplate" DataType="properties:String">
         <views:TexturePicker />
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PropEnumTemplate" DataType="properties:Enum">
+        <ComboBox SelectedItem="{Binding Path=Value}" ItemsSource="{Binding Path=Options}" />
     </DataTemplate>
 
     <DataTemplate x:Key="PropVectorTemplate" DataType="properties:Vector">

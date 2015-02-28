@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using EntityEditor.Entities.Representations.Properties;
 using EntityEditor.Entities.Serialization;
 using Newtonsoft.Json.Linq;
@@ -30,6 +31,9 @@ namespace EntityEditor.Entities.Representations
                 case "bool":
                     return ConstructBool(prop, value);
 
+                case "float":
+                    return ConstructFloat(prop, value);
+
                 case "string":
                     return ConstructString(prop, value);
 
@@ -44,6 +48,9 @@ namespace EntityEditor.Entities.Representations
 
                 case "entity":
                     return ConstructEntity(prop, value);
+
+                case "enum":
+                    return ConstructEnum(prop, value);
 
                 default:
                     return null;
@@ -78,6 +85,16 @@ namespace EntityEditor.Entities.Representations
             }
 
             return new Bool {Value = bvalue};
+        }
+
+        private static IPropertyValue ConstructFloat(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default;
+
+            if (value == null)
+                value = def;
+
+            return new Float {Value = (float?) value};
         }
 
         private static IPropertyValue ConstructString(ComponentDefinition.ComponentProperty prop, JToken value)
@@ -132,6 +149,24 @@ namespace EntityEditor.Entities.Representations
                 value = def;
 
             return new Entity((JObject) value);
+        }
+
+        private static IPropertyValue ConstructEnum(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? null;
+
+            if (value == null)
+                value = def;
+
+            var options = new List<string>();
+            if (!prop.Usage.Required)
+            {
+                options.Add("");
+            }
+
+            options.AddRange(prop.Usage.EnumOptions.Select(t => (string) t));
+
+            return new Enum((string) value, options.ToArray());
         }
     }
 }

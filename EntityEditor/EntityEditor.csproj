@@ -128,6 +128,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Entities\Representations\Views\StringMap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entities\Representations\Views\TexturePicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -193,9 +197,13 @@
     <Compile Include="Entities\Representations\Properties\Enum.cs" />
     <Compile Include="Entities\Representations\Properties\Float.cs" />
     <Compile Include="Entities\Representations\Properties\String.cs" />
+    <Compile Include="Entities\Representations\Properties\StringMap.cs" />
     <Compile Include="Entities\Representations\Properties\Texture.cs" />
     <Compile Include="Entities\Representations\Properties\Vector.cs" />
     <Compile Include="Entities\Representations\PropertyFactory.cs" />
+    <Compile Include="Entities\Representations\Views\StringMap.xaml.cs">
+      <DependentUpon>StringMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Representations\Views\TexturePicker.xaml.cs">
       <DependentUpon>TexturePicker.xaml</DependentUpon>
     </Compile>

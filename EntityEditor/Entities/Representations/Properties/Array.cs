@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using EntityEditor.Entities.Serialization;
 using Newtonsoft.Json.Linq;
@@ -12,12 +8,12 @@ namespace EntityEditor.Entities.Representations.Properties
 {
     public class Array : IPropertyValue
     {
-        private ComponentDefinition.ComponentProperty _ptype;
+        private readonly ComponentDefinition.ComponentProperty _ptype;
 
         public Array(JArray def, ComponentDefinition.ComponentProperty prop)
         {
             Items = new ObservableCollection<IPropertyValue>();
-            
+
             _ptype = new ComponentDefinition.ComponentProperty
             {
                 Property = "",
@@ -33,7 +29,7 @@ namespace EntityEditor.Entities.Representations.Properties
             }
         }
 
-        public ObservableCollection<IPropertyValue> Items { get; private set; } 
+        public ObservableCollection<IPropertyValue> Items { get; private set; }
 
         public DataTemplate RenderTemplate
         {

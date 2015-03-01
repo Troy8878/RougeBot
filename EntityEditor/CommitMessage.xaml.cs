@@ -51,13 +51,19 @@ namespace EntityEditor
                 // Stage everything in the repo
                 try
                 {
-                    await Task.Run(delegate
+                    await Task.Run(async delegate
                     {
                         // This closure will never be disposed because we await the call
-                        
                         // ReSharper disable AccessToDisposedClosure
+
+                        SetStagingMessage("Staging files");
                         StageDir(repo, MainWindow.Instance.RepoDir);
+
+                        SetStagingMessage("Commiting files");
                         repo.Commit(message, new CommitOptions {PrettifyMessage = true});
+                        await Task.Delay(500);
+
+                        return true;
                         // ReSharper restore AccessToDisposedClosure
                     });
                     Close();
@@ -81,8 +87,6 @@ namespace EntityEditor
             {
                 StageDir(repo, subdir.FullName, Path.Combine(basepath, subdir.Name));
             }
-            
-            SetStagingMessage(Path.Combine(basepath, dirinfo.Name));
 
             foreach (var file in dirinfo.GetFiles().Where(file => !file.Name.StartsWith(".")))
             {
@@ -92,7 +96,7 @@ namespace EntityEditor
 
         private void SetStagingMessage(string file)
         {
-            Dispatcher.Invoke(() => StagingFile = "Staging file: " + file);
+            Dispatcher.Invoke(() => StagingFile = file);
         }
 
         public static readonly DependencyProperty StagingFileProperty = DependencyProperty.Register(

@@ -23,7 +23,7 @@
                Width="400" Height="300" x:Name="Popup" StaysOpen="False">
             <Border Background="{StaticResource PopupBackgroundBrush}">
                 <Grid>
-                    <views:TextureTree SelectedTexture="{Binding Path=Value, Mode=TwoWay}" FontSize="14" />
+                    <views:TextureTree SelectedTexture="{Binding Path=Value, Mode=TwoWay}" FontSize="14" x:Name="TexTree" />
                 </Grid>
             </Border>
         </Popup>

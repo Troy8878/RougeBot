@@ -12,19 +12,28 @@ namespace EntityEditor.Entities.Representations.Views
         public static readonly DependencyProperty SelectedTextureProperty = DependencyProperty.Register(
             "SelectedTexture", typeof (String), typeof (TextureTree), new PropertyMetadata(default(String)));
 
+        private bool _loaded;
+
         public TextureTree()
         {
+            SelectedItemChanged += OnSelectedItemChanged;
+        }
+
+        public void Load()
+        {
+            if (_loaded)
+                return;
+
             try
             {
                 AddDir(
                     Path.Combine(MainWindow.Instance.RepoDir, "Roguelike", "Assets", "Textures"),
                     new string[] {}, this);
+                _loaded = true;
             }
             catch (NullReferenceException)
             {
             }
-
-            SelectedItemChanged += OnSelectedItemChanged;
         }
 
         public String SelectedTexture

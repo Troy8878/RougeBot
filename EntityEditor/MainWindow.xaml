@@ -10,22 +10,36 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" Grid.Column="0" Width="200" Height="75"
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Width="200" Height="75"
                 FontSize="30" Click="ButtonPrefab">
-            Prefab Editor
-        </Button>
-        <Button Grid.Row="0" Grid.Column="1" Width="200" Height="75"
+                Prefab Editor
+            </Button>
+            <Button Grid.Column="1" Width="200" Height="75"
                 FontSize="30" Click="ButtonEntity">
-            Entity Editor
-        </Button>
+                Entity Editor
+            </Button>
+        </Grid>
+        
+        <TextBlock Grid.Row="1" Margin="50,0" FontSize="18" TextWrapping="Wrap">
+            WARNING! All Changes are made immediately!
+            Remember to use Git to backup all changes you
+            make! You can always commit and push later!
+        </TextBlock>
 
-        <StackPanel Grid.Row="2" Grid.Column="0">
+        <Button Grid.Row="2" HorizontalAlignment="Center"
+                VerticalAlignment="Top" Padding="30,10" Click="CommitClick">
+            Commit
+        </Button>
+        
+        <StackPanel Grid.Row="3">
             <Button Margin="10" Width="200" Height="35"
                     FontSize="20" Click="ChangeDirClick">
                 Change Repo Dir</Button>

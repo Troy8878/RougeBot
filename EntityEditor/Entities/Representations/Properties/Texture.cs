@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using EntityEditor.Annotations;
+using EntityEditor.Entities.Serialization;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations.Properties
@@ -39,6 +39,11 @@ namespace EntityEditor.Entities.Representations.Properties
         public event PropertyChangedEventHandler PropertyChanged;
         public bool Locked { get; set; }
 
+        public TextureZip Zip
+        {
+            get { return (TextureZip) Value; }
+        }
+
         public DataTemplate RenderTemplate
         {
             get { return Value.RenderTemplate; }
@@ -63,8 +68,10 @@ namespace EntityEditor.Entities.Representations.Properties
             var zip = Value as TextureZip;
             if (zip == null) return;
 
-            var texture = zip.Textures.First();
-            Value = new SingleTexture(new JObject {{"texture", texture}});
+            var texture = zip.Textures.Items.FirstOrDefault();
+            Value = texture == null
+                ? new SingleTexture(new JObject {{"texture", ""}})
+                : new SingleTexture(new JObject {{"texture", texture.Serialize()}});
         }
 
         [NotifyPropertyChangedInvocator]
@@ -120,10 +127,17 @@ namespace EntityEditor.Entities.Representations.Properties
         {
             public TextureZip(JToken definition)
             {
-                Textures = new ObservableCollection<string>();
+                var aprop = new ComponentDefinition.ComponentProperty
+                {
+                    Usage = new ComponentDefinition.ComponentProperty.PropertyUsage
+                    {
+                        ArrayContains = "texture"
+                    }
+                };
+                Textures = new Array((JArray) definition["zipped"], aprop);
             }
 
-            public ObservableCollection<string> Textures { get; private set; }
+            public Array Textures { get; private set; }
             public event PropertyChangedEventHandler PropertyChanged;
 
             public DataTemplate RenderTemplate
@@ -135,7 +149,7 @@ namespace EntityEditor.Entities.Representations.Properties
             {
                 return new JObject
                 {
-                    {"zipped", new JArray(Textures)}
+                    {"zipped", Textures.Serialize()}
                 };
             }
 

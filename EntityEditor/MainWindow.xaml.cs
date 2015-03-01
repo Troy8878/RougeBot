@@ -90,5 +90,10 @@ namespace EntityEditor
             SelectCodeDir();
             UpdateRepoDirDisplay();
         }
+
+        private void CommitClick(object sender, RoutedEventArgs e)
+        {
+            new CommitMessage().ShowDialog();
+        }
     }
 }

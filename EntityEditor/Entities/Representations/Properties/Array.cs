@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using EntityEditor.Entities.Serialization;
@@ -25,8 +26,45 @@ namespace EntityEditor.Entities.Representations.Properties
 
             foreach (var item in def)
             {
+                if (item.Type == JTokenType.Comment)
+                    continue;
                 Items.Add(PropertyFactory.ConstructType(_ptype, item));
             }
+        }
+
+        public void New()
+        {
+            Items.Add(PropertyFactory.ConstructType(_ptype, null));
+        }
+
+        public void Add(IPropertyValue value)
+        {
+            Items.Add(value);
+        }
+
+        public void Move(IPropertyValue value, int index)
+        {
+            Items.Remove(value);
+            if (index < 0 || index > Items.Count)
+                throw new Exception("Tried to move value into invalid index");
+
+            Items.Insert(index, value);
+        }
+
+        public void MoveBy(IPropertyValue value, int offset)
+        {
+            var index = Items.IndexOf(value) + offset;
+            if (index < 0)
+                index = 0;
+            else if (index >= Items.Count)
+                index = Items.Count - 1;
+
+            Move(value, index);
+        }
+
+        public void Remove(IPropertyValue value)
+        {
+            Items.Remove(value);
         }
 
         public ObservableCollection<IPropertyValue> Items { get; private set; }

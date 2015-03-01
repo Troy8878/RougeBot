@@ -52,6 +52,9 @@ namespace EntityEditor.Entities.Representations
                 case "enum":
                     return ConstructEnum(prop, value);
 
+                case "map":
+                    return ConstructMap(prop, value);
+
                 default:
                     return null;
             }
@@ -153,7 +156,7 @@ namespace EntityEditor.Entities.Representations
 
         private static IPropertyValue ConstructEnum(ComponentDefinition.ComponentProperty prop, JToken value)
         {
-            var def = prop.Usage.Default ?? null;
+            var def = prop.Usage.Default ?? "";
 
             if (value == null)
                 value = def;
@@ -167,6 +170,24 @@ namespace EntityEditor.Entities.Representations
             options.AddRange(prop.Usage.EnumOptions.Select(t => (string) t));
 
             return new Enum((string) value, options.ToArray());
+        }
+
+        private static IPropertyValue ConstructMap(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default ?? new JObject();
+
+            if (value == null)
+                value = def;
+
+            if (prop.Usage.MapKey == "string")
+            {
+                if (prop.Usage.MapValue == "string")
+                {
+                    return new StringMap((JObject) value);
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -33,6 +33,7 @@ namespace EntityEditor.Entities.Representations.Views
 
         private void SelectClick(object sender, RoutedEventArgs e)
         {
+            TexTree.Load();
             Popup.IsOpen = true;
         }
 

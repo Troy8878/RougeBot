@@ -16,14 +16,7 @@
     </DataTemplate>
     
     <DataTemplate x:Key="PropArrayTemplate" DataType="properties:Array">
-        <!-- TODO: Add & Remove buttons -->
-        <ItemsControl ItemsSource="{Binding Path=Items}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentPresenter Content="{Binding}" ContentTemplate="{Binding Path=RenderTemplate}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <views:ArrayView />
     </DataTemplate>
 
     <DataTemplate x:Key="PropStringTextureTemplate" DataType="properties:String">
@@ -31,7 +24,7 @@
     </DataTemplate>
     
     <DataTemplate x:Key="PropEnumTemplate" DataType="properties:Enum">
-        <ComboBox SelectedItem="{Binding Path=Value}" ItemsSource="{Binding Path=Options}" />
+        <ComboBox SelectedItem="{Binding Path=Value}" ItemsSource="{Binding Path=Options}" MinWidth="100" />
     </DataTemplate>
 
     <DataTemplate x:Key="PropVectorTemplate" DataType="properties:Vector">
@@ -51,12 +44,18 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PropTextureZipTemplate" DataType="properties:Texture">
-        <TextBlock Foreground="DarkRed">I don't support zips yet :(</TextBlock>
+        <Border BorderBrush="SlateGray" BorderThickness="1">
+            <views:ArrayView DataContext="{Binding Path=Zip.Textures}" />
+        </Border>
     </DataTemplate>
     
     <DataTemplate x:Key="PropEntityTemplate" DataType="properties:Entity">
         <Border BorderBrush="AntiqueWhite" BorderThickness="1">
             <representations:EntityView DataContext="{Binding Path=Value}" />
         </Border>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PropMapStrStrTemplate" DataType="properties:StringMap">
+        <views:StringMap />
     </DataTemplate>
 </ResourceDictionary>

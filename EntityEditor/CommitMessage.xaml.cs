@@ -32,6 +32,9 @@ namespace EntityEditor
         public CommitMessage()
         {
             InitializeComponent();
+            
+            CanEdit = true;
+            Message = "";
         }
 
         public string RandomMessage
@@ -41,46 +44,55 @@ namespace EntityEditor
 
         private async void CommitClick(object sender, RoutedEventArgs e)
         {
-            var commitMessage = Message.Text;
-            var repo = new Repository(MainWindow.Instance.RepoDir);
-
-            // Stage everything in the repo
-            try
+            CanEdit = false;
+            var message = Message;
+            using (var repo = new Repository(MainWindow.Instance.RepoDir))
             {
-                await Task.Run(delegate
+                // Stage everything in the repo
+                try
                 {
-                    StageDir(repo, MainWindow.Instance.RepoDir);
-                    repo.Commit(commitMessage, new CommitOptions {PrettifyMessage = true});
-                });
-                Close();
+                    await Task.Run(delegate
+                    {
+                        // This closure will never be disposed because we await the call
+                        
+                        // ReSharper disable AccessToDisposedClosure
+                        StageDir(repo, MainWindow.Instance.RepoDir);
+                        repo.Commit(message, new CommitOptions {PrettifyMessage = true});
+                        // ReSharper restore AccessToDisposedClosure
+                    });
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            CanEdit = true;
         }
 
         private void StageDir(IRepository repo, string dir, string basepath = "")
         {
             var dirinfo = new DirectoryInfo(dir);
-            if (dirinfo.Name.StartsWith("."))
+            if (dirinfo.Name.StartsWith(".") ||
+                dirinfo.Name == "x64")
                 return;
 
             foreach (var subdir in dirinfo.GetDirectories())
             {
                 StageDir(repo, subdir.FullName, Path.Combine(basepath, subdir.Name));
             }
+            
+            SetStagingMessage(Path.Combine(basepath, dirinfo.Name));
 
             foreach (var file in dirinfo.GetFiles().Where(file => !file.Name.StartsWith(".")))
             {
-                SetStagingMessage(Path.Combine(basepath, file.Name));
                 repo.Stage(file.FullName);
             }
         }
 
         private void SetStagingMessage(string file)
         {
-            Dispatcher.Invoke(() => StagingFile = file);
+            Dispatcher.Invoke(() => StagingFile = "Staging file: " + file);
         }
 
         public static readonly DependencyProperty StagingFileProperty = DependencyProperty.Register(
@@ -90,6 +102,24 @@ namespace EntityEditor
         {
             get { return (string) GetValue(StagingFileProperty); }
             set { SetValue(StagingFileProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageProperty = DependencyProperty.Register(
+            "Message", typeof (string), typeof (CommitMessage), new PropertyMetadata(default(string)));
+
+        public string Message
+        {
+            get { return (string) GetValue(MessageProperty); }
+            set { SetValue(MessageProperty, value); }
+        }
+
+        public static readonly DependencyProperty CanEditProperty = DependencyProperty.Register(
+            "CanEdit", typeof (bool), typeof (CommitMessage), new PropertyMetadata(default(bool)));
+
+        public bool CanEdit
+        {
+            get { return (bool) GetValue(CanEditProperty); }
+            set { SetValue(CanEditProperty, value); }
         }
     }
 }

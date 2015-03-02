@@ -189,8 +189,7 @@ namespace EntityEditor
                             {
                                 if (total == 0)
                                 {
-                                    curr = 0;
-                                    total = 1;
+                                    return true;
                                 }
 
                                 status.SetMessage(string.Format(
@@ -210,8 +209,7 @@ namespace EntityEditor
                             {
                                 if (total == 0)
                                 {
-                                    curr = 0;
-                                    total = 1;
+                                    return true;
                                 }
 
                                 status.SetMessage(string.Format(

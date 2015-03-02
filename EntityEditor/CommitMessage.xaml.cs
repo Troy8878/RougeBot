@@ -112,5 +112,16 @@ namespace EntityEditor
             get { return (bool) GetValue(CanEditProperty); }
             set { SetValue(CanEditProperty, value); }
         }
+
+        private void ShowChangeList(object sender, RoutedEventArgs e)
+        {
+            ButtonContainer.Children.Remove((UIElement) sender);
+
+            ChangeList.ItemsSource = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus()
+                .Where(item => item.State != FileStatus.Ignored);
+
+            MinHeight = 450;
+            Height = 500;
+        }
     }
 }

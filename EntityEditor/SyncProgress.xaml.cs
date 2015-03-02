@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace EntityEditor
 {
@@ -32,7 +33,7 @@ namespace EntityEditor
             Dispatcher.BeginInvoke(new Action(delegate
             {
                 Status.Text = message;
-            }));
+            }), DispatcherPriority.Send);
         }
 
         public void SetProgress(double? progress)
@@ -48,7 +49,7 @@ namespace EntityEditor
                     Progress.IsIndeterminate = false;
                     Progress.Value = (double) progress;
                 }
-            }));
+            }), DispatcherPriority.Send);
         }
 
         public void CloseProgress()

@@ -235,7 +235,8 @@ namespace EntityEditor
                             }
                         };
 
-                        repo.Network.Push(repo.Head.TrackedBranch, options);
+                        var branch = repo.Branches[repo.Head.TrackedBranch.UpstreamBranchCanonicalName];
+                        repo.Network.Push(branch, options);
                     }
                 });
             }

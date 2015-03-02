@@ -179,7 +179,7 @@ namespace EntityEditor
                     }
 
                     var remote = repo.Network.Remotes["origin"];
-                    var specs = remote.PushRefSpecs.Select(spec => spec.Specification).ToArray();
+                    var specs = remote.RefSpecs.Select(spec => spec.Specification).ToArray();
                     repo.Network.Push(remote, specs, new PushOptions
                     {
                         CredentialsProvider = delegate { return author.Credentials; },

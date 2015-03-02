@@ -131,7 +131,8 @@ namespace EntityEditor
 
             var status = new SyncProgress();
             status.Show();
-            status.SetProgress(0.0);
+            status.SetProgress(null);
+            status.SetMessage("Preparing");
 
             await Task.Run(delegate
             {
@@ -159,7 +160,7 @@ namespace EntityEditor
                                     progress.ReceivedObjects,
                                     progress.TotalObjects));
                                 status.SetProgress(
-                                    progress.ReceivedObjects /
+                                    progress.ReceivedObjects/
                                     (double) progress.TotalObjects);
                                 return true;
                             }
@@ -179,6 +180,29 @@ namespace EntityEditor
 
                     if (result.Status != MergeStatus.UpToDate)
                         return;
+
+                    var remote = repo.Network.Remotes["origin"];
+                    var specs = remote.PushRefSpecs.Select(spec => spec.Specification);
+                    repo.Network.Push(remote, specs, new PushOptions
+                    {
+                        CredentialsProvider = delegate { return author.Credentials; },
+                        OnPackBuilderProgress = (stage, curr, total) =>
+                        {
+                            status.SetMessage(string.Format(
+                                "Packing objects ({0}/{1} objects)",
+                                curr, total));
+                            status.SetProgress(curr/(double) total);
+                            return true;
+                        },
+                        OnPushTransferProgress = (curr, total, bytes) =>
+                        {
+                            status.SetMessage(string.Format(
+                                "Pushing to server ({0}/{1} objects)",
+                                curr, total));
+                            status.SetProgress(curr/(double) total);
+                            return true;
+                        }
+                    });
                 }
             });
 

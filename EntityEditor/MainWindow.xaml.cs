@@ -235,7 +235,7 @@ namespace EntityEditor
                             }
                         };
 
-                        repo.Network.Push(repo.Branches["master"], options);
+                        repo.Network.Push(repo.Head.TrackedBranch, options);
                     }
                 });
             }

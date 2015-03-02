@@ -24,7 +24,7 @@ namespace EntityEditor.Views
             var data = new GitData
             {
                 Status = repo.RetrieveStatus(),
-                MasterBranch = repo.Branches["master"]
+                MasterBranch = repo.Head.TrackedBranch
             };
 
             var details = data.MasterBranch.TrackingDetails;

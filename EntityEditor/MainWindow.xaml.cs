@@ -178,9 +178,7 @@ namespace EntityEditor
                         return;
                     }
 
-                    var remote = repo.Network.Remotes["origin"];
-                    var specs = remote.RefSpecs.Select(spec => spec.Specification).ToArray();
-                    repo.Network.Push(remote, specs, new PushOptions
+                    var options = new PushOptions
                     {
                         CredentialsProvider = delegate { return author.Credentials; },
                         OnPackBuilderProgress = (stage, curr, total) =>
@@ -199,7 +197,9 @@ namespace EntityEditor
                             status.SetProgress(curr/(double) total);
                             return true;
                         }
-                    });
+                    };
+
+                    repo.Network.Push(repo.Branches["master"], options);
                 }
             });
 

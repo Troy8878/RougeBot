@@ -57,7 +57,12 @@ namespace EntityEditor
                         // ReSharper disable AccessToDisposedClosure
 
                         SetStagingMessage("Staging files");
-                        StageDir(repo, MainWindow.Instance.RepoDir);
+
+                        foreach (var item in repo.RetrieveStatus()
+                            .Where(item => item.State != FileStatus.Ignored))
+                        {
+                            repo.Stage(item.FilePath);
+                        }
 
                         SetStagingMessage("Commiting files");
                         repo.Commit(message, new CommitOptions {PrettifyMessage = true});
@@ -74,24 +79,6 @@ namespace EntityEditor
                 }
             }
             CanEdit = true;
-        }
-
-        private void StageDir(IRepository repo, string dir, string basepath = "")
-        {
-            var dirinfo = new DirectoryInfo(dir);
-            if (dirinfo.Name.StartsWith(".") ||
-                dirinfo.Name == "x64")
-                return;
-
-            foreach (var subdir in dirinfo.GetDirectories())
-            {
-                StageDir(repo, subdir.FullName, Path.Combine(basepath, subdir.Name));
-            }
-
-            foreach (var file in dirinfo.GetFiles().Where(file => !file.Name.StartsWith(".")))
-            {
-                repo.Stage(file.FullName);
-            }
         }
 
         private void SetStagingMessage(string file)

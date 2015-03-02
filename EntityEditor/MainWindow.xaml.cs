@@ -167,7 +167,7 @@ namespace EntityEditor
                         }
                     });
 
-                    status.SetMessage("");
+                    status.SetMessage("Preparing to send");
                     status.SetProgress(null);
 
                     if (result.Status == MergeStatus.Conflicts)
@@ -177,9 +177,6 @@ namespace EntityEditor
                             "Team Explorer or GitExtensions to resolve them.");
                         return;
                     }
-
-                    if (result.Status != MergeStatus.UpToDate)
-                        return;
 
                     var remote = repo.Network.Remotes["origin"];
                     var specs = remote.PushRefSpecs.Select(spec => spec.Specification);

@@ -186,18 +186,32 @@ namespace EntityEditor
                             CredentialsProvider = delegate { return author.Credentials; },
                             OnPackBuilderProgress = (stage, curr, total) =>
                             {
+                                if (total == 0)
+                                {
+                                    curr = 0;
+                                    total = 1;
+                                }
+
                                 status.SetMessage(string.Format(
                                     "Packing objects ({0}/{1} objects)",
                                     curr, total));
                                 status.SetProgress(curr/(double) total);
+
                                 return true;
                             },
                             OnPushTransferProgress = (curr, total, bytes) =>
                             {
+                                if (total == 0)
+                                {
+                                    curr = 0;
+                                    total = 1;
+                                }
+
                                 status.SetMessage(string.Format(
                                     "Pushing to server ({0}/{1} objects)",
                                     curr, total));
                                 status.SetProgress(curr/(double) total);
+
                                 return true;
                             }
                         };

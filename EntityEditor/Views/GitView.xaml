@@ -19,18 +19,24 @@
               Converter={StaticResource Visibility},
               ConverterParameter=Negate}"
               HorizontalAlignment="Center">
-            <TextBlock Foreground="SpringGreen">
-                No Uncommited Changes<LineBreak />
+            <StackPanel>
+                <TextBlock Foreground="SpringGreen">
+                    No Uncommited Changes<LineBreak />
+                </TextBlock>
+                <TextBlock Foreground="Red"
+                           Visibility="{Binding Path=UpToDate,
+                           Converter={StaticResource Visibility},
+                           ConverterParameter=Negate}">
+                    You are hoarding
+                    <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
+                         Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
+                    <LineBreak />
                 
-                You are hoarding
-                <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
-                     Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
-                <LineBreak />
-                
-                You are missing out on
-                <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy,
-                     Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
-            </TextBlock>
+                    You are missing out on
+                    <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy,
+                         Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
+                </TextBlock>
+            </StackPanel>
         </Grid>
         <!-- Dirty -->
         <Grid Visibility="{

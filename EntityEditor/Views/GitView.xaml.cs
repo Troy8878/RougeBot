@@ -27,6 +27,9 @@ namespace EntityEditor.Views
                 MasterBranch = repo.Branches["master"]
             };
 
+            var details = data.MasterBranch.TrackingDetails;
+            data.UpToDate = details.AheadBy == 0 && details.BehindBy == 0;
+
             DataContext = data;
         }
 
@@ -40,5 +43,6 @@ namespace EntityEditor.Views
     {
         public RepositoryStatus Status { get; set; }
         public Branch MasterBranch { get; set; }
+        public bool UpToDate { get; set; }
     }
 }

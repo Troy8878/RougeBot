@@ -1,8 +1,11 @@
 ﻿using System.IO;
-using System.Net.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using EntityEditor.API;
 using EntityEditor.Entities;
 using EntityEditor.Properties;
+using LibGit2Sharp;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -14,27 +17,42 @@ namespace EntityEditor
     public partial class MainWindow
     {
         public static MainWindow Instance;
+
+        public static readonly DependencyProperty GitUnlockedProperty = DependencyProperty.Register(
+            "GitUnlocked", typeof (bool), typeof (MainWindow), new PropertyMetadata(default(bool)));
+
         public string RepoDir = Settings.Default.RepoPath;
 
         public MainWindow()
         {
             Instance = this;
 
+            GitUnlocked = true;
             InitializeComponent();
-            
+
             if (!HasValidRepoDir())
                 SelectCodeDir();
             UpdateRepoDirDisplay();
         }
 
+        public bool GitUnlocked
+        {
+            get { return (bool) GetValue(GitUnlockedProperty); }
+            set { SetValue(GitUnlockedProperty, value); }
+        }
+
         private void ButtonPrefab(object sender, RoutedEventArgs e)
         {
+            GitUnlocked = false;
             new PrefabEditor.PrefabEditor().Show();
+            GitUnlocked = true;
         }
 
         private void ButtonEntity(object sender, RoutedEventArgs e)
         {
+            GitUnlocked = false;
             new Editor().Show();
+            GitUnlocked = true;
         }
 
         private void UpdateRepoDirDisplay()
@@ -93,7 +111,79 @@ namespace EntityEditor
 
         private void CommitClick(object sender, RoutedEventArgs e)
         {
+            GitUnlocked = false;
             new CommitMessage().ShowDialog();
+            GitUnlocked = true;
+        }
+
+        private async void SyncClick(object sender, RoutedEventArgs e)
+        {
+            GitUnlocked = false;
+
+            var author = Author.Load();
+            if (!author.IsComplete)
+            {
+                new AuthorInput().ShowDialog();
+                author = Author.Load();
+                if (!author.IsComplete)
+                    return;
+            }
+
+            var status = new SyncProgress();
+            status.Show();
+            status.SetProgress(0.0);
+
+            await Task.Run(delegate
+            {
+                using (var repo = new Repository(RepoDir))
+                {
+                    if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
+                    {
+                        MessageBox.Show(
+                            "You have uncommitted work. " +
+                            "Please commit your work before syncing.");
+                        return;
+                    }
+
+                    status.SetMessage("Pulling repository");
+
+                    var result = repo.Network.Pull(author.GetSignature(), new PullOptions
+                    {
+                        FetchOptions = new FetchOptions
+                        {
+                            CredentialsProvider = (a, b, c) => author.Credentials,
+                            OnTransferProgress = progress =>
+                            {
+                                status.SetMessage(string.Format(
+                                    "Fetching repository ({0}/{1} objects)",
+                                    progress.ReceivedObjects,
+                                    progress.TotalObjects));
+                                status.SetProgress(
+                                    progress.ReceivedObjects /
+                                    (double) progress.TotalObjects);
+                                return true;
+                            }
+                        }
+                    });
+
+                    status.SetMessage("");
+                    status.SetProgress(null);
+
+                    if (result.Status == MergeStatus.Conflicts)
+                    {
+                        MessageBox.Show(
+                            "There were merge conflicts, please open the Visual Studio " +
+                            "Team Explorer or GitExtensions to resolve them.");
+                        return;
+                    }
+
+                    if (result.Status != MergeStatus.UpToDate)
+                        return;
+                }
+            });
+
+            GitUnlocked = true;
+            status.CloseProgress();
         }
     }
 }

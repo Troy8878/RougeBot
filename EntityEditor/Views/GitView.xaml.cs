@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Windows;
 using LibGit2Sharp;
 
 namespace EntityEditor.Views
@@ -10,13 +11,21 @@ namespace EntityEditor.Views
     {
         public GitView()
         {
-            DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+            if (MainWindow.Instance != null)
+                DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+
             InitializeComponent();
         }
 
         public void Refresh()
         {
-            DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+            if (MainWindow.Instance != null)
+                DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+        }
+
+        private void OnRefresh(object sender, RoutedEventArgs e)
+        {
+            Refresh();
         }
     }
 }

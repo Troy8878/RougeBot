@@ -55,11 +55,13 @@ namespace EntityEditor
             GitUnlocked = false;
             new Editor().Show();
             GitUnlocked = true;
+            GitView.Refresh();
         }
 
         private void UpdateRepoDirDisplay()
         {
             RepoDirDisplay.Text = RepoDir;
+            GitView.Refresh();
         }
 
         private static bool HasValidRepoDir(string dir = null)
@@ -116,6 +118,7 @@ namespace EntityEditor
             GitUnlocked = false;
             new CommitMessage().ShowDialog();
             GitUnlocked = true;
+            GitView.Refresh();
         }
 
         private async void SyncClick(object sender, RoutedEventArgs e)
@@ -238,6 +241,7 @@ namespace EntityEditor
 
             GitUnlocked = true;
             status.CloseProgress();
+            GitView.Refresh();
         }
     }
 }

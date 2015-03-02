@@ -78,6 +78,7 @@ namespace EntityEditor
                     MessageBox.Show(ex.Message);
                 }
             }
+
             CanEdit = true;
         }
 

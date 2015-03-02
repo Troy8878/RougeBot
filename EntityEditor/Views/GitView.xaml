@@ -9,19 +9,26 @@
              d:DataContext="{d:DesignInstance libGit2Sharp:RepositoryStatus}"
              FontSize="16">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
         <!-- Clean -->
         <Grid Visibility="{
               Binding Path=IsDirty,
               Converter={StaticResource Visibility},
               ConverterParameter=Negate}"
               HorizontalAlignment="Center">
-            <TextBlock Foreground="SpringGreen">No Uncommited Changes :)</TextBlock>
+            <TextBlock Foreground="SpringGreen">
+                No Uncommited Changes :)<LineBreak />
+                Remember to sync!
+            </TextBlock>
         </Grid>
         <!-- Dirty -->
         <Grid Visibility="{
               Binding Path=IsDirty,
               Converter={StaticResource Visibility}}"
-              HorizontalAlignment="Center">
+              HorizontalAlignment="Center" Grid.Column="0">
             <StackPanel>
                 <TextBlock Foreground="SlateBlue">
                     Uncommited changes
@@ -44,5 +51,7 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
+
+        <Button Grid.Column="1" Click="OnRefresh" VerticalAlignment="Top">⟳</Button>
     </Grid>
 </UserControl>

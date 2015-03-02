@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:EntityEditor.Views"
         Title="MainWindow" MinHeight="550" MinWidth="800"
-        Height="500" Width="800"
+        Height="550" Width="800"
         Background="{StaticResource RbBackground}"
         Foreground="{StaticResource RbText}">
 
-    <Grid>
+    <Grid Height="550" Width="800">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -35,7 +35,8 @@
                 Entity Editor
             </Button>
             <Button Grid.Column="2" Width="200" Height="75"
-                    FontSize="30" Click="VisualStudio">
+                    FontSize="30" Click="VisualStudio"
+                    HorizontalAlignment="Right" Margin="0,0,32,0">
                 Visual Studio
             </Button>
         </Grid>
@@ -51,7 +52,8 @@
                 make!
             </TextBlock>
             <Button Grid.Column="1" Width="200" Height="75"
-                    FontSize="30" Click="RunGame" Margin="0,0,0,40">
+                    FontSize="30" Click="RunGame" Margin="0,0,32,40"
+                    HorizontalAlignment="Right">
                 Run Game
             </Button>
         </Grid>

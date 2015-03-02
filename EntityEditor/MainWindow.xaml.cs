@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using EntityEditor.API;
@@ -197,6 +198,14 @@ namespace EntityEditor
                                     curr, total));
                                 status.SetProgress(curr/(double) total);
 
+                                // Slowing things down for the user :)
+                                if (total - curr < 4)
+                                    Thread.Sleep(50);
+                                if (total - curr < 2)
+                                    Thread.Sleep(100);
+                                if (total == curr)
+                                    Thread.Sleep(500);
+
                                 return true;
                             },
                             OnPushTransferProgress = (curr, total, bytes) =>
@@ -211,6 +220,14 @@ namespace EntityEditor
                                     "Pushing to server ({0}/{1} objects)",
                                     curr, total));
                                 status.SetProgress(curr/(double) total);
+
+                                // Slowing things down for the user :)
+                                if (total - curr < 4)
+                                    Thread.Sleep(50);
+                                if (total - curr < 2)
+                                    Thread.Sleep(100);
+                                if (total == curr)
+                                    Thread.Sleep(500);
 
                                 return true;
                             }

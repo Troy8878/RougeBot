@@ -39,7 +39,7 @@ namespace EntityEditor
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
-                if (progress == null)
+                if (progress == null || progress > 1)
                 {
                     Progress.IsIndeterminate = true;
                 }

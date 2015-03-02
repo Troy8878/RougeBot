@@ -29,7 +29,7 @@ class BasicEnemySpawnerComponent < ComponentBase
       data = {}
 
       case type
-      when 2
+      when 2 # Enemy
         if meta.is_a? String
           meta = "Enemies/#{meta}"
         elsif meta.is_a? Array
@@ -38,8 +38,18 @@ class BasicEnemySpawnerComponent < ComponentBase
         else
           meta = ENEMY_TYPES.rand_item
         end
-      when 3
+      when 3 # Breakable wall
         meta = "BorkWall"
+      when 5 # Item spawn
+        if meta.is_a? Float
+          meta = meta.to_i
+        else
+          meta = GAME_STATE[:floor]
+        end
+
+        tile = current_floor[y][x]
+        tile.drop_item ItemGenerate.generate_weapon({}, meta)
+        next
       else
         next
       end

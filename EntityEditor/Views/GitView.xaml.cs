@@ -11,21 +11,34 @@ namespace EntityEditor.Views
     {
         public GitView()
         {
-            if (MainWindow.Instance != null)
-                DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+            Refresh();
 
             InitializeComponent();
         }
 
         public void Refresh()
         {
-            if (MainWindow.Instance != null)
-                DataContext = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus();
+            if (MainWindow.Instance == null) return;
+
+            var repo = new Repository(MainWindow.Instance.RepoDir);
+            var data = new GitData
+            {
+                Status = repo.RetrieveStatus(),
+                MasterBranch = repo.Branches["master"]
+            };
+
+            DataContext = data;
         }
 
         private void OnRefresh(object sender, RoutedEventArgs e)
         {
             Refresh();
         }
+    }
+
+    public class GitData
+    {
+        public RepositoryStatus Status { get; set; }
+        public Branch MasterBranch { get; set; }
     }
 }

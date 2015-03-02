@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:libGit2Sharp="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
+             xmlns:views="clr-namespace:EntityEditor.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance libGit2Sharp:RepositoryStatus}"
+             d:DataContext="{d:DesignInstance views:GitData}"
              FontSize="16">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -15,18 +15,25 @@
         </Grid.ColumnDefinitions>
         <!-- Clean -->
         <Grid Visibility="{
-              Binding Path=IsDirty,
+              Binding Path=Status.IsDirty,
               Converter={StaticResource Visibility},
               ConverterParameter=Negate}"
               HorizontalAlignment="Center">
             <TextBlock Foreground="SpringGreen">
                 No Uncommited Changes :)<LineBreak />
-                Remember to sync!
+                
+                You are hoarding
+                <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy, Mode=OneWay}" />
+                commits<LineBreak />
+                
+                You are missing out on
+                <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy, Mode=OneWay}" />
+                commits
             </TextBlock>
         </Grid>
         <!-- Dirty -->
         <Grid Visibility="{
-              Binding Path=IsDirty,
+              Binding Path=Status.IsDirty,
               Converter={StaticResource Visibility}}"
               HorizontalAlignment="Center" Grid.Column="0">
             <StackPanel>
@@ -35,18 +42,18 @@
                 </TextBlock>
                 <TextBlock Foreground="Red" HorizontalAlignment="Center">
                     ~<Run Text="{
-                        Binding Path=Modified, Mode=OneWay,
+                        Binding Path=Status.Modified, Mode=OneWay,
                         Converter={StaticResource EnumCount}}" />
                     +<Run Text="{
-                        Binding Path=Untracked, Mode=OneWay,
+                        Binding Path=Status.Untracked, Mode=OneWay,
                         Converter={StaticResource EnumCount}}" />
                     -<Run Text="{
-                        Binding Path=Missing, Mode=OneWay,
+                        Binding Path=Status.Missing, Mode=OneWay,
                         Converter={StaticResource EnumCount}}" />
                 </TextBlock>
                 <TextBlock Foreground="SpringGreen" HorizontalAlignment="Center">
                     <Run Text="{
-                        Binding Path=Staged, Mode=OneWay,
+                        Binding Path=Status.Staged, Mode=OneWay,
                         Converter={StaticResource EnumCount}}" /> staged
                 </TextBlock>
             </StackPanel>

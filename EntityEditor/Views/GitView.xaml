@@ -1,73 +1,82 @@
 ﻿<UserControl x:Class="EntityEditor.Views.GitView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:EntityEditor.Views"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance views:GitData}"
              FontSize="15">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <!-- Clean -->
-        <Grid Visibility="{
-              Binding Path=Status.IsDirty,
-              Converter={StaticResource Visibility},
-              ConverterParameter=Negate}"
-              HorizontalAlignment="Center">
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <!-- Clean -->
+            <Grid
+                Visibility="{
+                Binding Path=Status.IsDirty,
+                Converter={StaticResource Visibility},
+                ConverterParameter=Negate}"
+                HorizontalAlignment="Center">
                 <TextBlock Foreground="SpringGreen">
                     No Uncommited Changes
                 </TextBlock>
+            </Grid>
+            <!-- Dirty -->
+            <Grid
+                Visibility="{
+                Binding Path=Status.IsDirty,
+                Converter={StaticResource Visibility}}"
+                HorizontalAlignment="Center" Grid.Column="0">
+                <StackPanel>
+                    <TextBlock Foreground="SlateBlue">
+                        Uncommited changes
+                    </TextBlock>
+                    <TextBlock Foreground="Red" HorizontalAlignment="Center">
+                        ~<Run
+                            Text="{
+                             Binding Path=Status.Modified, Mode=OneWay,
+                             Converter={StaticResource EnumCount}}" />
+                        +<Run
+                            Text="{
+                             Binding Path=Status.Untracked, Mode=OneWay,
+                             Converter={StaticResource EnumCount}}" />
+                        -<Run
+                            Text="{
+                             Binding Path=Status.Missing, Mode=OneWay,
+                             Converter={StaticResource EnumCount}}" />
+                    </TextBlock>
+                    <TextBlock Foreground="SpringGreen" HorizontalAlignment="Center">
+                        <Run
+                            Text="{
+                             Binding Path=Status.Staged, Mode=OneWay,
+                             Converter={StaticResource EnumCount}}" />
+                        staged
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+
+            <Button Grid.Column="1" Click="OnRefresh" VerticalAlignment="Top">⟳</Button>
         </Grid>
-        <!-- Dirty -->
-        <Grid Visibility="{
-              Binding Path=Status.IsDirty,
-              Converter={StaticResource Visibility}}"
-              HorizontalAlignment="Center" Grid.Column="0">
-            <StackPanel>
-                <TextBlock Foreground="SlateBlue">
-                    Uncommited changes
-                </TextBlock>
-                <TextBlock Foreground="Red" HorizontalAlignment="Center">
-                    ~<Run Text="{
-                        Binding Path=Status.Modified, Mode=OneWay,
-                        Converter={StaticResource EnumCount}}" />
-                    +<Run Text="{
-                        Binding Path=Status.Untracked, Mode=OneWay,
-                        Converter={StaticResource EnumCount}}" />
-                    -<Run Text="{
-                        Binding Path=Status.Missing, Mode=OneWay,
-                        Converter={StaticResource EnumCount}}" />
-                </TextBlock>
-                <TextBlock Foreground="SpringGreen" HorizontalAlignment="Center">
-                    <Run Text="{
-                        Binding Path=Status.Staged, Mode=OneWay,
-                        Converter={StaticResource EnumCount}}" /> staged
-                </TextBlock>
-            </StackPanel>
-        </Grid>
-        <StackPanel Grid.Column="0">
-            <TextBlock Foreground="Red"
-                           Visibility="{Binding Path=UpToDate,
+        <TextBlock Foreground="Red"
+                   Visibility="{Binding Path=UpToDate,
                            Converter={StaticResource Visibility},
                            ConverterParameter=Negate}"
-                           TextWrapping="Wrap">
-                    You are hoarding
-                    <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
+                   TextWrapping="Wrap">
+            You are hoarding
+            <Run
+                Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
                          Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
-                    
-                    <LineBreak />
-                
-                    You are missing out on
-                    <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy,
-                         Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
-            </TextBlock>
-        </StackPanel>
 
-        <Button Grid.Column="1" Click="OnRefresh" VerticalAlignment="Top">⟳</Button>
-    </Grid>
+            <LineBreak />
+            You are missing out on
+            <Run
+                Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy,
+                         Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
+        </TextBlock>
+
+    </StackPanel>
 </UserControl>

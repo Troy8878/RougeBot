@@ -253,5 +253,14 @@ namespace EntityEditor
         {
             Process.Start(Path.Combine(RepoDir, "Roguelike", "Roguelike.sln"));
         }
+
+        private void RunGame(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(RepoDir, "Roguelike", "build.bat"),
+                WorkingDirectory = Path.Combine(RepoDir, "Roguelike")
+            });
+        }
     }
 }

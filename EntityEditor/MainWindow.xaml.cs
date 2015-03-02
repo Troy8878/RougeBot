@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -30,11 +31,12 @@ namespace EntityEditor
             Instance = this;
 
             GitUnlocked = true;
-            InitializeComponent();
 
             if (!HasValidRepoDir())
                 SelectCodeDir();
             UpdateRepoDirDisplay();
+
+            InitializeComponent();
         }
 
         public bool GitUnlocked
@@ -60,8 +62,11 @@ namespace EntityEditor
 
         private void UpdateRepoDirDisplay()
         {
-            RepoDirDisplay.Text = RepoDir;
-            GitView.Refresh();
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                RepoDirDisplay.Text = RepoDir;
+                GitView.Refresh();
+            }));
         }
 
         private static bool HasValidRepoDir(string dir = null)
@@ -242,6 +247,11 @@ namespace EntityEditor
             GitUnlocked = true;
             status.CloseProgress();
             GitView.Refresh();
+        }
+
+        private void VisualStudio(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Path.Combine(RepoDir, "Roguelike", "Roguelike.sln"));
         }
     }
 }

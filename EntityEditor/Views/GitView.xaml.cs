@@ -1,5 +1,6 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
 using System.Windows;
+using EntityEditor.API;
 using LibGit2Sharp;
 
 namespace EntityEditor.Views
@@ -16,7 +17,7 @@ namespace EntityEditor.Views
             InitializeComponent();
         }
 
-        public void Refresh()
+        public async void Refresh()
         {
             if (MainWindow.Instance == null) return;
 
@@ -29,8 +30,24 @@ namespace EntityEditor.Views
 
             var details = data.MasterBranch.TrackingDetails;
             data.UpToDate = details.AheadBy == 0 && details.BehindBy == 0;
+            data.Ahead = details.AheadBy;
+            data.Behind = details.BehindBy;
 
             DataContext = data;
+
+            await Task.Run(delegate
+            {
+                var author = Author.Load();
+                repo.Fetch("origin", new FetchOptions
+                {
+                    CredentialsProvider = (a, b, c) => author.Credentials
+                });
+
+                var ndetails = data.MasterBranch.TrackingDetails;
+                data.Ahead = ndetails.AheadBy;
+                data.Behind = ndetails.BehindBy;
+                Dispatcher.Invoke(() => DataContext = data);
+            });
         }
 
         private void OnRefresh(object sender, RoutedEventArgs e)
@@ -43,6 +60,8 @@ namespace EntityEditor.Views
     {
         public RepositoryStatus Status { get; set; }
         public Branch MasterBranch { get; set; }
+        public int? Ahead { get; set; }
+        public int? Behind { get; set; }
         public bool UpToDate { get; set; }
     }
 }

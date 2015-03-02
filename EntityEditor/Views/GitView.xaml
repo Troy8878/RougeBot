@@ -21,15 +21,17 @@
               HorizontalAlignment="Center">
             <StackPanel>
                 <TextBlock Foreground="SpringGreen">
-                    No Uncommited Changes<LineBreak />
+                    No Uncommited Changes
                 </TextBlock>
                 <TextBlock Foreground="Red"
                            Visibility="{Binding Path=UpToDate,
                            Converter={StaticResource Visibility},
-                           ConverterParameter=Negate}">
+                           ConverterParameter=Negate}"
+                           TextWrapping="Wrap">
                     You are hoarding
                     <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
                          Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
+                    
                     <LineBreak />
                 
                     You are missing out on

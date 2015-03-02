@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -134,74 +135,81 @@ namespace EntityEditor
             status.SetProgress(null);
             status.SetMessage("Preparing");
 
-            await Task.Run(delegate
+            try
             {
-                using (var repo = new Repository(RepoDir))
+                await Task.Run(delegate
                 {
-                    if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
+                    using (var repo = new Repository(RepoDir))
                     {
-                        MessageBox.Show(
-                            "You have uncommitted work. " +
-                            "Please commit your work before syncing.");
-                        return;
-                    }
-
-                    status.SetMessage("Pulling repository");
-
-                    var result = repo.Network.Pull(author.GetSignature(), new PullOptions
-                    {
-                        FetchOptions = new FetchOptions
+                        if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
                         {
-                            CredentialsProvider = (a, b, c) => author.Credentials,
-                            OnTransferProgress = progress =>
+                            MessageBox.Show(
+                                "You have uncommitted work. " +
+                                "Please commit your work before syncing.");
+                            return;
+                        }
+
+                        status.SetMessage("Pulling repository");
+
+                        var result = repo.Network.Pull(author.GetSignature(), new PullOptions
+                        {
+                            FetchOptions = new FetchOptions
+                            {
+                                CredentialsProvider = (a, b, c) => author.Credentials,
+                                OnTransferProgress = progress =>
+                                {
+                                    status.SetMessage(string.Format(
+                                        "Fetching repository ({0}/{1} objects)",
+                                        progress.ReceivedObjects,
+                                        progress.TotalObjects));
+                                    status.SetProgress(
+                                        progress.ReceivedObjects/
+                                        (double) progress.TotalObjects);
+                                    return true;
+                                }
+                            }
+                        });
+
+                        status.SetMessage("Preparing to send");
+                        status.SetProgress(null);
+
+                        if (result.Status == MergeStatus.Conflicts)
+                        {
+                            MessageBox.Show(
+                                "There were merge conflicts, please open the Visual Studio " +
+                                "Team Explorer or GitExtensions to resolve them.");
+                            return;
+                        }
+
+                        var options = new PushOptions
+                        {
+                            CredentialsProvider = delegate { return author.Credentials; },
+                            OnPackBuilderProgress = (stage, curr, total) =>
                             {
                                 status.SetMessage(string.Format(
-                                    "Fetching repository ({0}/{1} objects)",
-                                    progress.ReceivedObjects,
-                                    progress.TotalObjects));
-                                status.SetProgress(
-                                    progress.ReceivedObjects/
-                                    (double) progress.TotalObjects);
+                                    "Packing objects ({0}/{1} objects)",
+                                    curr, total));
+                                status.SetProgress(curr/(double) total);
+                                return true;
+                            },
+                            OnPushTransferProgress = (curr, total, bytes) =>
+                            {
+                                status.SetMessage(string.Format(
+                                    "Pushing to server ({0}/{1} objects)",
+                                    curr, total));
+                                status.SetProgress(curr/(double) total);
                                 return true;
                             }
-                        }
-                    });
+                        };
 
-                    status.SetMessage("Preparing to send");
-                    status.SetProgress(null);
-
-                    if (result.Status == MergeStatus.Conflicts)
-                    {
-                        MessageBox.Show(
-                            "There were merge conflicts, please open the Visual Studio " +
-                            "Team Explorer or GitExtensions to resolve them.");
-                        return;
+                        repo.Network.Push(repo.Branches["master"], options);
                     }
-
-                    var options = new PushOptions
-                    {
-                        CredentialsProvider = delegate { return author.Credentials; },
-                        OnPackBuilderProgress = (stage, curr, total) =>
-                        {
-                            status.SetMessage(string.Format(
-                                "Packing objects ({0}/{1} objects)",
-                                curr, total));
-                            status.SetProgress(curr/(double) total);
-                            return true;
-                        },
-                        OnPushTransferProgress = (curr, total, bytes) =>
-                        {
-                            status.SetMessage(string.Format(
-                                "Pushing to server ({0}/{1} objects)",
-                                curr, total));
-                            status.SetProgress(curr/(double) total);
-                            return true;
-                        }
-                    };
-
-                    repo.Network.Push(repo.Branches["master"], options);
-                }
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("{0}: {1}", ex.GetType().Name, ex.Message));
+            }
 
             GitUnlocked = true;
             status.CloseProgress();

@@ -32,6 +32,7 @@
                     <helpers:NegateConverter x:Key="Negate" />
                     <helpers:VisibilityConverter x:Key="Visibility" />
                     <helpers:EnumCountConverter x:Key="EnumCount" />
+                    <helpers:NIntPluralConverter x:Key="NIntPlural" />
                 </ResourceDictionary>
                 
                 <ResourceDictionary Source="Entities/Representations/ViewTemplates.xaml" />

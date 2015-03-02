@@ -123,6 +123,7 @@
       <DependentUpon>AuthorInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\EnumCountConverter.cs" />
+    <Compile Include="Helpers\NIntPluralConverter.cs" />
     <Compile Include="SyncProgress.xaml.cs">
       <DependentUpon>SyncProgress.xaml</DependentUpon>
     </Compile>

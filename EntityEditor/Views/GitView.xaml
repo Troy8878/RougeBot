@@ -20,15 +20,16 @@
               ConverterParameter=Negate}"
               HorizontalAlignment="Center">
             <TextBlock Foreground="SpringGreen">
-                No Uncommited Changes :)<LineBreak />
+                No Uncommited Changes<LineBreak />
                 
                 You are hoarding
-                <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy, Mode=OneWay}" />
-                commits<LineBreak />
+                <Run Text="{Binding Path=MasterBranch.TrackingDetails.AheadBy,
+                     Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
+                <LineBreak />
                 
                 You are missing out on
-                <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy, Mode=OneWay}" />
-                commits
+                <Run Text="{Binding Path=MasterBranch.TrackingDetails.BehindBy,
+                     Mode=OneWay, Converter={StaticResource NIntPlural}, ConverterParameter=commit}" />
             </TextBlock>
         </Grid>
         <!-- Dirty -->

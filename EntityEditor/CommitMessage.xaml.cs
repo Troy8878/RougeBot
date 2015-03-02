@@ -46,6 +46,14 @@ namespace EntityEditor
         {
             CanEdit = false;
             var message = Message;
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                MessageBox.Show("Say something!");
+                CanEdit = true;
+                return;
+            }
+
             using (var repo = new Repository(MainWindow.Instance.RepoDir))
             {
                 // Stage everything in the repo

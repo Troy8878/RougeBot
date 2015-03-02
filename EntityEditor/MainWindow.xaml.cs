@@ -200,9 +200,7 @@ namespace EntityEditor
 
                                 // Slowing things down for the user :)
                                 if (total - curr < 4)
-                                    Thread.Sleep(50);
-                                if (total - curr < 2)
-                                    Thread.Sleep(100);
+                                    Thread.Sleep(500);
                                 if (total == curr)
                                     Thread.Sleep(500);
 
@@ -223,9 +221,7 @@ namespace EntityEditor
 
                                 // Slowing things down for the user :)
                                 if (total - curr < 4)
-                                    Thread.Sleep(50);
-                                if (total - curr < 2)
-                                    Thread.Sleep(100);
+                                    Thread.Sleep(500);
                                 if (total == curr)
                                     Thread.Sleep(500);
 

@@ -4,7 +4,8 @@
         Title="SyncProgress" Height="100" Width="400"
         Topmost="True" WindowStyle="ToolWindow" ResizeMode="NoResize"
         Background="{StaticResource RbBackground}"
-        Foreground="{StaticResource RbText}">
+        Foreground="{StaticResource RbText}"
+        Icon="/wizard0.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />

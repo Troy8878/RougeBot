@@ -10,7 +10,8 @@
         Title="Editor" Height="480" Width="800"
         d:DataContext="{d:DesignInstance project:ProjectTree}"
         Background="{StaticResource RbBackground}"
-        Foreground="{StaticResource RbText}">
+        Foreground="{StaticResource RbText}"
+        Icon="/wizard0.ico">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">

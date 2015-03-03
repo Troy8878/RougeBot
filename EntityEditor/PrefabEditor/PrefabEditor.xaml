@@ -8,7 +8,8 @@
         d:DesignHeight="300" d:DesignWidth="300"
         Title="PrefabEditor"
         Background="{StaticResource RbBackground}"
-        Foreground="{StaticResource RbText}">
+        Foreground="{StaticResource RbText}"
+        Icon="/wizard0.ico">
 
     <Window.CommandBindings>
         <CommandBinding Command="New" Executed="OnNew" CanExecute="AlwaysExecute" />

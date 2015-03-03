@@ -5,7 +5,8 @@
         Title="CommitMessage" Height="400" Width="800"
         Background="{StaticResource RbBackground}"
         Foreground="{StaticResource RbText}"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Icon="/wizard0.ico">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />

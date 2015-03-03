@@ -676,10 +676,20 @@
     "dependencies": [],
     "properties": [
       {
+        "property": "shader",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "shader",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
         "property": "render_target",
         "usage": {
           "type": "string",
-          "required": true,
+          "required": false,
           "semantics": "render_target",
           "locked": false,
           "default": ""

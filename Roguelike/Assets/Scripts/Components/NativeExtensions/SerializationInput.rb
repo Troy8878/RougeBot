@@ -50,7 +50,8 @@ end
 class CustomModelComponent < ComponentBase
   # Describe what goes in the json file
   serialized_input do |p|
-    p.string :render_target, semantics: :render_target, required: true
+    p.string :shader,        semantics: :shader
+    p.string :render_target, semantics: :render_target
   end
 end
 
@@ -87,8 +88,8 @@ end
 
 class PositionComponent < ComponentBase
   serialized_input do |p|
-    p.float :move_speed, default: 5
-    p.vector :position, dimms: 2
-    p.enum :mode, required: true, options: ["jump", "linear", "exponential"]
+    p.float  :move_speed, default: 5
+    p.vector :position,   dimms: 2
+    p.enum   :mode,       required: true, options: ["jump", "linear", "exponential"]
   end
 end

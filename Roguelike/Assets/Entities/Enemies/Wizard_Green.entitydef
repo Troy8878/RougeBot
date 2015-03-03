@@ -1,59 +1,132 @@
 {
   "TransformComponent": {
-    "rotation": [0, 0, 0],
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "DefenseComponent": {
-    "health": 25,
-    "max_health": 25
+    "max_health": 25.0,
+    "health": 25.0
   },
-  "AttackComponent": {},
-  
+  "AttackComponent": {
+    "damage": [
+      2.0,
+      4.0
+    ]
+  },
   "PositionComponent": {
+    "move_speed": 5.0,
+    "position": [
+      0.0,
+      0.0
+    ],
     "mode": "linear"
   },
-
-  "EnemyLogicComponent": {},
-
+  "EnemyLogicComponent": {
+    "stationary": false
+  },
   "ChildHierarchy": {
     "children": [
       {
         "name": "Sprite",
         "components": {
           "TransformComponent": {
-            "position": [0, 0, -0.1]
+            "position": [
+              0.0,
+              0.0,
+              -0.1
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
           },
           "TextureComponent": {
             "textures": [
               "Enemies/Wizard_Green/Wizard0.png",
               "Enemies/Wizard_Green/Wizard1.png",
               "Enemies/Wizard_Green/Wizard2.png",
-              "Enemies/Wizard_Green/Wizard3.png",
+              "Enemies/Wizard_Green/Wizard3.png"
             ]
           },
           "SpriteComponent": {
-            "render_target": "WorldLayer"
+            "render_target": "WorldLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
           },
           "AnimatedComponent": {
-            "frame_range": [0, 4],
-            "frame_time": 0.3
+            "paused": "",
+            "frame_time": 0.3,
+            "frame_range": [
+              0.0,
+              4.0
+            ],
+            "loops": false
           }
-        }
+        },
+        "children": []
       },
       {
         "name": "HealthBar",
         "components": {
           "TransformComponent": {
-            "position": [0, 0.5, 0],
-            "scale": [1, 0.5, 1],
+            "position": [
+              0.0,
+              0.5,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              0.5,
+              1.0
+            ]
           },
           "TextureComponent": {
-            "textures": ["HealthBar.png"]
+            "textures": [
+              "HealthBar.png"
+            ]
           },
           "SpriteComponent": {
-            "render_target": "TranslucentLayer"
+            "render_target": "TranslucentLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
           },
           "HealthBarComponent": {}
-        }
+        },
+        "children": []
       }
     ]
   }

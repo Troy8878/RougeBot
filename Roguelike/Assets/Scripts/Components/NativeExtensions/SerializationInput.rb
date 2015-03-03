@@ -74,7 +74,6 @@ end
 class TextComponent < ComponentBase
   # Describe what goes in the json file
   serialized_input do |p|
-    p.string :text
     p.array  :texts,      contained: :string
     p.string :text_color, semantics: :color
     p.string :bg_color,   semantics: :color

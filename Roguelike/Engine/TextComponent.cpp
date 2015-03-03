@@ -260,7 +260,11 @@ Component *TextComponentFactory::CreateObject(
   if (it != data.end())
   {
     auto jsize = it->second.as_array_of<json::value::number_t>();
-    component->PopulateTextureComponent(D2D1::SizeF(static_cast<FLOAT>(jsize[0]), static_cast<FLOAT>(jsize[1])));
+    auto x = static_cast<FLOAT>(jsize[0]);
+    auto y = static_cast<FLOAT>(jsize[1]);
+
+    if (x >= 1 && y >= 1)
+      component->PopulateTextureComponent(D2D1::SizeF(x, y));
   }
 
   return component;

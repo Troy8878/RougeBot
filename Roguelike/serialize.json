@@ -838,16 +838,6 @@
     "dependencies": [],
     "properties": [
       {
-        "property": "text",
-        "usage": {
-          "type": "string",
-          "required": false,
-          "semantics": null,
-          "locked": false,
-          "default": ""
-        }
-      },
-      {
         "property": "texts",
         "usage": {
           "type": "array",

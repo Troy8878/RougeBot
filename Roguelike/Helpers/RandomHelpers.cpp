@@ -302,6 +302,9 @@ D2D1::ColorF JsonToColor(json::value json)
 
 D2D1::ColorF StringToColor(const std::string& name)
 {
+  if (name == "")
+    return D2D1::ColorF(D2D1::ColorF::Black, 0.0f);
+
   #pragma region Named Colors
   const static std::unordered_map<std::string, D2D1::ColorF::Enum> namedColors =
   {

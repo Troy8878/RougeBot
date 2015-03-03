@@ -46,6 +46,16 @@ namespace EntityEditor.Entities.Project
 
         public bool MissingData { get; set; }
 
-        public Dictionary<String, IPropertyValue> Properties { get; set; } 
+        public Dictionary<String, IPropertyValue> Properties { get; set; }
+
+        public JObject Serialize()
+        {
+            var cdef = new JObject();
+            foreach (var kvp in Properties)
+            {
+                cdef[kvp.Key] = kvp.Value.Serialize();
+            }
+            return cdef;
+        }
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using EntityEditor.Entities.Project;
+using EntityEditor.Helpers;
 
 namespace EntityEditor.Entities.Representations
 {
@@ -25,6 +26,26 @@ namespace EntityEditor.Entities.Representations
         public EntityView()
         {
             InitializeComponent();
+        }
+
+        private void Save(object sender, RoutedEventArgs e)
+        {
+            var tree = (ITreeOwner) DataContext;
+            while (tree.Owner != null)
+            {
+                tree = tree.Owner;
+            }
+
+            var saveable = tree as ISaveable;
+            if (saveable != null)
+            {
+                saveable.Save();
+            }
+            else
+            {
+                var uie = ((UIElement) sender);
+                ((Panel) LogicalTreeHelper.GetParent(uie)).Children.Remove(uie);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -46,7 +47,7 @@ namespace EntityEditor.Entities.Project
             var jcomponents = definition["components"];
             if (jcomponents != null)
             {
-                foreach (var jcomp in (JObject)jcomponents)
+                foreach (var jcomp in (JObject) jcomponents)
                 {
                     var existing = Components.FirstOrDefault(c => c.Name == jcomp.Key);
                     if (existing != null)
@@ -62,22 +63,46 @@ namespace EntityEditor.Entities.Project
             }
         }
 
-        public string Name { get; set; }
-
-        public string Type { get; set; }
-
         public List<Entity> Children { get; set; }
+        public List<Component> Components { get; set; }
 
-        public List<Component> Components { get; set; } 
+        public string Name { get; set; }
+        public string Type { get; set; }
 
         public IEnumerable<object> OwnedItems
         {
             get { return Children; }
         }
 
+        public ITreeOwner Owner { get; set; }
+
         public JToken Serialize()
         {
-            return JValue.CreateNull();
+            var data = new JObject();
+            data["name"] = Name;
+            data["components"] = SerializeComponents();
+            data["children"] = SerializeChildren();
+            return data;
+        }
+
+        public JToken SerializeChildren()
+        {
+            var children = new JArray();
+            foreach (var child in Children)
+            {
+                children.Add(child.Serialize());
+            }
+            return children;
+        }
+
+        public JToken SerializeComponents()
+        {
+            var data = new JObject();
+            foreach (var component in Components)
+            {
+                data[component.Name] = component.Serialize();
+            }
+            return data;
         }
     }
 }

@@ -9,7 +9,17 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance project:Archetype}">
     <Grid>
-        <ItemsControl ItemsSource="{Binding Path=Components}" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Button HorizontalAlignment="Left" Margin="5" Click="Save">
+            Save
+        </Button>
+        
+        <ItemsControl ItemsSource="{Binding Path=Components}" Margin="10"
+                      Grid.Row="1">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>

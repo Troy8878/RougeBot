@@ -160,6 +160,7 @@
     <Compile Include="AuthorInput.xaml.cs">
       <DependentUpon>AuthorInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Project\ISaveable.cs" />
     <Compile Include="Entities\Representations\Properties\Raw.cs" />
     <Compile Include="Helpers\EnumCountConverter.cs" />
     <Compile Include="Helpers\NIntPluralConverter.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace EntityEditor.Entities.Project
     {
         public ArchetypeContainer()
             : this(Path.Combine(
-                MainWindow.Instance.RepoDir, 
+                MainWindow.Instance.RepoDir,
                 "Roguelike", "Assets", "Entities"))
         {
             Name = "Archetypes";
@@ -33,9 +34,8 @@ namespace EntityEditor.Entities.Project
             }
         }
 
-        public List<ArchetypeContainer> Directories { get; set; } 
+        public List<ArchetypeContainer> Directories { get; set; }
         public List<Archetype> Archetypes { get; set; }
-
         public string Name { get; set; }
 
         public string Type
@@ -47,6 +47,12 @@ namespace EntityEditor.Entities.Project
         {
             // ReSharper disable once PossibleMultipleEnumeration
             get { return new IEnumerable<object>[] {Directories, Archetypes}.SelectMany(l => l); }
+        }
+
+        public ITreeOwner Owner
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
 
         public Archetype Find(string arch)

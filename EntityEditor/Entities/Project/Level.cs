@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Level : ITreeOwner
+    public class Level : ITreeOwner, ISaveable
     {
         public Level(string name, string file)
         {
@@ -15,7 +17,7 @@ namespace EntityEditor.Entities.Project
             var leveldef = JObject.Parse(System.IO.File.ReadAllText(file));
             leveldef["children"] = leveldef["entities"];
 
-            LevelRoot = new Entity(leveldef) {Name = "Root"};
+            LevelRoot = new Entity(leveldef) {Name = Name};
         }
         
         public string Name { get; set; }
@@ -31,6 +33,22 @@ namespace EntityEditor.Entities.Project
         public IEnumerable<object> OwnedItems
         {
             get { return new[] {LevelRoot}; }
+        }
+
+        public ITreeOwner Owner
+        {
+            get { return null; }
+            set { }
+        }
+
+        public void Save()
+        {
+            var data = new JObject();
+            data["name"] = Name;
+            data["components"] = LevelRoot.SerializeComponents();
+            data["entities"] = LevelRoot.SerializeChildren();
+
+            System.IO.File.WriteAllText(File, data.ToString(Formatting.Indented));
         }
     }
 }

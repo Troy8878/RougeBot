@@ -84,3 +84,11 @@ class TextComponent < ComponentBase
     p.vector :autocreate_textures, dimms: 2
   end
 end
+
+class PositionComponent < ComponentBase
+  serialized_input do |p|
+    p.float :move_speed, default: 5
+    p.vector :position, dimms: 2
+    p.enum :mode, required: true, options: ["jump", "linear", "exponential"]
+  end
+end

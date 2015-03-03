@@ -28,7 +28,7 @@
         "property": "frame_range",
         "usage": {
           "type": "vector",
-          "semantics": null,
+          "semantics": "range",
           "dimensions": 2,
           "required": false,
           "locked": false,
@@ -150,6 +150,16 @@
   {
     "dependencies": [],
     "properties": [
+      {
+        "property": "max_health",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 25
+        }
+      },
       {
         "property": "health",
         "usage": {
@@ -927,6 +937,53 @@
       }
     ],
     "name": "TextComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "move_speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 5
+        }
+      },
+      {
+        "property": "position",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "mode",
+        "usage": {
+          "type": "enum",
+          "required": true,
+          "options": [
+            "jump",
+            "linear",
+            "exponential"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "jump"
+        }
+      }
+    ],
+    "name": "PositionComponent"
   },
   {
     "dependencies": [],

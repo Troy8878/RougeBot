@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using EntityEditor.API;
 using LibGit2Sharp;
@@ -19,35 +21,42 @@ namespace EntityEditor.Views
 
         public async void Refresh()
         {
-            if (MainWindow.Instance == null) return;
-
-            var repo = new Repository(MainWindow.Instance.RepoDir);
-            var data = new GitData
+            try
             {
-                Status = repo.RetrieveStatus(),
-                MasterBranch = repo.Branches[repo.Head.TrackedBranch.UpstreamBranchCanonicalName]
-            };
+                if (MainWindow.Instance == null) return;
 
-            var details = data.MasterBranch.TrackingDetails;
-            data.UpToDate = details.AheadBy == 0 && details.BehindBy == 0;
-            data.Ahead = details.AheadBy;
-            data.Behind = details.BehindBy;
-
-            DataContext = data;
-
-            await Task.Run(delegate
-            {
-                var author = Author.Load();
-                repo.Fetch("origin", new FetchOptions
+                var repo = new Repository(MainWindow.Instance.RepoDir);
+                var data = new GitData
                 {
-                    CredentialsProvider = (a, b, c) => author.Credentials
-                });
+                    Status = repo.RetrieveStatus(),
+                    MasterBranch = repo.Branches[repo.Head.TrackedBranch.UpstreamBranchCanonicalName]
+                };
 
-                var ndetails = data.MasterBranch.TrackingDetails;
-                data.Ahead = ndetails.AheadBy;
-                data.Behind = ndetails.BehindBy;
-                Dispatcher.Invoke(() => DataContext = data);
-            });
+                var details = data.MasterBranch.TrackingDetails;
+                data.UpToDate = details.AheadBy == 0 && details.BehindBy == 0;
+                data.Ahead = details.AheadBy;
+                data.Behind = details.BehindBy;
+
+                DataContext = data;
+
+                await Task.Run(delegate
+                {
+                    var author = Author.Load();
+                    repo.Fetch("origin", new FetchOptions
+                    {
+                        CredentialsProvider = (a, b, c) => author.Credentials
+                    });
+
+                    var ndetails = data.MasterBranch.TrackingDetails;
+                    data.Ahead = ndetails.AheadBy;
+                    data.Behind = ndetails.BehindBy;
+                    Dispatcher.Invoke(() => DataContext = data);
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
 
         private void OnRefresh(object sender, RoutedEventArgs e)

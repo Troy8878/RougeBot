@@ -58,4 +58,14 @@
     <DataTemplate x:Key="PropMapStrStrTemplate" DataType="properties:StringMap">
         <views:StringMap />
     </DataTemplate>
+    
+    <DataTemplate x:Key="PropRawTemplate" DataType="properties:Raw">
+        <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="175"
+                 Height="75" FontSize="14" VerticalScrollBarVisibility="Auto">
+            <TextBox.Text>
+                <Binding Path="RawValue" ValidatesOnExceptions="True">
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+    </DataTemplate>
 </ResourceDictionary>

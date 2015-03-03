@@ -16,10 +16,7 @@ namespace EntityEditor.Entities.Representations
                 return null;
 
             var pvalue = ConstructType(prop, value);
-            if (pvalue != null)
-            {
-                pvalue.Locked = prop.Usage.Locked;
-            }
+            pvalue.Locked = prop.Usage.Locked;
 
             return pvalue;
         }
@@ -56,7 +53,7 @@ namespace EntityEditor.Entities.Representations
                     return ConstructMap(prop, value);
 
                 default:
-                    return null;
+                    return ConstructRaw(prop, value);
             }
         }
 
@@ -187,7 +184,14 @@ namespace EntityEditor.Entities.Representations
                 }
             }
 
-            return null;
+            // TODO: Handle more map types (do we even have any?)
+            return ConstructRaw(prop, value);
+        }
+
+        private static IPropertyValue ConstructRaw(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            value = value ?? prop.Usage.Default;
+            return new Raw {JsonValue = value};
         }
     }
 }

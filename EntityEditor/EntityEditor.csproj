@@ -160,8 +160,10 @@
     <Compile Include="AuthorInput.xaml.cs">
       <DependentUpon>AuthorInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Representations\Properties\Raw.cs" />
     <Compile Include="Helpers\EnumCountConverter.cs" />
     <Compile Include="Helpers\NIntPluralConverter.cs" />
+    <Compile Include="Helpers\RawJsonConverter.cs" />
     <Compile Include="SyncProgress.xaml.cs">
       <DependentUpon>SyncProgress.xaml</DependentUpon>
     </Compile>

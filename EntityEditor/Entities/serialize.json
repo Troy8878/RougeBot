@@ -116,15 +116,13 @@
         "property": "damage",
         "usage": {
           "type": "vector",
-          "semantics": null,
+          "semantics": "range",
           "dimensions": 2,
           "required": false,
           "locked": false,
           "default": [
-            0,
-            0,
-            0,
-            0
+            2,
+            4
           ]
         }
       }

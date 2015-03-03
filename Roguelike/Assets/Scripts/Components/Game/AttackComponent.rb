@@ -20,7 +20,7 @@ class AttackComponent < ComponentBase
   property :damage, :float_pair, true
 
   serialized_input do |p|
-    p.vector :damage, dimms: 2
+    p.vector :damage, dimms: 2, default: [2, 4], semantics: :range
   end
 
   def initialize(data)

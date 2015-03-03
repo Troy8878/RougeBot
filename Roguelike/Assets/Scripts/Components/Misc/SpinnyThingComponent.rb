@@ -13,7 +13,7 @@ class SpinnyThingComponent < ComponentBase
   serialized_input do |p|
     p.dependency "TransformComponent"
     p.float :speed, default: 1
-    p.enum  :axis, options: ["x", "y", "z"]
+    p.enum  :axis, options: ["x", "y", "z"], default: "z"
   end
 
   def initialize(data)

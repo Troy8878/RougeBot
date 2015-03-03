@@ -40,6 +40,9 @@ namespace EntityEditor.Entities.Representations.Properties
 
         public JToken Serialize()
         {
+            if (string.IsNullOrWhiteSpace(Value))
+                return JValue.CreateNull();
+
             return Value;
         }
 

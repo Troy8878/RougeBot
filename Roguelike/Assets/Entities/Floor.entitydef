@@ -1,27 +1,35 @@
 {
   "TransformComponent": {
-    "position": [0, 0, 0.1]
+    "position": [
+      0.0,
+      0.0,
+      0.1
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "TextureComponent": {
-    "textures": [ 
+    "textures": [
       {
         "zipped": [
           "World/Full.png",
           "World/Wall.png",
           "World/Floor.png"
         ]
-      },
-      /*{
-        "zipped": [
-          "ASCII/Roof.png",
-          "ASCII/Wall.png",
-          "ASCII/Floor.png"
-        ]
-      }*/
+      }
     ]
   },
   "CustomModelComponent": {
-    "shader": "Textured"
+    "shader": "Textured",
+    "render_target": ""
   },
   "FloorGeneratorComponent": {}
 }

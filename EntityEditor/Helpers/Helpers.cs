@@ -67,17 +67,13 @@ namespace EntityEditor.Helpers
 
         public static Color NamedColor(this string str)
         {
-            var colors = typeof (Colors).GetFields(BindingFlags.Static);
-            foreach (var c in from color in colors
-                              where color.Name.Equals(str, StringComparison.InvariantCultureIgnoreCase)
-                              select color.GetValue(null))
-            {
-                var value = (Color) c;
-                value.ScA = 1.0f;
-                return value;
-            }
+            var value =
+                (from color in typeof (Colors).GetFields(BindingFlags.Static)
+                    where color.Name.Equals(str, StringComparison.InvariantCultureIgnoreCase)
+                    select (Color) color.GetValue(null)).FirstOrDefault();
 
-            return new Color {ScA = 1.0f};
+            value.ScA = 1.0f;
+            return value;
         }
     }
 }

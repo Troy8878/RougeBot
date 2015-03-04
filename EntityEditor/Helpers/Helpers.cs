@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
+using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Helpers
 {
@@ -46,6 +50,34 @@ namespace EntityEditor.Helpers
         {
             action(obj);
             return obj;
+        }
+
+        public static JArray HexToColor(this string str)
+        {
+            var ary = new JArray();
+            while (str.Length >= 2)
+            {
+                var value = int.Parse(str.Substring(0, 2), NumberStyles.HexNumber);
+                ary.Add(value/255.0f);
+
+                str = str.Substring(2);
+            }
+            return ary;
+        }
+
+        public static Color NamedColor(this string str)
+        {
+            var colors = typeof (Colors).GetFields(BindingFlags.Static);
+            foreach (var c in from color in colors
+                              where color.Name.Equals(str, StringComparison.InvariantCultureIgnoreCase)
+                              select color.GetValue(null))
+            {
+                var value = (Color) c;
+                value.ScA = 1.0f;
+                return value;
+            }
+
+            return new Color {ScA = 1.0f};
         }
     }
 }

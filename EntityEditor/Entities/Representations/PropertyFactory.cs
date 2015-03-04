@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using EntityEditor.Entities.Representations.Properties;
 using EntityEditor.Entities.Serialization;
+using EntityEditor.Helpers;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations
@@ -119,16 +121,32 @@ namespace EntityEditor.Entities.Representations
 
         private static IPropertyValue ConstructVector(ComponentDefinition.ComponentProperty prop, JToken value)
         {
-            var ary = value as JArray;
             var def = prop.Usage.Default as JArray;
 
-            if (ary == null)
-                ary = def;
+            if (value == null)
+                value = def;
 
-            if (ary == null)
-                ary = new JArray();
+            if (value == null)
+                value = new JArray();
 
-            return new Vector(ary, prop.Usage.VectorDimensions ?? 4, prop.Usage.Semantics);
+            if (value.Type == JTokenType.String)
+            {
+                var str = (string) value;
+                if (str.StartsWith("#"))
+                {
+                    value = str.TrimStart('#').HexToColor();
+                }
+                else
+                {
+                    var split = str.Split(',').Select(s => s.Trim()).ToArray();
+                    var color = split[0].Trim().NamedColor();
+                    if (split.Length > 1)
+                        color.ScA = float.Parse(split[1].Trim());
+                    value = new JArray(color.ScR, color.ScG, color.ScB, color.ScA);
+                }
+            }
+
+            return new Vector(value as JArray, prop.Usage.VectorDimensions ?? 4, prop.Usage.Semantics);
         }
 
         private static IPropertyValue ConstructTexture(ComponentDefinition.ComponentProperty prop, JToken value)

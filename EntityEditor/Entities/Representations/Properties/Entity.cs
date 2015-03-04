@@ -28,5 +28,10 @@ namespace EntityEditor.Entities.Representations.Properties
         }
 
         public bool Locked { get; set; }
+        public bool Equals(IPropertyValue other)
+        {
+            var e = other as Entity;
+            return e != null && Value.Equals(e.Value);
+        }
     }
 }

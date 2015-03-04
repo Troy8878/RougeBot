@@ -67,5 +67,17 @@ namespace EntityEditor.Entities.Representations.Properties
         }
 
         public bool Locked { get; set; }
+        public bool Equals(IPropertyValue other)
+        {
+            // ReSharper disable CompareOfFloatsByEqualityOperator
+            var v = other as Vector;
+            return v != null &&
+                   Dimensions == v.Dimensions &&
+                   X == v.X &&
+                   Y == v.Y &&
+                   Z == v.Z &&
+                   W == v.W;
+            // ReSharper restore CompareOfFloatsByEqualityOperator
+        }
     }
 }

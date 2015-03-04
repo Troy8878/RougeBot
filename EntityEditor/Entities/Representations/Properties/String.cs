@@ -62,5 +62,11 @@ namespace EntityEditor.Entities.Representations.Properties
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public bool Equals(IPropertyValue other)
+        {
+            var s = other as String;
+            return s != null && Value == s.Value;
+        }
     }
 }

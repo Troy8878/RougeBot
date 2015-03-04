@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Component
+    public class Component : IEquatable<Component>
     {
         public Component(string name, JObject definition)
         {
@@ -56,6 +56,26 @@ namespace EntityEditor.Entities.Project
                 cdef[kvp.Key] = kvp.Value.Serialize();
             }
             return cdef;
+        }
+
+        public bool Equals(Component other)
+        {
+            if (other == null)
+                return false;
+
+            if (Properties.Count != other.Properties.Count)
+                return false;
+
+            foreach (var p1 in Properties)
+            {
+                IPropertyValue p2;
+                if (!other.Properties.TryGetValue(p1.Key, out p2))
+                    return false;
+                if (!p1.Value.Equals(p2))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

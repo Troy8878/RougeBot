@@ -41,12 +41,7 @@ namespace EntityEditor.Entities.Project
 
         public void Save()
         {
-            var data = new JObject();
-            foreach (var comp in Components)
-            {
-                data[comp.Name] = comp.Serialize();
-            }
-            
+            var data = Serialize();
             File.WriteAllText(_file, data.ToString(Formatting.Indented));
         }
 
@@ -66,6 +61,16 @@ namespace EntityEditor.Entities.Project
         {
             get { return null; }
             set { }
+        }
+
+        public JObject Serialize()
+        {
+            var data = new JObject();
+            foreach (var comp in Components)
+            {
+                data[comp.Name] = comp.Serialize();
+            }
+            return data;
         }
     }
 }

@@ -80,5 +80,10 @@ namespace EntityEditor.Entities.Representations.Properties
         }
 
         public bool Locked { get; set; }
+        public bool Equals(IPropertyValue other)
+        {
+            var ary = other as Array;
+            return ary != null && Items.Zip(ary.Items, (v1, v2) => v1.Equals(v2)).All(r => r);
+        }
     }
 }

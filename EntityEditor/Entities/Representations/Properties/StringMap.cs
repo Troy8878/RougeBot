@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using EntityEditor.Annotations;
@@ -39,7 +41,7 @@ namespace EntityEditor.Entities.Representations.Properties
             return obj;
         }
 
-        public class Row : INotifyPropertyChanged
+        public class Row : INotifyPropertyChanged, IEquatable<Row>
         {
             public Row()
                 : this("", "")
@@ -85,6 +87,19 @@ namespace EntityEditor.Entities.Representations.Properties
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public bool Equals(Row other)
+            {
+                return Key == other.Key && Value == other.Value;
+            }
+        }
+
+        public bool Equals(IPropertyValue other)
+        {
+            var m = other as StringMap;
+            return 
+                m != null && Values.Count == m.Values.Count && 
+                Values.Zip(m.Values, (v1, v2) => v1.Equals(v2)).All(r => r);
         }
     }
 }

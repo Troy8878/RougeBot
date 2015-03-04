@@ -121,6 +121,12 @@ namespace EntityEditor.Entities.Representations.Properties
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public bool Equals(IPropertyValue other)
+            {
+                var s = other as SingleTexture;
+                return s != null && Value == s.Value;
+            }
         }
 
         public class TextureZip : IPropertyValue, INotifyPropertyChanged
@@ -161,6 +167,18 @@ namespace EntityEditor.Entities.Representations.Properties
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public bool Equals(IPropertyValue other)
+            {
+                var z = other as TextureZip;
+                return z != null && Textures.Equals(z.Textures);
+            }
+        }
+
+        public bool Equals(IPropertyValue other)
+        {
+            var t = other as Texture;
+            return t != null && Value.Equals(t.Value);
         }
     }
 }

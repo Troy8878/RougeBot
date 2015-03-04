@@ -30,5 +30,11 @@ namespace EntityEditor.Entities.Representations.Properties
         {
             return JsonValue;
         }
+
+        public bool Equals(IPropertyValue other)
+        {
+            var r = other as Raw;
+            return r != null && JToken.DeepEquals(JsonValue, r.JsonValue);
+        }
     }
 }

@@ -1,6 +1,20 @@
 {
   "TransformComponent": {
-    "position": [0, 0, -0.1, 1]
+    "position": [
+      0.0,
+      0.0,
+      -0.1
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "TextureComponent": {
     "textures": [
@@ -8,10 +22,29 @@
     ]
   },
   "SpriteComponent": {
-    "render_target": "TranslucentLayer"
+    "render_target": "TranslucentLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "TextComponent": {
+    "texts": [],
+    "text_color": "",
+    "bg_color": "",
     "font": "Impact",
+    "font_size": 48.0,
+    "text_align": "center",
+    "paragraph_align": "center",
+    "autocreate_textures": [
+      0.0,
+      0.0
+    ]
   },
-  "StatusMessageComponent": {}
+  "StatusMessageComponent": {
+    "delete_owner": false
+  }
 }

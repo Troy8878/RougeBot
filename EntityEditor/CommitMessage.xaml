@@ -6,7 +6,7 @@
         Background="{StaticResource RbToolBackground}"
         Foreground="{StaticResource RbText}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Icon="/wizard0.ico" WindowStyle="ToolWindow">
+        Icon="/wizard0.ico" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />

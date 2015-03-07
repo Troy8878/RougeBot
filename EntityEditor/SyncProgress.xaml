@@ -5,7 +5,7 @@
         Topmost="True" WindowStyle="ToolWindow" ResizeMode="NoResize"
         Background="{StaticResource RbToolBackground}"
         Foreground="{StaticResource RbText}"
-        Icon="/wizard0.ico">
+        Icon="/wizard0.ico" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />

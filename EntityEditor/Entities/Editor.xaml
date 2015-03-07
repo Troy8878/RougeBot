@@ -7,7 +7,7 @@
         xmlns:project="clr-namespace:EntityEditor.Entities.Project"
         xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
         mc:Ignorable="d"
-        Title="Editor" Height="480" Width="800"
+        Title="Editor" Height="600" Width="1200"
         d:DataContext="{d:DesignInstance project:ProjectTree}"
         Background="{StaticResource RbBackground}"
         Foreground="{StaticResource RbText}"

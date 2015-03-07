@@ -10,9 +10,11 @@
                 <ResourceDictionary>
                     <Color x:Key="RbTextColor">White</Color>
                     <Color x:Key="RbBackgroundColor">#101010</Color>
+                    <Color x:Key="RbToolBackgroundColor">#202020</Color>
                     
                     <SolidColorBrush x:Key="RbText" Color="{StaticResource RbTextColor}" />
                     <SolidColorBrush x:Key="RbBackground" Color="{StaticResource RbBackgroundColor}" />
+                    <SolidColorBrush x:Key="RbToolBackground" Color="{StaticResource RbToolBackgroundColor}" />
 
                     <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#202020" />
                     <SolidColorBrush x:Key="SolidBorderBrush" Color="#404040" />

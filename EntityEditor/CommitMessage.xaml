@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
         Title="CommitMessage" Height="400" Width="800"
-        Background="{StaticResource RbBackground}"
+        Background="{StaticResource RbToolBackground}"
         Foreground="{StaticResource RbText}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Icon="/wizard0.ico">
+        Icon="/wizard0.ico" WindowStyle="ToolWindow">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />

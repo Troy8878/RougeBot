@@ -48,14 +48,14 @@ namespace EntityEditor
         private void ButtonPrefab(object sender, RoutedEventArgs e)
         {
             GitUnlocked = false;
-            new PrefabEditor.PrefabEditor().Show();
+            new PrefabEditor.PrefabEditor {Owner = this}.Show();
             GitUnlocked = true;
         }
 
         private void ButtonEntity(object sender, RoutedEventArgs e)
         {
             GitUnlocked = false;
-            new Editor().Show();
+            new Editor {Owner = this}.Show();
             GitUnlocked = true;
             GitView.Refresh();
         }
@@ -90,7 +90,7 @@ namespace EntityEditor
                     IsFolderPicker = true,
                     Title = "Select Roguebot git repo folder"
                 };
-                if (dlg.ShowDialog() != CommonFileDialogResult.Ok)
+                if (dlg.ShowDialog(this) != CommonFileDialogResult.Ok)
                 {
                     if (init)
                         Loaded += (o, e) => Close();
@@ -121,7 +121,7 @@ namespace EntityEditor
         private void CommitClick(object sender, RoutedEventArgs e)
         {
             GitUnlocked = false;
-            new CommitMessage().ShowDialog();
+            new CommitMessage {Owner = this}.ShowDialog();
             GitUnlocked = true;
             GitView.Refresh();
         }
@@ -133,13 +133,13 @@ namespace EntityEditor
             var author = Author.Load();
             if (!author.IsComplete)
             {
-                new AuthorInput().ShowDialog();
+                new AuthorInput {Owner = this}.ShowDialog();
                 author = Author.Load();
                 if (!author.IsComplete)
                     return;
             }
 
-            var status = new SyncProgress();
+            var status = new SyncProgress {Owner = this};
             status.Show();
             status.SetProgress(null);
             status.SetMessage("Preparing");

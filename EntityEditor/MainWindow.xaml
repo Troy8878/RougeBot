@@ -3,9 +3,19 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:views="clr-namespace:EntityEditor.Views"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                   xmlns:entityEditor="clr-namespace:EntityEditor"
                    Title="MainWindow" MinHeight="550" MinWidth="800"
                    Height="550" Width="800" ResizeMode="CanResizeWithGrip"
-                   Icon="/wizard0.ico">
+                   Icon="/wizard0.ico" WindowState="Maximized">
+    
+    <mctrl:MetroWindow.Flyouts>
+        <mctrl:FlyoutsControl>
+            <mctrl:Flyout x:Name="CommitFlyout" IsOpenChanged="CommitFlyoutOpenChanged"
+                          Position="Right" IsModal="True">
+                <entityEditor:CommitMessage x:Name="CommitMessage" OnClose="CommitMessageOnClose" />
+            </mctrl:Flyout>
+        </mctrl:FlyoutsControl>
+    </mctrl:MetroWindow.Flyouts>
 
     <Grid Height="550" Width="800">
         <Grid.RowDefinitions>

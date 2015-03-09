@@ -120,10 +120,8 @@ namespace EntityEditor
 
         private void CommitClick(object sender, RoutedEventArgs e)
         {
-            GitUnlocked = false;
-            new CommitMessage {Owner = this}.ShowDialog();
-            GitUnlocked = true;
-            GitView.Refresh();
+            CommitMessage.Reset();
+            CommitFlyout.IsOpen = true;
         }
 
         private async void SyncClick(object sender, RoutedEventArgs e)
@@ -282,6 +280,21 @@ namespace EntityEditor
                 FileName = Path.Combine(RepoDir, "Roguelike", "build.bat"),
                 WorkingDirectory = Path.Combine(RepoDir, "Roguelike")
             });
+        }
+
+        private void CommitFlyoutOpenChanged(object sender, RoutedEventArgs e)
+        {
+            GitUnlocked = !CommitFlyout.IsOpen;
+
+            if (GitUnlocked)
+            {
+                GitView.Refresh();
+            }
+        }
+
+        private void CommitMessageOnClose()
+        {
+            CommitFlyout.IsOpen = false;
         }
     }
 }

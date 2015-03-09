@@ -4,7 +4,7 @@
                     xmlns:views="clr-namespace:EntityEditor.Entities.Representations.Views"
                     xmlns:representations="clr-namespace:EntityEditor.Entities.Representations">
     <DataTemplate x:Key="PropBoolTemplate" DataType="properties:Bool">
-        <CheckBox Height="25" IsChecked="{Binding Path=Value}" IsEnabled="{Binding Path=Locked}" />
+        <CheckBox Height="25" IsChecked="{Binding Path=Value}" IsEnabled="{Binding Path=Locked, Converter={StaticResource Negate}}" />
     </DataTemplate>
 
     <DataTemplate x:Key="PropFloatTemplate" DataType="properties:Float">

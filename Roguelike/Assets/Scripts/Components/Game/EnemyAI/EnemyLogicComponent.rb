@@ -14,7 +14,7 @@ class EnemyLogicComponent < ComponentBase
   serialized_input do |p|
     p.dependency "PositionComponent"
     p.dependency "AttackComponent"
-    p.bool :stationary, required: false, default: false
+    p.bool :stationary, default: false
   end
 
   def initialize(data)

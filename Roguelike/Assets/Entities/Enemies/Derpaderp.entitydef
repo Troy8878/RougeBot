@@ -84,10 +84,11 @@
               0.0,
               3.0
             ],
-            "loops": false
+            "loops": true
           }
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       },
       {
         "name": "HealthBar",
@@ -126,7 +127,8 @@
           },
           "HealthBarComponent": {}
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       }
     ]
   }

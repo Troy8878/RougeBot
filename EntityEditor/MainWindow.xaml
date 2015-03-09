@@ -15,7 +15,7 @@
                 <entityEditor:CommitMessage x:Name="CommitMessage" OnClose="CommitMessageOnClose" />
             </mctrl:Flyout>
             <mctrl:Flyout x:Name="SyncFlyout" Position="Bottom" CloseButtonVisibility="Collapsed">
-                <entityEditor:SyncProgress x:Name="SyncProgress" />
+                <entityEditor:SyncProgress x:Name="SyncProgress" Margin="0,0,50,0" />
             </mctrl:Flyout>
         </mctrl:FlyoutsControl>
     </mctrl:MetroWindow.Flyouts>

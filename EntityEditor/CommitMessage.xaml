@@ -1,9 +1,10 @@
 ﻿<UserControl x:Class="EntityEditor.CommitMessage"
-                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
-                   DataContext="{Binding RelativeSource={RelativeSource Self}}"
-                    VerticalAlignment="Top">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
+             Width="600"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             VerticalAlignment="Top">
     <Grid Margin="5" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />

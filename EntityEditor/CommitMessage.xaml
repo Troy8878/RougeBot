@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                   Title="CommitMessage" Height="400" Width="800"
+                   Title="CommitMessage" Height="400" Width="700"
                    DataContext="{Binding RelativeSource={RelativeSource Self}}"
                    Icon="/wizard0.ico" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner">
     <Grid Margin="5">

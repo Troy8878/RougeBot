@@ -16,7 +16,10 @@
   },
   "TextureComponent": {
     "textures": [
-      "Robot.png",
+      "Player/Player0.png",
+      "Player/Player1.png",
+      "Player/Player2.png",
+      "Player/Player3.png",
     ]
   },
   "SpriteComponent": {
@@ -24,7 +27,7 @@
   },
   "AnimatedComponent": {
     "frame_range": [0, 4],
-    "frame_time": 0.3
+    "frame_time": 0.1
   },
   "PlayerControllerComponent": {},
 

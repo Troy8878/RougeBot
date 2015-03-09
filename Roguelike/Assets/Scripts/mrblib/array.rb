@@ -193,6 +193,17 @@ class Array
       self
     end
   end
+
+  def to_ary
+    ary = []
+    self.each do |a|
+      ary << a
+    end
+    puts ary
+    ary
+  end
+
+  alias to_a to_ary
 end
 
 ##
@@ -210,9 +221,9 @@ class Array
 end
 
 ##
-# Other Array helpers
+# Array can get random entries
 class Array
-  def count
-    self.size
+  def random_entry
+    self[Random.int_range(0, length)]
   end
 end

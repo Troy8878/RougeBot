@@ -48,15 +48,29 @@ end
 #################################################################
 repo_dir = "#{Dir.pwd}/Roguelike/"
 code_dirs = [
-  "Assets/Scripts/Components/",
-  "Assets/Scripts/Support/",
-  "Assets/Scripts/Support/Helpers/",
-  "Assets/Scripts/Support/Items/",
   "Engine/", 
   "Game/", 
   "Helpers/",
-  "json/"
+  "json/",
+  "FMOD/"
 ]
+
+def list_subdirs(base, dir, ary = [])
+  ary << "#{dir}"
+
+  Dir.foreach(base + dir) do |subdir|
+    next if subdir =~ /^\./
+
+    fulldir = "#{dir}#{subdir}"
+    next unless Dir.exist?(base + fulldir)
+
+    list_subdirs base, "#{fulldir}/", ary
+  end
+  ary
+end
+
+code_dirs += list_subdirs repo_dir, "Assets/Scripts/Components/"
+code_dirs += list_subdirs repo_dir, "Assets/Scripts/Support/"
 
 # Look for C files in the current directory and its sub dirrectories
 filters = code_dirs.map do |dir| 
@@ -71,9 +85,15 @@ end
 puts
 
 # Do the calculation
-command_line = "cloc --by-file --quiet --yaml #{filters.map{|filter| "\"#{filter}\""}.join ' '}"
+command_line = "cloc --by-file --quiet --yaml #{filters.map{|filter| "#{filter.inspect}"}.join ' '}"
 puts "> #{command_line}\n" # just print it so we can see what the command line was
 file_data_raw = `#{command_line}` # run the actual command
+
+#adsourhjgaoeirg damn you cloc!
+while file_data_raw[0] != '-'
+  file_data_raw = file_data_raw[1..-1]
+end
+
 file_data = YAML.load(file_data_raw) # 
 
 # Discount the header/sum sections, but store them
@@ -98,9 +118,17 @@ def find_authors(filename)
   file = File.read(filename)
   file.gsub!(/(\r|\n)+/, "\n")
 
-  # It's on line 3
-  authors = file.lines[2].match(pattern)[:authors]
-  authors = authors.split(',').map{|author| author.strip.downcase }
+  authors = []
+  lines = file.lines
+
+  if lines && lines[2]
+    # It's on line 3
+    author_lines = lines[2].match(pattern)
+    if author_lines
+      authors = author_lines[:authors]
+      authors = authors.split(',').map{|author| author.strip.downcase }
+    end
+  end
 
   if authors.empty?
     puts "No authors found for #{filename}"
@@ -160,7 +188,14 @@ $author_loc = author_loc
 
 def diff_values(diffp, *path, remove_empty: false)
   authp = $author_loc
-  path[0..-2].each{|p| authp = authp[p]; diffp = diffp[p] }
+  path[0..-2].each do |p|
+    return if authp.nil? || diffp.nil?
+
+    authp = authp[p]
+    diffp = diffp[p]
+  end
+
+  return if authp.nil? || diffp.nil?
 
   authp[path.last] -= diffp[path.last]
 

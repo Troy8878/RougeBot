@@ -1271,7 +1271,11 @@ mrb_class_path(mrb_state *mrb, struct RClass *c)
       return mrb_nil_value();
     }
     else if (outer && outer != mrb->object_class) {
+      if (outer->tt == MRB_TT_SCLASS)
+        outer = mrb_class_ptr(mrb_iv_get(mrb, mrb_obj_value(outer), mrb_intern_lit(mrb, "__attached__")));
+
       mrb_value base = mrb_class_path(mrb, outer);
+
       path = mrb_str_buf_new(mrb, 0);
       if (mrb_nil_p(base)) {
         mrb_str_cat_lit(mrb, path, "#<Class:");

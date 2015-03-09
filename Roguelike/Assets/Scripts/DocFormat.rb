@@ -6,6 +6,7 @@
 # FileName.rb
 # Your Name
 # Created Year/Month/Day
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 #Paste this on top of all classes!#
@@ -22,6 +23,7 @@
 #Just kidding. Please just do it or you will make me sad panda.#
 
 #Sincerely, 
-#Jake Robsahm
+#Claire Robsahm
 #The person in charge of the Ruby
+
 

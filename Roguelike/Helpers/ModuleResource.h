@@ -2,6 +2,7 @@
  * ModuleResource.h
  * Connor Hilarides
  * Created 2014/05/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "FixedWindows.h"
@@ -13,7 +14,7 @@ class ModuleResource final
 public:
   inline ModuleResource(int id, const char *type)
   {
-    auto module = GetModuleHandle(NULL);
+    auto module = GetModuleHandle(nullptr);
 
     resource = FindResource(module, MAKEINTRESOURCE(id), (type));
     resHandle = LoadResource(module, resource);

@@ -1,0 +1,45 @@
+{
+  "TransformComponent": {
+    "position": [0, 0.25, 0],
+    "scale": [0.8, 0.2]
+  },
+  "TextureComponent": {
+    "textures": ["SPECIAL/NULL"]
+  },
+  "SpriteComponent": {
+    "render_target": "PauseLayer",
+    "tint": "#7F7F7FAF"
+  },
+  "ButtonComponent": {
+    "render_target": "PauseLayer"
+  },
+  "EvalOnEventComponent": {
+    "bindings": {
+      "button_clicked": "coda!('Are you sure you want to exit? All unsaved progress will be lost.'){Game.switch_level 'MainMenu'}",
+      "mouse_leave": "owner.sprite_component.tint = '#7F7F7FAF'",
+      "mouse_enter": "owner.sprite_component.tint = '#FF0000AF'",
+    }
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.01]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/400:100"]
+          },
+          "SpriteComponent": {
+            "render_target": "PauseLayer",
+          },
+          "TextComponent": {
+            "texts": ["Main Menu"],
+            "font_size": 48,
+            "bg_color": "#7F7F7F6F"
+          }
+        }
+      }
+    ]
+  }
+}

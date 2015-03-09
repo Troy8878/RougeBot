@@ -2,6 +2,7 @@
  * CStackTrace.h
  * Connor Hilarides
  * Created 2014/08/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #ifdef __cplusplus

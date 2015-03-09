@@ -2,6 +2,7 @@
  * Camera.cpp
  * Connor Hilarides
  * Created 2014/09/06
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -13,11 +14,12 @@
 
 using namespace ruby;
 
-static mrb_value mrb_cameras_make(ruby_class& cls, ICamera *cam);
+static mrb_value mrb_cameras_make(ruby_class &cls, ICamera *cam);
 static ruby_module mrb_camera_module();
 static ruby_class mrb_camera_base();
 static mrb_value mrb_cameras_get_camera(mrb_state *mrb, mrb_value);
 static mrb_value mrb_cameras_camera_init(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value self);
 
 static ruby_class mrb_hudcamera_class();
 static mrb_value mrb_hudcamera_init(mrb_state *mrb, mrb_value self);
@@ -43,7 +45,7 @@ static mrb_value mrb_manualcamera_set_fov(mrb_state *mrb, mrb_value self);
 
 #pragma region ICamera Impls
 
-void HUDCamera::LoadFromData(const component_factory_data& data)
+void HUDCamera::LoadFromData(const component_factory_data &data)
 {
   auto jpos = map_fetch(data, "position", json::value::parse("[0,0,0,1]"));
   auto jsize = map_fetch(data, "size", json::value::parse("[1,1]"));
@@ -64,19 +66,19 @@ mrb_value HUDCamera::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
-void LookAtCamera::LoadFromData(const component_factory_data& data)
+void LookAtCamera::LoadFromData(const component_factory_data &data)
 {
   static auto dpos = json::value::parse("[0,0,1,1]");
   static auto dlook = json::value::parse("[0,0,0,1]");
-  
+
   auto jnear = map_fetch(data, "near", 0.01);
   auto jfar = map_fetch(data, "far", 100);
   auto jfov = map_fetch(data, "fov", 45);
   auto jpos = map_fetch(data, "position", dpos);
   auto jlook = map_fetch(data, "look_at", dlook);
-  
-  nearField = (float) jnear.as_number();
-  farField = (float) jfar.as_number();
+
+  nearField = static_cast<float>(jnear.as_number());
+  farField = static_cast<float>(jfar.as_number());
   fieldOfView = float(jfov.as_number() * math::pi / 180.0);
   position = math::Vector::VectorFromJson(jpos);
   lookAt = math::Vector::VectorFromJson(jlook);
@@ -95,14 +97,14 @@ mrb_value LookAtCamera::GetRubyWrapper()
 
 // ----------------------------------------------------------------------------
 
-void ManualCamera::LoadFromData(const component_factory_data& data)
+void ManualCamera::LoadFromData(const component_factory_data &data)
 {
   auto jnear = map_fetch(data, "near", 0.01);
   auto jfar = map_fetch(data, "far", 100);
   auto jfov = map_fetch(data, "fov", 45);
-  
-  nearField = (float) jnear.as_number();
-  farField = (float) jfar.as_number();
+
+  nearField = static_cast<float>(jnear.as_number());
+  farField = static_cast<float>(jfar.as_number());
   fieldOfView = float(jfov.as_number() * math::pi / 180.0);
 }
 
@@ -120,9 +122,9 @@ mrb_value ManualCamera::GetRubyWrapper()
 
 #pragma region Base Camera Ruby
 
-static mrb_value mrb_cameras_make(ruby::ruby_class& cls, ICamera *cam)
+static mrb_value mrb_cameras_make(ruby::ruby_class &cls, ICamera *cam)
 {
-  return cls.new_inst(mrb_inst->wrap_native_ptr(static_cast<ICamera *>(cam)));
+  return cls.new_inst(mrb_inst->wrap_native_ptr(cam)).silent_reset();
 }
 
 // ----------------------------------------------------------------------------
@@ -151,11 +153,11 @@ static ruby::ruby_class mrb_camera_base()
 
   if (!init)
   {
-    base.define_method("initialize", mrb_cameras_camera_init, ARGS_REQ(1));
+    base.define_method("screen_to_world", mrb_cameras_camera_screen_to_world, ARGS_REQ(1));
 
     init = true;
   }
-  
+
   return base;
 }
 
@@ -178,8 +180,33 @@ static mrb_value mrb_cameras_camera_init(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "o", &native_ptr);
 
   ruby::save_native_ptr(mrb, self, mrb_cptr(native_ptr));
-  
+
   return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_cameras_camera_screen_to_world(mrb_state *mrb, mrb_value self)
+{
+  using namespace DirectX;
+
+  mrb_value point;
+  mrb_value plane_origin = mrb_nil_value();
+  mrb_value plane_normal = mrb_nil_value();
+  mrb_get_args(mrb, "o|oo", &point, &plane_origin, &plane_normal);
+
+  auto cam = ruby::read_native_ptr<ICamera>(mrb, self);
+  XMVECTOR point_v = ruby::get_ruby_vector(point);
+  XMVECTOR origin_v = g_XMZero;
+  XMVECTOR normal_v = g_XMIdentityR2;
+
+  if (!mrb_nil_p(plane_origin))
+    origin_v = ruby::get_ruby_vector(plane_origin);
+  if (!mrb_nil_p(plane_normal))
+    normal_v = ruby::get_ruby_vector(plane_normal);
+
+  auto result = ScreenToPlane(point_v, origin_v, normal_v, cam);
+  return ruby::create_new_vector(result);
 }
 
 #pragma endregion
@@ -251,7 +278,7 @@ static mrb_value mrb_lookatcamera_init(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_lookatcamera_position(mrb_state *mrb, mrb_value self)
 {
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   return wrap_memory_vector(&lcam.position);
 }
@@ -263,9 +290,9 @@ static mrb_value mrb_lookatcamera_position_set(mrb_state *mrb, mrb_value self)
   mrb_value vv;
   mrb_get_args(mrb, "o", &vv);
 
-  auto v = *(math::Vector *)mrb_data_get_ptr(mrb, vv, &mrb_vector_type);
+  auto v = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, vv, &mrb_vector_type));
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   lcam.position = v;
 
@@ -277,7 +304,7 @@ static mrb_value mrb_lookatcamera_position_set(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_lookatcamera_look_at(mrb_state *mrb, mrb_value self)
 {
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   return wrap_memory_vector(&lcam.lookAt);
 }
@@ -289,9 +316,9 @@ static mrb_value mrb_lookatcamera_look_at_set(mrb_state *mrb, mrb_value self)
   mrb_value vv;
   mrb_get_args(mrb, "o", &vv);
 
-  auto v = *(math::Vector *)mrb_data_get_ptr(mrb, vv, &mrb_vector_type);
+  auto v = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, vv, &mrb_vector_type));
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   lcam.lookAt = v;
 
@@ -303,7 +330,7 @@ static mrb_value mrb_lookatcamera_look_at_set(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_lookatcamera_get_fov(mrb_state *mrb, mrb_value self)
 {
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   return mrb_float_value(mrb, lcam.fieldOfView);
 }
@@ -313,12 +340,12 @@ static mrb_value mrb_lookatcamera_get_fov(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_lookatcamera_set_fov(mrb_state *mrb, mrb_value self)
 {
   auto icam = read_native_ptr<ICamera>(mrb, self);
-  auto& lcam = *static_cast<LookAtCamera *>(icam);
+  auto &lcam = *static_cast<LookAtCamera *>(icam);
 
   mrb_float fov;
   mrb_get_args(mrb, "f", &fov);
 
-  lcam.fieldOfView = (float)fov;
+  lcam.fieldOfView = static_cast<float>(fov);
   lcam.Init();
   lcam.Update();
 
@@ -346,7 +373,6 @@ static ruby_class mrb_manualcamera_class()
   }
 
   return manualcamera;
-
 }
 
 // ----------------------------------------------------------------------------
@@ -368,3 +394,15 @@ static mrb_value mrb_manualcamera_set_fov(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
+void Basic3DCamera::LoadFromData(const component_factory_data&)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value Basic3DCamera::GetRubyWrapper()
+{
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------

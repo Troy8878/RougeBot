@@ -2,6 +2,7 @@
  * ResourcePack.cpp
  * Connor Hilarides
  * Created 2014/08/08
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "ResourcePack.h"
@@ -96,6 +97,9 @@ struct MemoryResource : public Resource
 
   void Release() override;
 
+  bool Exists() override;
+  bool IsFileBased(fs::path *path = nullptr) override;
+
   size_t GetSize() override;
   byte *GetData() override;
   TempFile GetTempFile() override;
@@ -142,6 +146,9 @@ struct FileResource : public Resource
   FileResource(const fs::wpath& path);
 
   void Release() override;
+
+  bool Exists() override;
+  bool IsFileBased(fs::path *path = nullptr) override;
 
   size_t GetSize() override;
   byte *GetData() override;
@@ -511,6 +518,20 @@ void MemoryResource::Release()
 
 // ----------------------------------------------------------------------------
 
+bool MemoryResource::Exists()
+{
+  return this == nullptr;
+}
+
+// ----------------------------------------------------------------------------
+
+bool MemoryResource::IsFileBased(fs::path *)
+{
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+
 size_t MemoryResource::GetSize()
 {
   return mapping.header.resource_size;
@@ -572,6 +593,21 @@ FileResource::FileResource(const fs::wpath& path)
 void FileResource::Release()
 {
   delete this;
+}
+
+// ----------------------------------------------------------------------------
+
+bool FileResource::Exists()
+{
+  return fs::exists(path);
+}
+
+// ----------------------------------------------------------------------------
+
+bool FileResource::IsFileBased(fs::path *path)
+{
+  *path = narrow(this->path);
+  return false;
 }
 
 // ----------------------------------------------------------------------------

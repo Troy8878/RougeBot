@@ -1,7 +1,8 @@
 /*********************************
  * SpriteComponent.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/08/19
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -28,16 +29,27 @@ public:
   SpriteComponent(Shader *shader, RenderSet *set);
   ~SpriteComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
   void Draw() override;
-  void OnSetDestroyed() override { renderTarget = nullptr; }
+
+  void OnSetDestroyed() override
+  {
+    renderTarget = nullptr;
+  }
 
   IR_PROPERTY(Model *, UnitSquare);
   IR_PROPERTY(Shader *, ModelShader);
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
-  size_t TextureIndex;
+  IRW_PROPERTY(size_t, TextureIndex);
+  IRW_PROPERTY(math::Vector, Tint);
+  IRW_PROPERTY(Texture2D, TintTexture);
 
-  Texture2D GetTexture(size_t index) { return _texture ? _texture->Textures[index] : Texture2D(); }
+  IRW_PROPERTY(bool, Visible);
+
+  Texture2D GetTexture(size_t index)
+  {
+    return _texture ? _texture->Textures[index] : Texture2D();
+  }
 
   mrb_value GetRubyWrapper() override;
 
@@ -47,22 +59,33 @@ public:
 private:
   RenderSet *renderTarget = nullptr;
   TextureComponent *_texture = nullptr;
+  bool enabled = false;
 
-  static Model *GetSpriteModel();
+  void SpriteHide(Events::EventMessage &);
+  void SpriteShow(Events::EventMessage &);
 
 public:
-  size_t _GetTextureCount() { return _texture ? _texture->TextureCount : 0; }
+  static Model *GetSpriteModel();
+
+  size_t _GetTextureCount()
+  {
+    return _texture ? _texture->TextureCount : 0;
+  }
 };
 
 // ----------------------------------------------------------------------------
 
-class SpriteComponentFactory : public IComponentFactory
+class SpriteComponentFactory final : public IComponentFactory
 {
 public:
   SpriteComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

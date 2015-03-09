@@ -1,0 +1,50 @@
+{
+  "TransformComponent": {
+  },
+  "AttackComponent": {
+    "attack": 0, 
+    "damage": [12,21]
+  },
+  
+  "DefenseComponent": {
+    "health": 99999999,
+    "max_health": 99999999
+  },
+  
+  "PositionComponent": {
+    "mode": "linear"
+  },
+
+  "PlayerProjectileLogicComponent": {
+    "direc": [0, 0],
+    "speed": 0
+  },
+
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Sprite",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.1]
+          },
+          "TextureComponent": {
+            "textures": [
+              "PlayerProjectiles/Bomb/Bomb0.png",
+              "PlayerProjectiles/Bomb/Bomb1.png",
+              "PlayerProjectiles/Bomb/Bomb2.png",
+              "PlayerProjectiles/Bomb/Bomb3.png",
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "WorldLayer"
+          },
+          "AnimatedComponent": {
+            "frame_range": [0, 3],
+            "frame_time": 0.3
+          }
+        }
+      }
+    ]
+  }
+}

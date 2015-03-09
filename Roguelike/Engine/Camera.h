@@ -2,6 +2,7 @@
  * Camera.h
  * Connor Hilarides
  * Created 2014/07/03
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -22,10 +23,12 @@ struct Camera
 
 struct ICamera : Camera
 {
+  virtual ~ICamera() {}
+
   virtual void Init() = 0;
   virtual void Update() = 0;
 
-  virtual void LoadFromData(const component_factory_data& data) = 0;
+  virtual void LoadFromData(const component_factory_data &data) = 0;
   virtual mrb_value GetRubyWrapper() = 0;
 };
 
@@ -39,14 +42,14 @@ struct Basic3DCamera : ICamera
   float aspectRatio = 1280.f / 720.f;
   float nearField = 0.1f, farField = 100;
 
-  void Init()
+  void Init() override
   {
     using namespace DirectX;
-    projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 
+    projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio,
                                                 nearField, farField);
   }
 
-  void Update()
+  void Update() override
   {
     using namespace DirectX;
     auto rotate = XMMatrixRotationRollPitchYawFromVector(rotation.get());
@@ -57,7 +60,7 @@ struct Basic3DCamera : ICamera
     viewMatrix = XMMatrixLookAtLH(position, lookAt, up);
   }
 
-  void LoadFromData(const component_factory_data& data) override;
+  void LoadFromData(const component_factory_data &data) override;
   mrb_value GetRubyWrapper() override;
 };
 
@@ -71,13 +74,13 @@ struct LookAtCamera : ICamera
   float aspectRatio = 1280.f / 720.f;
   float nearField = 0.1f, farField = 100;
 
-  void Init()
+  void Init() override
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, nearField, farField);
   }
 
-  void Update()
+  void Update() override
   {
     using namespace DirectX;
     auto pos = position.get();
@@ -88,7 +91,7 @@ struct LookAtCamera : ICamera
     viewMatrix = XMMatrixLookAtLH(pos, look, g_XMIdentityR2);
   }
 
-  void LoadFromData(const component_factory_data& data) override;
+  void LoadFromData(const component_factory_data &data) override;
   mrb_value GetRubyWrapper() override;
 };
 
@@ -100,19 +103,19 @@ struct HUDCamera final : ICamera
   math::Vector2D size = {1280.f / 720.f, 1};
   float nearField = 0.1f, farField = 100;
 
-  void Init()
+  void Init() override
   {
     using namespace DirectX;
     projectionMatrix = XMMatrixOrthographicLH(size.x, size.y, nearField, farField);
   }
 
-  void Update()
+  void Update() override
   {
     using namespace DirectX;
     viewMatrix = XMMatrixLookToLH(position.get(), g_XMIdentityR2, g_XMIdentityR1);
   }
 
-  void LoadFromData(const component_factory_data& data) override;
+  void LoadFromData(const component_factory_data &data) override;
   mrb_value GetRubyWrapper() override;
 };
 
@@ -137,13 +140,13 @@ struct ManualCamera final : ICamera
     XMMATRIX transfrom = *cameraTransform;
 
     XMVECTOR position = transfrom * g_XMIdentityR3; // [transform] * <0, 0, 0, 1>
-    XMVECTOR forward  = transfrom * g_XMIdentityR2; // [transform] * <0, 0, 1, 0>
-    XMVECTOR up       = transfrom * g_XMIdentityR1; // [transform] * <0, 1, 0, 0>
+    XMVECTOR forward = transfrom * g_XMIdentityR2; // [transform] * <0, 0, 1, 0>
+    XMVECTOR up = transfrom * g_XMIdentityR1; // [transform] * <0, 1, 0, 0>
 
     viewMatrix = XMMatrixLookToLH(position, forward, up);
   }
 
-  void LoadFromData(const component_factory_data& data) override;
+  void LoadFromData(const component_factory_data &data) override;
   mrb_value GetRubyWrapper() override;
 };
 
@@ -151,8 +154,13 @@ struct ManualCamera final : ICamera
 
 #pragma warning (disable : 4324) // I know it added that padding :U
 
+
 __declspec(align(16)) struct MultiCam
 {
+  MultiCam()
+  {
+  }
+
   __declspec(align(16)) union
   {
     byte buffer[sizeof(ICamera)];
@@ -161,6 +169,7 @@ __declspec(align(16)) struct MultiCam
     byte _hdbuffer[sizeof(HUDCamera)];
     byte _mcbuffer[sizeof(ManualCamera)];
   };
+
   std::type_index type = typeid(ICamera);
 
   __declspec(property(get = GetBase)) ICamera *Base;
@@ -169,13 +178,13 @@ __declspec(align(16)) struct MultiCam
   void SetType()
   {
     type = typeid(CamType);
-    new (GetCamera<CamType>()) CamType;
+    new(GetCamera<CamType>()) CamType;
   }
-  
+
   template <typename CamType>
-  CamType *GetCamera() 
+  CamType *GetCamera()
   {
-    return static_cast<CamType *>(Base); 
+    return static_cast<CamType *>(Base);
   }
 
   ICamera *GetBase()
@@ -186,5 +195,5 @@ __declspec(align(16)) struct MultiCam
 
 #pragma warning (default : 4324) // restore
 
-// ----------------------------------------------------------------------------
 
+// ----------------------------------------------------------------------------

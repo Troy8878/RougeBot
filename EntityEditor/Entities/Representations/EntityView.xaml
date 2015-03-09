@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="EntityEditor.Entities.Representations.EntityView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:project="clr-namespace:EntityEditor.Entities.Project"
+             xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance project:Entity}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="18" Margin="5">
+                <Run Text="{Binding Path=Name}" />
+                <Run Text="    " />
+                <Run Text="{Binding Path=Type}" />
+                <Run Text="    " />
+            </TextBlock>
+            <Button Width="175" FontSize="16" Grid.Column="1" HorizontalAlignment="Left">
+                Open Archetype
+            </Button>
+            <Button Width="175" FontSize="16" Grid.Column="2"
+                    HorizontalAlignment="Left" Margin="10,0" Click="Save">
+                Save
+            </Button>
+        </Grid>
+        
+        <ItemsControl ItemsSource="{Binding Path=Components}" Margin="10" Grid.Row="1">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Name}" FontSize="26" />
+                        <representations:ComponentView DataContext="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

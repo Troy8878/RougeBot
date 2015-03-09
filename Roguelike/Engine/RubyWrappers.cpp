@@ -1,7 +1,8 @@
 /*********************************
  * RubyWrappers.cpp
- * Connor Hilarides
+ * Connor Hilarides, Enrique Rodriguez, Leonardo Saikali
  * Created 2014/08/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -10,6 +11,7 @@
 #include "RubyInterop.h"
 #include "RubyWrappers.h"
 #include "Game.h"
+#include "Helpers/BucketAllocator.h"
 
 #include "mruby/string.h"
 #include "mruby/data.h"
@@ -22,60 +24,16 @@
 
 // ----------------------------------------------------------------------------
 
+BucketAllocator vectorAlloc = BucketAllocator(sizeof(math::Vector), 4096);
+
+BucketAllocator matrixAlloc = BucketAllocator(sizeof(math::Matrix), 4096);
+
+// ----------------------------------------------------------------------------
+
 #pragma region MemoryVector
 
-namespace memvect 
+namespace memvect
 {
-#define MEMVECT_BASICS \
-  using namespace ruby;\
-  ruby_engine engine{mrb};\
-  static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");\
-  auto ptr_v = mrb_iv_get(mrb, self, ptr_sym);\
-  math::Vector *vect = (math::Vector *) engine.unwrap_native_ptr(ptr_v)
-
-#define MEMVECT_GETFUN(v) \
-  static mrb_value get_ ## v (mrb_state *mrb, mrb_value self) \
-  { \
-    MEMVECT_BASICS; \
-    return mrb_float_value(mrb, vect->v); \
-  }
-
-#define MEMVECT_SETFUN(v) \
-  static mrb_value set_ ## v (mrb_state *mrb, mrb_value self) \
-  { \
-    MEMVECT_BASICS; \
-    mrb_float newv; \
-    mrb_get_args(mrb, "f", &newv); \
-    return mrb_float_value(mrb, vect->v = (float) newv); \
-  }
-
-  MEMVECT_GETFUN(x);
-  MEMVECT_SETFUN(x);
-
-  MEMVECT_GETFUN(y);
-  MEMVECT_SETFUN(y);
-
-  MEMVECT_GETFUN(z);
-  MEMVECT_SETFUN(z);
-
-  MEMVECT_GETFUN(w);
-  MEMVECT_SETFUN(w);
-
-#undef MEMVECT_BASICS
-#undef MEMVECT_GETFUN
-#undef MEMVECT_SETFUN
-
-  static mrb_value init(mrb_state *mrb, mrb_value self)
-  {
-    mrb_value vect_ptr_v;
-    mrb_get_args(mrb, "o", &vect_ptr_v);
-
-    static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");
-    mrb_iv_set(mrb, self, ptr_sym, vect_ptr_v);
-
-    return mrb_nil_value();
-  }
-
   static mrb_value dup(mrb_state *mrb, mrb_value self)
   {
     auto vclass = mrb_class_get(mrb, "Vector");
@@ -84,45 +42,18 @@ namespace memvect
   }
 }
 
-static ruby::ruby_class memvect2dclass;
+#pragma endregion
 
-static ruby::ruby_class create_memory_vector_class(mrb_state *mrb)
+#pragma region MemoryMatrix
+
+namespace memmatrix
 {
-  ruby::ruby_engine mrb_inst{mrb};
-
-  auto rclass2D = mrb_inst.define_class("MemoryVector2D");
-  auto rclass = mrb_inst.define_class("MemoryVector", rclass2D);
-  
-  rclass2D.define_method("initialize", memvect::init, ARGS_REQ(1));
-  rclass.define_method("initialize", memvect::init, ARGS_REQ(1));
-  rclass.define_method("dup", memvect::dup, ARGS_NONE());
-
-  rclass2D.define_method("x", memvect::get_x, ARGS_NONE());
-  rclass2D.define_method("y", memvect::get_y, ARGS_NONE());
-  rclass.define_method("z", memvect::get_z, ARGS_NONE());
-  rclass.define_method("w", memvect::get_w, ARGS_NONE());
-
-  rclass2D.define_method("x=", memvect::set_x, ARGS_REQ(1));
-  rclass2D.define_method("y=", memvect::set_y, ARGS_REQ(1));
-  rclass.define_method("z=", memvect::set_z, ARGS_REQ(1));
-  rclass.define_method("w=", memvect::set_w, ARGS_REQ(1));
-
-  memvect2dclass = rclass2D;
-  return rclass;
-}
-
-mrb_value ruby::wrap_memory_vector(math::Vector *vect)
-{
-  static auto rclass = mrb_inst->get_class("MemoryVector");
-
-  auto ptr = mrb_inst->wrap_native_ptr(vect);
-  return rclass.new_inst(ptr);
-}
-
-mrb_value ruby::wrap_memory_vector(math::Vector2D *vect)
-{
-  auto ptr = mrb_inst->wrap_native_ptr(vect);
-  return memvect2dclass.new_inst(ptr);
+  static mrb_value dup(mrb_state *mrb, mrb_value self)
+  {
+    auto mclass = mrb_class_get(mrb, "Matrix");
+    static mrb_sym mnew = mrb_intern_cstr(mrb, "new");
+    return mrb_funcall_argv(mrb, mrb_obj_value(mclass), mnew, 1, &self);
+  }
 }
 
 #pragma endregion
@@ -134,6 +65,7 @@ mrb_value ruby::wrap_memory_vector(math::Vector2D *vect)
 // ----------------------------------------------------------------------------
 
 mrb_data_type ruby::mrb_vector_type;
+mrb_data_type ruby::mrb_mvector_type;
 
 // ----------------------------------------------------------------------------
 
@@ -141,7 +73,16 @@ namespace vect
 {
   using namespace ruby;
 
-  #pragma region New vector
+#pragma region New vector
+
+  static mrb_value valloc(mrb_state *mrb, const math::Vector &vect)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    auto nvect = vectorAlloc.Create<math::Vector>(vect);
+    auto obj = mrb_data_object_alloc(mrb, vclass, nvect, &mrb_vector_type);
+    return mrb_obj_value(obj);
+  }
 
   static mrb_value vnew(mrb_state *mrb, mrb_value)
   {
@@ -150,22 +91,11 @@ namespace vect
     mrb_value first = mrb_nil_value(), *rest;
     mrb_int crest;
     mrb_get_args(mrb, "|o*", &first, &rest, &crest);
-    
+
     mrb_float x = 0, y = 0, z = 0, w = 0;
     if (mrb_obj_class(mrb, first) == vclass)
     {
-      auto oldv = (math::Vector *) 
-        mrb_data_get_ptr(mrb, first, &mrb_vector_type);
-
-      x = oldv->x;
-      y = oldv->y;
-      z = oldv->z;
-      w = oldv->w;
-    }
-    else if (mrb_obj_class(mrb, first) == mrb_class_get(mrb, "MemoryVector"))
-    {
-      static auto ptr_sym = mrb_intern_cstr(mrb, "vect_ptr");
-      auto oldv = (math::Vector *) mrb_cptr(mrb_iv_get(mrb, first, ptr_sym));
+      auto oldv = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, first, &mrb_vector_type));
 
       x = oldv->x;
       y = oldv->y;
@@ -177,105 +107,141 @@ namespace vect
       mrb_get_args(mrb, "|ffff", &x, &y, &z, &w);
     }
 
-    auto vect = new math::Vector{(float)x, (float)y, (float)z, (float)w};
-    auto obj = mrb_data_object_alloc(mrb, vclass, vect, &mrb_vector_type);
-    return mrb_obj_value(obj);
+    auto vect = math::Vector(
+        static_cast<float>(x),
+        static_cast<float>(y),
+        static_cast<float>(z),
+        static_cast<float>(w)
+      );
+    return valloc(mrb, vect);
+  }
+
+  static mrb_value scalar(mrb_state *mrb, mrb_value)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+    
+    auto vect = math::Vector(
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(s)
+      );
+    return valloc(mrb, vect);
+  }
+
+  static mrb_value scalar3(mrb_state *mrb, mrb_value)
+  {
+    static auto vclass = mrb_class_get(mrb, "Vector");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+    
+    auto vect = math::Vector(
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(s),
+        static_cast<float>(1)
+      );
+    return valloc(mrb, vect);
   }
 
   static void free(mrb_state *, void *mem)
   {
-    auto vect = (math::Vector*) mem;
-    delete vect;
+    auto vect = static_cast<math::Vector*>(mem);
+    vectorAlloc.Destroy(vect);
   }
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Getters
+#pragma region Getters
 
   static mrb_value get_x(mrb_state *mrb, mrb_value self)
   {
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     return mrb_float_value(mrb, vect->x);
   }
 
   static mrb_value get_y(mrb_state *mrb, mrb_value self)
   {
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     return mrb_float_value(mrb, vect->y);
   }
 
   static mrb_value get_z(mrb_state *mrb, mrb_value self)
   {
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     return mrb_float_value(mrb, vect->z);
   }
 
   static mrb_value get_w(mrb_state *mrb, mrb_value self)
   {
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     return mrb_float_value(mrb, vect->w);
   }
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Setters
+#pragma region Setters
 
   static mrb_value set_x(mrb_state *mrb, mrb_value self)
   {
     mrb_float value;
     mrb_get_args(mrb, "f", &value);
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
-    return mrb_float_value(mrb, vect->x = (float)value);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
+    return mrb_float_value(mrb, vect->x = static_cast<float>(value));
   }
 
   static mrb_value set_y(mrb_state *mrb, mrb_value self)
   {
     mrb_float value;
     mrb_get_args(mrb, "f", &value);
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
-    return mrb_float_value(mrb, vect->y = (float)value);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
+    return mrb_float_value(mrb, vect->y = static_cast<float>(value));
   }
 
   static mrb_value set_z(mrb_state *mrb, mrb_value self)
   {
     mrb_float value;
     mrb_get_args(mrb, "f", &value);
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
-    return mrb_float_value(mrb, vect->z = (float)value);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
+    return mrb_float_value(mrb, vect->z = static_cast<float>(value));
   }
 
   static mrb_value set_w(mrb_state *mrb, mrb_value self)
   {
     mrb_float value;
     mrb_get_args(mrb, "f", &value);
-    auto vect = (math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
-    return mrb_float_value(mrb, vect->w = (float)value);
+    auto vect = static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
+    return mrb_float_value(mrb, vect->w = static_cast<float>(value));
   }
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Basic Operators
+#pragma region Basic Operators
 
   static mrb_value op_add(mrb_state *mrb, mrb_value self)
   {
     mrb_value oval;
     mrb_get_args(mrb, "o", &oval);
 
-    auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
-    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto &ov = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, oval, &mrb_vector_type));
+    auto &sv = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
 
     sv = sv + ov;
 
     return self;
   }
-  
+
   static mrb_value op_sub(mrb_state *mrb, mrb_value self)
   {
     mrb_value oval;
     mrb_get_args(mrb, "o", &oval);
 
-    auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
-    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+    auto &ov = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, oval, &mrb_vector_type));
+    auto &sv = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
 
     sv = sv - ov;
 
@@ -288,39 +254,39 @@ namespace vect
     mrb_get_args(mrb, "o", &oval);
 
     if (mrb_fixnum_p(oval))
-      oval = mrb_float_value(mrb, (mrb_float) mrb_fixnum(oval));
-    
-    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+      oval = mrb_float_value(mrb, static_cast<mrb_float>(mrb_fixnum(oval)));
+
+    auto &sv = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     if (mrb_float_p(oval))
     {
-      sv = sv * (float)mrb_float(oval);
+      sv = sv * static_cast<float>(mrb_float(oval));
     }
     else
     {
-      auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+      auto &ov = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, oval, &mrb_vector_type));
 
       sv = sv * ov;
     }
 
     return self;
   }
-  
+
   static mrb_value op_div(mrb_state *mrb, mrb_value self)
   {
     mrb_value oval;
     mrb_get_args(mrb, "o", &oval);
 
     if (mrb_fixnum_p(oval))
-      oval = mrb_float_value(mrb, (mrb_float) mrb_fixnum(oval));
-    
-    auto& sv = *(math::Vector *)mrb_data_get_ptr(mrb, self, &mrb_vector_type);
+      oval = mrb_float_value(mrb, static_cast<mrb_float>(mrb_fixnum(oval)));
+
+    auto &sv = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, self, &mrb_vector_type));
     if (mrb_float_p(oval))
     {
-      sv = sv / (float)mrb_float(oval);
+      sv = sv / static_cast<float>(mrb_float(oval));
     }
     else
     {
-      auto& ov = *(math::Vector *)mrb_data_get_ptr(mrb, oval, &mrb_vector_type);
+      auto &ov = *static_cast<math::Vector *>(mrb_data_get_ptr(mrb, oval, &mrb_vector_type));
 
       sv = sv / ov;
     }
@@ -328,15 +294,15 @@ namespace vect
     return self;
   }
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Complex vector ops
+#pragma region Complex vector ops
 
   using namespace DirectX;
 
   mrb_value length2(mrb_state *mrb, mrb_value self)
   {
-    auto& vector = get_ruby_vector(self);
+    auto &vector = get_ruby_vector(self);
     auto lensq = XMVector3LengthSq(vector);
 
     return mrb_float_value(mrb, XMVectorGetX(lensq));
@@ -344,15 +310,15 @@ namespace vect
 
   mrb_value length(mrb_state *mrb, mrb_value self)
   {
-    auto& vector = get_ruby_vector(self);
+    auto &vector = get_ruby_vector(self);
     auto len = XMVector3Length(vector);
-    
+
     return mrb_float_value(mrb, XMVectorGetX(len));
   }
 
   mrb_value normalize(mrb_state *, mrb_value self)
   {
-    auto& vector = get_ruby_vector(self);
+    auto &vector = get_ruby_vector(self);
     vector = XMVector3Normalize(vector);
 
     return self;
@@ -360,13 +326,89 @@ namespace vect
 
   mrb_value normalized(mrb_state *, mrb_value self)
   {
-    auto& vector = get_ruby_vector(self);
+    auto &vector = get_ruby_vector(self);
 
     return create_new_vector(XMVector3Normalize(vector));
   }
 
-  #pragma endregion
+  mrb_value distance2(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
 
+    auto &v1 = get_ruby_vector(self);
+    auto &v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR diff = XMVectorSubtract(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(XMVector3LengthSq(diff)));
+  }
+
+  mrb_value distance(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
+
+    auto &v1 = get_ruby_vector(self);
+    auto &v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR diff = XMVectorSubtract(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(XMVector3Length(diff)));
+  }
+
+  mrb_value angle(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value mrb_v2;
+    mrb_get_args(mrb, "o", &mrb_v2);
+
+    auto &v1 = get_ruby_vector(self);
+    auto &v2 = get_ruby_vector(mrb_v2);
+
+    XMVECTOR vangle = XMVector3AngleBetweenVectors(v1, v2);
+    return mrb_float_value(mrb, XMVectorGetX(vangle));
+  }
+
+#pragma endregion
+
+#pragma region Equality
+
+  static mrb_value op_eql(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value other;
+    mrb_get_args(mrb, "o", &other);
+
+    XMVECTOR v1 = get_ruby_vector(self);
+    XMVECTOR v2 = get_ruby_vector(other);
+
+    return mrb_bool_value(XMVector4Equal(v1, v2));
+  }
+
+  static mrb_value op_near(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value other;
+    mrb_float epsilon = 0.01;
+    mrb_get_args(mrb, "o|f", &other, &epsilon);
+
+    XMVECTOR v1 = get_ruby_vector(self);
+    XMVECTOR v2 = get_ruby_vector(other);
+
+    const float epsilon_f = static_cast<float>(epsilon);
+    const XMVECTOR epsilon_v = XMVectorSet(epsilon_f, epsilon_f, epsilon_f, epsilon_f);
+
+    return mrb_bool_value(XMVector4NearEqual(v1, v2, epsilon_v));
+  }
+
+#pragma endregion
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_string_to_color(mrb_state *mrb, mrb_value)
+{
+  mrb_value strv;
+  mrb_get_args(mrb, "S", &strv);
+
+  auto result = StringToColor(mrb_str_to_stdstring(strv));
+  return ruby::create_new_vector(result);
 }
 
 // ----------------------------------------------------------------------------
@@ -376,16 +418,23 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   ruby::mrb_vector_type.dfree = vect::free;
   ruby::mrb_vector_type.struct_name = "math::Vector";
 
+  ruby::mrb_mvector_type.dfree = ruby::data_nop_delete;
+  ruby::mrb_mvector_type.struct_name = "math::Vector";
+
   auto vclass = mrb_define_class(mrb, "Vector", mrb->object_class);
-  
+
   mrb_define_class_method(mrb, vclass, "new", vect::vnew, ARGS_OPT(4));
+  mrb_define_class_method(mrb, vclass, "scalar", vect::scalar, ARGS_REQ(1));
+  mrb_define_class_method(mrb, vclass, "scalar3", vect::scalar3, ARGS_REQ(1));
+  mrb_define_class_method(mrb, vclass, "string_to_color", mrb_string_to_color, ARGS_REQ(1));
+
   mrb_define_method(mrb, vclass, "dup", memvect::dup, ARGS_NONE());
 
   mrb_define_method(mrb, vclass, "x", vect::get_x, ARGS_NONE());
   mrb_define_method(mrb, vclass, "y", vect::get_y, ARGS_NONE());
   mrb_define_method(mrb, vclass, "z", vect::get_z, ARGS_NONE());
   mrb_define_method(mrb, vclass, "w", vect::get_w, ARGS_NONE());
-  
+
   mrb_define_method(mrb, vclass, "x=", vect::set_x, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "y=", vect::set_y, ARGS_REQ(1));
   mrb_define_method(mrb, vclass, "z=", vect::set_z, ARGS_REQ(1));
@@ -401,27 +450,244 @@ extern "C" void mrb_mruby_vector_init(mrb_state *mrb)
   mrb_define_method(mrb, vclass, "normalize!", vect::normalize, ARGS_NONE());
   mrb_define_method(mrb, vclass, "normalized", vect::normalized, ARGS_NONE());
 
-  create_memory_vector_class(mrb);
+  mrb_define_method(mrb, vclass, "distance2", vect::distance2, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "distance", vect::distance, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "angle", vect::angle, ARGS_REQ(1));
+
+  mrb_define_method(mrb, vclass, "==", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
+  mrb_define_method(mrb, vclass, "===", vect::op_eql, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "eql?", vect::op_eql, ARGS_REQ(1));
+  mrb_define_method(mrb, vclass, "near?", vect::op_near, ARGS_REQ(1) | ARGS_OPT(1));
 }
 
 #pragma endregion
 
 // ----------------------------------------------------------------------------
 
-mrb_value ruby::create_new_vector(const math::Vector& v)
+mrb_value ruby::create_new_vector(const math::Vector &v)
 {
-  return mrb_inst->get_class("Vector").functions["new"].call(v.x, v.y, v.z, v.w);
+  return vect::valloc(*mrb_inst, v);
 }
 
 // ----------------------------------------------------------------------------
 
-math::Vector& ruby::get_ruby_vector(mrb_value value)
+math::Vector &ruby::get_ruby_vector(mrb_value value)
 {
   auto ptr = mrb_data_get_ptr(*mrb_inst, value, &mrb_vector_type);
-  return *(math::Vector *) ptr;
+  return *static_cast<math::Vector *>(ptr);
 }
 
 // ----------------------------------------------------------------------------
 
+mrb_value ruby::wrap_memory_vector(math::Vector *vect)
+{
+  static auto rclass = mrb_inst->get_class("Vector");
+  auto data = mrb_data_object_alloc(*mrb_inst, rclass, vect, &mrb_mvector_type);
+  return mrb_obj_value(data);
+}
 
+// ----------------------------------------------------------------------------
 
+#pragma region Matrix
+
+// ----------------------------------------------------------------------------
+
+mrb_data_type ruby::mrb_matrix_type;
+mrb_data_type ruby::mrb_mmatrix_type;
+
+// ----------------------------------------------------------------------------
+
+namespace matrix
+{
+  using namespace ruby;
+
+#pragma region New matrix
+
+  static mrb_value matalloc(mrb_state *mrb, const math::Matrix &mat)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    auto nmatrix = matrixAlloc.Create<math::Matrix>(mat);
+    auto obj = mrb_data_object_alloc(mrb, mclass, nmatrix, &mrb_matrix_type);
+    return mrb_obj_value(obj);
+  }
+
+  static mrb_value mnew(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value first = mrb_nil_value();
+    mrb_get_args(mrb, "|o", &first);
+
+    math::Matrix mat{ DirectX::XMMatrixIdentity() };
+    if (!mrb_nil_p(first))
+    {
+      mat = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, first, &mrb_matrix_type));
+    }
+
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value identity(mrb_state *mrb, mrb_value)
+  {
+    auto mat = DirectX::XMMatrixIdentity();
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value scalar(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_float s;
+    mrb_get_args(mrb, "f", &s);
+
+    auto mat = DirectX::XMMatrixScaling(static_cast<float>(s), static_cast<float>(s), static_cast<float>(s));
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value scale(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_float s1, s2, s3;
+    mrb_get_args(mrb, "f", &s1, &s2, &s3);
+
+    auto mat = DirectX::XMMatrixScaling(static_cast<float>(s1), static_cast<float>(s2), static_cast<float>(s3));
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value translation(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value value;
+    mrb_get_args(mrb, "o", &value);
+    auto vect = ruby::get_ruby_vector(value);
+
+    auto mat = DirectX::XMMatrixTranslationFromVector(vect);
+    return matalloc(mrb, mat);
+  }
+
+  static mrb_value rotation(mrb_state *mrb, mrb_value)
+  {
+    static auto mclass = mrb_class_get(mrb, "Matrix");
+
+    mrb_value value;
+    mrb_get_args(mrb, "o", &value);
+    auto vect = ruby::get_ruby_vector(value);
+
+    auto mat = DirectX::XMMatrixRotationRollPitchYawFromVector(vect);
+    return matalloc(mrb, mat);
+  }
+
+  static void free(mrb_state *, void *mem)
+  {
+    auto mat = static_cast<math::Matrix*>(mem);
+    matrixAlloc.Destroy(mat);
+  }
+
+#pragma endregion
+
+#pragma region Basic Operators
+
+  //static mrb_value op_add(mrb_state *mrb, mrb_value self)
+  //{
+  //  mrb_value oval;
+  //  mrb_get_args(mrb, "o", &oval);
+
+  //  auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+  //  auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+  //
+  //  sv = sv + ov;
+
+  //  return self;
+  //}
+
+  //static mrb_value op_sub(mrb_state *mrb, mrb_value self)
+  //{
+  //  mrb_value oval;
+  //  mrb_get_args(mrb, "o", &oval);
+
+  //  auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+  //  auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+
+  //  sv = sv - ov;
+
+  //  return self;
+  //}
+
+  static mrb_value op_mul(mrb_state *mrb, mrb_value self)
+  {
+    mrb_value oval;
+    mrb_get_args(mrb, "o", &oval);
+
+    auto &sv = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, self, &mrb_matrix_type));
+    auto &ov = *static_cast<math::Matrix *>(mrb_data_get_ptr(mrb, oval, &mrb_matrix_type));
+
+    sv = sv * ov;
+
+    return self;
+  }
+
+#pragma endregion
+}
+
+//extern "C" void mrb_mruby_matrix_init(mrb_state *mrb)
+//{
+//  ruby::mrb_matrix_type.dfree = matrix::free;
+//  ruby::mrb_matrix_type.struct_name = "math::Matrix";
+//
+//  ruby::mrb_mmatrix_type.dfree = ruby::data_nop_delete;
+//  ruby::mrb_mmatrix_type.struct_name = "math::Matrix";
+//
+//  auto mclass = mrb_define_class(mrb, "Matrix", mrb->object_class);
+//
+//  mrb_define_class_method(mrb, mclass, "new", matrix::mnew, ARGS_OPT(4));
+//
+//  static mrb_value identity(mrb_state *mrb, mrb_value)
+//
+//  mrb_define_class_method(mrb, mclass, "scalar", matrix::scalar, ARGS_REQ(1));
+//
+//  static mrb_value scale(mrb_state *mrb, mrb_value)
+//
+//
+//  static mrb_value translation(mrb_state *mrb, mrb_value)
+//
+//  static mrb_value rotation(mrb_state *mrb, mrb_value)
+//
+//  mrb_define_class_method(mrb, mclass, "string_to_color", mrb_string_to_color, ARGS_REQ(1));
+//
+//  mrb_define_method(mrb, mclass, "dup", memmatrix::dup, ARGS_NONE());
+//
+//  mrb_define_method(mrb, mclass, "add", matrix::op_add, ARGS_REQ(1));
+//  mrb_define_method(mrb, mclass, "sub", matrix::op_sub, ARGS_REQ(1));
+//  mrb_define_method(mrb, mclass, "mul", matrix::op_mul, ARGS_REQ(1));
+//}
+//
+//#pragma endregion
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby::create_new_matrix(const math::Matrix &m)
+{
+  return matrix::matalloc(*mrb_inst, m);
+}
+
+// ----------------------------------------------------------------------------
+
+math::Matrix &ruby::get_ruby_matrix(mrb_value value)
+{
+  auto ptr = mrb_data_get_ptr(*mrb_inst, value, &mrb_mmatrix_type);
+  return *static_cast<math::Matrix *>(ptr);
+}
+
+// ----------------------------------------------------------------------------
+
+mrb_value ruby::wrap_memory_matrix(math::Matrix *mat)
+{
+  static auto rclass = mrb_inst->get_class("Matrix");
+  auto data = mrb_data_object_alloc(*mrb_inst, rclass, mat, &mrb_mmatrix_type);
+  return mrb_obj_value(data);
+}
+
+// ----------------------------------------------------------------------------

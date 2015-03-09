@@ -2,6 +2,7 @@
  * ResourcePack.h
  * Connor Hilarides
  * Created 2014/08/08
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -21,6 +22,9 @@ namespace Respack
   __interface Resource
   {
     void Release();
+
+    bool Exists();
+    bool IsFileBased(fs::path *path = nullptr);
 
     size_t GetSize();
     byte *GetData();

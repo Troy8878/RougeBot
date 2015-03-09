@@ -1,0 +1,424 @@
+{
+  "tiles": [
+    [
+      {
+        "id": 2,
+        "meta": "[[\"Wizard_Red\", {health: 100}],[\"Wizard_Green\", {health: 100}],[\"Wizard_Blue\", {health: 100}],[\"Wizard_Purple\", {health: 100}],[\"Wizard_Orange\", {health: 100}]].rand_item"
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 2,
+        "meta": "[[\"Wizard_Red\", {health: 100}],[\"Wizard_Green\", {health: 100}],[\"Wizard_Blue\", {health: 100}],[\"Wizard_Purple\", {health: 100}],[\"Wizard_Orange\", {health: 100}]].rand_item"
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 2,
+        "meta": "[[\"Wizard_Red\", {health: 100}],[\"Wizard_Green\", {health: 100}],[\"Wizard_Blue\", {health: 100}],[\"Wizard_Purple\", {health: 100}],[\"Wizard_Orange\", {health: 100}]].rand_item"
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 2,
+        "meta": "[[\"Wizard_Red\", {health: 100}],[\"Wizard_Green\", {health: 100}],[\"Wizard_Blue\", {health: 100}],[\"Wizard_Purple\", {health: 100}],[\"Wizard_Orange\", {health: 100}]].rand_item"
+      }
+    ]
+  ]
+}

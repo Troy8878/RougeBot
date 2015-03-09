@@ -2,6 +2,7 @@
  * Level.h
  * Connor Hilarides
  * Created 2014/07/07
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -18,7 +19,7 @@ class Game;
 class Level : public Events::BasicEventDispatcher
 {
 public:
-  static Level *CreateLevel(const std::string& def);
+  static Level *CreateLevel(const std::string &def);
   static void DestroyLevel(Level *level);
 
   IR_PROPERTY(std::string, Name);
@@ -35,4 +36,3 @@ protected:
 };
 
 // ----------------------------------------------------------------------------
-

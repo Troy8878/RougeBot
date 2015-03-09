@@ -1,86 +1,130 @@
 {
   "name": "MainMenu",
   "components": {
-    "TransformComponent": {
-      "scale": [1,1,1]
-    }
+    "MenuQuitBlocker": {}
   },
   "entities": [
     {
-      "name": "Le3DCam",
+      "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0.77, 0, 0]
-        },
-        "CameraComponent": {
-          "target_name": "Le3DCam",
-          "layer": 1,
-          "fov": 45,
-          "near": 1,
-          "far": 100
-        },
-        "CameraFollowComponent": {
-          "offset": [0, 5, -6],
-          "follows": "Pancake",
-          "speed": 5
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
         }
-      }
-    },
-    {
-      "name": "TranslucentLayer",
-      "components": {
-        "CameraComponent": {
-          "copy": "Le3DCam",
-          "target_name": "TranslucentLayer",
-          "layer": 2
-        }
-      }
-    },
-    {
-      "name": "The Room",
-      "archetype": "Floor",
-      "components": {
-        "CustomModelComponent": {
-          "render_target": "Le3DCam"
-        }
-      }
-    },
-    {
-      "name": "Pancake",
-      "archetype": "PancakeFace",
-      "components": {
-        "TransformComponent": {
-          "rotation": [0.77, 0, 0],
-          "position": [1, 0.25, 1],
-          "scale": [0.5, 0.5]
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
         },
-        "SpriteComponent": {
-          "render_target": "Le3DCam"
+        {
+          "name": "TranslucentLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "TranslucentLayer",
+              "layer": 2
+            }
+          }
         },
-        "SpinnyThingComponent": {
-          "speed": 0
+        {
+          "name": "HUDLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "HUDLayer",
+              "layer": 5000
+            }
+          }
         },
-        "PlayerControllerComponent": {}
-      }
-    },
-    {
-      "name": "2DSurfaceTest",
-      "components": {
-        "TransformComponent": {
-          "rotation": [1.57079632679489, 0, 0],
-          "position": [1, 0.01, 2],
-          "scale": [0.75, 0.75]
+        {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
         },
-        "TextureComponent": {
-          "textures": [
-            "SPECIAL/SURFACE/500:500"
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "scale": [0.3, 0.3, 0.3, 1],
+              "position": [0, 0, 1]
+            }
+          },
+          "children": [
+            {
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "MenuTitle",
+              "archetype": "Menu/Title"
+            },
+            {
+              "name": "Spinbot",
+              "archetype": "Menu/Spinbot"
+            },
+            {
+              "name": "MenuButtons",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.2, 0.4, 0]
+                }
+              },
+              "children": [
+                {
+                  "name": "Play",
+                  "archetype": "Menu/Play"
+                },
+                {
+                  "name": "Options",
+                  "archetype": "Menu/Options"
+                },
+                {
+                  "name": "Help",
+                  "archetype": "Menu/Help"
+                },
+                {
+                  "name": "Quit",
+                  "archetype": "Menu/Quit"
+                },
+                {
+                  "name": "Credits",
+                  "archetype": "Menu/Credits"
+                },
+              ]
+            },
+            {
+              "name": "BG",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, 0, 1],
+                  "scale": [6.5, 3.5, 1]
+                },
+                "TextureComponent": {
+                  "textures": ["HUBWorldPrototype.png"]
+                },
+                "SpriteComponent": {
+                  "render_target": "WorldLayer"
+                }
+              }
+            }
           ]
-        },
-        "SpriteComponent": {
-          "render_target": "TranslucentLayer",
-          "shader": "Textured"
         }
-      }
+      ]
     }
   ]
 }

@@ -2,6 +2,7 @@
  * Component.h
  * Connor Hilarides
  * Created 2014/08/11
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -22,7 +23,7 @@ public:
 
   // Please call this in your implementations
   // just at the top do Component::initialize(parent)
-  virtual void Initialize(Entity *owner, const std::string& name);
+  virtual void Initialize(Entity *owner, const std::string &name);
   virtual void Cleanup();
 
   IR_PROPERTY(Entity *, Owner);
@@ -30,16 +31,24 @@ public:
 
   virtual mrb_value GetRubyWrapper()
   {
-    return ruby::ruby_value{};
+    return mrb_nil_value();
   }
 
-protected:
-  static ruby::ruby_module GetComponentRModule();
-  static ruby::ruby_class GetComponentRClass();
+  static std::vector<std::string> AdditionalDependencies()
+  {
+    return std::vector<std::string>{};
+  }
   
+  static ruby::ruby_module GetComponentRModule();
+protected:
+  static ruby::ruby_class GetComponentRClass();
+
   friend void RegisterEngineComponents();
 
-  virtual ~Component() {}
+  virtual ~Component()
+  {
+  }
+
   friend class ComponentManager;
 };
 
@@ -52,36 +61,34 @@ public:
 
   static ComponentManager Instance;
 
-  void RegisterComponent(const ComponentRegistration& registration);
+  void RegisterComponent(const ComponentRegistration &registration);
   PROPERTY(get = _GetComponentRegistrations) component_map ComponentRegistrations;
 
-  Component *InstantiateComponent(const std::string& compName, 
-                                  component_factory_data& data);
+  Component *InstantiateComponent(const std::string &compName,
+                                  component_factory_data &data);
   void ReleaseComponent(Component *component);
 
 private:
   ComponentManager();
 
 public:
-  static component_map& _GetComponentRegistrations();
+  static component_map &_GetComponentRegistrations();
 };
 
 // ----------------------------------------------------------------------------
 
 __interface IComponentFactory
 {
-  Component *CreateObject(void *memory, component_factory_data& data);
-
-  PROPERTY(get = _GetAllocator) IAllocator *Allocator;
-  IAllocator *_GetAllocator();
+  Component *CreateObject(void *memory, component_factory_data &data);
+  IAllocator *Allocator();
 };
 
 // ----------------------------------------------------------------------------
 
 struct ComponentRegistration
 {
-  ComponentRegistration(std::type_index const& componentType,
-                        std::string const& componentName,
+  ComponentRegistration(std::type_index const &componentType,
+                        std::string const &componentName,
                         IComponentFactory *factory,
                         IAllocator *allocator)
     : componentName(componentName),
@@ -95,9 +102,9 @@ struct ComponentRegistration
   std::type_index componentType;
   IComponentFactory *factory;
   IAllocator *allocator;
-  
-  PROPERTY(get = _GetFactory) IComponentFactory& Factory;
-  PROPERTY(get = _GetAllocator) IAllocator& Allocator;
+
+  PROPERTY(get = _GetFactory) IComponentFactory &Factory;
+  PROPERTY(get = _GetAllocator) IAllocator &Allocator;
 
 private:
   ComponentRegistration()
@@ -108,8 +115,15 @@ private:
   friend class flat_map<std::string, ComponentRegistration>;
 
 public:
-  inline IComponentFactory& _GetFactory() { return *factory; }
-  inline IAllocator& _GetAllocator() { return *allocator; }
+  inline IComponentFactory &_GetFactory()
+  {
+    return *factory;
+  }
+
+  inline IAllocator &_GetAllocator()
+  {
+    return *allocator;
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -119,18 +133,47 @@ void RegisterEngineComponents();
 // ----------------------------------------------------------------------------
 
 template <typename T>
-void RegisterStaticComponent(const std::string& name,
+void RegisterStaticComponent(const std::string &name,
                              IComponentFactory *factory = &T::factory)
 {
-  ComponentRegistration registration{typeid(T), name, factory, factory->Allocator};
+  ComponentRegistration registration{typeid(T), name, factory, factory->Allocator()};
   ComponentManager::Instance.RegisterComponent(registration);
 
   auto prevfg = console::fg_color();
   std::cout << console::fg::green
-            << "Registered static component '" 
-            << registration.componentName << "'" << std::endl
-            << prevfg;
+    << "Registered static component '"
+    << registration.componentName << "'" << std::endl
+    << prevfg;
 }
 
 // ----------------------------------------------------------------------------
 
+#define DRAWING_PROPERTY(type, name, var) \
+  PROPERTY(get = _PropGet##name, put = _PropSet##name) type name; \
+  type& _PropGet##name() { return var; } \
+  void _PropSet##name(type const& value) { var = value; OnChanged(); }
+
+// ----------------------------------------------------------------------------
+
+inline void comp_add_property(mrb_state *mrb, RClass *cls, mrb_sym id,
+                              mrb_sym type, bool can_set = false)
+{
+  static const mrb_sym add_property = mrb_intern_lit(mrb, "property");
+  const mrb_value values[] =
+    {
+      mrb_symbol_value(id),
+      mrb_symbol_value(type),
+      mrb_bool_value(can_set)
+    };
+  mrb_funcall_argv(mrb, mrb_obj_value(cls), add_property, ARRAYSIZE(values), values);
+}
+
+inline void comp_add_property(mrb_state *mrb, RClass *cls, const char *id,
+                              const char *type, bool can_set = false)
+{
+  mrb_sym id_sym = mrb_intern(mrb, id, strlen(id));
+  mrb_sym type_sym = mrb_intern(mrb, type, strlen(type));
+  comp_add_property(mrb, cls, id_sym, type_sym, can_set);
+}
+
+// ----------------------------------------------------------------------------

@@ -2,6 +2,7 @@
  * Shader.h
  * Connor Hilarides
  * Created 2014/07/07
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -33,18 +34,30 @@ struct Shader
 
   static void LoadShader(
     GraphicsDevice *device,
-    const std::string& asset);
+    const std::string &asset);
 
 private:
   void InitCameraBuffer();
   static Shader *LoadShader(
     GraphicsDevice *device,
-    const std::string& vertexAsset,
-    const std::string& pixelAsset);
+    const std::string &vertexAsset,
+    const std::string &pixelAsset);
 };
 
 // ----------------------------------------------------------------------------
 
-extern std::unordered_map<std::string, Shader *> RegisteredShaders;
+struct ShaderManager
+{
+  std::unordered_map<std::string, Shader *> shaders;
+
+  Shader *&operator[](const std::string &key)
+  {
+    if (key == "")
+      return shaders["Textured"];
+    return shaders[key];
+  }
+};
+
+extern ShaderManager RegisteredShaders;
 
 // ----------------------------------------------------------------------------

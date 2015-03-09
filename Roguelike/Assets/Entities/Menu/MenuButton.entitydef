@@ -1,0 +1,37 @@
+{
+  "TransformComponent": {},
+  "ButtonComponent": {
+    "size": [1, 1]
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "TransformComponent": {
+          "scale": [1, 1, 1]
+        },
+        "TextureComponent": {
+          "textures": ["SPECIAL/NULL"]
+        },
+        "SpriteComponent": {
+          "render_target": "HUDLayer",
+          "tint": "CornflowerBlue"
+        },
+      },
+      {
+        "name": "ButtonText",
+        "components": {
+          "TransformComponent": {
+            "position": [0, 0, -0.1],
+            "scale": [1, 1, 1]
+          },
+          "TextureComponent": {
+            "textures": ["SPECIAL/SURFACE/400:100"]
+          },
+          "SpriteComponent": {
+            "render_target": "HUDLayer"
+          },
+        }
+      }
+    ]
+  }
+}

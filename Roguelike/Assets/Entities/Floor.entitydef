@@ -1,18 +1,35 @@
 {
-  "TransformComponent": {},
+  "TransformComponent": {
+    "position": [
+      0.0,
+      0.0,
+      0.1
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
   "TextureComponent": {
     "textures": [
       {
         "zipped": [
-          "World/cobblestone.png",
-          "World/cobblestone_mossy.png",
-          "World/lapis_block.png"
+          "World/Full.png",
+          "World/Wall.png",
+          "World/Floor.png"
         ]
       }
     ]
   },
   "CustomModelComponent": {
-    "shader": "Textured"
+    "shader": "Textured",
+    "render_target": ""
   },
-  "TestRoomComponent": {}
+  "FloorGeneratorComponent": {}
 }

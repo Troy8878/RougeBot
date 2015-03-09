@@ -54,7 +54,7 @@
 //#define MRB_STR_BUF_MIN_SIZE 128
 
 /* arena size */
-//#define MRB_GC_ARENA_SIZE 100
+//#define MRB_GC_ARENA_SIZE 200
 
 /* fixed size GC arena */
 //#define MRB_GC_FIXED_ARENA

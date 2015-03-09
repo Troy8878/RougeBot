@@ -71,6 +71,9 @@
     <ClInclude Include="Lq.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VisualizePerformance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">
@@ -89,6 +92,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RandomHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualizePerformance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

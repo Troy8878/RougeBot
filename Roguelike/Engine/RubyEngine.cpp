@@ -2,6 +2,7 @@
  * RubyEngine.cpp
  * Connor Hilarides
  * Created 2014/08/12
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -10,6 +11,8 @@
 #include "RubyInterop.h"
 #include "Game.h"
 
+#include <cstdlib>
+
 #include "mruby/string.h"
 #include "mruby/data.h"
 #include "mruby/class.h"
@@ -17,8 +20,6 @@
 #include "mruby/error.h"
 #include "mruby/array.h"
 #include "mruby/compile.h"
-
-#include <sstream>
 
 // ----------------------------------------------------------------------------
 
@@ -51,12 +52,12 @@ ruby_engine::~ruby_engine()
 
 // ----------------------------------------------------------------------------
 
-bool ruby_engine::evaluate_asset(const std::string& asset)
+bool ruby_engine::evaluate_asset(const std::string &asset)
 {
   auto prevfg = console::fg_color();
-  std::cout << console::fg::blue 
-            << "Loading ruby script " << asset 
-            << std::endl << prevfg;
+  std::cout << console::fg::blue
+    << "Loading ruby script " << asset
+    << std::endl << prevfg;
 
   auto container = GetGame()->Respack["Scripts"];
   RELEASE_AFTER_SCOPE(container);
@@ -65,22 +66,21 @@ bool ruby_engine::evaluate_asset(const std::string& asset)
 
   if (!resource)
     return false;
-  
+
   mrbc_context *cxt = mrbc_context_new(mrb);
 
-#ifdef _DEBUG
   cxt->capture_errors = true;
 
   size_t fname_size = asset.length() + 1;
   cxt->filename = new char[fname_size];
   strcpy_s(cxt->filename, fname_size, asset.c_str());
-#endif
 
-  mrb_load_nstring_cxt(mrb, (char *) resource->Data, (int) resource->Size, cxt);
+  mrb_load_nstring_cxt(mrb, reinterpret_cast<char *>(resource->Data), static_cast<int>(resource->Size), cxt);
 
   resource->Release();
 
   log_and_clear_error();
+  mrb_full_gc(mrb);
   return true;
 }
 
@@ -124,8 +124,6 @@ void ruby_engine::define_const(const char *name, mrb_value value)
 
 // ----------------------------------------------------------------------------
 
-
-
 mrb_value ruby_engine::wrap_native_ptr(void *ptr)
 {
   return mrb_cptr_value(mrb, ptr);
@@ -153,7 +151,6 @@ ruby_gc_guard::~ruby_gc_guard()
   if (mrb)
   {
     mrb_gc_arena_restore(mrb, arena);
-    mrb_garbage_collect(mrb);
   }
 }
 
@@ -185,12 +182,12 @@ ruby_value ruby_func::call_argv(const ruby_value *values, mrb_int num)
   mrb_value mvalues[128] = {0};
 
   if (num > 128)
-    throw std::exception("Over 128 params? >.> y u do dis? srsly, tell me");
+    throw basic_exception("Over 128 params? >.> y u do dis? srsly, tell me");
 
   for (int i = 0; i < num; ++i)
     mvalues[i] = values[i];
 
-  ruby_value result{mrb_nil_value(), engine};
+  ruby_value result;
   result = mrb_funcall_argv(*engine, invokee, funid, num, mvalues);
 
   engine->log_and_clear_error();
@@ -213,6 +210,8 @@ void ruby_engine::log_and_clear_error()
   if (!mrb->exc)
     return;
 
+  ruby_gc_guard{mrb};
+
   auto pfg = console::fg_color();
   std::cerr << console::fg::red;
 
@@ -221,12 +220,12 @@ void ruby_engine::log_and_clear_error()
 
   // Print the error
   mrb_value s = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
-  if (mrb_string_p(s)) 
+  if (mrb_string_p(s))
   {
     fwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1, stderr);
     putc('\n', stderr);
   }
-  
+
   mrb_gc_mark_value(mrb, mrb_obj_value(mrb->exc));
   mrb->exc = nullptr;
 
@@ -237,43 +236,32 @@ void ruby_engine::log_and_clear_error()
   std::cerr << "Backtrace:" << std::endl;
   size_t i = 0;
 
-#ifdef _DEBUG
   std::ostringstream btb;
   btb << "Backtrace:" << std::endl;
-#endif
 
-  for (auto& line : btrace_lines)
+  for (auto &line : btrace_lines)
   {
-    std::cerr << "  [" << ++i << "] " 
-              << static_cast<std::string>(line) << std::endl;
-#ifdef _DEBUG
-    btb << "  [" << i << "] " 
-        << static_cast<std::string>(line) << std::endl;
-#endif
+    std::cerr << "  [" << ++i << "] "
+      << static_cast<std::string>(line) << std::endl;
+    btb << "  [" << i << "] "
+      << static_cast<std::string>(line) << std::endl;
 
     mrb_gc_mark_value(mrb, line);
   }
 
-#ifdef _DEBUG
   if (mrb_debug_mbox)
   {
     std::string error_message = std::string(RSTRING_PTR(s), RSTRING_PTR(s) + RSTRING_LEN(s));
     std::string backtrace = btb.str();
     std::string full_message = error_message + "\n" + backtrace + "\n\nContinue running?";
 
-    int result = MessageBox(NULL, full_message.c_str(), "Ruby Error", MB_ICONERROR | MB_YESNO);
+    int result = MessageBox(nullptr, full_message.c_str(), "Ruby Error", MB_ICONERROR | MB_YESNO);
 
     if (result == IDNO)
-      exit(1);
+      _exit(1);
   }
-#endif
 
   std::cerr << pfg;
-
-  mrb_gc_mark_value(mrb, s);
-  mrb_gc_mark_value(mrb, b);
-
-  mrb_full_gc(mrb);
 }
 
 // ----------------------------------------------------------------------------
@@ -284,35 +272,35 @@ json::value ruby_engine::value_to_json(mrb_value value)
   {
     return hash_to_json(value);
   }
-  else if (mrb_array_p(value))
+  if (mrb_array_p(value))
   {
     return array_to_json(value);
   }
-  else if (mrb_string_p(value))
+  if (mrb_string_p(value) || mrb_symbol_p(value))
   {
     mrb_value value_s = mrb_funcall(mrb, value, "to_s", 0);
     return json::value::string(mrb_str_to_stdstring(value_s));
   }
-  else if (mrb_fixnum_p(value))
+  if (mrb_fixnum_p(value))
   {
-    return json::value::number((json::value::number_t) mrb_fixnum(value));
+    return json::value::number(static_cast<json::value::number_t>(mrb_fixnum(value)));
   }
-  else if (mrb_float_p(value))
+  if (mrb_float_p(value))
   {
     return json::value::number(mrb_float(value));
   }
-  else if (mrb_nil_p(value))
+  if (mrb_nil_p(value))
   {
     return json::value::null();
   }
-  else if (mrb_type(value) == MRB_TT_FALSE || mrb_type(value) == MRB_TT_TRUE)
+  if (mrb_type(value) == MRB_TT_FALSE || mrb_type(value) == MRB_TT_TRUE)
   {
     return json::value::boolean(!!mrb_bool(value));
   }
 
-  throw std::exception("Unknown type in hash. "
-                       "Please only use basics "
-                       "(hash, array, string, num, bool).");
+  throw basic_exception("Unknown type in hash. "
+    "Please only use basics "
+    "(hash, array, string, num, bool).");
 }
 
 // ----------------------------------------------------------------------------
@@ -320,7 +308,7 @@ json::value ruby_engine::value_to_json(mrb_value value)
 json::value ruby_engine::hash_to_json(mrb_value hash)
 {
   json::value jobj = json::value::object();
-  auto& object = jobj.as_object();
+  auto &object = jobj.as_object();
 
   auto keys = mrb_hash_keys(mrb, hash);
 
@@ -329,7 +317,7 @@ json::value ruby_engine::hash_to_json(mrb_value hash)
   {
     mrb_value key = mrb_ary_entry(keys, i);
     mrb_value value = mrb_hash_get(mrb, hash, key);
-    
+
     mrb_value key_to_s = mrb_funcall(mrb, key, "to_s", 0);
     std::string key_s = mrb_str_to_stdstring(key_to_s);
 
@@ -344,7 +332,7 @@ json::value ruby_engine::hash_to_json(mrb_value hash)
 json::value ruby_engine::array_to_json(mrb_value ary)
 {
   json::value jary = json::value::array();
-  auto& array = jary.as_array();
+  auto &array = jary.as_array();
 
   auto value_ct = mrb_ary_len(mrb, ary);
   for (mrb_int i = 0; i < value_ct; ++i)
@@ -363,26 +351,34 @@ mrb_value ruby_engine::json_to_value(json::value jv)
   using namespace json;
   switch (jv.type())
   {
-    case json_type::jbool:
-      return mrb_bool_value(jv.as_bool());
+  case json_type::jbool:
+    return mrb_bool_value(jv.as_bool());
 
-    case json_type::jnumber:
-      return mrb_float_value(mrb, (mrb_float) jv.as_number());
-
-    case json_type::jobject:
-      return json_to_hash(jv);
-
-    case json_type::jarray:
-      return json_to_array(jv);
-
-    case json_type::jstring:
+  case json_type::jnumber:
     {
-      auto& str = jv.as_string();
+      auto num = static_cast<mrb_float>(jv.as_number());
+      if (std::fmod(num, 1) == 0)
+        return mrb_fixnum_value(static_cast<mrb_int>(num));
+
+      return mrb_float_value(mrb, num);
+    }
+
+  case json_type::jobject:
+    return json_to_hash(jv);
+
+  case json_type::jarray:
+    return json_to_array(jv);
+
+  case json_type::jstring:
+    {
+      auto &str = jv.as_string();
+      if (str.empty())
+        return mrb_str_new_lit(mrb, "");
       return mrb_str_new(mrb, &*str.begin(), str.size());
     }
 
-    default:
-      return mrb_nil_value();
+  default:
+    return mrb_nil_value();
   }
 }
 
@@ -392,9 +388,9 @@ mrb_value ruby_engine::json_to_hash(json::value jobj)
 {
   mrb_value hash = mrb_hash_new(mrb);
 
-  for (auto& pair : jobj.as_object())
+  for (auto &pair : jobj.as_object())
   {
-    mrb_value key = mrb_str_new(mrb,&* pair.first.begin(), pair.first.size());
+    mrb_value key = mrb_str_new(mrb, &* pair.first.begin(), pair.first.size());
     mrb_value value = json_to_value(pair.second);
 
     mrb_hash_set(mrb, hash, key, value);
@@ -409,7 +405,7 @@ mrb_value ruby_engine::json_to_array(json::value jary)
 {
   mrb_value ary = mrb_ary_new(mrb);
 
-  for (auto& jv : jary.as_array())
+  for (auto &jv : jary.as_array())
   {
     mrb_value value = json_to_value(jv);
     mrb_ary_push(mrb, ary, value);
@@ -430,4 +426,3 @@ mrb_value mrb_nop(mrb_state *, mrb_value)
 bool mrb_debug_mbox = true;
 
 // ----------------------------------------------------------------------------
-

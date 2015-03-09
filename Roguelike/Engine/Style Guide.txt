@@ -67,7 +67,7 @@ letters.
 int globalVariable; // Please avoid these though D:
 
 template <typename T>
-void globalFunction(T& functionParameter)
+void GlobalFunction(T& functionParameter)
 {
   int localVariable;
 }
@@ -87,11 +87,11 @@ public:
   }
 
   int publicVariable;
-  void publicMemberFunction();
+  void PublicMemberFunction();
   
 private:
   int _privateVariable;
-  void privateMemberFunction();
+  void PrivateMemberFunction();
 };
 
 -- EXCEPTION TO NAMING CONVENTIONS --

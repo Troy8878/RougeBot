@@ -1,0 +1,1234 @@
+[
+  {
+    "dependencies": [
+      "SpriteComponent"
+    ],
+    "properties": [
+      {
+        "property": "paused",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "frame_time",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "frame_range",
+        "usage": {
+          "type": "vector",
+          "semantics": "range",
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "loops",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      }
+    ],
+    "name": "AnimatedComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "children",
+        "usage": {
+          "type": "array",
+          "contained": "entity",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": []
+        }
+      }
+    ],
+    "name": "ChildHierarchy"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "bindings",
+        "usage": {
+          "type": "map",
+          "key": "string",
+          "semantics": null,
+          "value": "string",
+          "required": false,
+          "locked": false,
+          "default": {}
+        }
+      }
+    ],
+    "name": "EvalOnEventComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "AnimationKillComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "delete_owner",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      }
+    ],
+    "name": "StatusMessageComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "damage",
+        "usage": {
+          "type": "vector",
+          "semantics": "range",
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            2,
+            4
+          ]
+        }
+      }
+    ],
+    "name": "AttackComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "num_enemies",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "BasicEnemySpawnerComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "max_health",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 25
+        }
+      },
+      {
+        "property": "health",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 10
+        }
+      }
+    ],
+    "name": "DefenseComponent"
+  },
+  {
+    "dependencies": [
+      "PositionComponent",
+      "AttackComponent"
+    ],
+    "properties": [
+      {
+        "property": "stationary",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      }
+    ],
+    "name": "EnemyLogicComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "FloorGeneratorComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "GameQuitCancelerComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "HealthBarComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "is_player",
+        "usage": {
+          "type": "bool",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      }
+    ],
+    "name": "InventoryComponent"
+  },
+  {
+    "dependencies": [
+      "TransformComponent",
+      "PositionComponent"
+    ],
+    "properties": [],
+    "name": "PlayerControllerComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "PlayerHealthComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "direc",
+        "usage": {
+          "type": "direction",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": [
+            1,
+            0
+          ]
+        }
+      },
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "PlayerProjectileLogicComponent"
+  },
+  {
+    "dependencies": [
+      "PositionComponent"
+    ],
+    "properties": [],
+    "name": "StairComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "ButtonAdjustment"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "ButtonSoundsComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "ConsoleBeGone"
+  },
+  {
+    "dependencies": [
+      "TransformComponent"
+    ],
+    "properties": [],
+    "name": "ConsoleTextComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "GameConsoleComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "slot",
+        "usage": {
+          "type": "integer",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "target_name",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": "entity_name",
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "HotbarComponent"
+  },
+  {
+    "dependencies": [
+      "TransformComponent"
+    ],
+    "properties": [],
+    "name": "MapControllerComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "GamePauseControllerComponent"
+  },
+  {
+    "dependencies": [
+      "TransformComponent"
+    ],
+    "properties": [
+      {
+        "property": "camera",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": "entity_name",
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "HUD::TileCursorComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "AITestComponent"
+  },
+  {
+    "dependencies": [
+      "TransformComponent"
+    ],
+    "properties": [
+      {
+        "property": "offset",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 3,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "superspeed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "follows",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": "entity_id",
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "CameraFollowComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "DebugDrawSwitchComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "GameQuitComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "HttpInstanceUpdaterComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "MenuQuitBlocker"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "Pancakification"
+  },
+  {
+    "dependencies": [
+      "CameraComponent"
+    ],
+    "properties": [
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 1
+        }
+      },
+      {
+        "property": "distance",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 1
+        }
+      }
+    ],
+    "name": "SpinnyCameraComponent"
+  },
+  {
+    "dependencies": [
+      "TransformComponent"
+    ],
+    "properties": [
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 1
+        }
+      },
+      {
+        "property": "axis",
+        "usage": {
+          "type": "enum",
+          "required": false,
+          "options": [
+            "x",
+            "y",
+            "z"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "z"
+        }
+      }
+    ],
+    "name": "SpinnyThingComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "position",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 3,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "rotation",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 3,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "scale",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 3,
+          "required": false,
+          "locked": false,
+          "default": [
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    ],
+    "name": "TransformComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "textures",
+        "usage": {
+          "type": "array",
+          "contained": "texture",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": []
+        }
+      }
+    ],
+    "name": "TextureComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "shader",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "shader",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "tint",
+        "usage": {
+          "type": "vector",
+          "semantics": "color",
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    ],
+    "name": "SpriteComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "ButtonComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "target_name",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "layer",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "copy",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "type",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": true,
+          "default": "ManualCamera"
+        }
+      }
+    ],
+    "name": "CameraComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "shader",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "shader",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "CustomModelComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "scaleRange",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "rotationRange",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "velocityRange",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "rotVelRange",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "offSet",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 4,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "particleRate",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "fadeTime",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "active",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
+        "property": "texture",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "texture",
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "ParticleSystemComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "texts",
+        "usage": {
+          "type": "array",
+          "contained": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": []
+        }
+      },
+      {
+        "property": "text_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "bg_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "font",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "font",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "font_size",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 48
+        }
+      },
+      {
+        "property": "text_align",
+        "usage": {
+          "type": "enum",
+          "required": false,
+          "options": [
+            "center",
+            "justified",
+            "leading",
+            "trailing"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "center"
+        }
+      },
+      {
+        "property": "paragraph_align",
+        "usage": {
+          "type": "enum",
+          "required": false,
+          "options": [
+            "center",
+            "near",
+            "far"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "center"
+        }
+      },
+      {
+        "property": "autocreate_textures",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "name": "TextComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "move_speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 5
+        }
+      },
+      {
+        "property": "position",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "mode",
+        "usage": {
+          "type": "enum",
+          "required": true,
+          "options": [
+            "jump",
+            "linear",
+            "exponential"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "jump"
+        }
+      }
+    ],
+    "name": "PositionComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "GoToSplash"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "SplashLevelSwitcher"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "SplashZoomComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "width",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 3
+        }
+      },
+      {
+        "property": "bg_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": "White, 0.6"
+        }
+      },
+      {
+        "property": "bg_hover",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "text_scale",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 48
+        }
+      },
+      {
+        "property": "image",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "text_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": "White"
+        }
+      },
+      {
+        "property": "text_alt_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "font",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "font",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "text",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "text_align",
+        "usage": {
+          "type": "enum",
+          "required": false,
+          "options": [
+            "center",
+            "justified",
+            "leading",
+            "trailing"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "center"
+        }
+      }
+    ],
+    "name": "ButtonHelperComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "render_target",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "render_target",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "is_checked",
+        "usage": {
+          "type": "bool",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
+        "property": "box_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": "#AFAFAFFF"
+        }
+      },
+      {
+        "property": "alt_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": "#007FCFFF"
+        }
+      },
+      {
+        "property": "text_color",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "color",
+          "locked": false,
+          "default": "White"
+        }
+      },
+      {
+        "property": "text_width",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 3
+        }
+      },
+      {
+        "property": "text_scale",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 48
+        }
+      },
+      {
+        "property": "font",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "font",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "text",
+        "usage": {
+          "type": "string",
+          "required": true,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
+        "property": "config_bind",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": ""
+        }
+      }
+    ],
+    "name": "CheckboxHelperComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "KeybindingComponent"
+  }
+]

@@ -2,6 +2,7 @@
  * GraphicsDevice.cpp
  * Connor Hilarides
  * Created 2014/06/24
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -13,6 +14,7 @@
 // Testing stuff, remove later
 #include "Level.h"
 #include "SpriteComponent.h"
+#include <mmintrin.h>
 
 // ----------------------------------------------------------------------------
 
@@ -58,45 +60,113 @@ void GraphicsDevice::FreeD2DResources()
 
 // ----------------------------------------------------------------------------
 
-std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions& options)
+static WndProcPatch *wndpatch = nullptr;
+static bool patchContinue;
+
+bool GraphicsDevice::IsPatched()
 {
-  auto *window = new WindowDevice(options);
-  return std::unique_ptr < WindowDevice > {window};
+  return wndpatch != nullptr;
+}
+
+void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
+{
+  wndpatch = &patch;
+  patchContinue = true;
+
+  // SoonEwe will take a screenshot of the game state
+  // and overlay the CODA over that. But for now, sadfaec for this
+
+  auto &time = GetGame()->_gameTime;
+  while (patchContinue)
+  {
+    time.Update();
+
+    this->ProcessMessages();
+
+    this->BeginFrame();
+    patch.Update(time);
+    this->EndFrame();
+  }
+
+  wndpatch = nullptr;
 }
 
 // ----------------------------------------------------------------------------
 
-HWND WindowDevice::InitializeWindow(const WindowCreationOptions& options)
+std::unique_ptr<WindowDevice> GraphicsDevice::CreateGameWindow(const WindowCreationOptions &options)
 {
+  auto *window = new WindowDevice(options);
+  return std::unique_ptr<WindowDevice>{window};
+}
+
+// ----------------------------------------------------------------------------
+
+HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
+{
+  wndpatch = nullptr;
+
   std::string className = std::to_string(reinterpret_cast<size_t>(this));
 
   WNDCLASSEX wndc = {sizeof(wndc)};
   wndc.cbWndExtra = sizeof(WindowDevice *);
+  wndc.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
   wndc.hInstance = options.hInstance;
   wndc.lpfnWndProc = StaticWindowProc;
   wndc.lpszClassName = className.c_str();
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
+  wndc.hCursor = LoadCursor(nullptr, IDC_ARROW);
   RegisterClassEx(&wndc);
 
-  HWND window = CreateWindow(wndc.lpszClassName,
-                             options.gameTitle.c_str(),
-                             WS_OVERLAPPEDWINDOW,
-                             CW_USEDEFAULT, CW_USEDEFAULT,
-                             static_cast<UINT>(options.size.x),
-                             static_cast<UINT>(options.size.y),
-                             NULL, NULL, options.hInstance,
-                             reinterpret_cast<void *>(this));
+#pragma region Fix the width and height for the client rect
+
+  RECT rect;
+  rect.left = 0;
+  rect.right = static_cast<LONG>(options.size.x);
+  rect.top = 0;
+  rect.bottom = static_cast<LONG>(options.size.y);
+
+  AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+
+  auto width = UINT(rect.right - rect.left);
+  auto height = UINT(rect.bottom - rect.top);
+
+#pragma endregion
+
+  auto window = CreateWindow(
+    wndc.lpszClassName,
+    options.gameTitle.c_str(),
+    WS_OVERLAPPEDWINDOW,
+    CW_USEDEFAULT, CW_USEDEFAULT,
+    width, height,
+    NULL, NULL, options.hInstance,
+    reinterpret_cast<void *>(this));
 
   ShowWindow(window, SW_SHOWNORMAL);
   UpdateWindow(window);
+
+  SwitchToThisWindow(window, TRUE);
+
+  is_fullscreen = false;
 
   return window;
 }
 
 // ----------------------------------------------------------------------------
 
-WindowDevice::WindowDevice(const WindowCreationOptions& options)
-  : _size(options.size)
+template <typename Container>
+class Iterator
+{
+  Container container;
+
+public:
+  auto begin() -> decltype(container.begin())
+  {
+    return container.begin();
+  }
+};
+
+WindowDevice::WindowDevice(const WindowCreationOptions &options)
+  : GraphicsDevice(), _size(options.size)
 {
   Window = InitializeWindow(options);
 
@@ -114,23 +184,34 @@ LRESULT CALLBACK WindowDevice::StaticWindowProc(HWND hwnd, UINT msg, WPARAM wpar
     return 0;
   }
 
-  auto *_this = reinterpret_cast<WindowDevice *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-  return _this->WindowProc(hwnd, msg, wparam, lparam);
+  auto *_this = static_cast<WindowDevice *>(GetGame()->GameDevice);
+  if (_this)
+    return _this->WindowProc(hwnd, msg, wparam, lparam);
+  return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 // ----------------------------------------------------------------------------
 
+void SetMrbGVolume(double vol);
+
 LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-  auto& game = *GetGame();
+  if (GetGame()->levelChangeContext.name != "Init" && wndpatch != nullptr)
+  {
+    return wndpatch->PatchedWndProc(hwnd, msg, wparam, lparam, patchContinue);
+  }
+
+  auto &game = *GetGame();
   auto iter = game._wndprocCallbacks.find(msg);
   if (iter != game._wndprocCallbacks.end())
   {
-    auto& handler = iter->second;
+    auto &handler = iter->second;
 
     LRESULT result = 0;
     handler(hwnd, msg, wparam, lparam, result);
-    return result;
+
+    if (msg != WM_KILLFOCUS)
+      return result;
   }
 
   switch (msg)
@@ -149,21 +230,20 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       return 0;
     }
 
-    case WM_KEYDOWN:
+    case WM_KILLFOCUS:
     {
-      if ((wparam & 0x40000000) == 0)
+      SetMrbGVolume(0);
+      if (is_fullscreen)
       {
-        auto signal = Input::TranslateSignal(msg, wparam, lparam);
-        Input::Instance.OnKeyDown(signal);
-        return 0;
+        ShowWindow(hwnd, SW_MINIMIZE);
       }
+      break;
     }
 
-    case WM_KEYUP:
+    case WM_SETFOCUS:
     {
-      auto signal = Input::TranslateSignal(msg, wparam, lparam);
-      Input::Instance.OnKeyUp(signal);
-      return 0;
+      SetMrbGVolume(1);
+      break;
     }
   }
 
@@ -175,7 +255,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 void WindowDevice::ProcessMessages()
 {
   MSG message;
-  while (PeekMessage(&message, Window, 0, 0, TRUE))
+  while (PeekMessage(&message, Window, 0, 0, PM_REMOVE))
   {
     TranslateMessage(&message);
     DispatchMessage(&message);
@@ -203,7 +283,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   _size = size;
 
   // Release D2D stuff
-  FreeD2DResources();
+  //FreeD2DResources();
 
   // Release render target
   DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -219,6 +299,8 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   CHECK_HRESULT(hr);
 
   hr = Device->CreateRenderTargetView(pBuffer, nullptr, &RenderTargetView);
+  CHECK_HRESULT(hr);
+
   ReleaseDXInterface(pBuffer);
 
   InitializeDepthBuffer();
@@ -232,7 +314,7 @@ void WindowDevice::SetSize(math::Vector2D size, bool overrideFullscreen)
   vp.TopLeftY = 0;
   DeviceContext->RSSetViewports(1, &vp);
 
-  InitializeD2DContext();
+  //InitializeD2DContext();
 }
 
 // ----------------------------------------------------------------------------
@@ -244,8 +326,6 @@ math::Vector2D WindowDevice::GetSize() const
 
 // ----------------------------------------------------------------------------
 
-void TestDrawText(GraphicsDevice::D2DData& D2D);
-
 bool WindowDevice::BeginFrame()
 {
   if (DeviceContext == nullptr)
@@ -254,94 +334,26 @@ bool WindowDevice::BeginFrame()
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-  TestDrawText(D2D);
-
   return true;
-}
-
-// ----------------------------------------------------------------------------
-
-void TestDrawText(GraphicsDevice::D2DData& D2D)
-{
-  HRESULT hr;
-  
-  static ID2D1SolidColorBrush *boxBrush = nullptr;
-  static ID2D1SolidColorBrush *textBrush = nullptr;
-  static IDWriteTextFormat *textFormat = nullptr;
-
-  static const WCHAR helloWorld[] = L"Hello, World!";
-
-  static GraphicsDevice::D2DData::clock::time_point created;
-  if (created < D2D.ResourceTimestamp)
-  {
-    ReleaseDXInterface(textFormat);
-    ReleaseDXInterface(textBrush);
-    ReleaseDXInterface(boxBrush);
-
-    created = GraphicsDevice::D2DData::clock::now();
-
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(1, 0, 0, 0.7f), &boxBrush);
-    CHECK_HRESULT(hr);
-
-    hr = D2D.DeviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &textBrush);
-    CHECK_HRESULT(hr);
-
-    hr = D2D.WriteFactory->
-      CreateTextFormat(L"Segoe Script", nullptr,
-                       DWRITE_FONT_WEIGHT_EXTRA_BOLD,
-                       DWRITE_FONT_STYLE_NORMAL,
-                       DWRITE_FONT_STRETCH_NORMAL,
-                       96, L"", &textFormat);
-    CHECK_HRESULT(hr);
-
-    hr = textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    CHECK_HRESULT(hr);
-
-    hr = textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    CHECK_HRESULT(hr);
-
-    auto testent = GetGame()->CurrentLevel->RootEntity->FindEntity("2DSurfaceTest");
-
-    auto sprite = (SpriteComponent *) testent->GetComponent("SpriteComponent");
-    auto texture = sprite->GetTexture(0);
-
-    D2D.DrawTo(texture);
-    auto targetSize = D2D.DeviceContext->GetSize();
-
-    D2D.DeviceContext->FillRectangle(
-      D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-      boxBrush);
-
-    D2D.DeviceContext->DrawTextA(
-      helloWorld, 
-      ARRAYSIZE(helloWorld),
-      textFormat,
-      D2D1::RectF(0, 0, targetSize.width, targetSize.height),
-      textBrush);
-
-    hr = D2D.EndDraw();
-    CHECK_HRESULT(hr);
-  }
 }
 
 // ----------------------------------------------------------------------------
 
 void WindowDevice::EndFrame()
 {
-  static bool vsync = GetGame()->initSettings.vsync;
-  if (vsync)
+  bool vsync = GetGame()->initSettings.vsync;
+  if (vsync && GetFullscreen())
   {
     SwapChain->Present(1, 0);
   }
   else
   {
-    const double min_frame_time = 0.001;
-
-    static auto& time = GetGame()->Time;
-    while (time.CurrFrameTime < min_frame_time)
-      Sleep(0);
-
     SwapChain->Present(0, 0);
+
+    const double min_frame = 1 / 120.0;
+    auto &time = GetGame()->Time;
+    while (time.CurrFrameTime < min_frame)
+      Sleep(0);
   }
 }
 
@@ -353,7 +365,7 @@ void GraphicsDevice::InitializeD3DContext()
   auto _window = GetContextWindow();
   CHECK_HRESULT(GetLastError());
 
-  #pragma region Initialize Swap Chain
+#pragma region Initialize Swap Chain
 
   DXGI_SWAP_CHAIN_DESC sd;
   ZeroMemory(&sd, sizeof(sd));
@@ -361,28 +373,29 @@ void GraphicsDevice::InitializeD3DContext()
   sd.BufferDesc.Width = static_cast<UINT>(contextSize.x);
   sd.BufferDesc.Height = static_cast<UINT>(contextSize.y);
   sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  sd.BufferDesc.RefreshRate.Numerator = 120;
-  sd.BufferDesc.RefreshRate.Denominator = 1;
+  sd.BufferDesc.RefreshRate.Numerator = 1;
+  sd.BufferDesc.RefreshRate.Denominator = 120;
   sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   sd.OutputWindow = _window;
   sd.SampleDesc.Count = 1;
   sd.SampleDesc.Quality = 0;
   sd.Windowed = TRUE;
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Create Device and Swap Chain
+#pragma region Create Device and Swap Chain
 
-  D3D_FEATURE_LEVEL  FeatureLevelsRequested[] =
-  {
-    D3D_FEATURE_LEVEL_11_0,
-  };
-  UINT               numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
-  D3D_FEATURE_LEVEL  FeatureLevelSupported;
+  D3D_FEATURE_LEVEL FeatureLevelsRequested[] =
+    {
+      D3D_FEATURE_LEVEL_11_0,
+    };
+  UINT numLevelsRequested = ARRAYSIZE(FeatureLevelsRequested);
+  D3D_FEATURE_LEVEL FeatureLevelSupported;
 
   // this is a big function call >.> just go to
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ff476879(v=vs.85).aspx
   // if you have no idea, because it's too complex to describe here
+  IDXGISwapChain *swapChain;
   HRESULT hr = D3D11CreateDeviceAndSwapChain(
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
@@ -392,11 +405,13 @@ void GraphicsDevice::InitializeD3DContext()
     numLevelsRequested,
     D3D11_SDK_VERSION,
     &sd,
-    &SwapChain,
+    &swapChain,
     &Device,
     &FeatureLevelSupported,
     &DeviceContext);
   CHECK_HRESULT(hr);
+
+  swapChain->QueryInterface(&SwapChain);
 
   hr = ConvertInterface<IDXGIDevice>(Device, &FactoryDevice);
   CHECK_HRESULT(hr);
@@ -411,11 +426,11 @@ void GraphicsDevice::InitializeD3DContext()
 
   ReleaseDXInterface(backBuffer);
 
-  #pragma endregion
+#pragma endregion
 
   InitializeDepthBuffer();
 
-  #pragma region Rasterizer
+#pragma region Rasterizer
 
   D3D11_RASTERIZER_DESC rasterDesc;
   rasterDesc.CullMode = GetGame()->initSettings.cullTriangles ? D3D11_CULL_BACK : D3D11_CULL_NONE;
@@ -434,9 +449,24 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetState(RasterState);
 
-  #pragma endregion
+  D3D11_RASTERIZER_DESC wireframeDesc;
+  wireframeDesc.CullMode = D3D11_CULL_NONE;
+  wireframeDesc.DepthBias = -1;
+  wireframeDesc.DepthBiasClamp = 0.0f;
+  wireframeDesc.DepthClipEnable = false;
+  wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+  wireframeDesc.FrontCounterClockwise = false;
+  wireframeDesc.MultisampleEnable = true;
+  wireframeDesc.ScissorEnable = false;
+  wireframeDesc.SlopeScaledDepthBias = 0.0f;
+  wireframeDesc.AntialiasedLineEnable = true;
 
-  #pragma region Viewport
+  hr = Device->CreateRasterizerState(&wireframeDesc, &WireframeState);
+  CHECK_HRESULT(hr);
+
+#pragma endregion
+
+#pragma region Viewport
 
   D3D11_VIEWPORT viewport;
   viewport.Width = contextSize.x;
@@ -448,9 +478,9 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->RSSetViewports(1, &viewport);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Blend State
+#pragma region Blend State
 
   D3D11_BLEND_DESC blendStateDesc;
   ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
@@ -470,8 +500,7 @@ void GraphicsDevice::InitializeD3DContext()
 
   DeviceContext->OMSetBlendState(BlendState, nullptr, 0xFFFFFF);
 
-  #pragma endregion
-
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -484,7 +513,7 @@ void GraphicsDevice::InitializeDepthBuffer()
   ReleaseDXInterface(DepthStencilState);
   ReleaseDXInterface(DepthStencilView);
 
-  #pragma region Depth Stencil Buffer
+#pragma region Depth Stencil Buffer
 
   D3D11_TEXTURE2D_DESC depthBufferDesc;
   ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -503,9 +532,9 @@ void GraphicsDevice::InitializeDepthBuffer()
   hr = Device->CreateTexture2D(&depthBufferDesc, nullptr, &DepthStencilBuffer);
   CHECK_HRESULT(hr);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Depth Stencil State
+#pragma region Depth Stencil State
 
   D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
   ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -533,9 +562,9 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
 
-  #pragma endregion
+#pragma endregion
 
-  #pragma region Depth Stencil View Desc
+#pragma region Depth Stencil View Desc
 
   D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
   ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -548,8 +577,7 @@ void GraphicsDevice::InitializeDepthBuffer()
 
   DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 
-  #pragma endregion
-
+#pragma endregion
 }
 
 // ----------------------------------------------------------------------------
@@ -585,7 +613,7 @@ void GraphicsDevice::InitializeD2DContext()
 
   D2D.DeviceContext->SetDpi(96, 96);
 
-  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
+  hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
                            __uuidof(*D2D.WriteFactory),
                            reinterpret_cast<IUnknown **>(&D2D.WriteFactory));
   CHECK_HRESULT(hr);
@@ -595,7 +623,7 @@ void GraphicsDevice::InitializeD2DContext()
 
 // ----------------------------------------------------------------------------
 
-void DisplayAdapter::GetAdapters(std::vector<DisplayAdapter>& adapters)
+void DisplayAdapter::GetAdapters(std::vector<DisplayAdapter> &adapters)
 {
   IDXGIFactory1 *dxgFactory = nullptr;
   auto result = CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&dxgFactory));
@@ -646,21 +674,21 @@ DisplayOutput::DisplayOutput(IDXGIOutput *dxgOutput)
   hr = dxgOutput->GetDisplayModeList(format, flags, &numModes, modeStructs.data());
   CHECK_HRESULT(hr);
 
-  for (auto& mode : modeStructs)
+  for (auto &mode : modeStructs)
     DisplayModes.emplace_back(mode);
 }
 
 // ----------------------------------------------------------------------------
 
-void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
+void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting> &settings)
 {
-  for (auto& mode : DisplayModes)
+  for (auto &mode : DisplayModes)
   {
-    auto pred = [&mode] (const DisplaySetting& setting)
-    {
-      return mode.Width == setting.Width &&
-             mode.Height == setting.Height;
-    };
+    auto pred = [&mode] (const DisplaySetting &setting)
+      {
+        return mode.Width == setting.Width &&
+          mode.Height == setting.Height;
+      };
 
     auto it = std::find_if(settings.begin(), settings.end(), pred);
     if (it != settings.end())
@@ -676,7 +704,7 @@ void DisplayOutput::CreateResolutionList(std::vector<DisplaySetting>& settings)
 
 // ----------------------------------------------------------------------------
 
-DisplayMode::DisplayMode(const DXGI_MODE_DESC& desc)
+DisplayMode::DisplayMode(const DXGI_MODE_DESC &desc)
   : DXGI_MODE_DESC(desc)
 {
 }
@@ -689,7 +717,7 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
-  DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
+  DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
 // ----------------------------------------------------------------------------
@@ -701,3 +729,42 @@ HRESULT GraphicsDevice::D2DData::EndDraw()
 
 // ----------------------------------------------------------------------------
 
+bool WindowDevice::GetFullscreen()
+{
+  return is_fullscreen;
+}
+
+void WindowDevice::SetFullscreen(bool value)
+{
+  if (is_fullscreen == value)
+    return;
+  is_fullscreen = value;
+
+  if (is_fullscreen)
+  {
+    HMONITOR hmon = MonitorFromWindow(Window, 0);
+    MONITORINFO mi = { sizeof(mi) };
+    GetMonitorInfo(hmon, &mi);
+
+    GetWindowRect(Window, &pre_fullscreen_rect);
+    SetWindowLong(Window, GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_SYSMENU);
+    SetWindowPos(Window, HWND_TOP,
+                 mi.rcMonitor.left,
+                 mi.rcMonitor.top,
+                 mi.rcMonitor.right - mi.rcMonitor.left,
+                 mi.rcMonitor.bottom - mi.rcMonitor.top, 
+                 SWP_SHOWWINDOW);
+  }
+  else
+  {
+    SetWindowLong(Window, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+    SetWindowPos(Window, HWND_TOP,
+                 pre_fullscreen_rect.left,
+                 pre_fullscreen_rect.top,
+                 pre_fullscreen_rect.right - pre_fullscreen_rect.left,
+                 pre_fullscreen_rect.bottom - pre_fullscreen_rect.top,
+                 SWP_SHOWWINDOW);
+  }
+}
+
+// ----------------------------------------------------------------------------

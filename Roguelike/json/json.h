@@ -2,6 +2,7 @@
  * json.h
  * Connor Hilarides
  * Created 2014/05/30
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -10,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <sstream>
 
 namespace json
 {
@@ -46,6 +48,10 @@ namespace json
     private:
       class shared_value
       {
+      public:
+        ~shared_value();
+
+      private:
         typedef unsigned __int8 byte_t;
 
         union data_t
@@ -99,6 +105,7 @@ namespace json
 
     public:
       value() : value(null()) {}
+      value(std::_Uninitialized) {}
 
       static value null();
       static value number(number_t value = 0);
@@ -141,6 +148,28 @@ namespace json
       template <typename JsonType>
       array_of_t<JsonType> as_array_of();
 
+      #pragma region Access As Object/Array
+
+      json::value& operator[](array_t::size_type index)
+      {
+        auto& ary = as_array();
+        if (ary.size() <= index)
+          ary.resize(index + 1);
+
+        return ary[index];
+      }
+
+      json::value& operator[](const object_t::key_type& key)
+      {
+        auto& obj = as_object();
+        return obj[key];
+      }
+
+      #pragma endregion
+
+    private:
+      void assert_type(json_type type);
+
       #pragma endregion
 
       #pragma region Parse
@@ -162,16 +191,30 @@ namespace json
       #pragma region Serialize
 
     public:
-      std::string serialize();
-      void serialize(std::ostream& out);
+      std::string serialize() const;
+      void serialize(std::ostream& out) const;
+
+      void pretty_print(std::ostream& out, unsigned indent = 0) const;
+
+      std::string pretty_print() const
+      {
+        std::ostringstream out;
+        pretty_print(out);
+        return out.str();
+      }
 
     private:
-      void serialize_null(std::ostream& out);
-      void serialize_object(std::ostream& out);
-      void serialize_array(std::ostream& out);
-      void serialize_string(std::ostream& out);
-      void serialize_number(std::ostream& out);
-      void serialize_bool(std::ostream& out);
+      mutable bool _pretty_print = false;
+      mutable unsigned _pretty_level;
+
+      void serialize_null(std::ostream& out) const;
+      void serialize_object(std::ostream& out) const;
+      void serialize_array(std::ostream& out) const;
+      void serialize_string(std::ostream& out) const;
+      void serialize_number(std::ostream& out) const;
+      void serialize_bool(std::ostream& out) const;
+
+      void next_pretty_line(std::ostream& out) const;
 
       #pragma endregion
   };

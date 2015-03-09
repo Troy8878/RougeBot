@@ -2,6 +2,7 @@
  * GraphicsDevice.h
  * Connor Hilarides
  * Created 2014/06/24
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -14,6 +15,14 @@ struct WindowCreationOptions;
 class GraphicsDevice;
 class WindowDevice;
 class Texture2D;
+
+// ----------------------------------------------------------------------------
+
+__interface WndProcPatch
+{
+  LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont);
+  void Update(const GameTime &time);
+};
 
 // ----------------------------------------------------------------------------
 
@@ -32,16 +41,20 @@ public:
 
   virtual bool BeginFrame() = 0;
   virtual void EndFrame() = 0;
+  virtual void ProcessMessages() = 0;
+  bool IsPatched();
 
-  static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions& options);
-  void CreateInputLayout(byte* bytecode,
+  void PatchWndProc(WndProcPatch &patch);
+
+  static std::unique_ptr<WindowDevice> CreateGameWindow(const WindowCreationOptions &options);
+  void CreateInputLayout(byte *bytecode,
                          UINT bytecodeSize,
-                         D3D11_INPUT_ELEMENT_DESC* layoutDesc,
+                         D3D11_INPUT_ELEMENT_DESC *layoutDesc,
                          UINT layoutDescNumElements,
-                         ID3D11InputLayout** layout);
+                         ID3D11InputLayout **layout);
 
   // 3D stuff
-  IR_PROPERTY(IDXGISwapChain *, SwapChain);
+  IR_PROPERTY(IDXGISwapChain1 *, SwapChain);
   IR_PROPERTY(IDXGIAdapter *, FactoryAdapter);
   IR_PROPERTY(IDXGIDevice *, FactoryDevice);
   IR_PROPERTY(IDXGIFactory2 *, DeviceFactory);
@@ -52,7 +65,11 @@ public:
   IR_PROPERTY(ID3D11DepthStencilState *, DepthStencilState);
   IR_PROPERTY(ID3D11DepthStencilView *, DepthStencilView);
   IR_PROPERTY(ID3D11RasterizerState *, RasterState);
+  IR_PROPERTY(ID3D11RasterizerState *, WireframeState);
   IR_PROPERTY(ID3D11BlendState *, BlendState);
+
+  bool WireframeDraw = false;
+  bool DebugDraw = false;
 
   // 2D stuff
   struct D2DData
@@ -71,6 +88,7 @@ public:
     void DrawTo(Texture2D texture);
     HRESULT EndDraw();
   };
+
   IR_PROPERTY(D2DData, D2D);
 
 protected:
@@ -100,7 +118,10 @@ class WindowDevice final : public GraphicsDevice
   math::Vector2D _size;
 
 public:
-  HWND GetContextWindow() override { return Window; }
+  HWND GetContextWindow() override
+  {
+    return Window;
+  }
 
   void SetSize(math::Vector2D newSize, bool overrideFullscreen = false) final override;
   math::Vector2D GetSize() const final override;
@@ -108,16 +129,22 @@ public:
   bool BeginFrame() override;
   void EndFrame() override;
 
-  void ProcessMessages();
+  void ProcessMessages() override;
 
   IR_PROPERTY(HWND, Window);
 
+  bool GetFullscreen();
+  void SetFullscreen(bool value);
+
 private:
-  WindowDevice(const WindowCreationOptions& options);
+  explicit WindowDevice(const WindowCreationOptions &options);
   static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-  HWND InitializeWindow(const WindowCreationOptions& options);
+  HWND InitializeWindow(const WindowCreationOptions &options);
   LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+  RECT pre_fullscreen_rect;
+  bool is_fullscreen = false;
 
   friend class GraphicsDevice;
 };
@@ -127,11 +154,12 @@ private:
 struct DisplayMode : public DXGI_MODE_DESC
 {
   DisplayMode() = default;
-  DisplayMode(const DXGI_MODE_DESC& mode);
+  explicit DisplayMode(const DXGI_MODE_DESC &mode);
 
-  DisplayMode& operator=(const DXGI_MODE_DESC& other) 
-  { 
-    DXGI_MODE_DESC::operator=(other); 
+  DisplayMode &operator=(const DXGI_MODE_DESC &other)
+  {
+    DXGI_MODE_DESC::operator=(other);
+    return *this;
   }
 };
 
@@ -141,20 +169,20 @@ struct DisplaySetting;
 
 struct DisplayOutput : public DXGI_OUTPUT_DESC
 {
-  DisplayOutput(IDXGIOutput *output);
+  explicit DisplayOutput(IDXGIOutput *output);
 
   std::vector<DisplayMode> DisplayModes;
 
-  void CreateResolutionList(std::vector<DisplaySetting>& settings);
+  void CreateResolutionList(std::vector<DisplaySetting> &settings);
 };
 
 // ----------------------------------------------------------------------------
 
 struct DisplayAdapter
 {
-  static void GetAdapters(std::vector<DisplayAdapter>& adapters);
-  
-  DisplayAdapter(IDXGIAdapter *dxgAdapter);
+  static void GetAdapters(std::vector<DisplayAdapter> &adapters);
+
+  explicit DisplayAdapter(IDXGIAdapter *dxgAdapter);
 
   std::vector<DisplayOutput> DisplayOutputs;
 };
@@ -163,8 +191,8 @@ struct DisplayAdapter
 
 struct DisplaySetting
 {
-  DisplaySetting(const DXGI_MODE_DESC& mode)
-    : Width(mode.Width), Height(mode.Height), Variants({mode})
+  explicit DisplaySetting(const DXGI_MODE_DESC &mode)
+    : Width(mode.Width), Height(mode.Height), Variants({DisplayMode(mode)})
   {
   }
 

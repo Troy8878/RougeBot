@@ -1,0 +1,65 @@
+{
+  "TransformComponent": {
+    "position": [0, 10, -1]
+  },
+  "GamePauseControllerComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "ButtonRoot",
+        "components": {
+          "TransformComponent": {
+            "position": [-0.5, 0]
+          },
+          "ChildHierarchy": {
+            "children": [
+              {
+                "name": "PauseTitle",
+                "archetype": "HUD/Pause/PauseTitle"
+              },
+              {
+                "name": "Resume",
+                "archetype": "HUD/Pause/Resume"
+              },
+              {
+                "name": "Exit",
+                "archetype": "HUD/Pause/Exit"
+              },
+              {
+                "name": "Quit",
+                "archetype": "HUD/Pause/Quit"
+              },
+              {
+                "name": "Restart",
+                "archetype": "HUD/Pause/Restart"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "PauseBG",
+        "archetype": "HUD/Pause/PauseBG"
+      },
+      {
+        "name": "Copyright",
+        "archetype": "HUD/Pause/Copyright"
+      },
+      {
+        "name": "HowToPlay",
+        "components": {
+          "TransformComponent": {
+            "scale": [1.5, 1.125],
+            "position": [0.8, 0]
+          },
+          "TextureComponent": {
+            "textures": ["HowTo/HowTo1White.png"]
+          },
+          "SpriteComponent": {
+            "render_target": "PauseLayer"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -6,6 +6,8 @@
 *.user
 *.sln.docstates
 
+Thumbs.db
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -179,3 +181,9 @@ Roguelike/Assets/Shaders/
 
 cloc_diff.yml
 last_cloc_report.yml
+
+Roguelike/performance_data.txt
+Roguelike/Roguelike.sln.ide/*
+Installer/GAMEDIRECTORY/*
+
+Installer/INSTALLER/Roguebot_Setup.exe

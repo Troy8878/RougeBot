@@ -1,0 +1,24 @@
+{
+  "TransformComponent": {
+    "position": [0, 0, -0.1],
+    "scale": [1, 3, 1]
+  },
+  "TextureComponent": {
+    "textures": [
+      "Weapons/Spear_Animate/Spear0.png",
+      "Weapons/Spear_Animate/Spear1.png",
+      "Weapons/Spear_Animate/Spear2.png",
+      "Weapons/Spear_Animate/Spear3.png",
+      "Weapons/Spear_Animate/Spear4.png",
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer"
+  },
+  "AnimatedComponent": {
+    "frame_range": [0, 4],
+    "frame_time": 0.04,
+    "loops": false
+  },
+  "AnimationKillComponent": {}
+}

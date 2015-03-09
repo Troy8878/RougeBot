@@ -2,6 +2,7 @@
  * EventHandlers.cpp
  * Connor Hilarides
  * Created 2014/08/17
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -9,27 +10,16 @@
 
 namespace Events
 {
+  // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-
-  bool BasicEventDispatcher::CanHandle(const EventMessage& e)
+  bool BasicEventDispatcher::CanHandle(const EventMessage &)
   {
-    bool any = false;
-
-    for (auto& hpair : recievers)
-    {
-      hpair.second = hpair.first->CanHandle(e);
-      if (hpair.second)
-        any = true;
-    }
-    
-    static EventId recieverDestroyedId("event_reciever_destroyed");
-    return any || e.EventId == recieverDestroyedId;
+    return true;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
-  void BasicEventDispatcher::Handle(EventMessage& e)
+  void BasicEventDispatcher::Handle(EventMessage &e)
   {
     static EventId recieverDestroyedId("event_reciever_destroyed");
 
@@ -39,9 +29,9 @@ namespace Events
       RemoveListener(rec);
     }
 
-    for (auto& hpair : recievers)
+    for (auto &hpair : recievers)
     {
-      if (!hpair.second)
+      if (!hpair.first->CanHandle(e))
         continue;
 
       hpair.first->Handle(e);
@@ -50,14 +40,14 @@ namespace Events
     }
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::AddListener(EventReciever *reciever)
   {
     recievers[reciever] = false;
   }
 
-// ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------
 
   void BasicEventDispatcher::RemoveListener(EventReciever *reciever)
   {
@@ -68,6 +58,5 @@ namespace Events
     recievers.erase(it);
   }
 
-// ----------------------------------------------------------------------------
-
+  // ----------------------------------------------------------------------------
 }

@@ -2,11 +2,13 @@
  * VectorHelp.h
  * Connor Hilarides
  * Created 2014/06/24
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
 
 #include "Helpers\UseDirectX.h"
+#include "json/json.h"
 #include <iostream>
 #include <algorithm>
 
@@ -16,7 +18,7 @@ namespace math
 
   const float pi = 3.14159265358979f;
 
-  __declspec(align(16)) class Vector : public XMFLOAT4A
+  __declspec(align(16)) class Vector final : public XMFLOAT4A
   {
   public:
     inline Vector() = default;
@@ -27,6 +29,11 @@ namespace math
 
     inline Vector(float x, float y, float z, float w)
       : XMFLOAT4A(x, y, z, w)
+    {
+    }
+
+    inline Vector(const XMFLOAT4A& v)
+      : XMFLOAT4A(v)
     {
     }
 
@@ -41,11 +48,14 @@ namespace math
 
     inline bool operator==(const Vector& other) const
     {
-      return 
-        x == other.x &&
-        y == other.y &&
-        z == other.z &&
-        w == other.w;
+      const float epsilon_f = 0.001f;
+      const XMVECTOR epsilon = XMVectorSet(epsilon_f, epsilon_f, epsilon_f, epsilon_f);
+      return XMVector4NearEqual(*this, other, epsilon);
+    }
+
+    inline bool operator!=(const Vector& other) const
+    {
+      return !(*this == other);
     }
 
     static math::Vector VectorFromJson(json::value value)
@@ -58,6 +68,13 @@ namespace math
     }
 
     inline operator XMVECTOR() const { return get(); }
+
+    inline Vector(const D2D1::ColorF color)
+      : XMFLOAT4A(color.r, color.g, color.b, color.a)
+    {
+    }
+
+    inline operator D2D1::ColorF() const { return D2D1::ColorF{x, y, z, w}; }
   };
 
   __declspec(align(16)) class Vector2D : public XMFLOAT2A
@@ -115,6 +132,11 @@ namespace math
     }
 
     inline operator XMMATRIX() const { return get(); }
+
+    inline XMMATRIX operator*(CXMMATRIX m2)
+    {
+      return get() * m2;
+    }
   };
 
   inline XMVECTOR XM_CALLCONV createVector(float x, float y, float z)
@@ -223,6 +245,86 @@ inline std::ostream& XM_CALLCONV operator<<(std::ostream& os, DirectX::CXMMATRIX
   os << '\xD9' << std::endl; // ┘
 
   return os;
+}
+
+namespace DirectX
+{
+  inline XMMATRIX XM_CALLCONV
+    operator+(FXMMATRIX m1, CXMMATRIX m2)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0];
+    m.r[1] = m1.r[1] + m2.r[1];
+    m.r[2] = m1.r[2] + m2.r[2];
+    m.r[3] = m1.r[3] + m2.r[3];
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    operator-(FXMMATRIX m1, CXMMATRIX m2)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0];
+    m.r[1] = m1.r[1] - m2.r[1];
+    m.r[2] = m1.r[2] - m2.r[2];
+    m.r[3] = m1.r[3] - m2.r[3];
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV 
+    XMMatrixFromVectorTimesVectorTranspose(FXMVECTOR v1, FXMVECTOR v2)
+  {
+    XMMATRIX m;
+    m.r[0] = v1 * XMVectorGetX(v2);
+    m.r[1] = v1 * XMVectorGetY(v2);
+    m.r[2] = v1 * XMVectorGetZ(v2);
+    m.r[3] = v1 * XMVectorGetW(v2);
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixAddMul(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0] * scale;
+    m.r[1] = m1.r[1] + m2.r[1] * scale;
+    m.r[2] = m1.r[2] + m2.r[2] * scale;
+    m.r[3] = m1.r[3] + m2.r[3] * scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixSubMul(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0] * scale;
+    m.r[1] = m1.r[1] - m2.r[1] * scale;
+    m.r[2] = m1.r[2] - m2.r[2] * scale;
+    m.r[3] = m1.r[3] - m2.r[3] * scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixAddDiv(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] + m2.r[0] / scale;
+    m.r[1] = m1.r[1] + m2.r[1] / scale;
+    m.r[2] = m1.r[2] + m2.r[2] / scale;
+    m.r[3] = m1.r[3] + m2.r[3] / scale;
+    return m;
+  }
+
+  inline XMMATRIX XM_CALLCONV
+    XMMatrixSubDiv(FXMMATRIX m1, CXMMATRIX m2, CXMVECTOR scale)
+  {
+    XMMATRIX m;
+    m.r[0] = m1.r[0] - m2.r[0] / scale;
+    m.r[1] = m1.r[1] - m2.r[1] / scale;
+    m.r[2] = m1.r[2] - m2.r[2] / scale;
+    m.r[3] = m1.r[3] - m2.r[3] / scale;
+    return m;
+  }
 }
 
 

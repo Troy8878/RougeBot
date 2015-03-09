@@ -1,7 +1,8 @@
 #######################
 # Armor.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/09/11
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 #########################Class Details##########################
@@ -16,7 +17,7 @@
 class Item
 end
 
-#An array containing every armor ever.
+# An array containing every armor ever.
 ARMOR = []
 
 class Weapon < Item

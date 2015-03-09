@@ -2,6 +2,7 @@
  * SharedArray.h
  * Connor Hilarides
  * Created 2014/07/07
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -40,7 +41,7 @@ public:
     for (auto& item : items)
       *data++ = item;
   }
-  shared_array(T *items, size_t size)
+  shared_array(const T *items, size_t size)
     : shared_array(size)
   {
     T *data = get();

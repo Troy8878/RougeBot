@@ -1,0 +1,12 @@
+{
+  "TransformComponent": {},
+  "TextureComponent": {},
+  "SpriteComponent": {
+    "render_target": "HUDLayer",
+  },
+  "TextComponent": {
+    "texts": [""],
+    "font_size": 35,
+    "autocreate_textures": [200, 200]
+  }
+}

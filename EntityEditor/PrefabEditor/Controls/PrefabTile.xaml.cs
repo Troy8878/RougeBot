@@ -1,0 +1,62 @@
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using EntityEditor.Helpers;
+using EntityEditor.PrefabEditor.Prefabs;
+
+namespace EntityEditor.PrefabEditor.Controls
+{
+    /// <summary>
+    ///     Interaction logic for PrefabTile.xaml
+    /// </summary>
+    public partial class PrefabTile : UserControl
+    {
+        public PrefabTile()
+        {
+            InitializeComponent();
+            Loaded += delegate
+            {
+                if (StartWall)
+                    DataContext = (PrefabTileData) Tiles.Prefabs[1];
+            };
+        }
+
+        public bool StartWall { get; set; }
+
+        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (StartWall)
+                return;
+
+            var data = DataContext as PrefabTileData;
+            if (data == null)
+                return;
+
+            var room = this.GetParent<PrefabRoom>();
+            var paintData = room.PaintTile.DataContext as PrefabTileData;
+            if (paintData == null)
+                return;
+
+            var prevValue = (PrefabTileData) data.Clone();
+
+            if (data.Base.Id == paintData.Base.Id)
+                data.Reassign((PrefabTileData) Tiles.Prefabs[0]);
+            else
+                data.Reassign(paintData);
+
+            var newValue = (PrefabTileData) data.Clone();
+
+            if (room.HasFile())
+                room.Save();
+
+            if (paintData.Base.Id != 0)
+                EditHistory.PushUndo(new PrefabChangeHistory
+                {
+                    Room = room,
+                    Data = data,
+                    Prev = prevValue,
+                    Next = newValue
+                }.Undo);
+
+        }
+    }
+}

@@ -2,6 +2,7 @@
  * FileMapping.cpp
  * Connor Hilarides
  * Created 2014/08/17
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "FileMapping.h"
@@ -39,7 +40,7 @@ FileMapping::FileMapping(const fs::wpath& path, bool read, bool write)
                                  0, 0,
                                  nullptr);
   if (mapHandle == nullptr)
-    throw std::exception("Failed to create file mapping");
+    throw basic_exception("Failed to create file mapping");
 
   if (read)
     viewAccess |= FILE_MAP_READ;

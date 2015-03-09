@@ -1,0 +1,35 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      0.5,
+      0.25,
+      1.0
+    ]
+  },
+  "TextureComponent": {
+    "textures": [
+      "SPECIAL/SURFACE/400:200"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "HUDLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "PositionDisplayComponent": {}
+}

@@ -2,6 +2,7 @@
  * LevelDef.h
  * Connor Hilarides
  * Created 2014/08/31
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -15,10 +16,10 @@
 class LevelDef
 {
 public:
-  LevelDef(const std::string& asset);
-  void Load(Level& level);
+  LevelDef(const std::string &asset);
+  void Load(Level &level);
 
-  static async_task<Level *> LoadLevelAsync(const std::string& name);
+  static async_task<Level *> LoadLevelAsync(const std::string &name);
 
 private:
   json::value deftree;
@@ -28,5 +29,3 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-
-

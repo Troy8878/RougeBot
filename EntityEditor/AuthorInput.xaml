@@ -1,0 +1,56 @@
+﻿<Window x:Class="EntityEditor.AuthorInput"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AuthorInput" Height="270" Width="540"
+        WindowStyle="ToolWindow" ResizeMode="NoResize"
+        Background="{StaticResource RbToolBackground}"
+        Foreground="{StaticResource RbText}"
+        Icon="/wizard0.ico"
+        FontSize="16" WindowStartupLocation="CenterOwner"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid DataContext="{Binding Path=Author}" Margin="20,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!-- Row 0 (title) -->
+        <TextBlock Grid.Column="1" FontSize="20">Enter Your Info</TextBlock>
+
+        <!-- Row 1 (name) -->
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
+                   VerticalAlignment="Center">Name</TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Name}"
+                 VerticalAlignment="Center" Margin="5,0" />
+
+        <!-- Row 2 (email) -->
+        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
+                   VerticalAlignment="Center">Email</TextBlock>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=Email}" 
+                 VerticalAlignment="Center" Margin="5,0" />
+
+        <!-- Row 3 (user) -->
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
+                   VerticalAlignment="Center">Github Username</TextBlock>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=User}" 
+                 VerticalAlignment="Center" Margin="5,0" />
+
+        <!-- Row 4 (password) -->
+        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right"
+                   VerticalAlignment="Center">Github Password</TextBlock>
+        <PasswordBox Grid.Row="4" Grid.Column="1" x:Name="Password" 
+                     VerticalAlignment="Center" Margin="5,0" />
+
+        <!-- Row 5 (button) -->
+        <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right"
+                VerticalAlignment="Center" Margin="10,0" Padding="20,0" Click="DoneClick">Done</Button>
+    </Grid>
+</Window>

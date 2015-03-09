@@ -1,0 +1,221 @@
+{
+  "name": "Game",
+  "components": {
+    "GameQuitCancelerComponent": {},
+  },
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0, 0, 0],
+          "position": [0, -0.5, -10]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
+        },
+        {
+          "name": "TranslucentLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "TranslucentLayer",
+              "layer": 2
+            }
+          }
+        },
+        {
+          "name": "HUDLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "HUDLayer",
+              "layer": 5000
+            }
+          }
+        },
+        {
+          "name": "ItemGlowLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ItemGlowLayer",
+              "layer": 5001
+            }
+          }
+        },
+        {
+          "name": "ItemLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ItemLayer",
+              "layer": 5002
+            }
+          }
+        },
+        {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
+        },
+        {
+          "name": "PauseLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "PauseLayer",
+              "layer": 9001
+            }
+          }
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "position": [0, 0, 3.5]
+            }
+          },
+          "children": [
+            {
+              "name": "PauseMenu",
+              "archetype": "HUD/Pause/PauseMenu"
+            },
+            {
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "Pause",
+              "archetype": "HUD/Pause/Pause",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.8, 1.3]
+                }
+              }
+            },
+            {
+              "name": "Hotbar",
+              "archetype": "HUD/Hotbar",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, -1.25],
+                  "scale": [0.35, 0.35, 0.35]
+                }
+              }
+            },
+            {
+              "name": "Minimap",
+              "components": {
+                "MapComponent": {},
+                "MapControllerComponent": {},
+                "TransformComponent": {
+                  "position": [1.4, 0.8]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/520:520"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+              },
+            },
+            {
+              "name": "FloorDisplay",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.8, 0.6],
+                  "scale": [0.8, 0.4]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/SURFACE/400:200"]
+                },
+                "SpriteComponent": {
+                  "render_target": "HUDLayer"
+                },
+                "TextComponent": {
+                  "texts": [""],
+                  "text_color": "White"
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "level_load": "owner.raise_event :send, [:set_text_at, [0, \"Floor #{GAME_STATE[:floor]} / #{$DungeonLength}\\nGet to the stairs!\"]]"
+                  }
+                }
+              }
+            },
+            {
+              "name": "CombatLog",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.2, -0.8]
+                },
+                "EvalOnEventComponent": {
+                  "bindings": {
+                    "combat_log": "seq = owner.action_sequence :log; seq.once { msg = owner.create_child(archetype: 'HUD/LogMessage'); msg.text_component.texts[0] = e.to_s }; seq.delay 0.4"
+                  }
+                }
+              }
+            },
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MainFloor",
+      "archetype": "Floor",
+      "components": {
+        "CustomModelComponent": {
+          "render_target": "WorldLayer"
+        }
+      }
+    },
+    {
+      "name": "EnemySpawner",
+      "components": {
+        "BasicEnemySpawnerComponent": {
+          "num_enemies": 40
+        }
+      }
+    },
+    {
+      "name": "Player",
+      "archetype": "Player",
+    },
+    {
+      "name": "TileCursor",
+      "archetype": "TileCursor"
+    },
+    {
+      "name": "Stairs",
+      "components": {
+        "TransformComponent": {},
+        "PositionComponent": {},
+        "StairComponent": {},
+        "TextureComponent": {
+          "textures": ["World/Stairs.png"]
+        },
+        "SpriteComponent": {
+          "render_target": "WorldLayer"
+        }
+      }
+    },
+  ]
+}

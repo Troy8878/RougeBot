@@ -1,0 +1,76 @@
+Slime
+	Move: Randomly moves, always.
+	Attack: Attacks if it wanders into player.
+
+Skeleton/Zombie
+	Move: Will chase if player is close.
+	Attack: Attacks player if able.
+
+Imp
+	Move: Will try to maintain a 3 space distance from the player.
+	Attack: Shoots 2 spc/turn fireballs.
+
+Mole
+	Move:	On odd turns, Will dig underground and show a dirt pile 0-5 spaces from previous location.
+		On even turns, will pop up from dirt pile.
+	Attack: Will attack player if player is on top of or adjacent to dirt pile when it pops up.
+		Will move player if pops up underneath.
+	Extra: Cannot be hurt when underground.
+
+Living Armor
+	Move: Will chase player if near. Moves slowly.
+	Attack: Will attack player if able.
+	Extra: Carries a shield. Cannot be hurt from direction the shield is facing.
+
+Leaper
+	Move: Will chase player if near. Can instantly move 1-5 spaces in a straight line to attack player.
+	Attack: Will leap at player and attack player if able.
+
+Treasure Imp
+	Move:	Will run from player if close. Moves Quickly.
+	Attack: None.
+	Extra:	Will ALWAYS drop an item when killed and money.
+
+Cultist
+	Move: Will try to stay close to enemies. Runs if player is close.
+	Attack: None.
+	Extra: Heals enemies.
+
+Statue
+	Move: None.
+	Attack: Will constantly shoot projectiles in the direction it is facing.
+
+Bomb Imp
+	Move: Will chase player if near.
+	Attack: Will suicide explode if next to player, damaging everything around it.
+	Extra: Will explode when killed, damaging everything around it.
+
+Scavenger
+	Move: Will chase player if near. Will try to align itself with player when engaged.
+	Attack: If aligned with player and NOT adjacent, will shoot projectiles. If adjacent to player, will attack with melee.
+	Extra: "Looks like an imp with robot parts similar to what the player has attached to it."
+		High chance to drop loot.
+
+Competitor
+	Move: Will chase player/monsters if near. Will try to align itself with player/monsters when engaged.
+	Attack: If aligned with player/monster and NOT adjacent, will shoot projectiles. If adjacent to player/monster, will attack with melee.
+	Extra: "Evil looking robot that looks fairly similar to the player. Implies other robots similar to the player exist in the dungeon; though, not necessarily friendly."
+		High chance to drop loot and lots of money.
+
+Collaborator
+	Move: Will move randomly but chase monsters if they are near.
+	Attack: If aligned with monster and NOT adjacent, will shoot projectiles. If adjacent to monster, will attack with melee.
+	Extra: "Is a friendly looking robot that implies other robots similar to the player exist in the dungeon that are friendly."
+
+Spider
+	Move: Will move slowly and randomly.
+	Attack: WIll attack player if able.
+	Extra: "Spiders. Have to have them."
+		Will lay eggs if player is near but can't melee.
+Eggs
+	Move: None.
+	Attack: None.
+	Extra: After many turns will break and spawn a few spider hatchlings.
+Spider Hatchlings
+	Move: Will chase player wherever. Moves quickly.
+	Attack: Will attack player if able.

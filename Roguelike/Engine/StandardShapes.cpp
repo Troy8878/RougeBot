@@ -2,6 +2,7 @@
  * StandardShapes.cpp
  * Connor Hilarides
  * Created 2014/07/03
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -20,22 +21,22 @@ namespace Shapes
     const float sy = size.y / 2;
 
     TexturedVertex vertices[] =
-    {
-      {{-sx,  sy, 0, 1}, color, {1, 0}},
-      {{ sx,  sy, 0, 1}, color, {0, 0}},
-      {{-sx, -sy, 0, 1}, color, {1, 1}},
-      {{ sx, -sy, 0, 1}, color, {0, 1}}
-    };
+      {
+        {{-sx, sy, 0, 1}, color,{1, 0}},
+        {{sx, sy, 0, 1}, color,{0, 0}},
+        {{-sx, -sy, 0, 1}, color,{1, 1}},
+        {{sx, -sy, 0, 1}, color,{0, 1}}
+      };
 
     UINT indices[] =
-    {
-      0, 1, 2,
-      1, 3, 2
-    };
+      {
+        0, 1, 2,
+        1, 3, 2
+      };
 
     return new Model{device, vertices, indices};
   }
-  
+
   Model *MakeCircle(ID3D11Device *device, unsigned sides, float radius, math::Vector color)
   {
     assert(sides >= 3);
@@ -48,14 +49,14 @@ namespace Shapes
 
     UINT vertexCount = sides + 1;
     UINT indexCount = sides * 3;
-    
+
     TexturedVertex *vertices = new TexturedVertex[vertexCount];
     vertices[sides].position = XMVectorSet(0, 0, 0, 1);
     vertices[sides].color = color;
     vertices[sides].texture = XMVectorSet(0.5f, 0.5f, 0, 1);
 
     unsigned *indices = new unsigned[indexCount];
-    
+
     for (unsigned i = 0; i < sides; ++i)
     {
       vertices[i].position = vertex;
@@ -69,7 +70,7 @@ namespace Shapes
       vertex = rotate * vertex;
       texvertex = rotate * texvertex;
     }
-    
+
     auto *model = new Model{device, vertices, vertexCount, indices, indexCount};
 
     delete[] vertices;
@@ -83,41 +84,40 @@ namespace Shapes
     const float csize = size / 2.0f;
 
     TexturedVertex vertices[] =
-    {
-      {{ csize,  csize,  csize, 1}, color},
-      {{-csize,  csize,  csize, 1}, color},
-      {{ csize, -csize,  csize, 1}, color},
-      {{-csize, -csize,  csize, 1}, color},
-      {{ csize,  csize, -csize, 1}, color},
-      {{-csize,  csize, -csize, 1}, color},
-      {{ csize, -csize, -csize, 1}, color},
-      {{-csize, -csize, -csize, 1}, color},
-    };
+      {
+        {{csize, csize, csize, 1}, color},
+        {{-csize, csize, csize, 1}, color},
+        {{csize, -csize, csize, 1}, color},
+        {{-csize, -csize, csize, 1}, color},
+        {{csize, csize, -csize, 1}, color},
+        {{-csize, csize, -csize, 1}, color},
+        {{csize, -csize, -csize, 1}, color},
+        {{-csize, -csize, -csize, 1}, color},
+      };
 
     UINT indices[] =
-    {
-      0, 1, 2, 2, 1, 3,
-      0, 2, 4, 2, 6, 4,
-      5, 4, 6, 5, 6, 7,
-      1, 5, 7, 1, 7, 3,
-      0, 5, 1, 0, 4, 5,
-      2, 3, 6, 6, 3, 7
-    };
+      {
+        0, 1, 2, 2, 1, 3,
+        0, 2, 4, 2, 6, 4,
+        5, 4, 6, 5, 6, 7,
+        1, 5, 7, 1, 7, 3,
+        0, 5, 1, 0, 4, 5,
+        2, 3, 6, 6, 3, 7
+      };
 
     if (color == Colors::Transparent)
     {
       std::uniform_real_distribution<float> color_rand;
 
-      for (auto& vertex : vertices)
+      for (auto &vertex : vertices)
       {
-
         vertex.color = math::Vector
-        {
-          color_rand(shape_rng),
-          color_rand(shape_rng),
-          color_rand(shape_rng),
-          1
-        };
+          {
+            color_rand(shape_rng),
+            color_rand(shape_rng),
+            color_rand(shape_rng),
+            1
+          };
       }
     }
 

@@ -409,12 +409,24 @@ module Enumerable
   end
 
   def combinations
-    raise "Block missing" unless block_given?
+    return to_enum :combinations unless block_given?
 
     self.each do |y|
       self.each do |x|
         yield(y, x)
       end
     end
+  end
+end
+
+module NativeEnumerable
+  def each(&block)
+    i = 0
+    while i < count
+      elem = self[i]
+      block.call elem
+      i += 1
+    end
+    self
   end
 end

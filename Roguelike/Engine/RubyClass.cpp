@@ -1,8 +1,9 @@
 /*********************************
-* RubyClass.cpp
-* Connor Hilarides
-* Created 2014/08/12
-*********************************/
+ * RubyClass.cpp
+ * Connor Hilarides
+ * Created 2014/08/12
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+ *********************************/
 
 #pragma once
 
@@ -70,12 +71,12 @@ ruby_class ruby_class::define_class(const char *name, RClass *baseClass)
 ruby_value ruby_class::new_inst_argv(ruby_value *values, mrb_int num)
 {
   if (num > 128)
-    throw std::exception("WTF ARE YOU DOING?! OVER 128 PARAMS?!");
+    throw basic_exception("WTF ARE YOU DOING?! OVER 128 PARAMS?!");
 
   THREAD_EXCLUSIVE_SCOPE;
   static mrb_value items[128];
   for (int i = 0; i < num; ++i)
-    items[i] = values[i];
+    items[i] = *static_cast<mrb_value *>(&values[i]);
 
   return ruby_value{mrb_obj_new(*_engine, _class, num, items), _engine};
 }

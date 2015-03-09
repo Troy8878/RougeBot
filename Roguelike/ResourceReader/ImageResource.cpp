@@ -2,6 +2,7 @@
  * ImageResource.cpp
  * Connor Hilarides
  * Created 2014/08/07
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "ImageResource.h"
@@ -90,6 +91,17 @@ ImageResource ImageResource::fromFile(const std::wstring& file)
     GENERIC_READ, 
     WICDecodeMetadataCacheOnLoad,
     &decoder);
+
+  if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+  {
+    auto pfg = console::fg_color();
+    std::cerr << console::fg::yellow
+              << "[WARN] Cannot load texture resource `"
+              << narrow(file) << '`' << std::endl << pfg;
+
+    return ImageResource::ImageResource(1, 1, Format::BGRA, {255, 255, 0, 255});
+  }
+
   CHECK_HRESULT(hr);
   RELEASE_AFTER_SCOPE(decoder);
 

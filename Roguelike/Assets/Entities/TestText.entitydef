@@ -1,0 +1,98 @@
+{
+  "TransformComponent": {
+    "position": [
+      2.0,
+      2.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      3.0,
+      3.0,
+      0.0
+    ]
+  },
+  "TextureComponent": {
+    "textures": [
+      "ThoughtBubble.png"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "WorldLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "<UNNAMED>",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.05,
+              0.15,
+              -0.1
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.7,
+              0.35,
+              0.0
+            ]
+          },
+          "TextureComponent": {
+            "textures": []
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "TextComponent": {
+            "texts": [
+              "I wonder if senpai will notice me\n｡◕‿◕｡"
+            ],
+            "text_color": "#FF0000FF",
+            "bg_color": "",
+            "font": "Impact",
+            "font_size": 36.0,
+            "text_align": "center",
+            "paragraph_align": "center",
+            "autocreate_textures": [
+              400.0,
+              200.0
+            ]
+          },
+          "AnimatedComponent": {
+            "paused": "",
+            "frame_time": 3.0,
+            "frame_range": [
+              0.0,
+              0.0
+            ],
+            "loops": false
+          }
+        },
+        "children": []
+      }
+    ]
+  }
+}

@@ -2,6 +2,7 @@
  * Roguelike.h
  * Connor Hilarides
  * Created 2014/05/28
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -22,35 +23,38 @@
 #include "mruby/value.h"
 #include "mruby/class.h"
 
+#include "FMOD/SoundManager.h"
+#include "Engine/Input.h"
+
 // ----------------------------------------------------------------------------
 
 class Roguelike : public Game
 {
 public:
-  Roguelike(const std::string& title, HINSTANCE hInstance)
+  Roguelike(const std::string &title, HINSTANCE hInstance)
     : Game(title, hInstance)
   {
     initSettings.cullTriangles = false;
     initSettings.assetPack = L"./Assets.respack";
     initSettings.assetFolder = L"./Assets";
-    initSettings.vsync = true;
+    initSettings.vsync = false;
   }
+
+  ManagedSound sound;
 
   void OnInit() override
   {
     using namespace DirectX;
 
     // Starting level
-    levelChangeContext.name = "MainMenu";
+    levelChangeContext.name = "Init";
 
     _graphicsDevice->backgroundColor = XMVectorSet(0, 0, 0, 1);
     _console = new GameConsole(true);
 
     RenderGroup::Instance.Initialize();
-    Events::Event::GlobalDispatcher->AddListener(&RenderGroup::Instance);
 
     InitShaders();
-    InitObjects();
     InitWMHandlers();
 
     using namespace Events;
@@ -58,9 +62,6 @@ public:
     SetHandler(updateEvent, &Roguelike::OnUpdate);
 
     static EventId resizeEvent("window_resize");
-    SetHandler(resizeEvent, &Roguelike::OnResize);
-
-    RenderGroup::Instance.CreateSet("global_hud", &_hudCamera, 100, true);
 
     Event::GlobalDispatcher->AddListener(_console);
   }
@@ -71,94 +72,164 @@ public:
     Shader::LoadShader(_graphicsDevice.get(), "Textured.shaderdef");
   }
 
-  void InitObjects()
-  {
-    _hudCamera.position = math::Vector{0, 0, 30, 1};
-    _hudCamera.Init();
-    _hudCamera.Update();
-    _hudCamera.GetRubyWrapper();
-  }
-
   void InitWMHandlers()
   {
     // Keep the window no less wide than a square
-    SetProcHandler(WM_GETMINMAXINFO, [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT&)
-    {
-      MINMAXINFO& info = *reinterpret_cast<LPMINMAXINFO>(lp);
-      info.ptMinTrackSize.y = 480;
-      info.ptMinTrackSize.x = 480;
-    });
-    SetProcHandler(WM_SIZING, [this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT& res)
-    {
-      RECT& rect = *reinterpret_cast<LPRECT>(lp);
-      
-      auto minwidth = LONG((rect.bottom - rect.top) * (4.0 / 3.0));
-      if (rect.right - rect.left < minwidth)
+    SetProcHandlers(
+      [this](HWND, UINT, WPARAM, LPARAM lp, LRESULT &)
       {
-        // Squarify while resizing from right
-        if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
-            wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
+        MINMAXINFO &info = *reinterpret_cast<LPMINMAXINFO>(lp);
+        info.ptMinTrackSize.y = 480;
+        info.ptMinTrackSize.x = 480;
+      }, WM_GETMINMAXINFO
+    );
+
+    SetProcHandlers(
+      [this](HWND, UINT, WPARAM wp, LPARAM lp, LRESULT &res)
+      {
+        RECT &rect = *reinterpret_cast<LPRECT>(lp);
+
+        auto minwidth = LONG((rect.bottom - rect.top) * (4.0 / 3.0));
+        if (rect.right - rect.left < minwidth)
         {
-          rect.right = rect.left + minwidth;
-          res = TRUE;
+          // Squarify while resizing from right
+          if (wp == WMSZ_RIGHT || wp == WMSZ_TOPRIGHT || wp == WMSZ_BOTTOMRIGHT ||
+              wp == WMSZ_TOP || wp == WMSZ_BOTTOM)
+          {
+            rect.right = rect.left + minwidth;
+            res = TRUE;
+          }
+          // Squarify while resizing from left
+          else if (wp == WMSZ_LEFT || wp == WMSZ_TOPLEFT || wp == WMSZ_BOTTOMLEFT)
+          {
+            rect.left = rect.right - minwidth;
+            res = TRUE;
+          }
         }
-        // Squarify while resizing from left
-        else if (wp == WMSZ_LEFT || wp == WMSZ_TOPLEFT || wp == WMSZ_BOTTOMLEFT)
-        {
-          rect.left = rect.right - minwidth;
-          res = TRUE;
-        }
-      }
-    });
+      }, WM_SIZING
+    );
   }
 
-  void OnUpdate(Events::EventMessage& e)
+  void OnUpdate(Events::EventMessage &e)
   {
     using namespace Events;
-    auto& time = e.GetData<UpdateEvent>()->gameTime;
-    float dt = (float) time.Dt;
+    auto &time = e.GetData<UpdateEvent>()->gameTime;
+    float dt = static_cast<float>(time.Dt);
 
     UpdateTitleFPS(dt);
   }
 
-  void UpdateTitleFPS(float dt)
-  {
-    if (dt > 0.001)
-    {
-      const int update_res = 60;
-
-      static float prev_fps = 60;
-      static float fps = 60;
-      fps = (fps * (update_res - 1) + 1 / dt) / update_res;
-
-      if (fps != prev_fps)
-      {
-        prev_fps = fps;
-
-        auto title = _title + " [" + std::to_string((int) (fps + 0.5f)) + " fps]";
-        SetWindowText(_graphicsDevice->Window, title.c_str());
-      }
-    }
-  }
+  void UpdateTitleFPS(float dt);
 
   void OnFree() override
   {
     delete _console;
   }
 
-  void OnResize(Events::EventMessage& e)
-  {
-    using event_type = Events::RudimentaryEventWrapper<math::Vector2D>;
-    auto& data = e.GetData<event_type>()->data;
+private:
+  GameConsole *_console = nullptr;
 
-    _hudCamera.size.x = _hudCamera.size.y * data.x / data.y;
-    _hudCamera.Init();
-    _hudCamera.Update();
+public:
+  GameConsole *ConsoleInst()
+  {
+    return _console;
+  }
+};
+
+// ----------------------------------------------------------------------------
+
+struct fps_item
+{
+  double fps = 0;
+  float wndproc_part = 0;
+  float unlock_part = 0;
+  float load_part = 0;
+  float update_part = 0;
+  float draw_part = 0;
+  float gc_wait_part = 0;
+  float kill_part = 0;
+
+  void operator+=(const fps_item &rhs)
+  {
+    fps += rhs.fps;
+    wndproc_part += rhs.wndproc_part;
+    unlock_part += rhs.unlock_part;
+    load_part += rhs.load_part;
+    update_part += rhs.update_part;
+    draw_part += rhs.draw_part;
+    gc_wait_part += rhs.gc_wait_part;
+    kill_part += rhs.kill_part;
   }
 
-private:
-  HUDCamera _hudCamera;
-  GameConsole *_console = nullptr;
+  void operator/=(int rhs)
+  {
+    fps /= rhs;
+    wndproc_part /= rhs;
+    unlock_part /= rhs;
+    load_part /= rhs;
+    update_part /= rhs;
+    draw_part /= rhs;
+    gc_wait_part /= rhs;
+    kill_part /= rhs;
+  }
+
+  void pull_performance(Roguelike *game, float dt)
+  {
+    fps = dt;
+    wndproc_part = game->performance.wndproc.time_dt() / dt;
+    unlock_part = game->performance.unlock_game.time_dt() / dt;
+    load_part = game->performance.load_level.time_dt() / dt;
+    update_part = game->performance.update.time_dt() / dt;
+    draw_part = game->performance.draw.time_dt() / dt;
+    gc_wait_part = game->performance.gc_join.time_dt() / dt;
+    kill_part = game->performance.entity_kill.time_dt() / dt;
+  }
+
+  void print(std::ostream &out)
+  {
+    out << static_cast<int>(1 / fps + 0.5f) << " fps";
+
+    // Detailed performance
+    out << ", ";
+    out << static_cast<int>(wndproc_part * 100) << "% wndproc, ";
+    out << static_cast<int>(unlock_part * 100) << "% unlock, ";
+    out << static_cast<int>(load_part * 100) << "% loading, ";
+    out << static_cast<int>(update_part * 100) << "% update, ";
+    out << static_cast<int>(draw_part * 100) << "% draw, ";
+    out << static_cast<int>(gc_wait_part * 100) << "% gc wait, ";
+    out << static_cast<int>(kill_part * 100) << "% kill";
+    out << ")";
+  }
 };
+
+inline void Roguelike::UpdateTitleFPS(float dt)
+{
+  if (dt > 0.0001)
+  {
+    const int update_res = 20;
+    static fps_item fps_buffer[update_res];
+    static int buf_count = 0;
+
+    fps_buffer[buf_count++].pull_performance(this, dt);
+
+    if (buf_count == update_res)
+    {
+      buf_count = 0;
+
+      fps_item avg;
+      for (auto &val : fps_buffer)
+      {
+        avg += val;
+      }
+      avg /= update_res;
+
+      std::ostringstream title;
+      title << _title << " [";
+      avg.print(title);
+      title << "]";
+      SetWindowText(this->_graphicsDevice->Window, title.str().c_str());
+    }
+  }
+}
 
 // ----------------------------------------------------------------------------

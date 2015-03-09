@@ -1,0 +1,56 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.0,
+      -3.0,
+      -0.5
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.5,
+      1.5,
+      1.5
+    ]
+  },
+  "GameConsoleComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "ConsoleBackground",
+        "components": {
+          "TransformComponent": {},
+          "TextureComponent": {},
+          "SpriteComponent": {}
+        },
+        "children": [],
+        "archetype": "HUD/Console/ConsoleBackground"
+      },
+      {
+        "name": "TextRoot",
+        "components": {},
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "Textbox",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -0.72,
+              0.0
+            ]
+          },
+          "ConsoleTextComponent": {},
+          "ChildHierarchy": {}
+        },
+        "children": [],
+        "archetype": "HUD/Console/TextItem"
+      }
+    ]
+  }
+}

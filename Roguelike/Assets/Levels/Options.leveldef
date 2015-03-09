@@ -1,0 +1,190 @@
+{
+  "name": "MainMenu",
+  "components": {
+    "EvalOnEventComponent": {
+      "bindings": {
+        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'"
+      }
+    }
+  },
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "rotation": [0, 0, 0],
+          "position": [0, 0, -10]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {},
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "fov": 45,
+              "near": 0.01,
+              "far": 100
+            }
+          }
+        },
+        {
+          "name": "TranslucentLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "TranslucentLayer",
+              "layer": 2
+            }
+          }
+        },
+        {
+          "name": "HUDLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "HUDLayer",
+              "layer": 5000
+            }
+          }
+        },
+        {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "copy": "WorldLayer",
+              "target_name": "ConsoleLayer",
+              "layer": 9000
+            }
+          }
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "scale": [0.3, 0.3, 0.3, 1],
+              "position": [0, 0, 1]
+            }
+          },
+          "children": [
+            {
+              "name": "Console",
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "LeftColumn",
+              "components": {
+                "TransformComponent": {
+                  "position": [-1.33, 1, 0],
+                  "scale": [0.2, 0.2, 0.2]
+                }
+              },
+              "children": [
+                {
+                  "name": "Back",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, 0.1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "ButtonHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "width": 1,
+                      "image": "MenuPrerender/Back.png"
+                    },
+                    "ButtonSoundsComponent": {},
+                    "EvalOnEventComponent": {
+                      "bindings": {
+                        "button_clicked": "Game.switch_level 'MainMenu'",
+                      }
+                    }
+                  },
+                },
+                {
+                  "name": "ResetDefaults",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [3, 0.1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "ButtonHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Reset Defaults",
+                      "width": 5
+                    },
+                    "ButtonSoundsComponent": {},
+                    "EvalOnEventComponent": {
+                      "bindings": {
+                        "button_clicked": "coda!('Are you sure you want to reset all of your settings?') { Config.load_defaults; Config.save }"
+                      }
+                    }
+                  }
+                },
+                {
+                  "name": "Vsync",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, -1, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Vsync",
+                      "config_bind": "graphics_vsync"
+                    }
+                  }
+                },
+                {
+                  "name": "Fullscreen",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, -2, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Fullscreen",
+                      "config_bind": "graphics_fullscreen"
+                    }
+                  }
+                },
+                {
+                  "name": "EnableConsole",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [0, -3, 0],
+                      "scale": [0.95, 0.95, 0.95]
+                    },
+                    "CheckboxHelperComponent": {
+                      "render_target": "HUDLayer",
+                      "text": "Enable Console",
+                      "config_bind": "console_enabled"
+                    }
+                  }
+                },
+              ]
+            },
+            {
+              "name": "BG",
+              "components": {
+                "TransformComponent": {
+                  "position": [0, 0, 2],
+                  "scale": [10, 10, 10]
+                },
+                "TextureComponent": {
+                  "textures": ["SPECIAL/NULL"]
+                },
+                "SpriteComponent": {
+                  "render_target": "WorldLayer",
+                  "tint": "CornflowerBlue, 0.6"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

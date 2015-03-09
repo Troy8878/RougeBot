@@ -1,7 +1,8 @@
 #######################
 # Item.rb
-# Jake Robsahm
+# Claire Robsahm
 # Created 2014/09/05
+# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 #########################Class Details###########################
@@ -12,16 +13,22 @@
 #################################################################
 
 class Item
-  attr_reader :name, :rarity, :equip_slot
+  attr_reader :name, :value, :equip_slot
+  attr_accessor :item_level
+
+  # Data to determine what the item looks like
+  attr_reader :view
 
   def initialize(data)
     #Either copy an existing item or create one from JSON
     if data.is_a? Item
-      @name = data.name
-      @rarity = data.rarity
+      @name = data.name.dup
+      @value = data.value.dup
+      @view = data.view.dup
     else
       @name = data.fetch("name", "Default")
-      @rarity = data.fetch("rarity", 0).to_f
+      @value = data.fetch("value", 0).to_f
+      @view = ItemView.new(nil, self)
     end
     # Makes sure you aren't equipping a base item you naughty girl
     @equip_slot = :invalid

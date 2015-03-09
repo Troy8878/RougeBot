@@ -1,0 +1,78 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.0,
+      -0.675,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ConsoleTextComponent": {},
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "TextDisplay",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              2.0,
+              0.0375,
+              0.0
+            ]
+          },
+          "TextureComponent": {
+            "textures": [
+              "SPECIAL/SURFACE/1600:30"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "ConsoleLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "TextComponent": {
+            "texts": [
+              "> "
+            ],
+            "text_color": "White",
+            "bg_color": "Black, 0.49",
+            "font": "Consolas",
+            "font_size": 28.0,
+            "text_align": "leading",
+            "paragraph_align": "center",
+            "autocreate_textures": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      }
+    ]
+  }
+}

@@ -1,7 +1,8 @@
 /*********************************
  * TransformComponent.h
- * Jake Robsahm
+ * Claire Robsahm
  * Created 2014/08/22
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -19,10 +20,10 @@ class TransformComponentFactory;
 class TransformComponent : public Component
 {
 public:
-  TransformComponent(const math::Vector& position, const math::Vector& rotation, 
-                     const math::Vector& scale);
+  TransformComponent(const math::Vector &position, const math::Vector &rotation,
+                     const math::Vector &scale);
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
   PROPERTY(get = _GetIsStatic, put = _SetIsStatic) bool Static;
 
@@ -30,9 +31,8 @@ public:
   math::Vector Rotation;
   math::Vector Scale;
 
-  void OnUpdate(Events::EventMessage&);
+  void OnUpdate(Events::EventMessage &);
   void UpdateMatrix();
-  void ApplyParentTransforms();
 
   mrb_value GetRubyWrapper() override;
 
@@ -42,19 +42,27 @@ private:
   bool _static = false;
 
 public:
-  bool _GetIsStatic() { return _static; }
+  bool _GetIsStatic()
+  {
+    return _static;
+  }
+
   void _SetIsStatic(bool value);
 };
 
 // ----------------------------------------------------------------------------
 
-class TransformComponentFactory : public IComponentFactory
+class TransformComponentFactory final : public IComponentFactory
 {
 public:
   TransformComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;
@@ -63,4 +71,3 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-

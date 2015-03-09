@@ -2,6 +2,7 @@
  * RubyInit.cpp
  * Connor Hilarides
  * Created 2014/05/29
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
@@ -44,6 +45,18 @@ extern "C"
   void mrb_mruby_regexp_init(mrb_state *mrb);
   void mrb_mruby_floor_init(mrb_state *mrb);
   void mrb_mruby_keystate_init(mrb_state *mrb);
+  void mrb_mruby_random_init(mrb_state *mrb);
+  void mrb_mruby_events_init(mrb_state *mrb);
+  void mrb_mruby_http_init(mrb_state *mrb);
+  void mrb_mruby_file_init(mrb_state *mrb);
+  void mrb_mruby_actions_init(mrb_state *mrb);
+  void mrb_mruby_texture_init(mrb_state *mrb);
+  void mrb_mruby_ary_streambuf_init(mrb_state *mrb);
+  void mrb_mruby_graphics_init(mrb_state *mrb);
+  void mrb_mruby_sound_init(mrb_state *mrb);
+  void mrb_mruby_asset_init(mrb_state *mrb);
+  void mrb_mruby_d2d_cxt_init(mrb_state *mrb);
+  void mrb_mruby_aisys_init(mrb_state *mrb);
 
   void mrb_init_mrbgems(mrb_state *mrb)
   {
@@ -55,6 +68,12 @@ extern "C"
 
     // Fiber gem
     mrb_mruby_fiber_gem_init(mrb);
+
+    // Files are useful
+    mrb_mruby_file_init(mrb);
+
+    // Randomness :D
+    mrb_mruby_random_init(mrb);
 
     // Load print gem (puts is nice to have for debugging :P)
     mrb_mruby_print_gem_init(mrb);
@@ -88,6 +107,39 @@ extern "C"
 
     // Input
     mrb_mruby_keystate_init(mrb);
+
+    // Events
+    mrb_mruby_events_init(mrb);
+
+    // Omg so lazy
+    engine.evaluate_asset("gems/mrb-enum-lazy/lazy.rb");
+    
+    // Http is nice
+    mrb_mruby_http_init(mrb);
+
+    // Gogo action sequences!
+    mrb_mruby_actions_init(mrb);
+
+    // Textures!
+    mrb_mruby_texture_init(mrb);
+
+    // For the in-game console
+    mrb_mruby_ary_streambuf_init(mrb);
+
+    // Graphics
+    mrb_mruby_graphics_init(mrb);
+
+    // *puts on shades and starts rocking out*
+    mrb_mruby_sound_init(mrb);
+
+    // Asset library
+    mrb_mruby_asset_init(mrb);
+
+    // DRAWING FROM RUBY BECAUSE FUCK DA POLICE
+    mrb_mruby_d2d_cxt_init(mrb);
+
+    // AI! KSFGOIWSHEFOUIJERF
+    mrb_mruby_aisys_init(mrb);
   }
 
   void mrb_final_mrbgems(mrb_state *)

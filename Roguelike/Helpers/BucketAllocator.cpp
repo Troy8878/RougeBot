@@ -2,6 +2,7 @@
  * BucketAllocator.h
  * Connor Hilarides
  * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "BucketAllocator.h"
@@ -41,7 +42,7 @@ void BucketAllocator::Free(void *item)
     return;
   }
 
-  throw std::exception("Attempted to free an item that did not belong to this allocator");
+  throw basic_exception("Attempted to free an item that did not belong to this allocator");
 }
 
 // ----------------------------------------------------------------------------
@@ -162,9 +163,9 @@ auto BucketAllocator::Bucket::OwnsItem(void *_item) -> bool
 {
   byte *item = reinterpret_cast<byte *>(_item);
   auto offset = item - memory;
-  auto index = offset / (long long) allocator.itemSize;
+  auto index = offset / static_cast<long long>(allocator.itemSize);
 
-  return index >= 0 && index < (long long) allocator.itemCount;
+  return index >= 0 && index < static_cast<long long>(allocator.itemCount);
 }
 
 // ----------------------------------------------------------------------------

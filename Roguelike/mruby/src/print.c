@@ -10,6 +10,9 @@
 
 #pragma warning(disable : 4244) // http://msdn.microsoft.com/en-us/library/th7a07tz.aspx
 
+void gwrite(const void *str, size_t size, size_t ct);
+void gputc(int c);
+
 static void
 printstr(mrb_state *mrb, mrb_value obj)
 {
@@ -20,7 +23,7 @@ printstr(mrb_state *mrb, mrb_value obj)
   if (mrb_string_p(obj)) {
     s = RSTRING_PTR(obj);
     len = RSTRING_LEN(obj);
-    fwrite(s, len, 1, stdout);
+    gwrite(s, len, 1);
   }
 #endif
 }
@@ -31,7 +34,7 @@ mrb_p(mrb_state *mrb, mrb_value obj)
 #ifdef ENABLE_STDIO
   obj = mrb_funcall(mrb, obj, "inspect", 0);
   printstr(mrb, obj);
-  putc('\n', stdout);
+  gputc('\n');
 #endif
 }
 
@@ -44,8 +47,8 @@ mrb_print_error(mrb_state *mrb)
   mrb_print_backtrace(mrb);
   s = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
   if (mrb_string_p(s)) {
-    fwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1, stderr);
-    putc('\n', stderr);
+    gwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1);
+    gputc('\n');
   }
 #endif
 }
@@ -57,7 +60,7 @@ mrb_show_version(mrb_state *mrb)
 
   msg = mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_DESCRIPTION"));
   printstr(mrb, msg);
-  printstr(mrb, mrb_str_new_lit(mrb, "\n"));
+  gputc('\n');
 }
 
 void
@@ -67,5 +70,5 @@ mrb_show_copyright(mrb_state *mrb)
 
   msg = mrb_const_get(mrb, mrb_obj_value(mrb->object_class), mrb_intern_lit(mrb, "MRUBY_COPYRIGHT"));
   printstr(mrb, msg);
-  printstr(mrb, mrb_str_new_lit(mrb, "\n"));
+  gputc('\n');
 }

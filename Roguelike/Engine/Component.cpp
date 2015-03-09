@@ -2,6 +2,7 @@
  * Component.h
  * Connor Hilarides
  * Created 2014/08/11
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -21,7 +22,7 @@ Component::Component()
 
 // ----------------------------------------------------------------------------
 
-void Component::Initialize(Entity *owner, const std::string& name)
+void Component::Initialize(Entity *owner, const std::string &name)
 {
   Owner = owner;
   Name = name;
@@ -41,22 +42,22 @@ ComponentManager::ComponentManager()
 
 // ----------------------------------------------------------------------------
 
-void ComponentManager::RegisterComponent(const ComponentRegistration& registration)
+void ComponentManager::RegisterComponent(const ComponentRegistration &registration)
 {
   ComponentRegistrations[registration.componentName] = registration;
 }
 
 // ----------------------------------------------------------------------------
 
-Component *ComponentManager::InstantiateComponent(const std::string& compName, 
-                                                  component_factory_data& data)
+Component *ComponentManager::InstantiateComponent(const std::string &compName,
+                                                  component_factory_data &data)
 {
-  auto& regs = ComponentRegistrations;
+  auto &regs = ComponentRegistrations;
   auto it = regs.find(compName);
   if (it == regs.end())
     throw string_exception("Component was requested to be created, "
-                           "but is not a registered component (" + compName + ")");
-  auto& reg = it->second;
+      "but is not a registered component (" + compName + ")");
+  auto &reg = it->second;
 
   auto *memory = reg.Allocator.Allocate();
   auto *component = reg.Factory.CreateObject(memory, data);
@@ -68,8 +69,9 @@ Component *ComponentManager::InstantiateComponent(const std::string& compName,
 
 void ComponentManager::ReleaseComponent(Component *component)
 {
-  auto& reg = ComponentRegistrations[component->Name];
-  
+  auto &reg = ComponentRegistrations[component->Name];
+
+  component->Cleanup();
   component->~Component();
   reg.Allocator.Free(component);
 }
@@ -84,15 +86,11 @@ auto ComponentManager::_GetComponentRegistrations() -> component_map&
 
 // ----------------------------------------------------------------------------
 
-#include "SpriteComponent.h"
-#include "TransformComponent.h"
-#include "CameraComponent.h"
-#include "CustomModelComponent.h"
-#include "TextureComponent.h"
+static void RegisterStaticComponents();
 
 void RegisterEngineComponents()
 {
-  auto& rbengine = *ruby::ruby_engine::global_engine;
+  auto &rbengine = *ruby::ruby_engine::global_engine;
   Component::GetComponentRClass();
 
   auto scriptResCont = GetGame()->Respack["Scripts"];
@@ -102,7 +100,7 @@ void RegisterEngineComponents()
 
   // Ruby Support Classes
   std::regex supportPattern{"Support/(.*)\\.rb", std::regex::icase};
-  for (auto& resource : scriptResources)
+  for (auto &resource : scriptResources)
   {
     if (std::regex_match(resource, supportPattern))
     {
@@ -112,7 +110,7 @@ void RegisterEngineComponents()
 
   // Ruby Components
   std::regex componentPattern{"Components/(.*)\\.rb", std::regex::icase};
-  for (auto& resource : scriptResources)
+  for (auto &resource : scriptResources)
   {
     if (std::regex_match(resource, componentPattern))
     {
@@ -120,12 +118,67 @@ void RegisterEngineComponents()
     }
   }
 
-  // Static components
-  RegisterStaticComponent<SpriteComponent>("SpriteComponent");
-  RegisterStaticComponent<TransformComponent>("TransformComponent");
-  RegisterStaticComponent<CameraComponent>("CameraComponent");
-  RegisterStaticComponent<CustomModelComponent>("CustomModelComponent");
-  RegisterStaticComponent<TextureComponent>("TextureComponent");
+  RegisterStaticComponents();
+}
+
+// ----------------------------------------------------------------------------
+
+#include "SpriteComponent.h"
+#include "TransformComponent.h"
+#include "CameraComponent.h"
+#include "CustomModelComponent.h"
+#include "TextureComponent.h"
+#include "TextComponent.h"
+#include "ParticleSystemComponent.h"
+#include "ButtonComponent.h"
+#include "AiComponent.h"
+
+#include "Game/PositionDisplayComponent.h"
+#include "Game/MapComponent.h"
+#include "Game/PositionComponent.h"
+
+template <typename Component>
+static void RegisterComponents()
+{
+  std::string name = typeid(Component).name();
+  auto parts = split(name, ' ');
+  name = parts[parts.size() - 1];
+
+  RegisterStaticComponent<Component>(name);
+  auto &deps = GetComponentDependencies();
+  auto &depList = deps[name];
+
+  for (auto &dep : Component::AdditionalDependencies())
+  {
+    depList.push_back(dep);
+  }
+}
+
+template <typename Component1, typename Component2, typename... Components>
+static void RegisterComponents()
+{
+  RegisterComponents<Component1>();
+  RegisterComponents<Component2, Components...>();
+}
+
+static void RegisterStaticComponents()
+{
+  RegisterComponents
+    < SpriteComponent
+    , TransformComponent
+    , CameraComponent
+    , CustomModelComponent
+    , TextureComponent
+    , TextComponent
+    , ParticleSystemComponent
+    , ButtonComponent
+
+    , PositionDisplayComponent
+    , MapComponent
+    , PositionComponent
+
+    , AiComponent
+    >();
 }
 
 // ----------------------------------------------------------------------------

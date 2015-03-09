@@ -324,3 +324,22 @@ end
 class Hash
   include Enumerable
 end
+
+
+##
+# Connor's Extensions
+class Hash
+  def flatten_keys
+    hsh = {}
+    self.each do |key, val|
+      if key.is_a? Array
+        key.each do |subkey|
+          hsh[subkey] = val
+        end
+      else
+        hsh[key] = val
+      end
+    end
+    hsh
+  end
+end

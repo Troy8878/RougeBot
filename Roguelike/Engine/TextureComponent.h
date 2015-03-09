@@ -2,6 +2,7 @@
  * TextureComponent.h
  * Connor Hilarides
  * Created 2014/09/14
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -20,13 +21,14 @@ class TextureComponent : public Component
 public:
   TextureComponent();
 
-  void Initialize(Entity *owner, const std::string& name) override;
+  void Initialize(Entity *owner, const std::string &name) override;
 
-  PROPERTY(get = _GetTextures) const std::vector<Texture2D>& Textures;
+  PROPERTY(get = _GetTextures) const std::vector<Texture2D> &Textures;
   PROPERTY(get = _GetTextureCount) size_t TextureCount;
 
-  void AddTexture(json::value Textureef);
+  void AddTexture(json::value definition);
   void RemoveTexture(size_t index);
+  void ReplaceTexture(size_t index, const Texture2D &replacement);
 
   mrb_value GetRubyWrapper() override;
 
@@ -35,23 +37,37 @@ public:
 private:
   std::vector<Texture2D> textures;
 
-  static Texture2D ConstructTexture(json::value definition);
-  static Texture2D ConstructZipped(json::value definition);
-
 public:
-  const std::vector<Texture2D>& _GetTextures() const { return textures; }
-  size_t _GetTextureCount() const { return textures.size(); }
+  const std::vector<Texture2D> &_GetTextures() const
+  {
+    return textures;
+  }
+
+  size_t _GetTextureCount() const
+  {
+    return textures.size();
+  }
+
+  // For the sake of ruby
+  size_t _GetTextureCount()
+  {
+    return textures.size();
+  }
 };
 
 // ----------------------------------------------------------------------------
 
-class TextureComponentFactory : public IComponentFactory
+class TextureComponentFactory final : public IComponentFactory
 {
 public:
   TextureComponentFactory();
 
-  Component *CreateObject(void *memory, component_factory_data& data) override;
-  IAllocator *_GetAllocator() override { return &allocator; }
+  Component *CreateObject(void *memory, component_factory_data &data) override;
+
+  IAllocator *Allocator() override
+  {
+    return &allocator;
+  }
 
 private:
   BucketAllocator allocator;

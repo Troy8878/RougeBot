@@ -2,6 +2,7 @@
  * BucketAllocator.h
  * Connor Hilarides
  * Created 2014/08/20
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #pragma once
@@ -16,14 +17,14 @@
   Useful for allocating in 'buckets' to improve
   average allocation performance and memory locality
 */
-class BucketAllocator : public IAllocator
+class BucketAllocator final : public IAllocator
 {
 public:
   /**
     itemSize: the sizeof() the type this allocator allocates
     itemCount: the number of items allocated per bucket
   */
-  BucketAllocator(size_t itemSize, size_t itemCount = 64);
+  explicit BucketAllocator(size_t itemSize, size_t itemCount = 64);
   ~BucketAllocator() = default;
 
   void *Allocate() override;
@@ -46,6 +47,9 @@ public:
   template <typename T>
   void Destroy(T *item)
   {
+    if (!item)
+      return;
+
     item->~T();
     Free(item);
   }
@@ -54,7 +58,7 @@ private:
   class Bucket
   {
   public:
-    Bucket(BucketAllocator& allocator);
+    explicit Bucket(BucketAllocator& allocator);
     ~Bucket();
 
     void *Allocate();

@@ -1,14 +1,12 @@
 /*********************************
  * TransformComponent.cpp
- * Jake Robsahm
+ * Claire Robsahm, Enrique Rodriguez
  * Created 2014/08/22
+ * Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
  *********************************/
 
 #include "Common.h"
 #include "TransformComponent.h"
-
-#include <sstream>
-#include <regex>
 
 #include "mruby/data.h"
 #include "mruby/class.h"
@@ -19,8 +17,8 @@
 // ----------------------------------------------------------------------------
 
 TransformComponent::TransformComponent(
-  const math::Vector& position, const math::Vector& rotation, 
-  const math::Vector& scale)
+  const math::Vector &position, const math::Vector &rotation,
+  const math::Vector &scale)
   : Position(position), Rotation(rotation),
     Scale(scale)
 {
@@ -28,17 +26,25 @@ TransformComponent::TransformComponent(
 
 // ----------------------------------------------------------------------------
 
-void TransformComponent::Initialize(Entity *owner, const std::string& name)
+static void mrb_transform_free(mrb_state *, void *)
+{
+}
+
+static mrb_data_type mrb_transformcomp_data_type;
+
+// ----------------------------------------------------------------------------
+
+void TransformComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
-  static Events::EventId updateId("update");
-  Owner->AddEvent(this, updateId, &TransformComponent::OnUpdate);
+  DEF_EVENT_ID(draw);
+  Owner->AddEvent(this, draw, &TransformComponent::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------
 
-void TransformComponent::OnUpdate(Events::EventMessage&)
+void TransformComponent::OnUpdate(Events::EventMessage &)
 {
   UpdateMatrix();
 }
@@ -47,6 +53,9 @@ void TransformComponent::OnUpdate(Events::EventMessage&)
 
 void TransformComponent::UpdateMatrix()
 {
+  if (this->Static)
+    return;
+
   using namespace DirectX;
 
   // Fix rotations so they don't fall prey to large number rounding errors
@@ -56,14 +65,12 @@ void TransformComponent::UpdateMatrix()
 
   // Scale, Rotate, and Translate
   // This brings it into V^[parent space]
-  auto mat = XMMatrixScalingFromVector(Scale.get()) *
-             XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
-             XMMatrixTranslationFromVector(Position.get());
+  auto mat =
+    XMMatrixScalingFromVector(Scale.get()) *
+    XMMatrixRotationRollPitchYawFromVector(Rotation.get()) *
+    XMMatrixTranslationFromVector(Position.get());
 
-  if (Owner->Parent)
-    mat = mat * Owner->Parent->Transform.get();
-
-  Owner->Transform = mat;
+  Owner->LocalTransform = mat;
 }
 
 // ----------------------------------------------------------------------------
@@ -75,15 +82,15 @@ void TransformComponent::_SetIsStatic(bool value)
 
   _static = value;
 
-  static Events::EventId updateId("update");
+  DEF_EVENT_ID(draw);
   if (_static)
   {
     UpdateMatrix();
-    Owner->RemoveEvent(this, updateId);
+    Owner->RemoveEvent(this, draw);
   }
   else
   {
-    Owner->AddEvent(this, updateId, &TransformComponent::OnUpdate);
+    Owner->AddEvent(this, draw, &TransformComponent::OnUpdate);
   }
 }
 
@@ -101,7 +108,7 @@ TransformComponentFactory::TransformComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *TransformComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
   math::Vector position, rotation, scale;
 
@@ -127,7 +134,10 @@ Component *TransformComponentFactory::CreateObject(
   rotation.w = 0;
   scale.w = 1;
 
-  auto comp = new (memory) TransformComponent(position, rotation, scale);
+  if (scale.z == 0)
+    scale.z = 1;
+
+  auto comp = new(memory) TransformComponent(position, rotation, scale);
 
   return comp;
 }
@@ -140,7 +150,13 @@ math::Vector TransformComponentFactory::ParseVector(json::value jv)
   while (nums.size() < 4)
     nums.push_back(0);
 
-  return math::Vector{(float)nums[0], (float)nums[1], (float)nums[2], (float)nums[3]};
+  return math::Vector
+  {
+    static_cast<float>(nums[0]),
+    static_cast<float>(nums[1]),
+    static_cast<float>(nums[2]),
+    static_cast<float>(nums[3])
+  };
 }
 
 // ----------------------------------------------------------------------------
@@ -150,10 +166,7 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
   mrb_value tc_wrapper; // TransformComponent *
   mrb_get_args(mrb, "o", &tc_wrapper);
 
-  // ruby equiv:
-  //  @comp_ptr = tc_wrapper
-  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
-  mrb_iv_set(mrb, self, tc_wrapper_sym, tc_wrapper);
+  ruby::save_native_ptr(mrb, self, mrb_ptr(tc_wrapper));
 
   return mrb_nil_value();
 }
@@ -162,12 +175,8 @@ static mrb_value rb_transform_initialize(mrb_state *mrb, mrb_value self)
 
 static TransformComponent *get_rb_tc_wrapper(mrb_state *mrb, mrb_value self)
 {
-  ruby::ruby_engine engine{mrb};
-
-  static mrb_sym tc_wrapper_sym = mrb_intern_cstr(mrb, "comp_ptr");
-  auto tc_wrapper = mrb_iv_get(mrb, self, tc_wrapper_sym);
-
-  return (TransformComponent *) engine.unwrap_native_ptr(tc_wrapper);
+  //auto tc_wrapper = ruby::read_native_ptr<TransformComponent>(mrb, self);
+  return static_cast<TransformComponent *>(mrb_data_get_ptr(mrb, self, &mrb_transformcomp_data_type));
 }
 
 static mrb_value rb_transform_position(mrb_state *mrb, mrb_value self)
@@ -245,38 +254,49 @@ static mrb_value rb_transform_set_static(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static void mrb_transformcomponent_init(mrb_state *mrb, RClass *module, RClass *base)
+{
+  mrb_transformcomp_data_type.dfree = mrb_transform_free;
+  mrb_transformcomp_data_type.struct_name = "TransformComponent";
+
+  auto transform = mrb_define_class_under(mrb, module, "TransformComponent", base);
+
+  mrb_define_method(mrb, transform, "initialize", rb_transform_initialize, ARGS_REQ(1));
+
+  mrb_define_method(mrb, transform, "position", rb_transform_position, ARGS_NONE());
+  mrb_define_method(mrb, transform, "position=", rb_transform_position_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "position", "vector");
+
+  mrb_define_method(mrb, transform, "rotation", rb_transform_rotation, ARGS_NONE());
+  mrb_define_method(mrb, transform, "rotation=", rb_transform_rotation_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "rotation", "vector");
+
+  mrb_define_method(mrb, transform, "scale", rb_transform_scale, ARGS_NONE());
+  mrb_define_method(mrb, transform, "scale=", rb_transform_scale_set, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "scale", "vector");
+
+  mrb_define_method(mrb, transform, "static", rb_transform_get_static, ARGS_NONE());
+  mrb_define_method(mrb, transform, "static=", rb_transform_set_static, ARGS_REQ(1));
+  comp_add_property(mrb, transform, "static", "bool", true);
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_transformcomponent_new(mrb_state *mrb, TransformComponent *comp)
+{
+  auto rmod = mrb_module_get(mrb, "Components");
+  auto rclass = mrb_class_get_under(mrb, rmod, "TransformComponent");
+
+  auto obj = mrb_data_object_alloc(mrb, rclass, comp, &mrb_transformcomp_data_type);
+  return mrb_obj_value(obj);
+}
+
+// ----------------------------------------------------------------------------
+
 mrb_value TransformComponent::GetRubyWrapper()
 {
-  THREAD_EXCLUSIVE_SCOPE;
-
-  static bool init = false;
-  static ruby::ruby_class comp_class;
-  
-  if (!init)
-  {
-    auto comp_mod = GetComponentRModule();
-    auto comp_base = GetComponentRClass();
-    comp_class = comp_mod.define_class("TransformComponent", comp_base);
-
-    comp_class.define_method("initialize", rb_transform_initialize, ARGS_REQ(1));
-
-    comp_class.define_method("position", rb_transform_position, ARGS_NONE());
-    comp_class.define_method("position=", rb_transform_position_set, ARGS_REQ(1));
-    
-    comp_class.define_method("rotation", rb_transform_rotation, ARGS_NONE());
-    comp_class.define_method("rotation=", rb_transform_rotation_set, ARGS_REQ(1));
-
-    comp_class.define_method("scale", rb_transform_scale, ARGS_NONE());
-    comp_class.define_method("scale=", rb_transform_scale_set, ARGS_REQ(1));
-
-    comp_class.define_method("static", rb_transform_get_static, ARGS_NONE());
-    comp_class.define_method("static=", rb_transform_set_static, ARGS_REQ(1));
-
-    init = true;
-  }
-
-  auto compwrap = mrb_inst->wrap_native_ptr(this);
-  return comp_class.new_inst(compwrap).silent_reset();
+  RUN_ONCE(mrb_transformcomponent_init(*mrb_inst, GetComponentRModule(), GetComponentRClass()));
+  return mrb_transformcomponent_new(*mrb_inst, this);
 }
 
 // ----------------------------------------------------------------------------

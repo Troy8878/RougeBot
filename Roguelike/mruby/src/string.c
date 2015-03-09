@@ -1795,7 +1795,7 @@ static const char isspacetable[256] = {
  *     "1,2,,3,4,,".split(',', -4)     #=> ["1", "2", "", "3", "4", "", ""]
  */
 
-mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str, mrb_value regexp);
+mrb_value mrb_regexp_split(mrb_state *mrb, mrb_value str, mrb_value regexp, mrb_int lim);
 
 static mrb_value
 mrb_str_split_m(mrb_state *mrb, mrb_value str)
@@ -1900,7 +1900,7 @@ mrb_str_split_m(mrb_state *mrb, mrb_value str)
     beg = ptr - temp;
   }
   else {
-    return mrb_regexp_split(mrb, str, spat);
+    return mrb_regexp_split(mrb, str, spat, lim);
   }
   if (RSTRING_LEN(str) > 0 && (lim_p || RSTRING_LEN(str) > beg || lim < 0)) {
     if (RSTRING_LEN(str) == beg) {

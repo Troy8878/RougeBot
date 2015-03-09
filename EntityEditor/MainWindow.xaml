@@ -4,7 +4,7 @@
                    xmlns:views="clr-namespace:EntityEditor.Views"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                    Title="MainWindow" MinHeight="550" MinWidth="800"
-                   Height="550" Width="800"
+                   Height="550" Width="800" ResizeMode="CanResizeWithGrip"
                    Icon="/wizard0.ico">
 
     <Grid Height="550" Width="800">

@@ -28,7 +28,7 @@
         "property": "frame_range",
         "usage": {
           "type": "vector",
-          "semantics": null,
+          "semantics": "range",
           "dimensions": 2,
           "required": false,
           "locked": false,
@@ -116,15 +116,13 @@
         "property": "damage",
         "usage": {
           "type": "vector",
-          "semantics": null,
+          "semantics": "range",
           "dimensions": 2,
           "required": false,
           "locked": false,
           "default": [
-            0,
-            0,
-            0,
-            0
+            2,
+            4
           ]
         }
       }
@@ -150,6 +148,16 @@
   {
     "dependencies": [],
     "properties": [
+      {
+        "property": "max_health",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 25
+        }
+      },
       {
         "property": "health",
         "usage": {
@@ -484,7 +492,7 @@
           ],
           "semantics": null,
           "locked": false,
-          "default": "x"
+          "default": "z"
         }
       }
     ],
@@ -666,10 +674,20 @@
     "dependencies": [],
     "properties": [
       {
+        "property": "shader",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "shader",
+          "locked": false,
+          "default": ""
+        }
+      },
+      {
         "property": "render_target",
         "usage": {
           "type": "string",
-          "required": true,
+          "required": false,
           "semantics": "render_target",
           "locked": false,
           "default": ""
@@ -818,16 +836,6 @@
     "dependencies": [],
     "properties": [
       {
-        "property": "text",
-        "usage": {
-          "type": "string",
-          "required": false,
-          "semantics": null,
-          "locked": false,
-          "default": ""
-        }
-      },
-      {
         "property": "texts",
         "usage": {
           "type": "array",
@@ -927,6 +935,53 @@
       }
     ],
     "name": "TextComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "move_speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 5
+        }
+      },
+      {
+        "property": "position",
+        "usage": {
+          "type": "vector",
+          "semantics": null,
+          "dimensions": 2,
+          "required": false,
+          "locked": false,
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "property": "mode",
+        "usage": {
+          "type": "enum",
+          "required": true,
+          "options": [
+            "jump",
+            "linear",
+            "exponential"
+          ],
+          "semantics": null,
+          "locked": false,
+          "default": "jump"
+        }
+      }
+    ],
+    "name": "PositionComponent"
   },
   {
     "dependencies": [],

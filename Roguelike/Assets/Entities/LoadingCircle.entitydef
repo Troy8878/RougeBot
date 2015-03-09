@@ -1,17 +1,38 @@
 {
   "TransformComponent": {
-    "position": [0, 0, -2, 1],
-    "rotation": [0, 0, 0, 0],
-    "scale": [0.5, 0.5, 1, 1]
+    "position": [
+      0.0,
+      0.0,
+      -2.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      0.5,
+      0.5,
+      1.0
+    ]
   },
   "TextureComponent": {
-    "textures": ["Spinner.png"]
+    "textures": [
+      "Spinner.png"
+    ]
   },
   "SpriteComponent": {
-    "render_target": "WorldLayer"
+    "render_target": "WorldLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "SpinnyThingComponent": {
-    // This is basically 'radians per second'
-    "speed": -7
+    "speed": -7.0,
+    "axis": "z"
   }
 }

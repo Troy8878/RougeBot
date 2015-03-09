@@ -1,6 +1,6 @@
 @echo off
 
-call setvc12
+call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\vcvars32"
 
 if /i "%1"=="run" (
   goto rungame

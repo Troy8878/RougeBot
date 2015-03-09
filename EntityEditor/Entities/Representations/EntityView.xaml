@@ -17,6 +17,7 @@
         <Grid Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock FontSize="18" Margin="5">
@@ -27,6 +28,10 @@
             </TextBlock>
             <Button Width="175" FontSize="16" Grid.Column="1" HorizontalAlignment="Left">
                 Open Archetype
+            </Button>
+            <Button Width="175" FontSize="16" Grid.Column="2"
+                    HorizontalAlignment="Left" Margin="10,0" Click="Save">
+                Save
             </Button>
         </Grid>
         

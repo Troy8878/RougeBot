@@ -1,9 +1,31 @@
 {
-  "TransformComponent": {},
+  "TransformComponent": {
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
   "ChildHierarchy": {
     "children": [
       {
         "name": "GameConsole",
+        "components": {
+          "TransformComponent": {},
+          "GameConsoleComponent": {},
+          "ChildHierarchy": {}
+        },
+        "children": [],
         "archetype": "HUD/Console/GameConsole"
       }
     ]

@@ -1,25 +1,11 @@
 Game200-Project
 ===============
 
-Building
---------
+You should all use our fancy schmancy new Project Manager! It's located
+in (you guys can't even guess this) the ProjectManager folder in the
+repository! It's all nice looking with its dark theme and buttons and
+git status :3 like omg ![http://i.imgur.com/cjccX97.png](http://i.imgur.com/cjccX97.png)
 
-Before you can build and run this project, make sure you
-set the Default Startup Project to "Game", and edit the
-working directory in the Game debugging settings to be
-    $(SolutionDir)
+I also hope this will get you guys to push your code more~
 
-
-Sublime Plugin
---------------
-
-Copy the "GameLauncher" folder into this folder:
-~\AppData\Roaming\Sublime Text 3\Packages
-
-If you want the keyboard shortcuts, add these to your
-Preferences -> Key Bindings - User
-
-    { "keys": ["f5"], "command": "launch_game", "args": {"mode": "Debug"} },
-    { "keys": ["ctrl+f5"], "command": "launch_game", "args": {"mode": "Release"} }
-
-
+Have fun~~~

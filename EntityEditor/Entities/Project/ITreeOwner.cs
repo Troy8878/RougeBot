@@ -12,5 +12,6 @@ namespace EntityEditor.Entities.Project
         string Name { get; }
         string Type { get; }
         IEnumerable<object> OwnedItems { get; }
+        ITreeOwner Owner { get; set; }
     }
 }

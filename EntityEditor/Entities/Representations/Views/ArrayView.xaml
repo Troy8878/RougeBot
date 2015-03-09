@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="EntityEditor.Entities.Representations.Views.ArrayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:properties="clr-namespace:EntityEditor.Entities.Representations.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance properties:Array}">
+    <Grid>
+        <!-- TODO: Add & Remove buttons -->
+        <StackPanel>
+            <ItemsControl ItemsSource="{Binding Path=Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentPresenter Content="{Binding}" ContentTemplate="{Binding Path=RenderTemplate}" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="20,0,0,0">
+                                <Button Click="RemoveClick">-</Button>
+                                <Button Click="UpClick">&#x2191;</Button>
+                                <Button Click="DownClick">&#x2193;</Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button HorizontalAlignment="Left" Click="AddClick">+</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

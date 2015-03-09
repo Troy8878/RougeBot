@@ -14,7 +14,7 @@ namespace EntityEditor
     /// <summary>
     ///     Interaction logic for CommitMessage.xaml
     /// </summary>
-    public partial class CommitMessage
+    public partial class CommitMessage : INotifyPropertyChanged
     {
         public event Action OnClose;
 
@@ -43,6 +43,7 @@ namespace EntityEditor
             Message = "";
             SetStagingMessage("");
             ShowChangeList();
+            OnPropertyChanged("RandomMessage");
         }
 
         public string RandomMessage
@@ -134,6 +135,9 @@ namespace EntityEditor
 
         private async void ShowChangeList()
         {
+            if (MainWindow.Instance == null)
+                return;
+
             var list = await Task.Run(delegate
             {
                 return new Repository(MainWindow.Instance.RepoDir).RetrieveStatus()
@@ -141,6 +145,15 @@ namespace EntityEditor
             });
 
             ChangeList.ItemsSource = list;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

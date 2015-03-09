@@ -137,8 +137,8 @@ namespace EntityEditor
                     return;
             }
 
-            var status = new SyncProgress {Owner = this};
-            status.Show();
+            SyncFlyout.IsOpen = true;
+            var status = SyncProgress;
             status.SetProgress(null);
             status.SetMessage("Preparing");
 
@@ -150,7 +150,7 @@ namespace EntityEditor
                     {
                         if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
                         {
-                            Dispatcher.Invoke(() => status.CloseProgress());
+                            Dispatcher.Invoke(() => SyncFlyout.IsOpen = false);
                             MessageBox.Show(
                                 "You have uncommitted work. " +
                                 "Please commit your work before syncing.");
@@ -201,7 +201,7 @@ namespace EntityEditor
 
                         if (result.Status == MergeStatus.Conflicts)
                         {
-                            Dispatcher.Invoke(() => status.CloseProgress());
+                            Dispatcher.Invoke(() => SyncFlyout.IsOpen = false);
                             MessageBox.Show(
                                 "There were merge conflicts, please open the Visual Studio " +
                                 "Team Explorer or GitExtensions to resolve them.");
@@ -264,7 +264,7 @@ namespace EntityEditor
             }
 
             GitUnlocked = true;
-            status.CloseProgress();
+            SyncFlyout.IsOpen = false;
             GitView.Refresh();
         }
 

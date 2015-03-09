@@ -1,11 +1,6 @@
-﻿<mctrl:MetroWindow x:Class="EntityEditor.SyncProgress"
-                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                   Title="SyncProgress" Height="100" Width="400"
-                   Topmost="True" WindowStyle="ToolWindow" ResizeMode="NoResize"
-                   Icon="/wizard0.ico" WindowStartupLocation="CenterOwner"
-                   ShowCloseButton="False" WindowTransitionsEnabled="True">
+﻿<UserControl x:Class="EntityEditor.SyncProgress"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
@@ -16,4 +11,4 @@
         <TextBlock Grid.Row="1" VerticalAlignment="Center"
                    x:Name="Status" Margin="10,0" />
     </Grid>
-</mctrl:MetroWindow>
+</UserControl>

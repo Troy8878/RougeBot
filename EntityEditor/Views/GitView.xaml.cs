@@ -68,7 +68,6 @@ namespace EntityEditor.Views
                     var ndetails = data.MasterBranch.TrackingDetails;
                     Dispatcher.Invoke(delegate
                     {
-                        data.Ahead = ndetails.AheadBy;
                         data.Behind = ndetails.BehindBy;
                     });
                 });

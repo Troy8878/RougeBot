@@ -131,10 +131,9 @@ namespace EntityEditor
             var author = Author.Load();
             if (!author.IsComplete)
             {
-                new AuthorInput {Owner = this}.ShowDialog();
-                author = Author.Load();
-                if (!author.IsComplete)
-                    return;
+                AuthorInput.Reset();
+                AuthorFlyout.IsOpen = true;
+                return;
             }
 
             SyncFlyout.IsOpen = true;
@@ -295,6 +294,16 @@ namespace EntityEditor
         private void CommitMessageOnClose()
         {
             CommitFlyout.IsOpen = false;
+        }
+
+        private void AuthorInputOnClose()
+        {
+            AuthorFlyout.IsOpen = false;
+        }
+
+        private void ChangeAuthorClick(object sender, RoutedEventArgs e)
+        {
+            AuthorFlyout.IsOpen = true;
         }
     }
 }

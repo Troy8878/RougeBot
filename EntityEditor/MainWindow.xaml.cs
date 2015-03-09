@@ -152,6 +152,7 @@ namespace EntityEditor
                     {
                         if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
                         {
+                            Dispatcher.Invoke(() => status.CloseProgress());
                             MessageBox.Show(
                                 "You have uncommitted work. " +
                                 "Please commit your work before syncing.");
@@ -176,6 +177,24 @@ namespace EntityEditor
                                         (double) progress.TotalObjects);
                                     return true;
                                 }
+                            },
+                            MergeOptions = new MergeOptions
+                            {
+                                CommitOnSuccess = true,
+                                OnCheckoutProgress = (path, curr, total) =>
+                                {
+                                    if (curr == total)
+                                    {
+                                        status.SetMessage("Pull complete");
+                                        status.SetProgress(null);
+                                        return;
+                                    }
+
+                                    status.SetMessage(string.Format(
+                                        "Merging files ({0}/{1}) ({2})",
+                                        curr, total, path));
+                                    status.SetProgress(curr/(double) total);
+                                }
                             }
                         });
 
@@ -184,6 +203,7 @@ namespace EntityEditor
 
                         if (result.Status == MergeStatus.Conflicts)
                         {
+                            Dispatcher.Invoke(() => status.CloseProgress());
                             MessageBox.Show(
                                 "There were merge conflicts, please open the Visual Studio " +
                                 "Team Explorer or GitExtensions to resolve them.");

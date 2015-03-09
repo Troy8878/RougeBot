@@ -8,29 +8,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
-                    <Color x:Key="RbTextColor">White</Color>
-                    <Color x:Key="RbBackgroundColor">#101010</Color>
-                    <Color x:Key="RbToolBackgroundColor">#202020</Color>
-                    
-                    <SolidColorBrush x:Key="RbText" Color="{StaticResource RbTextColor}" />
-                    <SolidColorBrush x:Key="RbBackground" Color="{StaticResource RbBackgroundColor}" />
-                    <SolidColorBrush x:Key="RbToolBackground" Color="{StaticResource RbToolBackgroundColor}" />
-
-                    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#202020" />
-                    <SolidColorBrush x:Key="SolidBorderBrush" Color="#404040" />
-                    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#7F7F7F" />
-                    <SolidColorBrush x:Key="NormalBrush" Color="{StaticResource RbTextColor}" />
-                    <SolidColorBrush x:Key="NormalBorderBrush" Color="#101010" />
-                    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#F0F0F0" />
-                    <SolidColorBrush x:Key="GlyphBrush" Color="#F0F0F0" />
-
-                    <Style TargetType="TreeView">
-                        <Setter Property="Foreground" Value="{StaticResource RbText}" />
-                    </Style>
-                    <Style TargetType="TreeViewItem">
-                        <Setter Property="Foreground" Value="{StaticResource RbText}" />
-                    </Style>
-                    
                     <helpers:RepoDirConv x:Key="RepoDirConv" />
                     <helpers:NegateConverter x:Key="Negate" />
                     <helpers:VisibilityConverter x:Key="Visibility" />
@@ -38,10 +15,13 @@
                     <helpers:NIntPluralConverter x:Key="NIntPlural" />
                     <helpers:RawJsonConverter x:Key="RawJson" />
                 </ResourceDictionary>
-                
+
                 <ResourceDictionary Source="Entities/Representations/ViewTemplates.xaml" />
-                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Core.Implicit.xaml" />
-                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

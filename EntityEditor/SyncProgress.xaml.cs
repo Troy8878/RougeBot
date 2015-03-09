@@ -54,6 +54,8 @@ namespace EntityEditor
 
         public void CloseProgress()
         {
+            if (_close)
+                return;
             _close = true;
             Close();
         }

@@ -65,7 +65,9 @@ namespace EntityEditor.Views
                         CredentialsProvider = (a, b, c) => author.Credentials
                     });
 
-                    var ndetails = data.MasterBranch.TrackingDetails;
+                    var ndetails = repo.Branches
+                        [repo.Head.TrackedBranch.UpstreamBranchCanonicalName]
+                        .TrackingDetails;
                     Dispatcher.Invoke(delegate
                     {
                         data.Behind = ndetails.BehindBy;

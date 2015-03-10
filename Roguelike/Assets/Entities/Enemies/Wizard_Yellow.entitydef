@@ -29,7 +29,7 @@
     "mode": "linear"
   },
   "EnemyLogicComponent": {
-    "stationary": false
+    "stationary": true
   },
   "ChildHierarchy": {
     "children": [

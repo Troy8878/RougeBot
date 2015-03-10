@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace EntityEditor.Helpers
 {
@@ -13,7 +10,19 @@ namespace EntityEditor.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Path.Combine(MainWindow.Instance.RepoDir, (string) parameter, (string) value);
+            var param = (string) parameter;
+            var path = Path.Combine(MainWindow.Instance.RepoDir, param, (string) value);
+
+            if (!param.Contains("Textures") || !File.Exists(path))
+                return path;
+
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            image.UriSource = new Uri(path);
+            image.EndInit();
+            return image;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -30,13 +30,7 @@
         <Border VerticalAlignment="Bottom" HorizontalAlignment="Left"
                 Width="400" Height="1" x:Name="PopupPlacement" />
         <Image Source="{Binding Path=Value, Mode=OneWay, Converter={StaticResource RepoDirConv}, ConverterParameter=Roguelike/Assets/Textures}"
-               HorizontalAlignment="Right" MaxWidth="25" MaxHeight="25" x:Name="Thumbnail" MouseLeftButtonDown="ThumbnailOnMouseLeftButtonDown" />
-        <Popup PlacementTarget="{Binding ElementName=Thumbnail}"
-               Width="200" Height="200" StaysOpen="False" x:Name="ImagePreview"
-               Placement="Left">
-            <Border>
-                <Image Source="{Binding Path=Value, Mode=OneWay, Converter={StaticResource RepoDirConv}, ConverterParameter=Roguelike/Assets/Textures}" />
-            </Border>
-        </Popup>
+               HorizontalAlignment="Right" MaxWidth="25" MaxHeight="25" x:Name="Thumbnail"
+               MouseLeftButtonDown="ThumbnailOnMouseLeftButtonDown" />
     </Grid>
 </UserControl>

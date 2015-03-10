@@ -9,6 +9,7 @@ using EntityEditor.API;
 using EntityEditor.Entities;
 using EntityEditor.Properties;
 using LibGit2Sharp;
+using MahApps.Metro;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -304,6 +305,19 @@ namespace EntityEditor
         private void ChangeAuthorClick(object sender, RoutedEventArgs e)
         {
             AuthorFlyout.IsOpen = true;
+        }
+
+        public bool DarkTheme
+        {
+            get { return Settings.Default.DarkTheme; }
+            set
+            {
+                var settings = Settings.Default;
+                settings.DarkTheme = value;
+                settings.Save();
+                
+                ThemeManager.ChangeAppTheme(Application.Current, value ? "BaseDark" : "BaseLight");
+            }
         }
     }
 }

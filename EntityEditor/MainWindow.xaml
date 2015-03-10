@@ -4,9 +4,12 @@
                    xmlns:views="clr-namespace:EntityEditor.Views"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                    xmlns:entityEditor="clr-namespace:EntityEditor"
-                   Title="MainWindow" MinHeight="550" MinWidth="800"
+                   Title="Roguebot Project Manager" MinHeight="550" MinWidth="800"
                    Height="550" Width="800" ResizeMode="CanResizeWithGrip"
-                   Icon="/wizard0.ico" WindowState="Maximized">
+                   Icon="/wizard0.png" WindowState="Maximized"
+                   BorderBrush="{StaticResource AccentColorBrush}"
+                   DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                   IconBitmapScalingMode="HighQuality">
     
     <mctrl:MetroWindow.Flyouts>
         <mctrl:FlyoutsControl>
@@ -17,7 +20,7 @@
             <mctrl:Flyout x:Name="SyncFlyout" Position="Bottom" CloseButtonVisibility="Collapsed">
                 <entityEditor:SyncProgress x:Name="SyncProgress" Margin="0,10,50,10" />
             </mctrl:Flyout>
-            <mctrl:Flyout x:Name="AuthorFlyout" Position="Right">
+            <mctrl:Flyout x:Name="AuthorFlyout" Position="Right" IsModal="True">
                 <entityEditor:AuthorInput x:Name="AuthorInput" OnClose="AuthorInputOnClose" />
             </mctrl:Flyout>
         </mctrl:FlyoutsControl>
@@ -95,19 +98,36 @@
 
         </Grid>
 
-        <StackPanel Grid.Row="4">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Margin="10" Width="200" Height="40"
-                        FontSize="20" Click="ChangeDirClick">
-                    Change Repo Dir
-                </Button>
-                <Button Margin="10" Width="200" Height="40"
-                        FontSize="20" Click="ChangeAuthorClick">
-                    Change Author
-                </Button>
-            </StackPanel>
+        <Grid Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            
+            <Button Margin="10" Width="200" Height="40"
+                    FontSize="20" Click="ChangeAuthorClick"
+                    Grid.Row="0" Grid.Column="0">
+                Change Author
+            </Button>
+            <mctrl:ToggleSwitch VerticalAlignment="Center" Margin="20,10"
+                                Grid.Row="1" Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                IsChecked="{Binding Path=DarkTheme}">
+                Dark Theme
+            </mctrl:ToggleSwitch>
+                
+            <Button Margin="10" Width="200" Height="40"
+                    FontSize="20" Click="ChangeDirClick"
+                    Grid.Row="0" Grid.Column="1">
+                Change Repo Dir
+            </Button>
             <TextBlock x:Name="RepoDirDisplay" TextWrapping="Wrap"
-                       Margin="20" HorizontalAlignment="Center" />
-        </StackPanel>
+                       Margin="20" HorizontalAlignment="Center"
+                       Grid.Row="1" Grid.Column="1" />
+        </Grid>
     </Grid>
 </mctrl:MetroWindow>

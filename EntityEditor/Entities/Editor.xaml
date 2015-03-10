@@ -7,9 +7,10 @@
                    xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                    mc:Ignorable="d"
-                   Title="Editor" Height="600" Width="1200"
+                   Title="Entity Editor" Height="600" Width="1200"
                    d:DataContext="{d:DesignInstance project:ProjectTree}"
-                   Icon="/wizard0.ico">
+                   Icon="/wizard0.png"
+                   BorderBrush="{StaticResource AccentColorBrush}">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">

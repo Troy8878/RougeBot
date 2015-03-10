@@ -379,6 +379,9 @@
     <Content Include="NativeBinaries\amd64\git2-e0902fb.pdb" />
     <Content Include="NativeBinaries\x86\git2-e0902fb.dll" />
     <Content Include="NativeBinaries\x86\git2-e0902fb.pdb" />
+    <Content Include="ImperialMarch.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Wizard0.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

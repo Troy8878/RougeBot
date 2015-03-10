@@ -317,6 +317,12 @@ namespace EntityEditor
                 settings.Save();
                 
                 ThemeManager.ChangeAppTheme(Application.Current, value ? "BaseDark" : "BaseLight");
+
+                if (value)
+                {
+                    March.Source = new Uri("ImperialMarch.mp3", UriKind.Relative);
+                    March.Position = new TimeSpan(0);
+                }
             }
         }
     }

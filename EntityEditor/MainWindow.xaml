@@ -34,8 +34,10 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
+        
+        <MediaElement x:Name="March" LoadedBehavior="Play" UnloadedBehavior="Stop" />
 
-        <TextBlock HorizontalAlignment="Center" FontSize="26">
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="26">
             Roguebot Project Manager
         </TextBlock>
 

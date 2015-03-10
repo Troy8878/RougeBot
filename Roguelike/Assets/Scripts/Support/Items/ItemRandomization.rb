@@ -17,9 +17,9 @@ class ItemRandomizer
     @categories[cat] << trait
   end
 
-  def randomize(base_item)
+  def randomize_base(base_item)
     @order.each do |category|
-      @categories[category]
+      @categories[category].rand_item.apply base_item
     end
   end
 end
@@ -46,7 +46,7 @@ class WeaponClassTrait < RandomTrait
   end
 
   def apply(item)
-    
+
   end
 end
 
@@ -65,6 +65,10 @@ class MaterialTrait < RandomTrait
     item.damage[1] += damage_mod[1]
   end
 end
+
+########################################################################
+#                  Stuff for the random generator                      #
+########################################################################
 
 WEAPON_GENERATOR = ItemRandomizer.new [:weapon_class, :material]
 

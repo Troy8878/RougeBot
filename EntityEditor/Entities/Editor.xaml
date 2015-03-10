@@ -1,16 +1,16 @@
-﻿<Window x:Class="EntityEditor.Entities.Editor"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:serialization="clr-namespace:EntityEditor.Entities.Serialization"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:project="clr-namespace:EntityEditor.Entities.Project"
-        xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
-        mc:Ignorable="d"
-        Title="Editor" Height="480" Width="800"
-        d:DataContext="{d:DesignInstance project:ProjectTree}"
-        Background="Black"
-        Foreground="SpringGreen">
+﻿<mctrl:MetroWindow x:Class="EntityEditor.Entities.Editor"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:project="clr-namespace:EntityEditor.Entities.Project"
+                   xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
+                   xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                   mc:Ignorable="d"
+                   Title="Entity Editor" Height="600" Width="1200"
+                   d:DataContext="{d:DesignInstance project:ProjectTree}"
+                   Icon="/wizard0.png"
+                   BorderBrush="{StaticResource AccentColorBrush}">
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">
@@ -34,7 +34,7 @@
 
         <HierarchicalDataTemplate x:Key="OwnerTemplate" DataType="project:ITreeOwner"
                                   ItemsSource="{Binding Path=OwnedItems}">
-            <TextBlock Foreground="SpringGreen">
+            <TextBlock>
                 <Run Text="{Binding Path=Name, Mode=OneWay}" />
                 (<Run Text="{Binding Path=Type, Mode=OneWay}" />)
             </TextBlock>
@@ -49,13 +49,12 @@
 
         <TreeView x:Name="ProjectView" ItemsSource="{Binding Path=DisplayItems}"
                   SelectedItemChanged="OnSelected" Width="350"
-                  ItemTemplate="{StaticResource OwnerTemplate}">
-        </TreeView>
+                  ItemTemplate="{StaticResource OwnerTemplate}" />
 
         <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}"
-                      HorizontalScrollBarVisibility="Auto">
+                      HorizontalScrollBarVisibility="Auto" PanningMode="Both">
             <ContentPresenter Content="{Binding}"
                               ContentTemplateSelector="{StaticResource EditorViewSelector}" />
         </ScrollViewer>
     </Grid>
-</Window>
+</mctrl:MetroWindow>

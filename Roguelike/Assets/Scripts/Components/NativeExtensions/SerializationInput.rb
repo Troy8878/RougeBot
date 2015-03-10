@@ -50,7 +50,8 @@ end
 class CustomModelComponent < ComponentBase
   # Describe what goes in the json file
   serialized_input do |p|
-    p.string :render_target, semantics: :render_target, required: true
+    p.string :shader,        semantics: :shader
+    p.string :render_target, semantics: :render_target
   end
 end
 
@@ -73,7 +74,6 @@ end
 class TextComponent < ComponentBase
   # Describe what goes in the json file
   serialized_input do |p|
-    p.string :text
     p.array  :texts,      contained: :string
     p.string :text_color, semantics: :color
     p.string :bg_color,   semantics: :color
@@ -82,5 +82,13 @@ class TextComponent < ComponentBase
     p.enum   :text_align, options: ["center", "justified", "leading", "trailing"]
     p.enum   :paragraph_align, options: ["center", "near", "far"]
     p.vector :autocreate_textures, dimms: 2
+  end
+end
+
+class PositionComponent < ComponentBase
+  serialized_input do |p|
+    p.float  :move_speed, default: 5
+    p.vector :position,   dimms: 2
+    p.enum   :mode,       required: true, options: ["jump", "linear", "exponential"]
   end
 end

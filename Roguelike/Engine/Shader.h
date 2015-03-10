@@ -46,6 +46,18 @@ private:
 
 // ----------------------------------------------------------------------------
 
-extern std::unordered_map<std::string, Shader *> RegisteredShaders;
+struct ShaderManager
+{
+  std::unordered_map<std::string, Shader *> shaders;
+
+  Shader *&operator[](const std::string &key)
+  {
+    if (key == "")
+      return shaders["Textured"];
+    return shaders[key];
+  }
+};
+
+extern ShaderManager RegisteredShaders;
 
 // ----------------------------------------------------------------------------

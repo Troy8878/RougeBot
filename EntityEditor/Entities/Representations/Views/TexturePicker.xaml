@@ -4,14 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:properties="clr-namespace:EntityEditor.Entities.Representations.Properties"
+             xmlns:views="clr-namespace:EntityEditor.Entities.Representations.Views"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="400">
-    <Grid Width="400" Height="30" d:DataContext="{d:DesignInstance properties:String}">
+    <Grid Width="450" Height="30" d:DataContext="{d:DesignInstance properties:String}">
         <StackPanel Orientation="Horizontal">
             <TextBox Width="365" Height="25" IsReadOnly="True" Text="{Binding Path=Value}" x:Name="Box">
                 <TextBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Clear" Click="ClearTexture" />
+                        <MenuItem Header="Override" Click="OnOverride" />
                     </ContextMenu>
                 </TextBox.ContextMenu>
             </TextBox>
@@ -19,14 +21,16 @@
         </StackPanel>
         <Popup PlacementTarget="{Binding ElementName=PopupPlacement}"
                Width="400" Height="300" x:Name="Popup" StaysOpen="False">
-            <Border Background="{StaticResource PopupBackgroundBrush}">
+            <Border>
                 <Grid>
-                    <ScrollViewer>
-                        <Image Source="http://i.imgur.com/kSqZ19P.jpg" />
-                    </ScrollViewer>
+                    <views:TextureTree SelectedTexture="{Binding Path=Value, Mode=TwoWay}" FontSize="14" x:Name="TexTree" />
                 </Grid>
             </Border>
         </Popup>
-        <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="0" x:Name="PopupPlacement" />
+        <Border VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                Width="400" Height="1" x:Name="PopupPlacement" />
+        <Image Source="{Binding Path=Value, Mode=OneWay, Converter={StaticResource RepoDirConv}, ConverterParameter=Roguelike/Assets/Textures}"
+               HorizontalAlignment="Right" MaxWidth="25" MaxHeight="25" x:Name="Thumbnail"
+               MouseLeftButtonDown="ThumbnailOnMouseLeftButtonDown" />
     </Grid>
 </UserControl>

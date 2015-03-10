@@ -22,6 +22,7 @@ class DefenseComponent < ComponentBase
   property :armor, :float, true
 
   serialized_input do |p|
+    p.float :max_health, default: 25.0
     p.float :health, default: 10.0
   end
 

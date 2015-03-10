@@ -1,97 +1,209 @@
 {
   "TransformComponent": {
-    "rotation": [0, 0, 0],
-    "position": [1, 0.25, 1],
-    "scale": [0.8, 0.8, 0.8]
+    "position": [
+      1.0,
+      0.25,
+      1.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      0.8,
+      0.8,
+      0.8
+    ]
   },
   "ParticleSystemComponent": {
     "render_target": "TranslucentLayer",
-    "scaleRange": [0.2, 0.6, 0.2, 0.6],
-    "rotationRange": [-3.14, 3.14, 0, 0],
-    "velocityRange": [-0.225, -0.125, 0.5, 0.7],
-    "offSet": [-0.225, -0.225, 0, 0],
-    "particleRate": 5,
-    "fadeTime": 1,
+    "scaleRange": [
+      0.2,
+      0.6,
+      0.2,
+      0.6
+    ],
+    "rotationRange": [
+      -3.14,
+      3.14,
+      0.0,
+      0.0
+    ],
+    "velocityRange": [
+      -0.225,
+      -0.125,
+      0.5,
+      0.7
+    ],
+    "rotVelRange": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "offSet": [
+      -0.225,
+      -0.225,
+      0.0,
+      0.0
+    ],
+    "particleRate": 5.0,
+    "fadeTime": 1.0,
     "active": true,
+    "texture": ""
   },
   "TextureComponent": {
     "textures": [
-      "Robot.png",
+      "Player/Player0.png",
+      "Player/Player1.png",
+      "Player/Player2.png",
+      "Player/Player3.png"
     ]
   },
   "SpriteComponent": {
-    "render_target": "TranslucentLayer"
+    "render_target": "TranslucentLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
   },
   "AnimatedComponent": {
-    "frame_range": [0, 4],
-    "frame_time": 0.3
+    "paused": "",
+    "frame_time": 0.1,
+    "frame_range": [
+      0.0,
+      4.0
+    ],
+    "loops": true
   },
   "PlayerControllerComponent": {},
-
   "PositionComponent": {
+    "move_speed": 5.0,
+    "position": [
+      0.0,
+      0.0
+    ],
     "mode": "linear"
   },
   "AttackComponent": {
-    "damage": [1,1]
+    "damage": [
+      1.0,
+      1.0
+    ]
   },
   "DefenseComponent": {
-    "health": 250,
-    "max_health": 250
+    "max_health": 250.0,
+    "health": 250.0
   },
-
   "InventoryComponent": {
     "is_player": true
   },
-
   "KeybindingComponent": {},
-
   "EvalOnEventComponent": {
     "bindings": {
       "actor_death": "Game.switch_level 'MainMenu'"
     }
   },
-
   "ChildHierarchy": {
     "children": [
       {
         "name": "HealthDisplay",
         "components": {
           "TransformComponent": {
-            "position": [0, -1, 0],
-            "scale": [3, 0.75, 1],
+            "position": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              3.0,
+              0.75,
+              1.0
+            ]
           },
           "TextureComponent": {
-            "textures": ["SPECIAL/SURFACE/600:150"]
+            "textures": [
+              "SPECIAL/SURFACE/600:150"
+            ]
           },
           "SpriteComponent": {
-            "render_target": "TranslucentLayer"
+            "render_target": "TranslucentLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
           },
           "TextComponent": {
-            "texts": ["Health: 250\nDamage: [1, 1]\nItem Level: 1"],
-
+            "texts": [
+              "Health: 250\nDamage: [1, 1]\nItem Level: 1"
+            ],
             "text_color": "White",
-
+            "bg_color": "",
             "font": "Segoe UI",
-            "font_size": 40,
+            "font_size": 40.0,
+            "text_align": "center",
+            "paragraph_align": "center",
+            "autocreate_textures": [
+              0.0,
+              0.0
+            ]
           },
-          "PlayerHealthComponent": {},
+          "PlayerHealthComponent": {}
         },
+        "children": [],
+        "archetype": "NoArchetype"
       },
       {
         "name": "HealthBar",
         "components": {
           "TransformComponent": {
-            "position": [0, 0.5, 0],
-            "scale": [1, 0.5, 1],
+            "position": [
+              0.0,
+              0.5,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              0.5,
+              1.0
+            ]
           },
           "TextureComponent": {
-            "textures": ["HealthBar.png"]
+            "textures": [
+              "HealthBar.png"
+            ]
           },
           "SpriteComponent": {
-            "render_target": "TranslucentLayer"
+            "render_target": "TranslucentLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
           },
           "HealthBarComponent": {}
-        }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
       }
     ]
   }

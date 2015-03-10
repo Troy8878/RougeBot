@@ -6,7 +6,7 @@
 *.user
 *.sln.docstates
 
-*/Thumbs.db
+Thumbs.db
 
 # Build results
 [Dd]ebug/

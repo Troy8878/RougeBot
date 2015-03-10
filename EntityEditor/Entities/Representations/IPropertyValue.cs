@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using EntityEditor.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations
 {
-    public interface IPropertyValue
+    public interface IPropertyValue : IEquatable<IPropertyValue>
     {
         DataTemplate RenderTemplate { get; }
+        bool Locked { get; set; }
         JToken Serialize();
     }
 }

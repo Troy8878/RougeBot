@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EntityEditor.PrefabEditor.Controls;
 
 namespace EntityEditor.Entities.Representations.Views
 {
@@ -32,7 +33,17 @@ namespace EntityEditor.Entities.Representations.Views
 
         private void SelectClick(object sender, RoutedEventArgs e)
         {
+            TexTree.Load();
             Popup.IsOpen = true;
+        }
+
+        private void ThumbnailOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+        private void OnOverride(object sender, RoutedEventArgs e)
+        {
+            Box.Text = SetMetadata.GetString(Box.Text);
         }
     }
 }

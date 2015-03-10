@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\LibGit2Sharp.0.21.0.176\build\net40\LibGit2Sharp.props" Condition="Exists('packages\LibGit2Sharp.0.21.0.176\build\net40\LibGit2Sharp.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,12 +9,36 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EntityEditor</RootNamespace>
-    <AssemblyName>EntityEditor</AssemblyName>
+    <AssemblyName>RoguebotProjectManager</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>10d7fd54</NuGetPackageImportStamp>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>ftp://waws-prod-bay-021.ftp.azurewebsites.windows.net/site/wwwroot/TerminalAudacity/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://connorcpu-clickonce.azurewebsites.net/TerminalAudacity/</InstallUrl>
+    <UpdateUrl>http://connorcpu-clickonce.azurewebsites.net/TerminalAudacity/</UpdateUrl>
+    <ProductName>Roguebot Project Manager</ProductName>
+    <PublisherName>Team Terminal Audacity</PublisherName>
+    <SuiteName>Roguebot Project Manager</SuiteName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,40 +79,27 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>wizard0.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>74DD532B57070BA3776E024504713D47A2025FDA</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>EntityEditor_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Expression.Controls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Controls.dll</HintPath>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>packages\LibGit2Sharp.0.21.0.176\lib\net40\LibGit2Sharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Expression.Controls.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Controls.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Drawing.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Drawing.Design.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Effects, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Effects.Design">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Effects.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Prototyping.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.SketchControls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Microsoft.Expression.Prototyping.SketchControls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Expression.Prototyping.SketchControls.design.v4">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\Design\Microsoft.Expression.Prototyping.SketchControls.design.v4.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Windows.Design.Extensibility">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\Blend\Microsoft.Windows.Design.Extensibility.dll</HintPath>
+    <Reference Include="MahApps.Metro">
+      <HintPath>packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -101,6 +113,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Controls.Input.Toolkit">
       <HintPath>packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Input.Toolkit.dll</HintPath>
     </Reference>
@@ -108,8 +121,8 @@
       <HintPath>packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Expression.Blend.SDK.WPF.4.0.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -149,6 +162,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="API\Author.cs" />
+    <Compile Include="AuthorInput.xaml.cs">
+      <DependentUpon>AuthorInput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Project\ISaveable.cs" />
+    <Compile Include="Entities\Representations\Properties\Raw.cs" />
+    <Compile Include="Helpers\EnumCountConverter.cs" />
+    <Compile Include="Helpers\NIntPluralConverter.cs" />
+    <Compile Include="Helpers\RawJsonConverter.cs" />
+    <Compile Include="SyncProgress.xaml.cs">
+      <DependentUpon>SyncProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GitView.xaml.cs">
+      <DependentUpon>GitView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\NegateConverter.cs" />
+    <Compile Include="Helpers\VisibilityConverter.cs" />
+    <Page Include="AuthorInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CommitMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entities\Editor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +200,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Entities\Representations\EntityView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entities\Representations\Views\ArrayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entities\Representations\Views\StringMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,12 +243,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="API\Component.cs" />
-    <Compile Include="API\Level.cs" />
-    <Compile Include="API\Variants\IVariant.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CommitMessage.xaml.cs">
+      <DependentUpon>CommitMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\Editor.xaml.cs">
       <DependentUpon>Editor.xaml</DependentUpon>
@@ -224,21 +270,33 @@
       <DependentUpon>EntityView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\Representations\IPropertyValue.cs" />
+    <Compile Include="Entities\Representations\Properties\Array.cs" />
     <Compile Include="Entities\Representations\Properties\Bool.cs" />
+    <Compile Include="Entities\Representations\Properties\Entity.cs" />
+    <Compile Include="Entities\Representations\Properties\Enum.cs" />
     <Compile Include="Entities\Representations\Properties\Float.cs" />
     <Compile Include="Entities\Representations\Properties\String.cs" />
+    <Compile Include="Entities\Representations\Properties\StringMap.cs" />
+    <Compile Include="Entities\Representations\Properties\Texture.cs" />
     <Compile Include="Entities\Representations\Properties\Vector.cs" />
     <Compile Include="Entities\Representations\PropertyFactory.cs" />
+    <Compile Include="Entities\Representations\Views\ArrayView.xaml.cs">
+      <DependentUpon>ArrayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Representations\Views\StringMap.xaml.cs">
+      <DependentUpon>StringMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Representations\Views\TexturePicker.xaml.cs">
       <DependentUpon>TexturePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Representations\Views\TextureTree.cs" />
     <Compile Include="Entities\Representations\Views\VectorColor.xaml.cs">
       <DependentUpon>VectorColor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entities\Representations\Views\VectorView.cs" />
     <Compile Include="Entities\Serialization\ComponentDefinition.cs" />
     <Compile Include="Entities\Project\ProjectTree.cs" />
-    <Compile Include="Helpers\ScrollTrigger.cs" />
+    <Compile Include="Helpers\RepoDirConv.cs" />
     <Compile Include="PrefabEditor\Controls\LibraryMenu.cs" />
     <Compile Include="PrefabEditor\Controls\PrefabLib.xaml.cs">
       <DependentUpon>PrefabLib.xaml</DependentUpon>
@@ -266,6 +324,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SyncProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -290,6 +352,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\GitView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PrefabEditor\PrefabEditor.xaml.cs">
@@ -309,13 +375,24 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="NativeBinaries\amd64\git2-e0902fb.dll" />
+    <Content Include="NativeBinaries\amd64\git2-e0902fb.pdb" />
+    <Content Include="NativeBinaries\x86\git2-e0902fb.dll" />
+    <Content Include="NativeBinaries\x86\git2-e0902fb.pdb" />
+    <Content Include="ImperialMarch.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Wizard0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Entities\serialize.json">
+    <Content Include="Entities\serialize.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <None Include="EntityEditor_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -329,7 +406,37 @@
   <ItemGroup>
     <Resource Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="wizard0.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\LibGit2Sharp.0.21.0.176\build\net40\LibGit2Sharp.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\LibGit2Sharp.0.21.0.176\build\net40\LibGit2Sharp.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

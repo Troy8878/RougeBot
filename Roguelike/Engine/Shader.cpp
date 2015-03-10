@@ -380,6 +380,6 @@ void Shader::InitCameraBuffer()
 
 // ----------------------------------------------------------------------------
 
-std::unordered_map<std::string, Shader *> RegisteredShaders;
+ShaderManager RegisteredShaders;
 
 // ----------------------------------------------------------------------------

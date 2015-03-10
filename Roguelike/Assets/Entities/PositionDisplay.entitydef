@@ -1,6 +1,20 @@
 {
   "TransformComponent": {
-    "scale": [0.5, 0.25, 1]
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      0.5,
+      0.25,
+      1.0
+    ]
   },
   "TextureComponent": {
     "textures": [
@@ -8,11 +22,14 @@
     ]
   },
   "SpriteComponent": {
-    "render_target": "HUDLayer"
+    "render_target": "HUDLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
   },
-  "PositionDisplayComponent": {
-    "target_name": "Player",
-    "font": "Comic Sans MS",
-    "font_size": 60
-  }
+  "PositionDisplayComponent": {}
 }

@@ -16,5 +16,12 @@ namespace EntityEditor.Entities.Representations.Properties
         {
             return Value == null ? JValue.CreateNull() : new JValue(Value);
         }
+
+        public bool Locked { get; set; }
+        public bool Equals(IPropertyValue other)
+        {
+            var b = other as Bool;
+            return b != null && Value == b.Value;
+        }
     }
 }

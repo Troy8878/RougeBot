@@ -2,6 +2,14 @@
   "tiles": [
     [
       {
+        "id": 5,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
         "id": 1,
         "meta": ""
       },
@@ -11,6 +19,124 @@
       },
       {
         "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 5,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 3,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 3,
         "meta": ""
       },
       {
@@ -46,132 +172,6 @@
       {
         "id": 1,
         "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 1,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
       },
       {
         "id": 1,
@@ -282,7 +282,7 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 3,
         "meta": ""
       },
       {
@@ -304,11 +304,11 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 3,
         "meta": ""
       },
       {
@@ -324,11 +324,11 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
@@ -342,11 +342,11 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
@@ -370,21 +370,21 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       }
     ],
     [
       {
-        "id": 1,
+        "id": 5,
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
         "meta": ""
       },
       {
@@ -416,7 +416,7 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 5,
         "meta": ""
       }
     ]

@@ -11,7 +11,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="2" Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Key}" Margin="0,0,5,0" Width="150" />
+                        <TextBlock Text="{Binding Path=Key}" Margin="0,0,5,0" Width="150" FontSize="18" />
                         <Border DataContext="{Binding Path=Value}">
                             <ContentPresenter Content="{Binding}" ContentTemplate="{Binding Path=RenderTemplate}" />
                         </Border>

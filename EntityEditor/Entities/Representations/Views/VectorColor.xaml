@@ -8,6 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <xctk:ColorPicker x:Name="Picker" SelectedColorChanged="OnColor" Foreground="Black"
-                          ColorMode="ColorCanvas" ShowAdvancedButton="False" />
+                          ColorMode="ColorCanvas" ShowAdvancedButton="False" Width="150" Height="30" />
     </Grid>
 </UserControl>

@@ -166,6 +166,9 @@ Component *SpriteComponentFactory::CreateObject(
   void *memory, component_factory_data &data)
 {
   auto shader_name = map_fetch(data, "shader", "Textured").as_string();
+  if (shader_name == "")
+    shader_name = "Textured";
+  
   auto shader = RegisteredShaders[shader_name];
 
   if (shader == nullptr)

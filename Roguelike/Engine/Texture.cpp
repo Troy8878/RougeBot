@@ -186,8 +186,12 @@ TextureManager::TextureManager()
 
 // ----------------------------------------------------------------------------
 
-Texture2D TextureManager::LoadTexture(const std::string &asset)
+Texture2D TextureManager::LoadTexture(const std::string &_asset)
 {
+  static const std::string nullasset = "SPECIAL/NULL";
+  auto *passet = _asset == "" ? &nullasset : &_asset;
+  auto &asset = *passet;
+
   auto it = _resources.find(asset);
   if (it != _resources.end())
   {

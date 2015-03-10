@@ -20,7 +20,7 @@
             <mctrl:Flyout x:Name="SyncFlyout" Position="Bottom" CloseButtonVisibility="Collapsed">
                 <entityEditor:SyncProgress x:Name="SyncProgress" Margin="0,10,50,10" />
             </mctrl:Flyout>
-            <mctrl:Flyout x:Name="AuthorFlyout" Position="Right">
+            <mctrl:Flyout x:Name="AuthorFlyout" Position="Right" IsModal="True">
                 <entityEditor:AuthorInput x:Name="AuthorInput" OnClose="AuthorInputOnClose" />
             </mctrl:Flyout>
         </mctrl:FlyoutsControl>

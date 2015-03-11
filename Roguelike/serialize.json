@@ -196,6 +196,16 @@
           "locked": false,
           "default": false
         }
+      },
+      {
+        "property": "move_skip",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
       }
     ],
     "name": "EnemyLogicComponent"

@@ -18,10 +18,13 @@ namespace EntityEditor.Entities
         public static Editor Instance;
         public static ProjectTree Project;
 
-        static Editor()
+        static void UpdateSerialize()
         {
             ComponentDefinitions = JsonConvert.DeserializeObject<ComponentDefinition[]>
-                (File.ReadAllText("Entities/serialize.json"));
+                (File.ReadAllText(Path.Combine(
+                    MainWindow.Instance.RepoDir,
+                    "Roguelike",
+                    "serialize.json")));
             ComponentDefinitionsMap = new Dictionary<string, ComponentDefinition>();
             foreach (var definition in ComponentDefinitions)
             {
@@ -31,6 +34,8 @@ namespace EntityEditor.Entities
 
         public Editor()
         {
+            UpdateSerialize();
+
             Instance = this;
 
             InitializeComponent();

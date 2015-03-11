@@ -87,46 +87,8 @@
             "loops": false
           }
         },
-        "children": []
-      },
-      {
-        "name": "HealthBar",
-        "components": {
-          "TransformComponent": {
-            "position": [
-              0.0,
-              0.5,
-              0.0
-            ],
-            "rotation": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "scale": [
-              1.0,
-              0.5,
-              1.0
-            ]
-          },
-          "TextureComponent": {
-            "textures": [
-              "HealthBar.png"
-            ]
-          },
-          "SpriteComponent": {
-            "render_target": "TranslucentLayer",
-            "shader": "",
-            "tint": [
-              1.0,
-              1.0,
-              1.0,
-              1.0
-            ]
-          },
-          "HealthBarComponent": {}
-        },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       }
     ]
   }

@@ -3,13 +3,13 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Representations.Properties
 {
-    public class Float : IPropertyValue
+    public class Integer : IPropertyValue
     {
-        public float? Value { get; set; }
+        public long? Value { get; set; }
 
         public DataTemplate RenderTemplate
         {
-            get { return (DataTemplate) Application.Current.FindResource("PropFloatTemplate"); }
+            get { return (DataTemplate) Application.Current.FindResource("PropIntegerTemplate"); }
         }
 
         public JToken Serialize()
@@ -21,7 +21,7 @@ namespace EntityEditor.Entities.Representations.Properties
 
         public bool Equals(IPropertyValue other)
         {
-            var f = other as Float;
+            var f = other as Integer;
             return f != null && Value == f.Value;
         }
     }

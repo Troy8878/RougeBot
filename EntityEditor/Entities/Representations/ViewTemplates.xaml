@@ -11,6 +11,10 @@
     <DataTemplate x:Key="PropFloatTemplate" DataType="properties:Float">
         <TextBox Height="25" Text="{Binding Path=Value}" MinWidth="150" IsReadOnly="{Binding Path=Locked}" />
     </DataTemplate>
+
+    <DataTemplate x:Key="PropIntegerTemplate" DataType="properties:Integer">
+        <TextBox Height="25" Text="{Binding Path=Value}" MinWidth="150" IsReadOnly="{Binding Path=Locked}" />
+    </DataTemplate>
     
     <DataTemplate x:Key="PropStringTemplate" DataType="properties:String">
         <TextBox Height="25" Text="{Binding Path=Value}" MinWidth="150" IsReadOnly="{Binding Path=Locked}" />

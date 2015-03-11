@@ -29,7 +29,8 @@
     "mode": "linear"
   },
   "EnemyLogicComponent": {
-    "stationary": false
+    "stationary": false,
+    "move_skip": 2
   },
   "ChildHierarchy": {
     "children": [

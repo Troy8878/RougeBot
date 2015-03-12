@@ -2,52 +2,6 @@
   "tiles": [
     [
       {
-        "id": 2,
-        "meta": "\"Slime\""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 2,
-        "meta": "\"Slime\""
-      }
-    ],
-    [
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
         "id": 1,
         "meta": ""
       },
@@ -65,7 +19,11 @@
       },
       {
         "id": 1,
-        "meta": ""
+        "meta": ":empty unless $ctx[:door][:top].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -80,13 +38,101 @@
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
         "meta": ""
       }
     ],
     [
       {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
         "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
         "meta": ""
       },
       {
@@ -95,10 +141,6 @@
       },
       {
         "id": 2,
-        "meta": "\"Slime\""
-      },
-      {
-        "id": 0,
         "meta": ""
       },
       {
@@ -112,77 +154,31 @@
       {
         "id": 0,
         "meta": ""
-      },
-      {
-        "id": 2,
-        "meta": "\"Slime\""
       },
       {
         "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
         "meta": ""
       }
     ],
     [
       {
-        "id": 0,
-        "meta": ""
-      },
-      {
         "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
+        "meta": ":empty unless $ctx[:door][:left].closed?"
       },
       {
         "id": 0,
         "meta": ""
       },
       {
-        "id": 1,
-        "meta": ""
-      },
-      {
         "id": 0,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
         "meta": ""
       },
       {
@@ -194,7 +190,15 @@
         "meta": ""
       },
       {
-        "id": 1,
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
         "meta": ""
       },
       {
@@ -203,61 +207,53 @@
       },
       {
         "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
+        "meta": ":empty unless $ctx[:door][:right].closed?"
       }
     ],
     [
       {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:left].closed?"
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
         "id": 0,
         "meta": ""
       },
       {
         "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 2,
-        "meta": "\"Slime\""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
+        "meta": ":empty unless $ctx[:door][:right].closed?"
       }
     ],
     [
       {
-        "id": 0,
-        "meta": ""
-      },
-      {
         "id": 1,
         "meta": ""
       },
@@ -267,48 +263,6 @@
       },
       {
         "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      }
-    ],
-    [
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 2,
-        "meta": "\"Slime\""
-      },
-      {
-        "id": 0,
         "meta": ""
       },
       {
@@ -325,39 +279,23 @@
       },
       {
         "id": 2,
-        "meta": "\"Slime\""
+        "meta": ""
       },
       {
         "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
         "meta": ""
       }
     ],
     [
       {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 0,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
-        "id": 1,
-        "meta": ""
-      },
-      {
         "id": 1,
         "meta": ""
       },
@@ -375,16 +313,44 @@
       },
       {
         "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
         "meta": ""
       }
     ],
     [
       {
-        "id": 2,
-        "meta": "\"Slime\""
+        "id": 1,
+        "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
         "meta": ""
       },
       {
@@ -396,28 +362,62 @@
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
+        "meta": ""
+      }
+    ],
+    [
+      {
+        "id": 1,
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 1,
         "meta": ""
       },
       {
-        "id": 2,
-        "meta": "\"Slime\""
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ""
       }
     ]
   ]

@@ -27,7 +27,7 @@
     ]
   },
   "PositionComponent": {
-    "move_speed": 2.0,
+    "move_speed": 3.0,
     "position": [
       0.0,
       0.0
@@ -86,7 +86,7 @@
               4.0
             ],
             "loops": true,
-            "random_start": false
+            "random_start": true
           }
         },
         "children": [],

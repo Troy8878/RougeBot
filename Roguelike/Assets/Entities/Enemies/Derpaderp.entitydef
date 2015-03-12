@@ -27,7 +27,7 @@
     ]
   },
   "PositionComponent": {
-    "move_speed": 2.0,
+    "move_speed": 4.0,
     "position": [
       0.0,
       0.0
@@ -35,7 +35,8 @@
     "mode": "linear"
   },
   "EnemyLogicComponent": {
-    "stationary": false
+    "stationary": false,
+    "move_skip": 2
   },
   "ChildHierarchy": {
     "children": [
@@ -84,7 +85,8 @@
               0.0,
               3.0
             ],
-            "loops": true
+            "loops": true,
+            "random_start": true
           }
         },
         "children": [],

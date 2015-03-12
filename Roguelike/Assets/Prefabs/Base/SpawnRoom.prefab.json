@@ -171,7 +171,7 @@
     [
       {
         "id": 1,
-        "meta": ""
+        "meta": ":empty unless $ctx[:door][:left].closed?"
       },
       {
         "id": 1,

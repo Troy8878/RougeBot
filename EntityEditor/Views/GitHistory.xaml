@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="EntityEditor.Views.GitHistory"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Loaded="GitHistoryLoaded"
+             Width="750">
+    <Grid>
+        <ScrollViewer PanningMode="Both">
+            <Grid Margin="15">
+                <ItemsControl ItemsSource="{Binding Path=Items}"
+                    Visibility="{Binding Path=Loading,
+                    Converter={StaticResource Visibility},
+                    ConverterParameter=Negate}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel TextBlock.FontSize="16" Margin="10">
+                                <TextBlock Text="{Binding Path=Message, Converter={StaticResource Trim}}"
+                                           FontSize="18"/>
+                                <TextBlock Text="{Binding Path=Committer, Mode=OneWay}" />
+                                <TextBlock Text="{Binding Path=Committer.When, Mode=OneWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <controls:ProgressRing IsActive="{Binding Path=Loading}" />
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

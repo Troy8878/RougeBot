@@ -14,6 +14,7 @@
                     <helpers:EnumCountConverter x:Key="EnumCount" />
                     <helpers:NIntPluralConverter x:Key="NIntPlural" />
                     <helpers:RawJsonConverter x:Key="RawJson" />
+                    <helpers:TrimConverter x:Key="Trim" />
                 </ResourceDictionary>
 
                 <ResourceDictionary Source="Entities/Representations/ViewTemplates.xaml" />

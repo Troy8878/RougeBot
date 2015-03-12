@@ -169,6 +169,10 @@
     <Compile Include="Entities\Project\ISaveable.cs" />
     <Compile Include="Entities\Representations\Properties\Integer.cs" />
     <Compile Include="Entities\Representations\Properties\Raw.cs" />
+    <Compile Include="Helpers\TrimConverter.cs" />
+    <Compile Include="Views\GitHistory.xaml.cs">
+      <DependentUpon>GitHistory.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\EnumCountConverter.cs" />
     <Compile Include="Helpers\NIntPluralConverter.cs" />
     <Compile Include="Helpers\RawJsonConverter.cs" />
@@ -221,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Entities\Representations\ViewTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GitHistory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

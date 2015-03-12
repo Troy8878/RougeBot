@@ -159,8 +159,8 @@ class PlayerControllerComponent < ComponentBase
 
 
     if enemies_nearby?
-      @logic_cooldown += 0.3
-      seq.delay(0.3)
+      @logic_cooldown += 0.1
+      seq.delay(0.1)
     else
       return
     end

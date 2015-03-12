@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using EntityEditor.API;
 using EntityEditor.Entities;
 using EntityEditor.Properties;
@@ -38,6 +40,11 @@ namespace EntityEditor
             UpdateRepoDirDisplay();
 
             InitializeComponent();
+
+            if (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).ToLower().Contains("leo"))
+            {
+                SetValue(TextBlock.FontFamilyProperty, new FontFamily("Comic Sans MS"));
+            }
         }
 
         public bool GitUnlocked
@@ -324,6 +331,12 @@ namespace EntityEditor
                     March.Position = new TimeSpan(0);
                 }
             }
+        }
+
+        private void HistoryClick(object sender, RoutedEventArgs e)
+        {
+            History.Refresh();
+            HistoryFlyout.IsOpen = true;
         }
     }
 }

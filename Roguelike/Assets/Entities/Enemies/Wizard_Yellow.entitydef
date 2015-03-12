@@ -21,7 +21,7 @@
     "health": 25.0
   },
   "PositionComponent": {
-    "move_speed": 2.0,
+    "move_speed": 3.0,
     "position": [
       0.0,
       0.0
@@ -29,7 +29,8 @@
     "mode": "linear"
   },
   "EnemyLogicComponent": {
-    "stationary": false
+    "stationary": false,
+    "move_skip": 2
   },
   "ChildHierarchy": {
     "children": [

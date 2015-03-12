@@ -32,7 +32,9 @@
     ]
   },
   "TextComponent": {
-    "texts": [],
+    "texts": [
+      "An unset status message D:"
+    ],
     "text_color": "",
     "bg_color": "",
     "font": "Impact",

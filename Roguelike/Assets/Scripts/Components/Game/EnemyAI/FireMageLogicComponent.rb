@@ -55,7 +55,7 @@ class FireMageLogicComponent < ComponentBase
 
     if distance < 3
       @attack.do_attack player if @attack
-    elsif distance < 4
+    elsif distance < 5
       @skip_number += 1
       if @skip_number >= @move_skip
         @skip_number = 0

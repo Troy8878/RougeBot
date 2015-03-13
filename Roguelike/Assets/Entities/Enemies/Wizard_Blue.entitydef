@@ -34,7 +34,7 @@
     ],
     "mode": "linear"
   },
-  "EnemyLogicComponent": {
+  "BlueMageLogicComponent": {
     "stationary": false,
     "move_skip": 1
   },

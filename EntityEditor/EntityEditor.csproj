@@ -184,6 +184,7 @@
     </Compile>
     <Compile Include="Helpers\NegateConverter.cs" />
     <Compile Include="Helpers\VisibilityConverter.cs" />
+    <Compile Include="Views\HistoryItem.cs" />
     <Page Include="AuthorInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

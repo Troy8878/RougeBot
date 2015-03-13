@@ -53,17 +53,19 @@ class FireMageLogicComponent < ComponentBase
     position_player = player.position_component.position
     distance = @position.distance position_player
 
-    if distance < 1.1
+    if distance < 3
       @attack.do_attack player if @attack
-    else
+    elsif distance < 4
       @skip_number += 1
-        if @skip_number >= @move_skip
-          @skip_number = 0
-        end
+      if @skip_number >= @move_skip
+        @skip_number = 0
+      end
 
       if @skip_number == 0
-        move_randomly
+        move_towards player
       end
+    else
+      move_randomly
     end
   end
 
@@ -88,18 +90,64 @@ class FireMageLogicComponent < ComponentBase
       end
     end
   end
-
-  def move(dx, dy)
-    return unless can_move? dx, dy
-
-    resolve_player_projectiles?(dx, dy)
-
-    @position.x += dx
-    @position.y += dy
-
-    actor_moved
-  end
+        
   
+  def move_towards(target)
+    difference = @position - target.position_component.position
+    difference.normalize!
+
+    dx = difference.x
+    dy = difference.y
+    ax = Math.abs dx
+    ay = Math.abs dy
+
+    if ax > ay
+      if dx > 0
+        if can_move?(-1, 0)
+          move -1, 0
+        elsif ay
+          if dy > 0
+            move 0, -1
+          else
+            move 0, 1
+          end
+        end
+      else
+        if can_move?(1, 0)
+          move 1, 0
+        elsif ay
+          if dy > 0
+            move 0, -1
+          else
+            move 0, 1
+          end
+        end
+      end
+    else
+      if dy > 0
+        if can_move?(0, -1)
+          move 0, -1
+        elsif ax
+          if dx > 0
+            move -1, 0
+          else
+            move 1, 0
+          end
+        end
+      else
+        if can_move?(0, 1)
+          move 0, 1
+        elsif ax
+          if dx > 0
+            move -1, 0
+          else
+            move 1, 0
+          end
+        end
+      end
+    end
+  end
+
   ###############################################################
   # This code won't do anything.  Projectiles are ghost actors. #
   ###############################################################
@@ -116,11 +164,25 @@ class FireMageLogicComponent < ComponentBase
 
     @move_tile.actor.owner.attack_component.do_attack self
     @move_tile.actor.owner.PlayerProjectileLogicComponent.decay_sqeuence(1)
-  end
-  
+
   #######################
   # End of useless code #
   #######################
+
+  end
+
+  def move(dx, dy)
+    return unless can_move? dx, dy
+
+    resolve_player_projectiles?(dx, dy)
+
+    @position.x += dx
+    @position.y += dy
+
+    #resolve_player_projectiles_past?(dx, dy)
+
+    actor_moved
+  end
 
   register_component "FireMageLogicComponent"
 end

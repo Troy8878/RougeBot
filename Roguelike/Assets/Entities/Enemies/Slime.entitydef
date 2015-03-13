@@ -34,9 +34,9 @@
     ],
     "mode": "linear"
   },
-  "EnemyLogicComponent": {
+  "SlimeLogicComponent": {
     "stationary": false,
-    "move_skip": 3
+    "move_skip": 1
   },
   "ChildHierarchy": {
     "children": [

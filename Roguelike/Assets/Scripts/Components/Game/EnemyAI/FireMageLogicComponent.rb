@@ -9,7 +9,7 @@ class FireMageLogicComponent < ComponentBase
   include Actor
   attr_accessor :stationary
 
-  dependency "PositionComponent", "AttackComponent"
+  dependency "PositionComponent", "AttackComponent", "SpriteComponent"
 
   serialized_input do |p|
     p.dependency "PositionComponent"
@@ -27,6 +27,7 @@ class FireMageLogicComponent < ComponentBase
     @stationary = !!data["stationary"]
     @move_skip = data.fetch("move_skip", 1).to_i
     @skip_number = 0
+    @charging = false
 
     register_event :logic_update, :on_update
     register_event :update, :first_update
@@ -54,8 +55,15 @@ class FireMageLogicComponent < ComponentBase
     distance = @position.distance position_player
 
     if distance < 3
-      @attack.do_attack player if @attack
-    elsif distance < 4
+      if @charging
+        @attack.do_attack player if @attack
+        @charging = false
+        self.owner.children[0].sprite_component.tint = Vector.new(1.0, 1.0, 1.0, 1.0)
+      else
+        @charging = true
+        self.owner.children[0].sprite_component.tint = Vector.new(1.0, 0.0, 0.0, 1.0)
+      end
+    elsif distance < 5
       @skip_number += 1
       if @skip_number >= @move_skip
         @skip_number = 0
@@ -63,9 +71,13 @@ class FireMageLogicComponent < ComponentBase
 
       if @skip_number == 0
         move_towards player
+        @charging = false
+        self.owner.children[0].sprite_component.tint = Vector.new(1.0, 1.0, 1.0, 1.0)
       end
     else
       move_randomly
+      @charging = false
+      self.owner.children[0].sprite_component.tint = Vector.new(1.0, 1.0, 1.0, 1.0)
     end
   end
 

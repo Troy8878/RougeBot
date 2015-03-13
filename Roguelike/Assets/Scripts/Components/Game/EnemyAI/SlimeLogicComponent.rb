@@ -5,7 +5,7 @@
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
-class EnemyLogicComponent < ComponentBase
+class SlimeLogicComponent < ComponentBase
   include Actor
   attr_accessor :stationary
 

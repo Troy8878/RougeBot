@@ -187,7 +187,7 @@
       },
       {
         "id": 2,
-        "meta": "[\"Derpaderp\", {defense_component.max_health: 200}, {defense_component.health: 200}]"
+        "meta": "[\"Derpaderp\", {max_health: 200}, {health: 200}]"
       },
       {
         "id": 0,

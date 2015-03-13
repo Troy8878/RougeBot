@@ -211,6 +211,64 @@
     "name": "EnemyLogicComponent"
   },
   {
+    "dependencies": [
+      "PositionComponent",
+      "AttackComponent"
+    ],
+    "properties": [
+      {
+        "property": "stationary",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
+        "property": "move_skip",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "FireMageLogicComponent"
+  },
+  {
+    "dependencies": [
+      "PositionComponent",
+      "AttackComponent"
+    ],
+    "properties": [
+      {
+        "property": "stationary",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
+        "property": "move_skip",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "SlimeLogicComponent"
+  },
+  {
     "dependencies": [],
     "properties": [],
     "name": "FloorGeneratorComponent"

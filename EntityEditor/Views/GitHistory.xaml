@@ -22,6 +22,7 @@
                                            FontSize="18"/>
                                 <TextBlock Text="{Binding Path=Committer, Mode=OneWay}" />
                                 <TextBlock Text="{Binding Path=Committer.When, Mode=OneWay}" />
+                                <ItemsControl />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

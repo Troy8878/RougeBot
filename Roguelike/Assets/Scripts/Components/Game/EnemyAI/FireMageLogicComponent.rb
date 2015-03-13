@@ -5,7 +5,7 @@
 # Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
-class SlimeLogicComponent < ComponentBase
+class FireMageLogicComponent < ComponentBase
   include Actor
   attr_accessor :stationary
 
@@ -122,5 +122,5 @@ class SlimeLogicComponent < ComponentBase
   # End of useless code #
   #######################
 
-  register_component "SlimeLogicComponent"
+  register_component "FireMageLogicComponent"
 end

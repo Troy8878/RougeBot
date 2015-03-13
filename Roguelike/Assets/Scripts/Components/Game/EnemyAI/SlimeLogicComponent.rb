@@ -63,7 +63,6 @@ class EnemyLogicComponent < ComponentBase
 
       if @skip_number == 0
         move_randomly
-        end
       end
     end
   end

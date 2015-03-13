@@ -71,7 +71,7 @@ class DefenseComponent < ComponentBase
     seq.interpolate tint, from: default_tint, to: high_tint, over: (0.1).seconds
     seq.interpolate tint, from: high_tint, to: default_tint, over: (0.1).seconds
 
-    message = StatusMessage.new("#{total_dmg}", 1, "Red, 0.8")
+    message = StatusMessage.new("#{total_dmg}", 1, "Red, 1")
     message.display self.owner
 
     return :hit

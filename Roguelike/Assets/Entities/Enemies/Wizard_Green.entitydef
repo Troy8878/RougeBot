@@ -11,8 +11,8 @@
       0.0
     ],
     "scale": [
-      1.1,
-      1.1,
+      1.0,
+      1.0,
       1.0
     ]
   },
@@ -62,10 +62,10 @@
           },
           "TextureComponent": {
             "textures": [
-              "Enemies/Wizard_Green/Wizard0.png",
-              "Enemies/Wizard_Green/Wizard1.png",
-              "Enemies/Wizard_Green/Wizard2.png",
-              "Enemies/Wizard_Green/Wizard3.png"
+              "Enemies/Armor/Armor0.png",
+              "Enemies/Armor/Armor1.png",
+              "Enemies/Armor/Armor2.png",
+              "Enemies/Armor/Armor3.png"
             ]
           },
           "SpriteComponent": {
@@ -83,7 +83,7 @@
             "frame_time": 0.3,
             "frame_range": [
               0.0,
-              4.0
+              3.0
             ],
             "loops": true,
             "random_start": true

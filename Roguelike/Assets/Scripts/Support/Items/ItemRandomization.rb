@@ -72,11 +72,14 @@ end
 
 WEAPON_GENERATOR = ItemRandomizer.new [:weapon_class, :material]
 
+
+# Weapon Classes
 WEAPON_GENERATOR.add WeaponClassTrait.new(
   weapon_class: "Dagger",
   weight: 1,
 )
 
+# Weapon Materials
 WEAPON_GENERATOR.add MaterialTrait.new(
   material: "Iron",
   weight: 5, target_level: 3,

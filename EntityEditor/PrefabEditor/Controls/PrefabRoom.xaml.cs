@@ -53,9 +53,10 @@ namespace EntityEditor.PrefabEditor.Controls
             return File.Open(name, FileMode.Open, FileAccess.Read);
         }
 
-        public void SetEmpty(int size = 10)
+        public void SetEmpty(int size = 10, bool resetFile = true)
         {
-            _file = null;
+            if (resetFile)
+                _file = null;
             _size = size;
 
             var data = new PrefabTileData[size][];
@@ -111,7 +112,7 @@ namespace EntityEditor.PrefabEditor.Controls
                 // Different sized maps require a reconstruction
                 if (tiles.Length != jtiles.Count)
                 {
-                    SetEmpty(jtiles.Count);
+                    SetEmpty(jtiles.Count, false);
                     tiles = (PrefabTileData[][]) Items.ItemsSource;
                 }
 

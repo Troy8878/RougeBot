@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using LibGit2Sharp;
 
 namespace EntityEditor.Views
@@ -16,8 +17,8 @@ namespace EntityEditor.Views
             "Loading", typeof (bool), typeof (GitHistory), new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register(
-            "Items", typeof (Commit[]), typeof (GitHistory),
-            new PropertyMetadata(default(Commit[])));
+            "Items", typeof (HistoryItem[]), typeof (GitHistory),
+            new PropertyMetadata(default(HistoryItem[])));
 
         public GitHistory()
         {
@@ -30,9 +31,9 @@ namespace EntityEditor.Views
             set { SetValue(LoadingProperty, value); }
         }
 
-        public Commit[] Items
+        public HistoryItem[] Items
         {
-            get { return (Commit[]) GetValue(ItemsProperty); }
+            get { return (HistoryItem[]) GetValue(ItemsProperty); }
             set { SetValue(ItemsProperty, value); }
         }
 
@@ -49,13 +50,19 @@ namespace EntityEditor.Views
                     return null;
 
                 var repo = new Repository(MainWindow.Instance.RepoDir);
-                return repo.Commits.Take(200).ToArray();
+                return repo.Commits.Take(100).Select(HistoryItem.Make).ToArray();
             });
             Loading = false;
         }
 
         private void GitHistoryLoaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void ShowChangesClicked(object sender, MouseButtonEventArgs e)
+        {
+            var item = (HistoryItem) ((FrameworkElement) sender).DataContext;
+            item.ShowList = !item.ShowList;
         }
     }
 }

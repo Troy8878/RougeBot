@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:views="clr-namespace:EntityEditor.Views"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              Loaded="GitHistoryLoaded"
@@ -18,11 +19,61 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel TextBlock.FontSize="16" Margin="10">
-                                <TextBlock Text="{Binding Path=Message, Converter={StaticResource Trim}}"
+                                <TextBlock Text="{Binding Path=Commit.Message, Converter={StaticResource Trim}}"
                                            FontSize="18"/>
-                                <TextBlock Text="{Binding Path=Committer, Mode=OneWay}" />
-                                <TextBlock Text="{Binding Path=Committer.When, Mode=OneWay}" />
-                                <ItemsControl />
+                                <TextBlock Text="{Binding Path=Commit.Committer, Mode=OneWay}" Foreground="{DynamicResource AccentColorBrush}" />
+                                <TextBlock Text="{Binding Path=Commit.Committer.When, Mode=OneWay}" Foreground="{DynamicResource AccentColorBrush2}" />
+                                <StackPanel Orientation="Horizontal" Cursor="Hand"
+                                                MouseLeftButtonDown="ShowChangesClicked">
+                                    <TextBlock Foreground="SpringGreen">+</TextBlock>
+                                    <TextBlock Foreground="SpringGreen"
+                                                   Text="{Binding Path=Changes.Added, Converter={StaticResource EnumCount}}" />
+
+                                    <Grid Margin="5" />
+
+                                    <TextBlock Foreground="Gold">~</TextBlock>
+                                    <TextBlock Foreground="Gold"
+                                                   Text="{Binding Path=Changes.Modified, Converter={StaticResource EnumCount}}" />
+
+                                    <Grid Margin="5" />
+
+                                    <TextBlock Foreground="OrangeRed">-</TextBlock>
+                                    <TextBlock Foreground="OrangeRed"
+                                                   Text="{Binding Path=Changes.Deleted, Converter={StaticResource EnumCount}}" />
+
+                                    <Grid Margin="5" />
+
+                                    <TextBlock Foreground="CornflowerBlue">±</TextBlock>
+                                    <TextBlock Foreground="CornflowerBlue"
+                                                   Text="{Binding Path=Changes.TypeChanged, Converter={StaticResource EnumCount}}" />
+
+                                    <Grid Margin="5" />
+
+                                    <TextBlock Foreground="BlueViolet">R</TextBlock>
+                                    <TextBlock Foreground="BlueViolet"
+                                                   Text="{Binding Path=Changes.Renamed, Converter={StaticResource EnumCount}}" />
+
+                                    <Grid Margin="5" />
+
+                                    <TextBlock Foreground="Chocolate">C</TextBlock>
+                                    <TextBlock Foreground="Chocolate"
+                                                   Text="{Binding Path=Changes.Deleted, Converter={StaticResource EnumCount}}" />
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding Path=Changes}"
+                                              Visibility="{Binding Path=ShowList, Converter={StaticResource Visibility}}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" TextBlock.FontSize="12">
+                                                <TextBlock MinWidth="100">
+                                                    <Run Text="{Binding Path=Status, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <TextBlock>
+                                                    <Run Text="{Binding Path=Path, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

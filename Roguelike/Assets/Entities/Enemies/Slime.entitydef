@@ -17,8 +17,8 @@
     ]
   },
   "DefenseComponent": {
-    "max_health": 5.0,
-    "health": 5.0
+    "max_health": 100.0,
+    "health": 100.0
   },
   "AttackComponent": {
     "damage": [
@@ -34,8 +34,9 @@
     ],
     "mode": "linear"
   },
-  "EnemyLogicComponent": {
-    "stationary": false
+  "SlimeLogicComponent": {
+    "stationary": false,
+    "move_skip": 1
   },
   "ChildHierarchy": {
     "children": [
@@ -84,7 +85,8 @@
               0.0,
               4.0
             ],
-            "loops": true
+            "loops": true,
+            "random_start": true
           }
         },
         "children": [],

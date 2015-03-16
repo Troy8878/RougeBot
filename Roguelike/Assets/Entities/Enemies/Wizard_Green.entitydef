@@ -11,23 +11,23 @@
       0.0
     ],
     "scale": [
-      1.1,
-      1.1,
+      1.0,
+      1.0,
       1.0
     ]
   },
   "DefenseComponent": {
-    "max_health": 50.0,
-    "health": 50.0
+    "max_health": 75.0,
+    "health": 75.0
   },
   "AttackComponent": {
     "damage": [
-      2.0,
-      4.0
+      15.0,
+      25.0
     ]
   },
   "PositionComponent": {
-    "move_speed": 2.0,
+    "move_speed": 3.0,
     "position": [
       0.0,
       0.0
@@ -35,7 +35,8 @@
     "mode": "linear"
   },
   "EnemyLogicComponent": {
-    "stationary": false
+    "stationary": false,
+    "move_skip": 2
   },
   "ChildHierarchy": {
     "children": [
@@ -61,10 +62,10 @@
           },
           "TextureComponent": {
             "textures": [
-              "Enemies/Wizard_Green/Wizard0.png",
-              "Enemies/Wizard_Green/Wizard1.png",
-              "Enemies/Wizard_Green/Wizard2.png",
-              "Enemies/Wizard_Green/Wizard3.png"
+              "Enemies/Armor/Armor0.png",
+              "Enemies/Armor/Armor1.png",
+              "Enemies/Armor/Armor2.png",
+              "Enemies/Armor/Armor3.png"
             ]
           },
           "SpriteComponent": {
@@ -82,9 +83,10 @@
             "frame_time": 0.3,
             "frame_range": [
               0.0,
-              4.0
+              3.0
             ],
-            "loops": true
+            "loops": true,
+            "random_start": true
           }
         },
         "children": [],

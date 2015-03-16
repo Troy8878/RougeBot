@@ -10,6 +10,11 @@
                    Title="Prefab Editor"
                    Icon="/wizard0.png"
                    BorderBrush="{StaticResource AccentColorBrush}">
+    
+    <Window.Resources>
+        <RoutedCommand x:Key="NewDungeon" />
+        <RoutedCommand x:Key="ToggleZoom" />
+    </Window.Resources>
 
     <Window.CommandBindings>
         <CommandBinding Command="New" Executed="OnNew" CanExecute="AlwaysExecute" />
@@ -17,6 +22,8 @@
         <CommandBinding Command="Save" Executed="OnSave" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Undo" Executed="OnUndo" CanExecute="AlwaysExecute" />
         <CommandBinding Command="Redo" Executed="OnRedo" CanExecute="AlwaysExecute" />
+        <CommandBinding Command="{StaticResource NewDungeon}" Executed="OnNewDungeon" CanExecute="AlwaysExecute" />
+        <CommandBinding Command="{StaticResource ToggleZoom}" Executed="OnToggleZoom" CanExecute="AlwaysExecute" />
     </Window.CommandBindings>
 
     <Window.InputBindings>
@@ -25,12 +32,15 @@
         <KeyBinding Modifiers="Control" Key="S" Command="Save" />
         <KeyBinding Modifiers="Control" Key="Z" Command="Undo" />
         <KeyBinding Modifiers="Control" Key="Y" Command="Redo" />
+        <KeyBinding Modifiers="Control" Key="OemPlus" Command="{StaticResource ToggleZoom}" />
     </Window.InputBindings>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Command="New" />
+                <MenuItem Header="New _Dungeon" Command="{StaticResource NewDungeon}" />
+                <Separator />
                 <MenuItem Header="_Open" Command="Open" />
                 <MenuItem Header="_Save" Command="Save" />
             </MenuItem>
@@ -38,7 +48,12 @@
                 <MenuItem Header="_Undo" Command="Undo" />
                 <MenuItem Header="_Redo" Command="Redo" />
             </MenuItem>
-            <controls:LibraryMenu Header="Library" />
+            <controls:LibraryMenu>
+                <controls:LibraryMenu.Header>
+                    <TextBlock VerticalAlignment="Center">Library</TextBlock>
+                </controls:LibraryMenu.Header>
+            </controls:LibraryMenu>
+            <MenuItem Header="Toggle _Zoom" Command="{StaticResource ToggleZoom}" />
         </Menu>
         <controls:PrefabRoom DataContext="{Binding}" x:Name="Room" />
     </DockPanel>

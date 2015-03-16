@@ -47,5 +47,10 @@ namespace EntityEditor.Entities.Representations
                 ((Panel) LogicalTreeHelper.GetParent(uie)).Children.Remove(uie);
             }
         }
+
+        private void AddComponentClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

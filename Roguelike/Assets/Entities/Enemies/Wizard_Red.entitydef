@@ -22,20 +22,21 @@
   },
   "AttackComponent": {
     "damage": [
-      4.0,
-      6.0
+      6.0,
+      8.0
     ]
   },
   "PositionComponent": {
-    "move_speed": 2.0,
+    "move_speed": 4.0,
     "position": [
       0.0,
       0.0
     ],
     "mode": "linear"
   },
-  "EnemyLogicComponent": {
-    "stationary": false
+  "FireMageLogicComponent": {
+    "stationary": false,
+    "move_skip": 2
   },
   "ChildHierarchy": {
     "children": [
@@ -84,7 +85,8 @@
               0.0,
               4.0
             ],
-            "loops": true
+            "loops": true,
+            "random_start": true
           }
         },
         "children": [],

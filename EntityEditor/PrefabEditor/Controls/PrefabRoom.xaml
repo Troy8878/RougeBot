@@ -15,8 +15,8 @@
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
             <controls:PrefabLib x:Name="Lib" />
         </ScrollViewer>
-        
-        <Grid Background="{StaticResource RbBackground}" Grid.Column="1">
+
+        <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -31,32 +31,32 @@
             <!-- Door markers -->
             <!-- Left -->
             <Border Background="Goldenrod" Width="50" Height="100"
-                Grid.Row="1" Grid.Column="0" Margin="2"
-                HorizontalAlignment="Right">
+                    Grid.Row="1" Grid.Column="0" Margin="2"
+                    HorizontalAlignment="Right">
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center">Door</TextBlock>
             </Border>
             <!-- Right -->
             <Border Background="Goldenrod" Width="50" Height="100"
-                Grid.Row="1" Grid.Column="2" Margin="2"
-                HorizontalAlignment="Left">
+                    Grid.Row="1" Grid.Column="2" Margin="2"
+                    HorizontalAlignment="Left">
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center">Door</TextBlock>
             </Border>
             <!-- Top -->
             <Border Background="Goldenrod" Width="100" Height="50"
-                Grid.Row="0" Grid.Column="1" Margin="2"
-                VerticalAlignment="Bottom">
+                    Grid.Row="0" Grid.Column="1" Margin="2"
+                    VerticalAlignment="Bottom">
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center">Door</TextBlock>
             </Border>
             <!-- Bottom -->
             <Border Background="Goldenrod" Width="100" Height="50"
-                Grid.Row="2" Grid.Column="1" Margin="2"
-                VerticalAlignment="Top">
+                    Grid.Row="2" Grid.Column="1" Margin="2"
+                    VerticalAlignment="Top">
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center">Door</TextBlock>
             </Border>
 
             <!-- Paint selector -->
             <Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="1"
-                HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <controls:PrefabTile x:Name="PaintTile" StartWall="True">
                     <controls:PrefabTile.ContextMenu>
                         <controls:TileContext />
@@ -66,10 +66,10 @@
 
             <!-- Prefab grid -->
             <ItemsControl x:Name="Items"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      Grid.Row="1" Grid.Column="1"
-                      Background="Black">
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Grid.Row="1" Grid.Column="1"
+                          Background="Black">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ItemsControl ItemsSource="{Binding}">

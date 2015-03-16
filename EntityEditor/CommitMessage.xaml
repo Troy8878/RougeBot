@@ -1,13 +1,11 @@
-﻿<Window x:Class="EntityEditor.CommitMessage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
-        Title="CommitMessage" Height="400" Width="800"
-        Background="{StaticResource RbToolBackground}"
-        Foreground="{StaticResource RbText}"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Icon="/wizard0.ico" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner">
-    <Grid Margin="5">
+﻿<UserControl x:Class="EntityEditor.CommitMessage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lg2="clr-namespace:LibGit2Sharp;assembly=LibGit2Sharp"
+             Width="600"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             VerticalAlignment="Top">
+    <Grid Margin="5" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />
             <RowDefinition />
@@ -37,9 +35,6 @@
         </Grid>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <Grid x:Name="ButtonContainer" Height="30" HorizontalAlignment="Left">
-                    <Button Click="ShowChangeList">Show change list</Button>
-                </Grid>
                 <ItemsControl x:Name="ChangeList" TextBlock.FontSize="16">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="lg2:StatusEntry">
@@ -57,4 +52,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Window>
+</UserControl>

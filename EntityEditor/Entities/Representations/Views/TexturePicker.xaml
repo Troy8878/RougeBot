@@ -21,7 +21,7 @@
         </StackPanel>
         <Popup PlacementTarget="{Binding ElementName=PopupPlacement}"
                Width="400" Height="300" x:Name="Popup" StaysOpen="False">
-            <Border Background="{StaticResource PopupBackgroundBrush}">
+            <Border>
                 <Grid>
                     <views:TextureTree SelectedTexture="{Binding Path=Value, Mode=TwoWay}" FontSize="14" x:Name="TexTree" />
                 </Grid>
@@ -30,13 +30,7 @@
         <Border VerticalAlignment="Bottom" HorizontalAlignment="Left"
                 Width="400" Height="1" x:Name="PopupPlacement" />
         <Image Source="{Binding Path=Value, Mode=OneWay, Converter={StaticResource RepoDirConv}, ConverterParameter=Roguelike/Assets/Textures}"
-               HorizontalAlignment="Right" MaxWidth="25" MaxHeight="25" x:Name="Thumbnail" MouseLeftButtonDown="ThumbnailOnMouseLeftButtonDown" />
-        <Popup PlacementTarget="{Binding ElementName=Thumbnail}"
-               Width="200" Height="200" StaysOpen="False" x:Name="ImagePreview"
-               Placement="Left">
-            <Border Background="{StaticResource PopupBackgroundBrush}">
-                <Image Source="{Binding Path=Value, Mode=OneWay, Converter={StaticResource RepoDirConv}, ConverterParameter=Roguelike/Assets/Textures}" />
-            </Border>
-        </Popup>
+               HorizontalAlignment="Right" MaxWidth="25" MaxHeight="25" x:Name="Thumbnail"
+               MouseLeftButtonDown="ThumbnailOnMouseLeftButtonDown" />
     </Grid>
 </UserControl>

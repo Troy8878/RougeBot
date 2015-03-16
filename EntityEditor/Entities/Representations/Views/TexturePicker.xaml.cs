@@ -39,7 +39,6 @@ namespace EntityEditor.Entities.Representations.Views
 
         private void ThumbnailOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ImagePreview.IsOpen = true;
         }
 
         private void OnOverride(object sender, RoutedEventArgs e)

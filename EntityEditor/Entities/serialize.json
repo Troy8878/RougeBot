@@ -49,6 +49,16 @@
           "locked": false,
           "default": false
         }
+      },
+      {
+        "property": "random_start",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
       }
     ],
     "name": "AnimatedComponent"

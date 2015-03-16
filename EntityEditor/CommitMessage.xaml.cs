@@ -14,8 +14,10 @@ namespace EntityEditor
     /// <summary>
     ///     Interaction logic for CommitMessage.xaml
     /// </summary>
-    public partial class CommitMessage
+    public partial class CommitMessage : INotifyPropertyChanged
     {
+        public event Action OnClose;
+
         private static readonly string[] MessageStrings =
         {
             "What I learned in boating school is...",
@@ -32,9 +34,16 @@ namespace EntityEditor
         public CommitMessage()
         {
             InitializeComponent();
-            
+            Reset();
+        }
+
+        public void Reset()
+        {
             CanEdit = true;
             Message = "";
+            SetStagingMessage("");
+            ShowChangeList();
+            OnPropertyChanged("RandomMessage");
         }
 
         public string RandomMessage
@@ -79,7 +88,9 @@ namespace EntityEditor
                         return true;
                         // ReSharper restore AccessToDisposedClosure
                     });
-                    Close();
+
+                    if (OnClose != null)
+                        OnClose();
                 }
                 catch (Exception ex)
                 {
@@ -122,15 +133,27 @@ namespace EntityEditor
             set { SetValue(CanEditProperty, value); }
         }
 
-        private void ShowChangeList(object sender, RoutedEventArgs e)
+        private async void ShowChangeList()
         {
-            ButtonContainer.Children.Remove((UIElement) sender);
+            if (MainWindow.Instance == null)
+                return;
 
-            ChangeList.ItemsSource = new Repository(MainWindow.Instance.RepoDir).RetrieveStatus()
-                .Where(item => item.State != FileStatus.Ignored);
+            var list = await Task.Run(delegate
+            {
+                return new Repository(MainWindow.Instance.RepoDir).RetrieveStatus()
+                    .Where(item => item.State != FileStatus.Ignored);
+            });
 
-            MinHeight = 450;
-            Height = 500;
+            ChangeList.ItemsSource = list;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

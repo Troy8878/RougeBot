@@ -13,7 +13,7 @@
 #################################################################
 
 class Item
-  attr_reader :name, :value, :equip_slot
+  attr_reader :name, :wclass, :material, :damage_mod, :value, :equip_slot
   attr_accessor :item_level
 
   # Data to determine what the item looks like

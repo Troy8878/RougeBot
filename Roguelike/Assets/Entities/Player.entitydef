@@ -55,7 +55,10 @@
   },
   "TextureComponent": {
     "textures": [
-      "Robot.png"
+      "Player/Player0.png",
+      "Player/Player1.png",
+      "Player/Player2.png",
+      "Player/Player3.png"
     ]
   },
   "SpriteComponent": {
@@ -70,12 +73,12 @@
   },
   "AnimatedComponent": {
     "paused": "",
-    "frame_time": 0.3,
+    "frame_time": 0.1,
     "frame_range": [
       0.0,
       4.0
     ],
-    "loops": false
+    "loops": true
   },
   "PlayerControllerComponent": {},
   "PositionComponent": {
@@ -159,7 +162,8 @@
           },
           "PlayerHealthComponent": {}
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       },
       {
         "name": "HealthBar",
@@ -198,7 +202,8 @@
           },
           "HealthBarComponent": {}
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       }
     ]
   }

@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using EntityEditor.Annotations;
 using EntityEditor.API;
 
 namespace EntityEditor
 {
     /// <summary>
-    /// Interaction logic for AuthorInput.xaml
+    ///     Interaction logic for AuthorInput.xaml
     /// </summary>
-    public partial class AuthorInput : Window
+    public partial class AuthorInput : INotifyPropertyChanged
     {
-        public Author Author { get; set; }
+        private Author _author;
 
         public AuthorInput()
         {
@@ -28,6 +20,20 @@ namespace EntityEditor
 
             InitializeComponent();
         }
+
+        public Author Author
+        {
+            get { return _author; }
+            set
+            {
+                if (Equals(value, _author)) return;
+                _author = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event Action OnClose;
 
         private void DoneClick(object sender, RoutedEventArgs e)
         {
@@ -40,7 +46,20 @@ namespace EntityEditor
             }
 
             Author.Save();
-            Close();
+            if (OnClose != null)
+                OnClose();
+        }
+
+        public void Reset()
+        {
+            Author = Author.Load();
+        }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

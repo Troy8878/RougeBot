@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:EntityEditor.Views"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance views:GitData}"
@@ -59,7 +60,20 @@
                 </StackPanel>
             </Grid>
 
-            <Button Grid.Column="1" Click="OnRefresh" VerticalAlignment="Top">⟳</Button>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" Click="OnRefresh" VerticalAlignment="Top"
+                        Style="{DynamicResource MetroCircleButtonStyle}"
+                        Width="50" Height="50" FontSize="30" Padding="0,-8,0,0">
+                    ⟳
+                </Button>
+
+                <controls:ProgressRing Grid.Row="1" Width="30"
+                                       Height="30" IsActive="{Binding Path=Syncing}" />
+            </Grid>
         </Grid>
         <TextBlock Foreground="Red"
                    Visibility="{Binding Path=UpToDate,

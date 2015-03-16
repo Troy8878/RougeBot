@@ -21,7 +21,7 @@
     "health": 25.0
   },
   "PositionComponent": {
-    "move_speed": 5.0,
+    "move_speed": 2.0,
     "position": [
       0.0,
       0.0
@@ -78,10 +78,12 @@
               0.0,
               4.0
             ],
-            "loops": false
+            "loops": true,
+            "random_start": true
           }
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       },
       {
         "name": "HealthBar",
@@ -120,7 +122,8 @@
           },
           "HealthBarComponent": {}
         },
-        "children": []
+        "children": [],
+        "archetype": "NoArchetype"
       }
     ]
   }

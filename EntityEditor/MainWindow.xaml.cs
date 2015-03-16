@@ -9,6 +9,7 @@ using EntityEditor.API;
 using EntityEditor.Entities;
 using EntityEditor.Properties;
 using LibGit2Sharp;
+using MahApps.Metro;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -120,10 +121,8 @@ namespace EntityEditor
 
         private void CommitClick(object sender, RoutedEventArgs e)
         {
-            GitUnlocked = false;
-            new CommitMessage {Owner = this}.ShowDialog();
-            GitUnlocked = true;
-            GitView.Refresh();
+            CommitMessage.Reset();
+            CommitFlyout.IsOpen = true;
         }
 
         private async void SyncClick(object sender, RoutedEventArgs e)
@@ -133,14 +132,13 @@ namespace EntityEditor
             var author = Author.Load();
             if (!author.IsComplete)
             {
-                new AuthorInput {Owner = this}.ShowDialog();
-                author = Author.Load();
-                if (!author.IsComplete)
-                    return;
+                AuthorInput.Reset();
+                AuthorFlyout.IsOpen = true;
+                return;
             }
 
-            var status = new SyncProgress {Owner = this};
-            status.Show();
+            SyncFlyout.IsOpen = true;
+            var status = SyncProgress;
             status.SetProgress(null);
             status.SetMessage("Preparing");
 
@@ -152,6 +150,7 @@ namespace EntityEditor
                     {
                         if (repo.RetrieveStatus().Any(item => item.State != FileStatus.Ignored))
                         {
+                            Dispatcher.Invoke(() => SyncFlyout.IsOpen = false);
                             MessageBox.Show(
                                 "You have uncommitted work. " +
                                 "Please commit your work before syncing.");
@@ -176,6 +175,24 @@ namespace EntityEditor
                                         (double) progress.TotalObjects);
                                     return true;
                                 }
+                            },
+                            MergeOptions = new MergeOptions
+                            {
+                                CommitOnSuccess = true,
+                                OnCheckoutProgress = (path, curr, total) =>
+                                {
+                                    if (curr == total)
+                                    {
+                                        status.SetMessage("Pull complete");
+                                        status.SetProgress(null);
+                                        return;
+                                    }
+
+                                    status.SetMessage(string.Format(
+                                        "Merging files ({0}/{1}) ({2})",
+                                        curr, total, path));
+                                    status.SetProgress(curr/(double) total);
+                                }
                             }
                         });
 
@@ -184,6 +201,7 @@ namespace EntityEditor
 
                         if (result.Status == MergeStatus.Conflicts)
                         {
+                            Dispatcher.Invoke(() => SyncFlyout.IsOpen = false);
                             MessageBox.Show(
                                 "There were merge conflicts, please open the Visual Studio " +
                                 "Team Explorer or GitExtensions to resolve them.");
@@ -246,7 +264,7 @@ namespace EntityEditor
             }
 
             GitUnlocked = true;
-            status.CloseProgress();
+            SyncFlyout.IsOpen = false;
             GitView.Refresh();
         }
 
@@ -262,6 +280,50 @@ namespace EntityEditor
                 FileName = Path.Combine(RepoDir, "Roguelike", "build.bat"),
                 WorkingDirectory = Path.Combine(RepoDir, "Roguelike")
             });
+        }
+
+        private void CommitFlyoutOpenChanged(object sender, RoutedEventArgs e)
+        {
+            GitUnlocked = !CommitFlyout.IsOpen;
+
+            if (GitUnlocked)
+            {
+                GitView.Refresh();
+            }
+        }
+
+        private void CommitMessageOnClose()
+        {
+            CommitFlyout.IsOpen = false;
+        }
+
+        private void AuthorInputOnClose()
+        {
+            AuthorFlyout.IsOpen = false;
+        }
+
+        private void ChangeAuthorClick(object sender, RoutedEventArgs e)
+        {
+            AuthorFlyout.IsOpen = true;
+        }
+
+        public bool DarkTheme
+        {
+            get { return Settings.Default.DarkTheme; }
+            set
+            {
+                var settings = Settings.Default;
+                settings.DarkTheme = value;
+                settings.Save();
+                
+                ThemeManager.ChangeAppTheme(Application.Current, value ? "BaseDark" : "BaseLight");
+
+                if (value)
+                {
+                    March.Source = new Uri("ImperialMarch.mp3", UriKind.Relative);
+                    March.Position = new TimeSpan(0);
+                }
+            }
         }
     }
 }

@@ -20,6 +20,9 @@ namespace EntityEditor.PrefabEditor.Controls
 
         public void Refresh(object sender, RoutedEventArgs e)
         {
+            if (MainWindow.Instance == null)
+                return;
+
             Tree.Items.Clear();
 
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

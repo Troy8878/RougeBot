@@ -30,6 +30,7 @@ class AnimatedComponent < ComponentBase
     p.float  :frame_time
     p.vector :frame_range, dimms: 2, semantics: "range"
     p.bool   :loops
+    p.bool   :random_start
   end
 
   def initialize(data)
@@ -41,6 +42,10 @@ class AnimatedComponent < ComponentBase
     @frame_range = data.fetch("frame_range", [0, 0xffff]).map{|f| f.to_i }
     @loops = data.fetch("loops", true)
     @time = 0
+
+    if data.fetch("random_start", false) == true
+      @sprite.texture_index = (frame_range[0] .. frame_range[1]).to_a.rand_item
+    end
 
     self.register_event :update, :animate
   end

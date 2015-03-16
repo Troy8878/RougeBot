@@ -33,6 +33,9 @@ namespace EntityEditor.Entities.Representations
                 case "float":
                     return ConstructFloat(prop, value);
 
+                case "integer":
+                    return ConstructInteger(prop, value);
+
                 case "string":
                     return ConstructString(prop, value);
 
@@ -97,6 +100,16 @@ namespace EntityEditor.Entities.Representations
                 value = def;
 
             return new Float {Value = (float?) value};
+        }
+        
+        private static IPropertyValue ConstructInteger(ComponentDefinition.ComponentProperty prop, JToken value)
+        {
+            var def = prop.Usage.Default;
+
+            if (value == null)
+                value = def;
+
+            return new Integer {Value = (long?) value};
         }
 
         private static IPropertyValue ConstructString(ComponentDefinition.ComponentProperty prop, JToken value)

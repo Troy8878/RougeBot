@@ -14,7 +14,8 @@ class EnemyLogicComponent < ComponentBase
   serialized_input do |p|
     p.dependency "PositionComponent"
     p.dependency "AttackComponent"
-    p.bool :stationary, default: false
+    p.bool    :stationary, default: false
+    p.integer :move_skip
   end
 
   def initialize(data)
@@ -24,6 +25,8 @@ class EnemyLogicComponent < ComponentBase
     @attack = self.owner.attack_component
 
     @stationary = !!data["stationary"]
+    @move_skip = data.fetch("move_skip", 1).to_i
+    @skip_number = 0
 
     register_event :logic_update, :on_update
     register_event :update, :first_update
@@ -53,7 +56,14 @@ class EnemyLogicComponent < ComponentBase
     if distance < 1.1
       @attack.do_attack player if @attack
     elsif distance < 3
-      move_towards player
+      @skip_number += 1
+      if @skip_number >= @move_skip
+        @skip_number = 0
+      end
+
+      if @skip_number == 0
+        move_towards player
+      end
     else
       move_randomly
     end

@@ -21,8 +21,6 @@ namespace EntityEditor
     /// </summary>
     public partial class SyncProgress
     {
-        private bool _close;
-
         public SyncProgress()
         {
             InitializeComponent();
@@ -50,20 +48,6 @@ namespace EntityEditor
                     Progress.Value = (double) progress;
                 }
             }), DispatcherPriority.Send);
-        }
-
-        public void CloseProgress()
-        {
-            _close = true;
-            Close();
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            if (!_close)
-            {
-                e.Cancel = true;
-            }
         }
     }
 }

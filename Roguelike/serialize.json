@@ -49,6 +49,16 @@
           "locked": false,
           "default": false
         }
+      },
+      {
+        "property": "random_start",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
       }
     ],
     "name": "AnimatedComponent"
@@ -185,6 +195,16 @@
           "semantics": null,
           "locked": false,
           "default": false
+        }
+      },
+      {
+        "property": "move_skip",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
         }
       }
     ],

@@ -130,6 +130,9 @@ const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y) const
 
 WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const
 {
+  oy = height - 1 - oy;
+  dy = -dy;
+
   // Making sure you aren't trying to move more than one block at a time.
   if (abs(dx) > 1.5 || abs(dy) > 1.5)
   {

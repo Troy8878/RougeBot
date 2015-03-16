@@ -111,7 +111,7 @@
   },
   "AiComponent": {},
   "AiScriptComponent": {
-    "brains": ["AIDerp"],
+    "brains": ["Idle"],
     "target": "Player"
   },
   "ChildHierarchy": {

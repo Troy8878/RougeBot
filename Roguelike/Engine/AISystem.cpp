@@ -66,6 +66,7 @@ void AIDecision::Init(Entity *owner, Entity *target)
 {
   behavior->InitilizeOwner(owner);
   behavior->InitializeTarget(target);
+  behavior->Prepare();
 }
 
 // ----------------------------------------------------------------------------
@@ -167,6 +168,7 @@ AIDecisionRef AISystem::GetDecision()
 mrb_data_type mrb_aisys_dt;
 
 static mrb_value mrb_aisys_instance(mrb_state *mrb, mrb_value klass);
+static mrb_value mrb_aisys_update_snapshot(mrb_state *mrb, mrb_value self);
 
 // ----------------------------------------------------------------------------
 
@@ -177,6 +179,8 @@ EXTERN_C void mrb_mruby_aisys_init(mrb_state *mrb)
 
   mrb_define_class_method(mrb, aclass, "instance", mrb_aisys_instance, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, aclass, "new", mrb_nop, MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, aclass, "update_snapshot", mrb_aisys_update_snapshot, MRB_ARGS_NONE());
 }
 
 // ----------------------------------------------------------------------------
@@ -191,10 +195,22 @@ static mrb_value mrb_aisys_instance(mrb_state *mrb, mrb_value klass)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_aisys_update_snapshot(mrb_state *mrb, mrb_value self)
+{
+  auto system = ruby::data_get<AISystem>(mrb, self);
+  system->UpdateSnapshot();
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 #include "AIDerp.h"
+#include "IdleBehaviour.h"
 
 void AIFactory::RegisterDefaultFactories()
 {
+  Register("Idle", new DefaultAIFactory<IdleBehaviour>);
+
   Register("AIDerp", new DefaultAIFactory<AIDerp>);
 }
 

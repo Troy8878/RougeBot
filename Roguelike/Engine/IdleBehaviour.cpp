@@ -11,11 +11,10 @@
 #include "WorldSnapshot.h"
 
 
-void IdleBehaviour::ApplyBehaviour(const WorldSnapshot& world, json::value params)
+void IdleBehaviour::ApplyBehaviour(const WorldSnapshot& world, json::value)
 {
   // Randomly generate a number from 1 to 4 to determine direction.
   std::random_device rng;
-  int direction = std::uniform_int_distribution<>(1, 4)(rng);
 
   // Store whether we can move in each direction ahead of time.
   bool canMoveUp = world.CanMove(ox, oy, 0, 1) == WorldSnapshot::NotBlocked;
@@ -23,35 +22,26 @@ void IdleBehaviour::ApplyBehaviour(const WorldSnapshot& world, json::value param
   bool canMoveRight = world.CanMove(ox, oy, 1, 0) == WorldSnapshot::NotBlocked;
   bool canMoveLeft = world.CanMove(ox, oy, -1, 0) == WorldSnapshot::NotBlocked;
 
-  // Move in the appropriate direction based on the result.
-  switch (direction)
+  std::pair<bool, void(AIBehaviour::*)()> moves[] =
   {
-    case 1:
-      if (canMoveUp)
-      {
-        MoveUp();
-        break;
-      }
-    case 2:
-      if (canMoveDown)
-      {
-        MoveDown();
-        break;
-      }
-    case 3:
-      if (canMoveLeft)
-      {
-        MoveLeft();
-        break;
-      }
-    case 4:
-      if (canMoveRight)
-      {
-        MoveRight();
-        break;
-      }
-    default:
-      result.action = AIResult::Nil;
+    {canMoveUp, &IdleBehaviour::MoveUp},
+    {canMoveDown, &IdleBehaviour::MoveDown},
+    {canMoveLeft, &IdleBehaviour::MoveLeft},
+    {canMoveRight, &IdleBehaviour::MoveRight},
+  };
+
+  shuffle(begin(moves), end(moves), rng);
+  shuffle(begin(moves), end(moves), rng);
+  shuffle(begin(moves), end(moves), rng);
+  shuffle(begin(moves), end(moves), rng);
+
+  for (auto &move : moves)
+  {
+    if (move.first)
+    {
+      (this->*move.second)();
+      break;
+    }
   }
 }
 

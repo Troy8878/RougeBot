@@ -66,8 +66,8 @@ class AiScriptComponent < ComponentBase
 
     case result["result"]
     when "move"
-      actor_move!(result["x"], result["y"])
-    when "attack"
+      self.owner.local_event :actor_move, [result["x"], result["y"]]
+    #when "attack"
     else
       message = StatusMessage.new "hivemind sent unknown code\n#{result}", 1, "Red", 20, 3
       message.display owner

@@ -25,16 +25,13 @@ module Actor
 
   def actor_init(shape, color)
     actor_minimap_create shape, color
-
-    @actor_transform = self.owner.transform_component
-    @actor_position = self.owner.position_component.position
-    @actor_diagonal = false
-    @actor_projectile = false
-
+    actor_sub_init(false)
     register_event :zombified, :actor_zombified
+    register_event :actor_move, :actor_move_impl
   end
 
-  def actor_sub_init
+  def actor_sub_init(is_sub = true)
+    @actor_is_sub = is_sub
     @actor_transform = self.owner.transform_component
     @actor_position = self.owner.position_component.position
     @actor_diagonal = false
@@ -95,10 +92,9 @@ module Actor
     actor_minimap_update
   end
 
-  def actor_move!(x, y)
-    @actor_position.x = x
-    @actor_position.y = y
-
+  def actor_move_impl(e)
+    @actor_position.x = e[0]
+    @actor_position.y = e[1]
     actor_moved
   end
 

@@ -61,7 +61,7 @@ private:
 class AISystem final
 {
 public:
-  AISystem(size_t threadCount);
+  explicit AISystem(size_t threadCount);
   ~AISystem();
 
   AIDecisionRef QueueBehavior(AIFactory &factory, json::value params,

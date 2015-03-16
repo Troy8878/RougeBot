@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
@@ -8,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Entity : ITreeOwner, IEquatable<Entity>, IEquatable<Archetype>, IEquatable<List<Component>>
+    public class Entity : ITreeOwner, IEquatable<Entity>, IEquatable<Archetype>, IEquatable<IList<Component>>
     {
         public Entity(JObject definition)
         {
@@ -35,7 +36,7 @@ namespace EntityEditor.Entities.Project
                 }
             }
 
-            Components = new List<Component>();
+            Components = new ObservableCollection<Component>();
 
             var arch = new Archetype(new FileInfo(Path.Combine(
                 MainWindow.Instance.RepoDir, "Roguelike", "Assets", "Entities", Type + ".entitydef")));
@@ -66,7 +67,7 @@ namespace EntityEditor.Entities.Project
         }
 
         public List<Entity> Children { get; set; }
-        public List<Component> Components { get; set; }
+        public ObservableCollection<Component> Components { get; set; }
 
         public string Name { get; set; }
         public string Type { get; set; }
@@ -148,7 +149,7 @@ namespace EntityEditor.Entities.Project
             return other != null && Equals(other.Components);
         }
 
-        public bool Equals(List<Component> other)
+        public bool Equals(IList<Component> other)
         {
             return (from c1 in Components
                     let c2 = other.FirstOrDefault(c => c.Name == c1.Name)

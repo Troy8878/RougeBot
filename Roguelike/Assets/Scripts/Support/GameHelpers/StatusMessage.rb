@@ -6,15 +6,17 @@
 #######################
 
 class StatusMessage
-  def initialize(message, scale, color)
+  def initialize(message, scale, color, fsize = 60, speed = 1)
     @message = message
     @scale = scale
     @color = color
+    @fsize = fsize
+    @speed = speed
     @delete_owner = false
   end
 
   def display(target)
-    scale = Vector.new(1, 0.5, 1, 1) * @scale
+    scale = Vector.new(2, 0.5, 1, 1) * @scale
 
     target.create_child(
       archetype: "Flare/StatusMessage",
@@ -25,10 +27,11 @@ class StatusMessage
         "TextComponent" => {
           "texts" => [ @message ],
           "text_color" => @color,
-          "font_size" => 60
+          "font_size" => @fsize
         },
         "StatusMessageComponent" => {
-          "delete_owner" => @delete_owner
+          "delete_owner" => @delete_owner,
+          "speed" => @speed
         }
       }
     )

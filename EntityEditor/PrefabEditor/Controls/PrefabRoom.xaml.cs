@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Windows.Media;
 using EntityEditor.PrefabEditor.Prefabs;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -11,8 +12,6 @@ namespace EntityEditor.PrefabEditor.Controls
     /// </summary>
     public partial class PrefabRoom
     {
-        private string _file;
-
         private readonly OpenFileDialog _openDlg = new OpenFileDialog
         {
             Filter = "Prefab JSON File|*.prefab.json"
@@ -23,11 +22,25 @@ namespace EntityEditor.PrefabEditor.Controls
             Filter = "Prefab JSON File|*.prefab.json"
         };
 
+        private string _file;
+        private bool _zoom;
+        private int _size;
+
         public PrefabRoom()
         {
             InitializeComponent();
 
             SetEmpty();
+        }
+
+        public bool Zoom
+        {
+            get { return _zoom; }
+            set
+            {
+                _zoom = value;
+                ZoomTransform.ScaleX = ZoomTransform.ScaleY = !value ? 1.0 : 0.5;
+            }
         }
 
         public Stream OpenFileWrite(string name)
@@ -40,15 +53,17 @@ namespace EntityEditor.PrefabEditor.Controls
             return File.Open(name, FileMode.Open, FileAccess.Read);
         }
 
-        public void SetEmpty()
+        public void SetEmpty(int size = 10, bool resetFile = true)
         {
-            _file = null;
+            if (resetFile)
+                _file = null;
+            _size = size;
 
-            var data = new PrefabTileData[10][];
-            for (var i = 0; i < 10; ++i)
+            var data = new PrefabTileData[size][];
+            for (var i = 0; i < size; ++i)
             {
-                data[i] = new PrefabTileData[10];
-                for (var j = 0; j < 10; ++j)
+                data[i] = new PrefabTileData[size];
+                for (var j = 0; j < size; ++j)
                 {
                     data[i][j] = (PrefabTileData) Tiles.Prefabs[0];
                 }
@@ -90,14 +105,21 @@ namespace EntityEditor.PrefabEditor.Controls
 
             using (var reader = new StreamReader(file))
             {
-                var tiles = (PrefabTileData[][]) Items.ItemsSource;
-
                 var data = JObject.Parse(reader.ReadToEnd());
                 var jtiles = (JArray) data["tiles"];
-                for (var y = 0; y < 10; ++y)
+                var tiles = (PrefabTileData[][]) Items.ItemsSource;
+
+                // Different sized maps require a reconstruction
+                if (tiles.Length != jtiles.Count)
+                {
+                    SetEmpty(jtiles.Count, false);
+                    tiles = (PrefabTileData[][]) Items.ItemsSource;
+                }
+
+                for (var y = 0; y < jtiles.Count; ++y)
                 {
                     var jrow = (JArray) jtiles[y];
-                    for (var x = 0; x < 10; ++x)
+                    for (var x = 0; x < jtiles.Count; ++x)
                     {
                         var jtile = (JObject) jrow[x];
                         var tile = tiles[y][x];
@@ -127,7 +149,7 @@ namespace EntityEditor.PrefabEditor.Controls
             {
                 Save(file);
             }
-            
+
             SetFile(_saveDlg.FileName);
 
             Lib.Refresh(null, null);
@@ -147,7 +169,7 @@ namespace EntityEditor.PrefabEditor.Controls
             var root = new JObject();
 
             var tiles = new JArray();
-            foreach (var row in (PrefabTileData[][])Items.ItemsSource)
+            foreach (var row in (PrefabTileData[][]) Items.ItemsSource)
             {
                 var jrow = new JArray();
                 foreach (var tile in row)

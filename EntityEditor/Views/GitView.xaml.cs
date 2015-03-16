@@ -38,41 +38,21 @@ namespace EntityEditor.Views
             try
             {
                 if (MainWindow.Instance == null) return;
-                
+
+                var repo = new Repository(MainWindow.Instance.RepoDir);
+                await RefreshView(data, repo);
+
                 await Task.Run(delegate
                 {
-                    var repo = new Repository(MainWindow.Instance.RepoDir);
-
-                    var status = repo.RetrieveStatus();
-                    var master = repo.Branches[repo.Head.TrackedBranch.UpstreamBranchCanonicalName];
-                    var details = master.TrackingDetails;
-                    var uptodate = details.AheadBy == 0 && details.BehindBy == 0;
-                    var ahead = details.AheadBy;
-                    var behind = details.BehindBy;
-                    
-                    Dispatcher.Invoke(delegate
-                    {
-                        data.Status = status;
-                        data.MasterBranch = master;
-                        data.UpToDate = uptodate;
-                        data.Ahead = ahead;
-                        data.Behind = behind;
-                    });
-
                     var author = Author.Load();
                     repo.Fetch("origin", new FetchOptions
                     {
                         CredentialsProvider = (a, b, c) => author.Credentials
                     });
-
-                    var ndetails = repo.Branches
-                        [repo.Head.TrackedBranch.UpstreamBranchCanonicalName]
-                        .TrackingDetails;
-                    Dispatcher.Invoke(delegate
-                    {
-                        data.Behind = ndetails.BehindBy;
-                    });
                 });
+
+                var newrepo = new Repository(MainWindow.Instance.RepoDir);
+                await RefreshView(data, newrepo);
             }
             catch (Exception ex)
             {
@@ -82,6 +62,29 @@ namespace EntityEditor.Views
             {
                 data.Syncing = false;
             }
+        }
+
+        private Task RefreshView(GitData data, Repository repo)
+        {
+            return Task.Run(delegate
+            {
+                var status = repo.RetrieveStatus();
+                var master = repo.Branches[repo.Head.TrackedBranch.UpstreamBranchCanonicalName];
+                var details = master.TrackingDetails;
+                var uptodate = details.AheadBy == 0 && details.BehindBy == 0;
+                var ahead = details.AheadBy;
+                var behind = details.BehindBy;
+                    
+                Dispatcher.Invoke(delegate
+                {
+                    data.Status = status;
+                    data.MasterBranch = master;
+                    data.UpToDate = uptodate;
+                    data.Ahead = ahead;
+                    data.Behind = behind;
+                    data.Dirty = status.IsDirty;
+                });
+            });
         }
 
         private void OnRefresh(object sender, RoutedEventArgs e)
@@ -98,6 +101,7 @@ namespace EntityEditor.Views
         private RepositoryStatus _status;
         private bool _syncing;
         private bool _upToDate;
+        private bool _dirty;
 
         public RepositoryStatus Status
         {
@@ -161,6 +165,17 @@ namespace EntityEditor.Views
             {
                 if (value.Equals(_syncing)) return;
                 _syncing = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Dirty
+        {
+            get { return _dirty; }
+            set
+            {
+                if (value.Equals(_dirty)) return;
+                _dirty = value;
                 OnPropertyChanged();
             }
         }

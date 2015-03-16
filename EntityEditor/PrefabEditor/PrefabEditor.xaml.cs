@@ -48,5 +48,15 @@ namespace EntityEditor.PrefabEditor
         {
             Room.SetEmpty();
         }
+
+        private void OnNewDungeon(object sender, ExecutedRoutedEventArgs e)
+        {
+            Room.SetEmpty(40);
+        }
+
+        private void OnToggleZoom(object sender, ExecutedRoutedEventArgs e)
+        {
+            Room.Zoom = !Room.Zoom;
+        }
     }
 }

@@ -91,6 +91,13 @@ class SerializedInput
     })
   end
 
+  def raw(prop, opts = {})
+    opts[:default] ||= nil
+    add_prop prop, (with_opts opts, {
+      type: :raw
+    })
+  end
+
   private
   def with_opts(opts, hsh)
     hsh[:required] = opts[:required] || false

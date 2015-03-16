@@ -109,6 +109,11 @@
       "actor_death": "Game.switch_level 'MainMenu'"
     }
   },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": ["AIDerp"],
+    "target": "Player"
+  },
   "ChildHierarchy": {
     "children": [
       {

@@ -95,6 +95,13 @@ module Actor
     actor_minimap_update
   end
 
+  def actor_move!(x, y)
+    @actor_position.x = x
+    @actor_position.y = y
+
+    actor_moved
+  end
+
   def current_tile
     pos = actor_position
     room = current_floor

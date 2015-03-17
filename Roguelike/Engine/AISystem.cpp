@@ -91,7 +91,12 @@ AISystem::AISystem(size_t threadCount)
 
   while (threadCount--)
   {
-    decisionThreads.emplace_back(std::bind(&AISystem::RunThread, this));
+    decisionThreads.emplace_back([this, threadCount]()
+    {
+      auto name = "AI Thread #" + std::to_string(threadCount + 1);
+      SetThreadName(static_cast<DWORD>(-1), name.c_str());
+      this->RunThread();
+    });
   }
 }
 

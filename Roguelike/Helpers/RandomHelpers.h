@@ -882,3 +882,7 @@ auto random_item(Container &cont) -> decltype((Container{})[0])
 
 // ----------------------------------------------------------------------------
 
+void SetThreadName(DWORD dwThreadID, const char *threadName);
+
+// ----------------------------------------------------------------------------
+

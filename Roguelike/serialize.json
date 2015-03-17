@@ -1,6 +1,56 @@
 [
   {
     "dependencies": [
+      "AiComponent",
+      "PositionComponent"
+    ],
+    "properties": [
+      {
+        "property": "brains",
+        "usage": {
+          "type": "array",
+          "contained": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": []
+        }
+      },
+      {
+        "property": "brain_index",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      },
+      {
+        "property": "target",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": "entity",
+          "locked": false,
+          "default": "Player"
+        }
+      },
+      {
+        "property": "params",
+        "usage": {
+          "type": "raw",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": {}
+        }
+      }
+    ],
+    "name": "AiScriptComponent"
+  },
+  {
+    "dependencies": [
       "SpriteComponent"
     ],
     "properties": [
@@ -115,6 +165,16 @@
           "locked": false,
           "default": false
         }
+      },
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
       }
     ],
     "name": "StatusMessageComponent"
@@ -180,6 +240,35 @@
       }
     ],
     "name": "DefenseComponent"
+  },
+  {
+    "dependencies": [
+      "PositionComponent",
+      "AttackComponent"
+    ],
+    "properties": [
+      {
+        "property": "stationary",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
+        "property": "move_skip",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0
+        }
+      }
+    ],
+    "name": "BlueMageLogicComponent"
   },
   {
     "dependencies": [
@@ -1060,6 +1149,11 @@
       }
     ],
     "name": "PositionComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [],
+    "name": "AiComponent"
   },
   {
     "dependencies": [],

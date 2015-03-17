@@ -69,8 +69,23 @@ class AiScriptComponent < ComponentBase
       self.owner.local_event :actor_move, [result["x"], result["y"]]
     #when "attack"
     else
-      message = StatusMessage.new "hivemind sent unknown code\n#{result}", 1, "Red", 20, 3
-      message.display owner
+      message = nil
+
+      begin
+        result = JSON.parse
+        case result["action"]
+        when "message"
+          message = result["text"]
+        end
+
+      rescue
+        message = "failed to interpret hivemind action"
+      end
+
+      if message
+        message = StatusMessage.new message, 1, "Red", 20, 3
+        message.display owner
+      end
     end
   end
 

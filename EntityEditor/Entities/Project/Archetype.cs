@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -7,9 +7,9 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Archetype : ITreeOwner, ISaveable
+    public class Archetype : ITreeOwner, IComponentOwner, ISaveable
     {
-        private string _file;
+        private readonly string _file;
 
         public Archetype(FileSystemInfo file)
         {
@@ -17,7 +17,7 @@ namespace EntityEditor.Entities.Project
             Name = file.Name;
             Definition = JObject.Parse(File.ReadAllText(file.FullName));
 
-            Components = new List<Component>();
+            Components = new ObservableCollection<Component>();
             var jcomponents = Definition;
             if (jcomponents == null) return;
 
@@ -30,14 +30,14 @@ namespace EntityEditor.Entities.Project
                 }
                 else
                 {
-                    var component = new Component(jcomp.Key, (JObject) jcomp.Value);
+                    var component = new Component(jcomp.Key, (JObject) jcomp.Value) {Owner = this};
                     Components.Add(component);
                 }
             }
         }
 
         public JObject Definition { get; set; }
-        public List<Component> Components { get; set; }
+        public ObservableCollection<Component> Components { get; set; }
 
         public void Save()
         {
@@ -61,6 +61,33 @@ namespace EntityEditor.Entities.Project
         {
             get { return null; }
             set { }
+        }
+
+        public bool NewComponent(string name)
+        {
+            if (Components.Any(c => c.Name == name))
+            {
+                return false;
+            }
+
+            var component = new Component(name, new JObject()) {Owner = this};
+            if (Components.Any(c => c.Name == "ChildHierarchy"))
+            {
+                var index = Components.Count - 1;
+                Components.Insert(index, component);
+            }
+            else
+            {
+                Components.Add(component);
+            }
+
+            return true;
+        }
+
+        public void RemoveComponent(string name)
+        {
+            var component = Components.FirstOrDefault(c => c.Name == name);
+            Components.Remove(component);
         }
 
         public JObject Serialize()

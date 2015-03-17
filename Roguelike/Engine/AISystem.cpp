@@ -216,7 +216,7 @@ void AIFactory::RegisterDefaultFactories()
 {
   Register("Idle", new DefaultAIFactory<IdleBehaviour>);
 
-  Register("AIDerp", new DefaultAIFactory<AIDerp>);
+  Register("Derp", new DefaultAIFactory<AIDerp>);
 }
 
 // ----------------------------------------------------------------------------

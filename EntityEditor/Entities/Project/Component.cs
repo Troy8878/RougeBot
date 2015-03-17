@@ -46,7 +46,9 @@ namespace EntityEditor.Entities.Project
 
         public bool MissingData { get; set; }
 
-        public Dictionary<String, IPropertyValue> Properties { get; set; }
+        public Dictionary<string, IPropertyValue> Properties { get; set; }
+
+        public IComponentOwner Owner { get; set; }
 
         public JObject Serialize()
         {
@@ -76,6 +78,11 @@ namespace EntityEditor.Entities.Project
             }
 
             return true;
+        }
+
+        public void Remove()
+        {
+            Owner.RemoveComponent(Name);
         }
     }
 }

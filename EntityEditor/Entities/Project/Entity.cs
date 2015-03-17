@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using EntityEditor.Entities.Representations;
 using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Entity : ITreeOwner, IEquatable<Entity>, IEquatable<Archetype>, IEquatable<IList<Component>>
+    public class Entity : ITreeOwner, IComponentOwner, IEquatable<Entity>, IEquatable<Archetype>, IEquatable<IList<Component>>
     {
         public Entity(JObject definition)
         {
@@ -59,7 +58,7 @@ namespace EntityEditor.Entities.Project
                     }
                     else
                     {
-                        var component = new Component(jcomp.Key, (JObject) jcomp.Value);
+                        var component = new Component(jcomp.Key, (JObject) jcomp.Value) {Owner = this};
                         Components.Add(component);
                     }
                 }
@@ -68,6 +67,27 @@ namespace EntityEditor.Entities.Project
 
         public List<Entity> Children { get; set; }
         public ObservableCollection<Component> Components { get; set; }
+
+        public bool Equals(Archetype other)
+        {
+            return other != null && Equals(other.Components);
+        }
+
+        public bool Equals(Entity other)
+        {
+            return
+                other != null &&
+                Name == other.Name &&
+                Equals(other.Components) &&
+                Children.Zip(other.Children, (c1, c2) => c1.Equals(c2)).All(r => r);
+        }
+
+        public bool Equals(IList<Component> other)
+        {
+            return (from c1 in Components
+                let c2 = other.FirstOrDefault(c => c.Name == c1.Name)
+                select c1.Equals(c2)).All(r => r);
+        }
 
         public string Name { get; set; }
         public string Type { get; set; }
@@ -78,6 +98,33 @@ namespace EntityEditor.Entities.Project
         }
 
         public ITreeOwner Owner { get; set; }
+
+        public bool NewComponent(string name)
+        {
+            if (Components.Any(c => c.Name == name))
+            {
+                return false;
+            }
+
+            var component = new Component(name, new JObject()) {Owner = this};
+            if (Components.Any(c => c.Name == "ChildHierarchy"))
+            {
+                var index = Components.Count - 1;
+                Components.Insert(index, component);
+            }
+            else
+            {
+                Components.Add(component);
+            }
+
+            return true;
+        }
+
+        public void RemoveComponent(string name)
+        {
+            var component = Components.FirstOrDefault(c => c.Name == name);
+            Components.Remove(component);
+        }
 
         public JToken Serialize()
         {
@@ -133,27 +180,6 @@ namespace EntityEditor.Entities.Project
             }
 
             return data;
-        }
-
-        public bool Equals(Entity other)
-        {
-            return
-                other != null &&
-                Name == other.Name &&
-                Equals(other.Components) &&
-                Children.Zip(other.Children, (c1, c2) => c1.Equals(c2)).All(r => r);
-        }
-
-        public bool Equals(Archetype other)
-        {
-            return other != null && Equals(other.Components);
-        }
-
-        public bool Equals(IList<Component> other)
-        {
-            return (from c1 in Components
-                    let c2 = other.FirstOrDefault(c => c.Name == c1.Name)
-                    select c1.Equals(c2)).All(r => r);
         }
     }
 }

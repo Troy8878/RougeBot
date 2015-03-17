@@ -6,11 +6,20 @@
                    xmlns:project="clr-namespace:EntityEditor.Entities.Project"
                    xmlns:representations="clr-namespace:EntityEditor.Entities.Representations"
                    xmlns:mctrl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                   xmlns:views="clr-namespace:EntityEditor.Entities.Representations.Views"
                    mc:Ignorable="d"
                    Title="Entity Editor" Height="600" Width="1200"
                    d:DataContext="{d:DesignInstance project:ProjectTree}"
                    Icon="/wizard0.png"
                    BorderBrush="{StaticResource AccentColorBrush}">
+    
+    <mctrl:MetroWindow.Flyouts>
+        <mctrl:FlyoutsControl>
+            <mctrl:Flyout x:Name="ComponentFlyout" Position="Right" IsModal="True">
+                <views:ComponentSelector x:Name="ComponentSelector" />
+            </mctrl:Flyout>
+        </mctrl:FlyoutsControl>
+    </mctrl:MetroWindow.Flyouts>
 
     <Window.Resources>
         <DataTemplate x:Key="EmptyView">

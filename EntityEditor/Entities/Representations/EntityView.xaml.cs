@@ -1,25 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using EntityEditor.Entities.Project;
-using EntityEditor.Helpers;
 
 namespace EntityEditor.Entities.Representations
 {
     /// <summary>
-    /// Interaction logic for EntityView.xaml
+    ///     Interaction logic for EntityView.xaml
     /// </summary>
     public partial class EntityView
     {
@@ -51,6 +38,11 @@ namespace EntityEditor.Entities.Representations
         private void AddComponentClick(object sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void RemoveComponent(object sender, RoutedEventArgs e)
+        {
+            ((Component) ((FrameworkElement) sender).DataContext).Remove();
         }
     }
 }

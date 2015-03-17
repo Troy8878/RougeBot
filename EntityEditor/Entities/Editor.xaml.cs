@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using EntityEditor.Entities.Project;
@@ -25,6 +26,8 @@ namespace EntityEditor.Entities
                     MainWindow.Instance.RepoDir,
                     "Roguelike",
                     "serialize.json")));
+            Array.Sort(ComponentDefinitions, (a, b) => 
+                string.Compare(a.Name, b.Name, StringComparison.InvariantCulture));
             ComponentDefinitionsMap = new Dictionary<string, ComponentDefinition>();
             foreach (var definition in ComponentDefinitions)
             {

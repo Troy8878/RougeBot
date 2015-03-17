@@ -34,7 +34,7 @@
     <SuiteName>Roguebot Project Manager</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>1.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -166,9 +166,13 @@
     <Compile Include="AuthorInput.xaml.cs">
       <DependentUpon>AuthorInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Project\IComponentOwner.cs" />
     <Compile Include="Entities\Project\ISaveable.cs" />
     <Compile Include="Entities\Representations\Properties\Integer.cs" />
     <Compile Include="Entities\Representations\Properties\Raw.cs" />
+    <Compile Include="Entities\Representations\Views\ComponentSelector.xaml.cs">
+      <DependentUpon>ComponentSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\TrimConverter.cs" />
     <Compile Include="Views\GitHistory.xaml.cs">
       <DependentUpon>GitHistory.xaml</DependentUpon>
@@ -210,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Entities\Representations\Views\ArrayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entities\Representations\Views\ComponentSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

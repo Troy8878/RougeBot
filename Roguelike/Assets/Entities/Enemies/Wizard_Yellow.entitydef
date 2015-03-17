@@ -32,6 +32,17 @@
     "stationary": false,
     "move_skip": 2
   },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "Idle"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "params": {
+      "uwot": "m8"
+    }
+  },
   "ChildHierarchy": {
     "children": [
       {

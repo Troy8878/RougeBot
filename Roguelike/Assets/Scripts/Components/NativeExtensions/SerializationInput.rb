@@ -92,3 +92,8 @@ class PositionComponent < ComponentBase
     p.enum   :mode,       required: true, options: ["jump", "linear", "exponential"]
   end
 end
+
+class AiComponent < ComponentBase
+  serialized_input do |p|
+  end
+end

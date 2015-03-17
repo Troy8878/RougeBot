@@ -833,6 +833,36 @@
           "locked": true,
           "default": "ManualCamera"
         }
+      },
+      {
+        "property": "fov",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 45
+        }
+      },
+      {
+        "property": "near",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0.01
+        }
+      },
+      {
+        "property": "far",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 100
+        }
       }
     ],
     "name": "CameraComponent"

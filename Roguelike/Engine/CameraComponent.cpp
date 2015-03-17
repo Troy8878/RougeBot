@@ -112,16 +112,20 @@ Component *CameraComponentFactory::CreateObject(void *memory, component_factory_
   auto copyit = data.find("copy");
   if (copyit != data.end())
   {
-    auto copyset = RenderGroup::Instance.GetSet(copyit->second.as_string());
+    const auto &copyname = copyit->second.as_string();
+    auto copyset = RenderGroup::Instance.GetSet(copyname);
 
-    auto icam = copyset->RenderCamera;
-    auto multicam = reinterpret_cast<MultiCam *>(
-      reinterpret_cast<byte *>(icam) +
-      (reinterpret_cast<byte *>(&camera) -
-        reinterpret_cast<byte *>(camera.Base))
-    );
+    if (copyset)
+    {
+      auto icam = copyset->RenderCamera;
+      auto multicam = reinterpret_cast<MultiCam *>(
+        reinterpret_cast<byte *>(icam) +
+        (reinterpret_cast<byte *>(&camera) -
+          reinterpret_cast<byte *>(camera.Base))
+      );
 
-    return new(memory) CameraComponent(target_name, layer, multicam);
+      return new(memory) CameraComponent(target_name, layer, multicam);
+    }
   }
 
   auto type = map_fetch(data, "type", "ManualCamera").as_string();

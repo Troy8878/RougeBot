@@ -44,6 +44,9 @@ class CameraComponent < ComponentBase
     p.integer :layer
     p.string  :copy, semantics: :render_target
     p.string  :type, default: "ManualCamera", locked: true # This is the One True Camera™
+    p.float   :fov, default: 45
+    p.float   :near, default: 0.01
+    p.float   :far, default: 100
   end
 end
 

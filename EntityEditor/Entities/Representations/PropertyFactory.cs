@@ -155,7 +155,7 @@ namespace EntityEditor.Entities.Representations
                     var color = split[0].Trim().NamedColor();
                     if (split.Length > 1)
                         color.ScA = float.Parse(split[1].Trim());
-                    value = new JArray(color.ScR, color.ScG, color.ScB, color.ScA);
+                    value = new JArray(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
                 }
             }
 

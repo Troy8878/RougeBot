@@ -1,77 +1,160 @@
 {
   "name": "Help",
+  "components": {},
   "entities": [
     {
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0, 0, 0],
-          "position": [0, 0, -10]
+          "position": [
+            0.0,
+            0.0,
+            -10.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       },
       "children": [
         {
           "name": "WorldLayer",
           "components": {
-            "TransformComponent": {},
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
             "CameraComponent": {
               "target_name": "WorldLayer",
               "layer": 1,
-              "fov": 45,
+              "copy": "",
+              "type": "ManualCamera",
+              "fov": 45.0,
               "near": 0.01,
-              "far": 100
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "TranslucentLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "TranslucentLayer",
-              "layer": 2
+              "layer": 2,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUDLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "HUDLayer",
-              "layer": 5000
+              "layer": 5000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "ConsoleLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "ConsoleLayer",
-              "layer": 9000
+              "layer": 9000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.3, 0.3, 0.3, 1],
-              "position": [0, 0, 1]
+              "position": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                0.3,
+                0.3,
+                0.3
+              ]
             }
           },
           "children": [
             {
               "name": "Console",
+              "components": {
+                "TransformComponent": {},
+                "ChildHierarchy": {}
+              },
+              "children": [],
               "archetype": "HUD/Console/Console"
             },
             {
               "name": "LeftColumn",
               "components": {
                 "TransformComponent": {
-                  "position": [-1.33, 1, 0],
-                  "scale": [0.2, 0.2, 0.2]
+                  "position": [
+                    -1.33,
+                    1.0,
+                    0.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    0.2,
+                    0.2,
+                    0.2
+                  ]
                 }
               },
               "children": [
@@ -79,59 +162,132 @@
                   "name": "Back",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, 0.1, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        0.0,
+                        0.1,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "ButtonHelperComponent": {
                       "render_target": "HUDLayer",
-                      "width": 1,
-                      "image": "MenuPrerender/Back.png"
+                      "width": 1.0,
+                      "bg_color": "White, 0.6",
+                      "bg_hover": "White, 0.51",
+                      "text_scale": 48.0,
+                      "image": "MenuPrerender/Back.png",
+                      "text_color": "White",
+                      "text_alt_color": "",
+                      "font": "",
+                      "text": "",
+                      "text_align": "center"
                     },
                     "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {
                       "bindings": {
                         "button_clicked": "Game.switch_level 'MainMenu'",
-                        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'",
+                        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'"
                       }
                     }
                   },
-                },
-              ]
+                  "children": [],
+                  "archetype": "NoArchetype"
+                }
+              ],
+              "archetype": "NoArchetype"
             },
             {
               "name": "Help",
               "components": {
                 "TransformComponent": {
-                  "position": [0, 0, 0],
-                  "scale": [2.666666666666666, 2, 1]
+                  "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    2.6666666666666661,
+                    2.0,
+                    1.0
+                  ]
                 },
                 "TextureComponent": {
-                  "textures": ["HowTo/HowTo1.png"]
+                  "textures": [
+                    "HowTo/HowTo1.png"
+                  ]
                 },
                 "SpriteComponent": {
-                  "render_target": "HUDLayer"
+                  "render_target": "HUDLayer",
+                  "shader": "",
+                  "tint": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
                 }
-              }
+              },
+              "children": [],
+              "archetype": "NoArchetype"
             },
             {
               "name": "BG",
               "components": {
                 "TransformComponent": {
-                  "position": [0, 0, 1],
-                  "scale": [10, 10, 1]
+                  "position": [
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    10.0,
+                    10.0,
+                    1.0
+                  ]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/NULL"]
+                  "textures": [
+                    "SPECIAL/NULL"
+                  ]
                 },
                 "SpriteComponent": {
                   "render_target": "WorldLayer",
-                  "tint": "CornflowerBlue, 0.6"
+                  "shader": "",
+                  "tint": [
+                    0.391572505235672,
+                    0.58407843112945557,
+                    0.9301108717918396,
+                    0.60000002384185791
+                  ]
                 }
-              }
+              },
+              "children": [],
+              "archetype": "NoArchetype"
             }
-          ]
+          ],
+          "archetype": "NoArchetype"
         }
-      ]
+      ],
+      "archetype": "NoArchetype"
     }
   ]
 }

@@ -40,8 +40,8 @@
                 <DataTemplate>
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Name}" FontSize="26" />
                             <Button Click="RemoveComponent" Margin="5">-</Button>
+                            <TextBlock Text="{Binding Path=Name}" FontSize="26" />
                         </StackPanel>
                         <representations:ComponentView DataContext="{Binding}" />
                     </StackPanel>

@@ -22,7 +22,7 @@ namespace EntityEditor.Entities.Project
 
             foreach (var file in new DirectoryInfo(leveldir).GetFiles())
             {
-                Levels.Add(new Level(file.Name, file.FullName));
+                Levels.Add(new Level(Path.GetFileNameWithoutExtension(file.Name), file.FullName));
             }
         }
 

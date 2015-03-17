@@ -17,7 +17,7 @@ namespace EntityEditor.Entities.Project
             var leveldef = JObject.Parse(System.IO.File.ReadAllText(file));
             leveldef["children"] = leveldef["entities"];
 
-            LevelRoot = new Entity(leveldef) {Name = Name};
+            LevelRoot = new Entity(leveldef) {Name = Name, Owner = this};
         }
         
         public string Name { get; set; }

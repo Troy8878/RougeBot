@@ -1,5 +1,5 @@
 {
-  "name": "MainMenu",
+  "name": "Options",
   "components": {
     "EvalOnEventComponent": {
       "bindings": {
@@ -12,73 +12,155 @@
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0, 0, 0],
-          "position": [0, 0, -10]
+          "position": [
+            0.0,
+            0.0,
+            -10.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       },
       "children": [
         {
           "name": "WorldLayer",
           "components": {
-            "TransformComponent": {},
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
             "CameraComponent": {
               "target_name": "WorldLayer",
               "layer": 1,
-              "fov": 45,
+              "copy": "",
+              "type": "ManualCamera",
+              "fov": 45.0,
               "near": 0.01,
-              "far": 100
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "TranslucentLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "TranslucentLayer",
-              "layer": 2
+              "layer": 2,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUDLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "HUDLayer",
-              "layer": 5000
+              "layer": 5000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "ConsoleLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "ConsoleLayer",
-              "layer": 9000
+              "layer": 9000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.3, 0.3, 0.3, 1],
-              "position": [0, 0, 1]
+              "position": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                0.3,
+                0.3,
+                0.3
+              ]
             }
           },
           "children": [
             {
               "name": "Console",
+              "components": {
+                "TransformComponent": {},
+                "ChildHierarchy": {}
+              },
+              "children": [],
               "archetype": "HUD/Console/Console"
             },
             {
               "name": "LeftColumn",
               "components": {
                 "TransformComponent": {
-                  "position": [-1.33, 1, 0],
-                  "scale": [0.2, 0.2, 0.2]
+                  "position": [
+                    -1.33,
+                    1.0,
+                    0.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    0.2,
+                    0.2,
+                    0.2
+                  ]
                 }
               },
               "children": [
@@ -86,33 +168,77 @@
                   "name": "Back",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, 0.1, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        0.0,
+                        0.1,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "ButtonHelperComponent": {
                       "render_target": "HUDLayer",
-                      "width": 1,
-                      "image": "MenuPrerender/Back.png"
+                      "width": 1.0,
+                      "bg_color": "White, 0.6",
+                      "bg_hover": "White, 0.51",
+                      "text_scale": 48.0,
+                      "image": "MenuPrerender/Back.png",
+                      "text_color": "White",
+                      "text_alt_color": "",
+                      "font": "",
+                      "text": "",
+                      "text_align": "center"
                     },
                     "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {
                       "bindings": {
-                        "button_clicked": "Game.switch_level 'MainMenu'",
+                        "button_clicked": "Game.switch_level 'MainMenu'"
                       }
                     }
                   },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 },
                 {
                   "name": "ResetDefaults",
                   "components": {
                     "TransformComponent": {
-                      "position": [3, 0.1, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        3.0,
+                        0.1,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "ButtonHelperComponent": {
                       "render_target": "HUDLayer",
+                      "width": 5.0,
+                      "bg_color": "White, 0.6",
+                      "bg_hover": "",
+                      "text_scale": 48.0,
+                      "image": "",
+                      "text_color": "White",
+                      "text_alt_color": "",
+                      "font": "",
                       "text": "Reset Defaults",
-                      "width": 5
+                      "text_align": "center"
                     },
                     "ButtonSoundsComponent": {},
                     "EvalOnEventComponent": {
@@ -120,71 +246,165 @@
                         "button_clicked": "coda!('Are you sure you want to reset all of your settings?') { Config.load_defaults; Config.save }"
                       }
                     }
-                  }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 },
                 {
                   "name": "Vsync",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, -1, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        0.0,
+                        -1.0,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "CheckboxHelperComponent": {
                       "render_target": "HUDLayer",
+                      "is_checked": false,
+                      "box_color": "#AFAFAFFF",
+                      "alt_color": "#007FCFFF",
+                      "text_color": "White",
+                      "text_width": 3.0,
+                      "text_scale": 48.0,
+                      "font": "",
                       "text": "Vsync",
                       "config_bind": "graphics_vsync"
                     }
-                  }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 },
                 {
                   "name": "Fullscreen",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, -2, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        0.0,
+                        -2.0,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "CheckboxHelperComponent": {
                       "render_target": "HUDLayer",
+                      "is_checked": false,
+                      "box_color": "#AFAFAFFF",
+                      "alt_color": "#007FCFFF",
+                      "text_color": "White",
+                      "text_width": 3.0,
+                      "text_scale": 48.0,
+                      "font": "",
                       "text": "Fullscreen",
                       "config_bind": "graphics_fullscreen"
                     }
-                  }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 },
                 {
                   "name": "EnableConsole",
                   "components": {
                     "TransformComponent": {
-                      "position": [0, -3, 0],
-                      "scale": [0.95, 0.95, 0.95]
+                      "position": [
+                        0.0,
+                        -3.0,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.95,
+                        0.95,
+                        0.95
+                      ]
                     },
                     "CheckboxHelperComponent": {
                       "render_target": "HUDLayer",
+                      "is_checked": false,
+                      "box_color": "#AFAFAFFF",
+                      "alt_color": "#007FCFFF",
+                      "text_color": "White",
+                      "text_width": 3.0,
+                      "text_scale": 48.0,
+                      "font": "",
                       "text": "Enable Console",
                       "config_bind": "console_enabled"
                     }
-                  }
-                },
-              ]
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
+                }
+              ],
+              "archetype": "NoArchetype"
             },
             {
               "name": "BG",
               "components": {
                 "TransformComponent": {
-                  "position": [0, 0, 2],
-                  "scale": [10, 10, 10]
+                  "position": [
+                    0.0,
+                    0.0,
+                    2.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    10.0,
+                    10.0,
+                    10.0
+                  ]
                 },
                 "TextureComponent": {
-                  "textures": ["SPECIAL/NULL"]
+                  "textures": [
+                    "SPECIAL/NULL"
+                  ]
                 },
                 "SpriteComponent": {
                   "render_target": "WorldLayer",
-                  "tint": "CornflowerBlue, 0.6"
+                  "shader": "",
+                  "tint": [
+                    0.39215686917304993,
+                    0.58431375026702881,
+                    0.929411768913269,
+                    0.60000002384185791
+                  ]
                 }
-              }
+              },
+              "children": [],
+              "archetype": "NoArchetype"
             }
-          ]
+          ],
+          "archetype": "NoArchetype"
         }
-      ]
+      ],
+      "archetype": "NoArchetype"
     }
   ]
 }

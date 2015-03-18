@@ -65,6 +65,9 @@ namespace EntityEditor.Entities.Project
             if (other == null)
                 return false;
 
+            if (Name != other.Name)
+                return false;
+
             if (Properties.Count != other.Properties.Count)
                 return false;
 

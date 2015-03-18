@@ -8,123 +8,314 @@
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0, 0, 0],
-          "position": [0, 0, -10]
+          "position": [
+            0.0,
+            0.0,
+            -10.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       },
       "children": [
         {
           "name": "WorldLayer",
           "components": {
-            "TransformComponent": {},
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
             "CameraComponent": {
               "target_name": "WorldLayer",
               "layer": 1,
-              "fov": 45,
+              "copy": "",
+              "type": "ManualCamera",
+              "fov": 45.0,
               "near": 0.01,
-              "far": 100
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "TranslucentLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "TranslucentLayer",
-              "layer": 2
+              "layer": 2,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUDLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "HUDLayer",
-              "layer": 5000
+              "layer": 5000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "ConsoleLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "ConsoleLayer",
-              "layer": 9000
+              "layer": 9000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.3, 0.3, 0.3, 1],
-              "position": [0, 0, 1]
+              "position": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                0.3,
+                0.3,
+                0.3
+              ]
             }
           },
           "children": [
             {
               "name": "Console",
+              "components": {
+                "TransformComponent": {},
+                "ChildHierarchy": {}
+              },
+              "children": [],
               "archetype": "HUD/Console/Console"
             },
             {
               "name": "MenuTitle",
+              "components": {
+                "TransformComponent": {},
+                "TextureComponent": {},
+                "SpriteComponent": {},
+                "TextComponent": {}
+              },
+              "children": [],
               "archetype": "Menu/Title"
             },
             {
               "name": "Spinbot",
+              "components": {
+                "TransformComponent": {},
+                "TextureComponent": {
+                  "textures": [
+                    "Player/Player0.png",
+                    "Player/Player1.png",
+                    "Player/Player2.png",
+                    "Player/Player3.png"
+                  ]
+                },
+                "SpriteComponent": {},
+                "SpinnyThingComponent": {},
+                "AnimatedComponent": {
+                  "paused": "",
+                  "frame_time": 0.1,
+                  "frame_range": [
+                    0.0,
+                    3.0
+                  ],
+                  "loops": true,
+                  "random_start": false
+                }
+              },
+              "children": [],
               "archetype": "Menu/Spinbot"
             },
             {
               "name": "MenuButtons",
               "components": {
                 "TransformComponent": {
-                  "position": [-1.2, 0.4, 0]
+                  "position": [
+                    -1.2,
+                    0.4,
+                    0.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
                 }
               },
               "children": [
                 {
                   "name": "Play",
+                  "components": {
+                    "TransformComponent": {},
+                    "TextureComponent": {},
+                    "SpriteComponent": {},
+                    "ButtonComponent": {},
+                    "EvalOnEventComponent": {},
+                    "ButtonSoundsComponent": {},
+                    "ChildHierarchy": {}
+                  },
+                  "children": [],
                   "archetype": "Menu/Play"
                 },
                 {
                   "name": "Options",
+                  "components": {
+                    "TransformComponent": {},
+                    "TextureComponent": {},
+                    "SpriteComponent": {},
+                    "ButtonComponent": {},
+                    "EvalOnEventComponent": {},
+                    "ButtonSoundsComponent": {},
+                    "ChildHierarchy": {}
+                  },
+                  "children": [],
                   "archetype": "Menu/Options"
                 },
                 {
                   "name": "Help",
+                  "components": {
+                    "TransformComponent": {},
+                    "TextureComponent": {},
+                    "SpriteComponent": {},
+                    "ButtonComponent": {},
+                    "EvalOnEventComponent": {},
+                    "ButtonSoundsComponent": {},
+                    "ChildHierarchy": {}
+                  },
+                  "children": [],
                   "archetype": "Menu/Help"
                 },
                 {
                   "name": "Quit",
+                  "components": {
+                    "TransformComponent": {},
+                    "TextureComponent": {},
+                    "SpriteComponent": {},
+                    "ButtonComponent": {},
+                    "EvalOnEventComponent": {},
+                    "ButtonSoundsComponent": {},
+                    "ChildHierarchy": {}
+                  },
+                  "children": [],
                   "archetype": "Menu/Quit"
                 },
                 {
                   "name": "Credits",
+                  "components": {
+                    "TransformComponent": {},
+                    "TextureComponent": {},
+                    "SpriteComponent": {},
+                    "ButtonComponent": {},
+                    "EvalOnEventComponent": {},
+                    "ButtonSoundsComponent": {},
+                    "ChildHierarchy": {}
+                  },
+                  "children": [],
                   "archetype": "Menu/Credits"
-                },
-              ]
+                }
+              ],
+              "archetype": "NoArchetype"
             },
             {
               "name": "BG",
               "components": {
                 "TransformComponent": {
-                  "position": [0, 0, 1],
-                  "scale": [6.5, 3.5, 1]
+                  "position": [
+                    0.0,
+                    0.0,
+                    1.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    6.5,
+                    3.5,
+                    1.0
+                  ]
                 },
                 "TextureComponent": {
-                  "textures": ["HUBWorldPrototype.png"]
+                  "textures": [
+                    "HUBWorldPrototype.png"
+                  ]
                 },
                 "SpriteComponent": {
-                  "render_target": "WorldLayer"
+                  "render_target": "WorldLayer",
+                  "shader": "",
+                  "tint": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
                 }
-              }
+              },
+              "children": [],
+              "archetype": "NoArchetype"
             }
-          ]
+          ],
+          "archetype": "NoArchetype"
         }
-      ]
+      ],
+      "archetype": "NoArchetype"
     }
   ]
 }

@@ -605,6 +605,42 @@
     "name": "Pancakification"
   },
   {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "strength",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0.3
+        }
+      },
+      {
+        "property": "length",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 0.5
+        }
+      },
+      {
+        "property": "shake_child",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": "CameraRoot"
+        }
+      }
+    ],
+    "name": "ScreenShakeComponent"
+  },
+  {
     "dependencies": [
       "CameraComponent"
     ],

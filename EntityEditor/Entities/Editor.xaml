@@ -55,6 +55,9 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Save" Click="SaveCurrent" />
             </MenuItem>
+            <MenuItem Header="_New">
+                <MenuItem Header="_Archetype" Click="NewArchetype" />
+            </MenuItem>
         </Menu>
 
         <Grid>

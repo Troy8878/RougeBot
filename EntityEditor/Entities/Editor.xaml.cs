@@ -61,5 +61,10 @@ namespace EntityEditor.Entities
                 item.Save();
             }
         }
+
+        private void NewArchetype(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Not yet");
+        }
     }
 }

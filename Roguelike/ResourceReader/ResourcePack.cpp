@@ -523,8 +523,11 @@ Resource *ResFallbackContainer::GetResource(const std::string &name)
   else
   {
     resource = new FileResource(folder / widen(name));
-    resource->GetData();
-    cache[name] = resource->data;
+    if (resource->Exists())
+    {
+      resource->GetData();
+      cache[name] = resource->data;
+    }
   }
   return resource;
 }

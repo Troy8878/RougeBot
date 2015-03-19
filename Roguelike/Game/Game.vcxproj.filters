@@ -23,6 +23,9 @@
     <Filter Include="Header Files\Other">
       <UniqueIdentifier>{373cc6fa-3b48-4c47-8646-c616cc78c0d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{39ca6f9b-ee37-46a4-915b-c4be599606cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\ShaderCommons.hlsli">
@@ -100,10 +103,19 @@
     <ClInclude Include="PositionComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Engine\Style Guide.txt" />
     <Text Include="Known Events.txt" />
     <Text Include="Component Info.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\EntityEditor\wizard0.ico" />
   </ItemGroup>
 </Project>

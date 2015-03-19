@@ -56,14 +56,14 @@ namespace EntityEditor
         private void ButtonPrefab(object sender, RoutedEventArgs e)
         {
             GitUnlocked = false;
-            new PrefabEditor.PrefabEditor {Owner = this}.Show();
+            new PrefabEditor.PrefabEditor().Show();
             GitUnlocked = true;
         }
 
         private void ButtonEntity(object sender, RoutedEventArgs e)
         {
             GitUnlocked = false;
-            new Editor {Owner = this}.Show();
+            new Editor().Show();
             GitUnlocked = true;
             GitView.Refresh();
         }

@@ -12,7 +12,7 @@
                    d:DataContext="{d:DesignInstance project:ProjectTree}"
                    Icon="/wizard0.png"
                    BorderBrush="{StaticResource AccentColorBrush}">
-    
+
     <mctrl:MetroWindow.Flyouts>
         <mctrl:FlyoutsControl>
             <mctrl:Flyout x:Name="ComponentFlyout" Position="Right" IsModal="True">
@@ -50,20 +50,29 @@
         </HierarchicalDataTemplate>
     </Window.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Save" Click="SaveCurrent" />
+            </MenuItem>
+        </Menu>
 
-        <TreeView x:Name="ProjectView" ItemsSource="{Binding Path=DisplayItems}"
-                  SelectedItemChanged="OnSelected" Width="350"
-                  ItemTemplate="{StaticResource OwnerTemplate}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}"
-                      HorizontalScrollBarVisibility="Auto" PanningMode="Both">
-            <ContentPresenter Content="{Binding}"
-                              ContentTemplateSelector="{StaticResource EditorViewSelector}" />
-        </ScrollViewer>
-    </Grid>
+
+            <TreeView x:Name="ProjectView" ItemsSource="{Binding Path=DisplayItems}"
+                      SelectedItemChanged="OnSelected" Width="350" Grid.Column="0"
+                      ItemTemplate="{StaticResource OwnerTemplate}" />
+
+            <ScrollViewer Grid.Column="1" DataContext="{Binding Path=DisplayedItem}"
+                          HorizontalScrollBarVisibility="Auto" PanningMode="Both">
+                <ContentPresenter Content="{Binding}"
+                                  ContentTemplateSelector="{StaticResource EditorViewSelector}" />
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
 </mctrl:MetroWindow>

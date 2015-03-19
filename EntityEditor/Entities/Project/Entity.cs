@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace EntityEditor.Entities.Project
 {
-    public class Entity : ITreeOwner, IComponentOwner, IEquatable<Entity>, IEquatable<Archetype>,
+    public class Entity : ITreeOwner, ISaveable, IComponentOwner, IEquatable<Entity>, IEquatable<Archetype>,
         IEquatable<IList<Component>>
     {
         public Entity(JObject definition)
@@ -181,6 +181,15 @@ namespace EntityEditor.Entities.Project
             }
 
             return data;
+        }
+
+        public void Save()
+        {
+            var parent = Owner as ISaveable;
+            if (parent != null)
+            {
+                parent.Save();
+            }
         }
     }
 }

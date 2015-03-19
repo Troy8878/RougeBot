@@ -52,5 +52,14 @@ namespace EntityEditor.Entities
                 Project.DisplayedItem = value;
 
         }
+
+        private void SaveCurrent(object sender, RoutedEventArgs e)
+        {
+            var item = Project.DisplayedItem as ISaveable;
+            if (item != null)
+            {
+                item.Save();
+            }
+        }
     }
 }

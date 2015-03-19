@@ -48,7 +48,7 @@ void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
   }
   else
   {
-    result.action = AIResult::Nil;
+    IdleBehaviour::ApplyBehaviour(world, params);
   }
 }
 
@@ -56,6 +56,8 @@ void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 
 void AIRoaming::Prepare()
 {
+  IdleBehaviour::Prepare();
+
   // Get the current position
   static mrb_sym get_position = mrb_intern_lit(*mrb_inst, "position");
 

@@ -157,7 +157,6 @@ class PlayerControllerComponent < ComponentBase
   def yield_to_enemies
     seq = self.owner.action_sequence :delay_logic
 
-
     if enemies_nearby?
       @logic_cooldown += 0.1
       seq.delay(0.1)
@@ -168,6 +167,7 @@ class PlayerControllerComponent < ComponentBase
     seq.delay(0) # ensure at _minimum_ 2 frames go by
     seq.once do
       if @logic_initialized
+        AISystem.instance.update_snapshot
         Event.raise_event :logic_update, self.owner
       end
     end

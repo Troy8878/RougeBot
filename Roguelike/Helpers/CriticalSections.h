@@ -182,15 +182,15 @@ public:
 
   rwlock &operator=(const T &copy)
   {
-    guard g(*this);
-    obj = copy;
+    auto lock = write();
+    *lock = copy;
     return *this;
   }
 
   rwlock &operator=(T &&move)
   {
-    guard g(*this);
-    obj = std::move(move);
+    auto lock = write();
+    *lock = std::move(move);
     return *this;
   }
 
@@ -236,12 +236,12 @@ public:
 
     T *operator->()
     {
-      return objptr();
+      return read_guard::objptr();
     }
 
     T &operator*()
     {
-      return *objptr();
+      return *read_guard::objptr();
     }
   };
 

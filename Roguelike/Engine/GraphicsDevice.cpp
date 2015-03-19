@@ -11,10 +11,7 @@
 #include "Engine\Game.h"
 #include "Input.h"
 
-// Testing stuff, remove later
-#include "Level.h"
-#include "SpriteComponent.h"
-#include <mmintrin.h>
+#include "Game/resource.h"
 
 // ----------------------------------------------------------------------------
 
@@ -116,6 +113,7 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
   wndc.lpszClassName = className.c_str();
   wndc.hbrBackground = GetSysColorBrush(COLOR_BACKGROUND);
   wndc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+  wndc.hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
   RegisterClassEx(&wndc);
 
 #pragma region Fix the width and height for the client rect

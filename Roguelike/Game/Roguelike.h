@@ -204,6 +204,7 @@ struct fps_item
 
 inline void Roguelike::UpdateTitleFPS(float dt)
 {
+#ifdef SHOW_FPS_TITLE
   if (dt > 0.0001)
   {
     const int update_res = 20;
@@ -230,6 +231,9 @@ inline void Roguelike::UpdateTitleFPS(float dt)
       SetWindowText(this->_graphicsDevice->Window, title.str().c_str());
     }
   }
+#else
+  (dt);
+#endif
 }
 
 // ----------------------------------------------------------------------------

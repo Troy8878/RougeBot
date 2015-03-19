@@ -224,6 +224,7 @@
     <ClInclude Include="MapComponent.h" />
     <ClInclude Include="PositionComponent.h" />
     <ClInclude Include="PositionDisplayComponent.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Roguelike.h" />
     <ClInclude Include="Voodoo.h" />
   </ItemGroup>
@@ -231,6 +232,12 @@
     <Text Include="..\Engine\Style Guide.txt" />
     <Text Include="Component Info.txt" />
     <Text Include="Known Events.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\EntityEditor\wizard0.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

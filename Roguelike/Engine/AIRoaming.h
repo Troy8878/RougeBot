@@ -11,8 +11,9 @@
 #pragma once
 
 #include "AIBehaviour.h"
+#include "IdleBehaviour.h"
 
-class AIRoaming final : public AIBehaviour
+class AIRoaming final : public IdleBehaviour
 {
 public:
   void ApplyBehaviour(const WorldSnapshot &world, json::value params) override;

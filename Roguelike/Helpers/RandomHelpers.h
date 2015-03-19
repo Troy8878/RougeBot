@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <functional>
 #include <chrono>
+#include <random>
 #include <limits>
 #include "json/json.h"
 #include "mruby/include/mruby.h"
@@ -843,8 +844,8 @@ size_t _lap_count = 0;
 template <typename T>
 class option
 {
-  T data;
   bool set;
+  T data;
 
   public:
   option()
@@ -853,22 +854,49 @@ class option
   }
 
   option(const T &t)
-  : set(true)
+  : set(true), data(t)
   {
-    data = t;
-  }
-
-  option(T &&t)
-  : set(true)
-  {
-    data = std::move(t);
   }
 
   bool is_set() const { return set; }
   const T &get() const { assert(set); return *reinterpret_cast<const T *>(&data); }
   T &get() { assert(set); return *reinterpret_cast<T *>(&data); }
+  
+  void assign(T &place) { if (set) { place = data; } }
+  template <typename U>
+  void assign(U &place) { if (set) { place = static_cast<U>(data); } }
+  template <typename U, typename Func>
+  void map(Func &&f) { if (set) { return f(data); } }
+};
 
+// ----------------------------------------------------------------------------
 
+template <typename T>
+class option_ref
+{
+  bool set;
+  T *data;
+
+  public:
+  option_ref()
+  : set(false), data(nullptr)
+  {
+  }
+
+  option_ref(T &t)
+  : set(true), data(&t)
+  {
+  }
+
+  bool is_set() const { return set; }
+  const T &get() const { assert(set); return *data; }
+  T &get() { assert(set); return *data; }
+
+  void assign(T &place) { if (set) { place = *data; } }
+  template <typename U>
+  void assign(U &place) { if (set) { place = static_cast<U>(*data); } }
+  template <typename U, typename Func>
+  void map(Func &&f) { if (set) { return f(data); } }
 };
 
 // ----------------------------------------------------------------------------

@@ -130,8 +130,9 @@ AIDecisionRef AISystem::QueueBehavior(AIFactory& factory, json::value params,
 
 void AISystem::UpdateSnapshot()
 {
+  static size_t turns = 0;
   auto snapshot = this->snapshot.write();
-  *snapshot = WorldSnapshot();
+  *snapshot = WorldSnapshot(turns++);
 }
 
 // ----------------------------------------------------------------------------
@@ -211,11 +212,12 @@ static mrb_value mrb_aisys_update_snapshot(mrb_state *mrb, mrb_value self)
 
 #include "AIDerp.h"
 #include "IdleBehaviour.h"
+#include "AIRoaming.h"
 
 void AIFactory::RegisterDefaultFactories()
 {
   Register("Idle", new DefaultAIFactory<IdleBehaviour>);
-
+  Register("Roaming", new DefaultAIFactory<AIRoaming>);
   Register("Derp", new DefaultAIFactory<AIDerp>);
 }
 

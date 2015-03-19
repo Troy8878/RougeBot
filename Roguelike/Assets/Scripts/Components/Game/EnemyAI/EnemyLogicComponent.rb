@@ -16,6 +16,7 @@ class EnemyLogicComponent < ComponentBase
     p.dependency "AttackComponent"
     p.bool    :stationary, default: false
     p.integer :move_skip
+    p.bool    :new_system, default: false
   end
 
   def initialize(data)
@@ -26,6 +27,7 @@ class EnemyLogicComponent < ComponentBase
 
     @stationary = !!data["stationary"]
     @move_skip = data.fetch("move_skip", 1).to_i
+    @new_system = data.fetch("new_system", false)
     @skip_number = 0
 
     register_event :logic_update, :on_update
@@ -49,6 +51,7 @@ class EnemyLogicComponent < ComponentBase
 
   def on_update(player)
     return if @stationary
+    return if @new_system
 
     position_player = player.position_component.position
     distance = @position.distance position_player

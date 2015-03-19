@@ -9,7 +9,7 @@
 
 #include "AIBehaviour.h"
 
-class IdleBehaviour final : public AIBehaviour
+class IdleBehaviour : public AIBehaviour
 {
 public:
   virtual void ApplyBehaviour(const WorldSnapshot &world, json::value params) override; // Called on AI thread, do not access engine

@@ -11,21 +11,38 @@
 #include "AIRoaming.h"
 #include "RubyWrappers.h"
 #include "WorldSnapshot.h"
+#include <json/jquery.h>
 
 
 // ----------------------------------------------------------------------------
 
 void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 {
+  double aggro_range = 3.5;
+  double attack_range = 1.1;
+  bool attack_ticktock = false;
+
+  query(params).at("aggro_range").is_number().assign(aggro_range);
+  query(params).at("attack_range").is_number().assign(attack_range);
+  query(params).at("attack_ticktock").is_bool().assign(attack_ticktock);
+
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 
-  if (distance < 1.1)
+  if (distance < attack_range)
   {
-    result.action = AIResult::Attack;
-    result.x = tx;
-    result.y = ty;
+    if (world.TurnNumber() % 2 || !attack_ticktock)
+    {
+      result.action = AIResult::Attack;
+      result.x = tx;
+      result.y = ty;
+    }
+    else
+    {
+      result.action = AIResult::Custom;
+      result.custom = R"( {"action":"colorize", "color": "Red", "turns": 1} )";
+    }
   }
-  else if (distance <20)
+  else if (distance < aggro_range)
   {
     MoveTowards(world);
   }

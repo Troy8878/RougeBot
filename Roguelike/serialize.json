@@ -37,6 +37,16 @@
         }
       },
       {
+        "property": "auto_exec",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      },
+      {
         "property": "params",
         "usage": {
           "type": "raw",
@@ -294,6 +304,16 @@
           "semantics": null,
           "locked": false,
           "default": 0
+        }
+      },
+      {
+        "property": "new_system",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
         }
       }
     ],

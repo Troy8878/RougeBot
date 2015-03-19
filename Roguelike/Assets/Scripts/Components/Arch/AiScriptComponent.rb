@@ -20,6 +20,7 @@ class AiScriptComponent < ComponentBase
     p.array   :brains, contained: :string, default: []
     p.integer :brain_index, default: 0
     p.string  :target, semantics: :entity, default: "Player"
+    p.bool    :auto_exec, default: false
     p.raw     :params, default: {}
   end
 
@@ -37,11 +38,19 @@ class AiScriptComponent < ComponentBase
 
     register_event :ai_complete, :ai_complete
     register_event :update, :first_update
+
+    if data.fetch("auto_exec", false)
+      register_event :logic_update, :logic_update
+    end
   end
 
   def first_update(e)
     actor_sub_init
     remove_event :update
+  end
+
+  def logic_update(e)
+    tick
   end
 
   def tick
@@ -66,8 +75,17 @@ class AiScriptComponent < ComponentBase
 
     case result["result"]
     when "move"
+
       self.owner.local_event :actor_move, [result["x"], result["y"]]
-    #when "attack"
+
+    when "attack"
+
+      floor = current_floor
+      tile = floor[result["y"]][result["x"]]
+      if tile.actor
+        self.owner.attack_component.do_attack tile.actor
+      end
+
     else
       message = nil
 
@@ -76,6 +94,8 @@ class AiScriptComponent < ComponentBase
         case result["action"]
         when "message"
           message = result["text"]
+        when "colorize"
+          #TODO: Colorize for a specific number of turns
         end
 
       rescue

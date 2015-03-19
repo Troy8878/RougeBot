@@ -12,7 +12,7 @@
 class WorldSnapshot
 {
 public:
-  WorldSnapshot();
+  WorldSnapshot(size_t turn = 0);
 
   enum class TileType
   {
@@ -60,9 +60,13 @@ public:
   const Tile &GetTile(mrb_int x, mrb_int y) const;
   BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const;
 
+  size_t TurnNumber() const { return turn_number; }
+
 private:
   Tile *map;
 
   mrb_int width;
   mrb_int height;
+
+  size_t turn_number;
 };

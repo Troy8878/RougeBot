@@ -156,3 +156,7 @@ def dump_serialization_maps
   end
 end
 
+def dsmap
+  dump_serialization_maps
+end
+

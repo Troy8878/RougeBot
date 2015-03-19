@@ -43,7 +43,8 @@ static WorldSnapshot::Tile::ActorType GetActorType(mrb_state *mrb, mrb_value act
 
 // ----------------------------------------------------------------------------
 
-WorldSnapshot::WorldSnapshot()
+WorldSnapshot::WorldSnapshot(size_t turn)
+  : turn_number(turn)
 {
   if (mrb_inst == nullptr)
     return;

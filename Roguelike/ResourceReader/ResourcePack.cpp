@@ -32,19 +32,20 @@ typedef MemMapping<ResHeader> MemResourceMapping;
 // ----------------------------------------------------------------------------
 
 struct ResMemoryContainer;
+struct ResFallbackContainer;
 
 struct ResPackImpl
 {
-  ResPackImpl(const fs::wpath& path, const fs::wpath& fallback);
+  ResPackImpl(const fs::wpath &path, const fs::wpath &fallback);
   ~ResPackImpl();
 
   void mapContainerHeads();
 
-  ResourceContainer *getContainer(const std::string& name);
-  
-  bool memoryContainerExists(const std::string& name);
-  ResourceContainer *getMemoryContainer(const std::string& name);
-  ResourceContainer *getFallbackContainer(const std::wstring& name);
+  ResourceContainer *getContainer(const std::string &name);
+
+  bool memoryContainerExists(const std::string &name);
+  ResourceContainer *getMemoryContainer(const std::string &name);
+  ResourceContainer *getFallbackContainer(const std::wstring &name);
 
   FileMapping *packmap = nullptr;
   fs::wpath fallback;
@@ -53,6 +54,7 @@ struct ResPackImpl
   std::vector<MemContainerMapping> memoryContainers;
 
   std::unordered_map<std::string, ResMemoryContainer *> memContainers;
+  std::unordered_map<std::wstring, ResFallbackContainer *> fallbackContainers;
 
   NO_COPY_CONSTRUCTOR(ResPackImpl);
   NO_ASSIGNMENT_OPERATOR(ResPackImpl);
@@ -62,8 +64,8 @@ struct ResPackImpl
 
 struct ResMemoryContainer : public ResourceContainer
 {
-  ResMemoryContainer(const MemContainerMapping& mapping, 
-                     FileMapping& file, const fs::wpath& fallback);
+  ResMemoryContainer(const MemContainerMapping &mapping,
+                     FileMapping &file, const fs::wpath &fallback);
 
   void Release() override;
 
@@ -71,19 +73,20 @@ struct ResMemoryContainer : public ResourceContainer
 
   UINT GetResourceCount() override;
   const char *GetContainerName() override;
-  Resource *GetResource(const std::string& name) override;
+  Resource *GetResource(const std::string &name) override;
   std::vector<std::string> GetResources() override;
 
-  bool memoryResourceExists(const std::string& name);
-  bool fileResourceExists(const std::wstring& name);
-  Resource *getMemoryResource(const std::string& name);
-  Resource *getFileResource(const std::wstring& name);
+  bool memoryResourceExists(const std::string &name);
+  bool fileResourceExists(const std::wstring &name);
+  Resource *getMemoryResource(const std::string &name);
+  Resource *getFileResource(const std::wstring &name);
 
   MemContainerMapping mapping;
-  FileMapping& file;
+  FileMapping &file;
   fs::wpath fallback;
 
   std::vector<MemResourceMapping> memoryResources;
+  std::unordered_map<std::string, shared_array<byte>> cache;
 
   NO_COPY_CONSTRUCTOR(ResMemoryContainer);
   NO_ASSIGNMENT_OPERATOR(ResMemoryContainer);
@@ -93,7 +96,7 @@ struct ResMemoryContainer : public ResourceContainer
 
 struct MemoryResource : public Resource
 {
-  MemoryResource(const MemResourceMapping& mapping, FileMapping& file);
+  MemoryResource(const MemResourceMapping &mapping, FileMapping &file);
 
   void Release() override;
 
@@ -105,7 +108,7 @@ struct MemoryResource : public Resource
   TempFile GetTempFile() override;
   std::chrono::system_clock::time_point GetModified() override;
 
-  std::istream& GetStream() override;
+  std::istream &GetStream() override;
   void ResetStream() override;
 
   MemResourceMapping mapping;
@@ -122,18 +125,20 @@ struct MemoryResource : public Resource
 
 struct ResFallbackContainer : public ResourceContainer
 {
-  ResFallbackContainer(const fs::wpath& folder, const std::wstring& name);
+  ResFallbackContainer(const fs::wpath &folder, const std::wstring &name);
 
   void Release() override;
 
   UINT GetResourceCount() override;
   const char *GetContainerName() override;
-  Resource *GetResource(const std::string& name) override;
+  Resource *GetResource(const std::string &name) override;
   std::vector<std::string> GetResources() override;
 
   std::string name;
   fs::wpath folder;
   int itemCount = -1;
+
+  std::unordered_map<std::string, shared_array<byte>> cache;
 
   NO_COPY_CONSTRUCTOR(ResFallbackContainer);
   NO_ASSIGNMENT_OPERATOR(ResFallbackContainer);
@@ -143,7 +148,8 @@ struct ResFallbackContainer : public ResourceContainer
 
 struct FileResource : public Resource
 {
-  FileResource(const fs::wpath& path);
+  explicit FileResource(const fs::wpath &path);
+  explicit FileResource(const fs::wpath &path, shared_array<byte> cached);
 
   void Release() override;
 
@@ -155,7 +161,7 @@ struct FileResource : public Resource
   TempFile GetTempFile() override;
   std::chrono::system_clock::time_point GetModified() override;
 
-  std::istream& GetStream() override;
+  std::istream &GetStream() override;
   void ResetStream() override;
 
   fs::wpath path;
@@ -169,26 +175,26 @@ struct FileResource : public Resource
 
 // ----------------------------------------------------------------------------
 
-static void GetFolderSubResources(std::vector<std::string>& list, 
-                                  const fs::wpath& path, const std::wstring& prefix);
+static void GetFolderSubResources(std::vector<std::string> &list,
+                                  const fs::wpath &path, const std::wstring &prefix);
 
 // ----------------------------------------------------------------------------
 
-ResourcePack::ResourcePack(const fs::wpath& path, const fs::wpath& fallbackFolder)
+ResourcePack::ResourcePack(const fs::wpath &path, const fs::wpath &fallbackFolder)
   : impl(std::make_shared<ResPackImpl>(path, fallbackFolder))
 {
 }
 
 // ----------------------------------------------------------------------------
 
-ResourceContainer *ResourcePack::operator[](const std::string& containerName)
+ResourceContainer *ResourcePack::operator[](const std::string &containerName)
 {
   return impl->getContainer(containerName);
 }
 
 // ----------------------------------------------------------------------------
 
-ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
+ResPackImpl::ResPackImpl(const fs::wpath &path, const fs::wpath &fallback)
   : fallback(fallback)
 {
   try
@@ -197,13 +203,13 @@ ResPackImpl::ResPackImpl(const fs::wpath& path, const fs::wpath& fallback)
     mapContainerHeads();
   }
 
-  catch (std::exception& e)
+  catch (std::exception &e)
 
   {
     auto prevfg = console::fg_color();
     std::cerr << console::fg::yellow << "[WARN] "
-              << "Resource pack could not be loaded. "
-              << "Reading files in fallback mode" << std::endl;
+      << "Resource pack could not be loaded. "
+      << "Reading files in fallback mode" << std::endl;
     std::cerr << "  " << e.what() << std::endl << prevfg;
 
     // run in fallback mode, only reading from
@@ -235,7 +241,7 @@ void ResPackImpl::mapContainerHeads()
     mapping.map_offset = offset + sizeof(ResContainerHeader);
     mapping.header = packmap->readStruct<ResContainerHeader>(offset);
     mapping.header.container_name[sizeof(mapping.header.container_name) - 1] = 0;
-    
+
     offset += sizeof(ResContainerHeader);
     offset += mapping.header.total_size;
 
@@ -245,9 +251,9 @@ void ResPackImpl::mapContainerHeads()
 
 // ----------------------------------------------------------------------------
 
-bool ResPackImpl::memoryContainerExists(const std::string& name)
+bool ResPackImpl::memoryContainerExists(const std::string &name)
 {
-  for (auto& containermap : memoryContainers)
+  for (auto &containermap : memoryContainers)
   {
     if (strcmpi(containermap.header.container_name, name.c_str()) == 0)
     {
@@ -260,7 +266,7 @@ bool ResPackImpl::memoryContainerExists(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-ResourceContainer *ResPackImpl::getContainer(const std::string& name)
+ResourceContainer *ResPackImpl::getContainer(const std::string &name)
 {
   if (memoryContainerExists(name))
   {
@@ -274,14 +280,14 @@ ResourceContainer *ResPackImpl::getContainer(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-ResourceContainer *ResPackImpl::getMemoryContainer(const std::string& name)
+ResourceContainer *ResPackImpl::getMemoryContainer(const std::string &name)
 {
   auto it = memContainers.find(name);
   if (it != memContainers.end())
     return it->second;
 
   MemContainerMapping *mapping = nullptr;
-  for (auto& containermap : memoryContainers)
+  for (auto &containermap : memoryContainers)
   {
     if (strcmpi(containermap.header.container_name, name.c_str()) == 0)
     {
@@ -294,11 +300,11 @@ ResourceContainer *ResPackImpl::getMemoryContainer(const std::string& name)
     return nullptr;
 
   auto *container = new ResMemoryContainer
-  {
-    *mapping, 
-    *packmap, 
-    fallback / widen(name)
-  };
+    {
+      *mapping,
+      *packmap,
+      fallback / widen(name)
+    };
   memContainers[name] = container;
 
   return container;
@@ -306,15 +312,21 @@ ResourceContainer *ResPackImpl::getMemoryContainer(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-ResourceContainer *ResPackImpl::getFallbackContainer(const std::wstring& name)
+ResourceContainer *ResPackImpl::getFallbackContainer(const std::wstring &name)
 {
-  return new ResFallbackContainer(fallback, name);
+  auto cached = fallbackContainers.find(name);
+  if (cached != fallbackContainers.end())
+    return cached->second;
+
+  auto container = new ResFallbackContainer(fallback, name);
+  fallbackContainers[name] = container;
+  return container;
 }
 
 // ----------------------------------------------------------------------------
 
-ResMemoryContainer::ResMemoryContainer(const MemContainerMapping& mapping, 
-                                       FileMapping& file, const fs::wpath& fallback)
+ResMemoryContainer::ResMemoryContainer(const MemContainerMapping &mapping,
+                                       FileMapping &file, const fs::wpath &fallback)
   : mapping(mapping), file(file), fallback(fallback)
 {
   mapResources();
@@ -367,7 +379,7 @@ const char *ResMemoryContainer::GetContainerName()
 
 // ----------------------------------------------------------------------------
 
-Resource *ResMemoryContainer::GetResource(const std::string& name)
+Resource *ResMemoryContainer::GetResource(const std::string &name)
 {
   auto wname = widen(name);
 
@@ -392,14 +404,14 @@ std::vector<std::string> ResMemoryContainer::GetResources()
   std::vector<std::string> resources;
   GetFolderSubResources(resources, fallback, L"");
 
-  for (auto& mapping : memoryResources)
+  for (auto &mapping : memoryResources)
   {
     if (std::find_if(
-          resources.begin(), resources.end(), 
-          [&mapping](const std::string& res)
-          {
-            return _strcmpi(mapping.header.resource_name, res.c_str()) == 0;
-          }) == resources.end())
+      resources.begin(), resources.end(),
+      [&mapping](const std::string &res)
+      {
+        return _strcmpi(mapping.header.resource_name, res.c_str()) == 0;
+      }) == resources.end())
     {
       resources.push_back(mapping.header.resource_name);
     }
@@ -410,9 +422,9 @@ std::vector<std::string> ResMemoryContainer::GetResources()
 
 // ----------------------------------------------------------------------------
 
-bool ResMemoryContainer::memoryResourceExists(const std::string& name)
+bool ResMemoryContainer::memoryResourceExists(const std::string &name)
 {
-  for (auto& resmap : memoryResources)
+  for (auto &resmap : memoryResources)
   {
     if (strcmpi(resmap.header.resource_name, name.c_str()) == 0)
     {
@@ -425,16 +437,16 @@ bool ResMemoryContainer::memoryResourceExists(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-bool ResMemoryContainer::fileResourceExists(const std::wstring& name)
+bool ResMemoryContainer::fileResourceExists(const std::wstring &name)
 {
   return fs::exists(fallback / name);
 }
 
 // ----------------------------------------------------------------------------
 
-Resource *ResMemoryContainer::getMemoryResource(const std::string& name)
+Resource *ResMemoryContainer::getMemoryResource(const std::string &name)
 {
-  for (auto& resmap : memoryResources)
+  for (auto &resmap : memoryResources)
   {
     if (strcmpi(resmap.header.resource_name, name.c_str()) == 0)
       return new MemoryResource(resmap, file);
@@ -445,16 +457,16 @@ Resource *ResMemoryContainer::getMemoryResource(const std::string& name)
 
 // ----------------------------------------------------------------------------
 
-Resource *ResMemoryContainer::getFileResource(const std::wstring& name)
+Resource *ResMemoryContainer::getFileResource(const std::wstring &name)
 {
   return new FileResource(fallback / name);
 }
 
 // ----------------------------------------------------------------------------
 
-ResFallbackContainer::ResFallbackContainer(const fs::wpath& folder, 
-                                           const std::wstring& name)
-  : folder(folder / name), name(narrow(name))
+ResFallbackContainer::ResFallbackContainer(const fs::wpath &folder,
+                                           const std::wstring &name)
+  : name(narrow(name)), folder(folder / name)
 {
 }
 
@@ -462,7 +474,6 @@ ResFallbackContainer::ResFallbackContainer(const fs::wpath& folder,
 
 void ResFallbackContainer::Release()
 {
-  delete this;
 }
 
 // ----------------------------------------------------------------------------
@@ -485,9 +496,20 @@ const char *ResFallbackContainer::GetContainerName()
 
 // ----------------------------------------------------------------------------
 
-Resource *ResFallbackContainer::GetResource(const std::string& name)
+Resource *ResFallbackContainer::GetResource(const std::string &name)
 {
-  return new FileResource(folder / widen(name));
+  FileResource *resource;
+  auto cached = cache.find(name);
+  if (cached != cache.end())
+  {
+    resource = new FileResource(folder / widen(name), cached->second);
+  }
+  else
+  {
+    resource = new FileResource(folder / widen(name));
+    cache[name] = resource->data;
+  }
+  return resource;
 }
 
 // ----------------------------------------------------------------------------
@@ -501,8 +523,8 @@ std::vector<std::string> ResFallbackContainer::GetResources()
 
 // ----------------------------------------------------------------------------
 
-MemoryResource::MemoryResource(const MemResourceMapping& mapping, FileMapping& file)
-  : mapping(mapping), 
+MemoryResource::MemoryResource(const MemResourceMapping &mapping, FileMapping &file)
+  : mapping(mapping),
     view(file.mapView(mapping.map_offset, mapping.header.resource_size)),
     databuf{nullptr, 0},
     datastream{&databuf}
@@ -560,7 +582,7 @@ std::chrono::system_clock::time_point MemoryResource::GetModified()
 
 // ----------------------------------------------------------------------------
 
-std::istream& MemoryResource::GetStream()
+std::istream &MemoryResource::GetStream()
 {
   if (!streaminit)
   {
@@ -583,8 +605,13 @@ void MemoryResource::ResetStream()
 
 // ----------------------------------------------------------------------------
 
-FileResource::FileResource(const fs::wpath& path)
+FileResource::FileResource(const fs::wpath &path)
   : path(path)
+{
+}
+
+FileResource::FileResource(const fs::wpath &path, shared_array<byte> cached)
+  : path(path), loaded(true), data(cached)
 {
 }
 
@@ -645,7 +672,7 @@ std::chrono::system_clock::time_point FileResource::GetModified()
 
 // ----------------------------------------------------------------------------
 
-std::istream& FileResource::GetStream()
+std::istream &FileResource::GetStream()
 {
   if (!filestream.is_open())
     ResetStream();
@@ -665,8 +692,8 @@ void FileResource::ResetStream()
 
 // ----------------------------------------------------------------------------
 
-static void GetFolderSubResources(std::vector<std::string>& list, 
-                                  const fs::wpath& path, const std::wstring& prefix)
+static void GetFolderSubResources(std::vector<std::string> &list,
+                                  const fs::wpath &path, const std::wstring &prefix)
 {
   for (auto item : fs::directory_contents{path})
   {

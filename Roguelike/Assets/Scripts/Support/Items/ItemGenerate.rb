@@ -60,8 +60,8 @@ module ItemGenerate
 
       name = "Axe"
     else
-      data["damage"][0] = 7
-      data["damage"][1] = 11
+      data["damage"][0] = 9
+      data["damage"][1] = 13
       data["weaponType"] = Weapon::DAGGER_TYPE
 
       name = "Dagger"

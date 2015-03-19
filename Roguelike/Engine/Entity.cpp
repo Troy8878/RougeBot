@@ -466,6 +466,9 @@ Entity *Entity::FindEntity(const std::string &name)
 
 Entity *Entity::LocalFind(const std::string &name)
 {
+  if (name == ".")
+    return this;
+
   if (name == _name)
     return this;
 

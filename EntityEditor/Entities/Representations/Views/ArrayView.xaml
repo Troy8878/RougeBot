@@ -8,7 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance properties:Array}">
     <Grid>
-        <!-- TODO: Add & Remove buttons -->
         <StackPanel>
             <ItemsControl ItemsSource="{Binding Path=Items}">
                 <ItemsControl.ItemTemplate>

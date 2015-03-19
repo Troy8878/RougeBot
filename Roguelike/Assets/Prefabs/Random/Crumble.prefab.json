@@ -18,12 +18,12 @@
         "meta": ""
       },
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
       },
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -102,11 +102,11 @@
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
@@ -140,10 +140,6 @@
         "meta": ""
       },
       {
-        "id": 3,
-        "meta": ""
-      },
-      {
         "id": 0,
         "meta": ""
       },
@@ -152,7 +148,11 @@
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
         "meta": ""
       },
       {
@@ -170,15 +170,15 @@
     ],
     [
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:left].closed?"
       },
       {
         "id": 0,
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
@@ -198,29 +198,29 @@
         "meta": ""
       },
       {
-        "id": 3,
-        "meta": ""
-      },
-      {
         "id": 0,
         "meta": ""
       },
       {
         "id": 0,
         "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:right].closed?"
       }
     ],
     [
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:left].closed?"
       },
       {
         "id": 0,
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
@@ -240,16 +240,16 @@
         "meta": ""
       },
       {
-        "id": 3,
-        "meta": ""
-      },
-      {
         "id": 0,
         "meta": ""
       },
       {
         "id": 0,
         "meta": ""
+      },
+      {
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:right].closed?"
       }
     ],
     [
@@ -266,10 +266,6 @@
         "meta": ""
       },
       {
-        "id": 3,
-        "meta": ""
-      },
-      {
         "id": 0,
         "meta": ""
       },
@@ -278,7 +274,11 @@
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
+        "meta": ""
+      },
+      {
+        "id": 0,
         "meta": ""
       },
       {
@@ -312,11 +312,11 @@
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
-        "id": 3,
+        "id": 0,
         "meta": ""
       },
       {
@@ -396,12 +396,12 @@
         "meta": ""
       },
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:bottom].closed?"
       },
       {
-        "id": 0,
-        "meta": ""
+        "id": 1,
+        "meta": ":empty unless $ctx[:door][:bottom].closed?"
       },
       {
         "id": 1,

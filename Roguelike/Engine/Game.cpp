@@ -17,6 +17,7 @@
 #include "mruby/variable.h"
 #include "WorldSnapshot.h"
 #include <PropertyAPI/PropertyServer.h>
+#include "Loading.h"
 
 // ----------------------------------------------------------------------------
 
@@ -71,6 +72,9 @@ void Game::Run()
   ButtonManager::Instance.Initialize();
   SoundSystem.Initialize();
 
+  std::shared_ptr<AsyncLoadingScreen> loadingScreen;
+  std::thread *screenThread = nullptr;
+
   try
   {
     _graphicsDevice = GraphicsDevice::CreateGameWindow({_hInstance,{1280, 720}, _title});
@@ -102,11 +106,25 @@ void Game::Run()
       }
       performance.unlock_game.end_lap();
 #endif
-      
+
       performance.load_level.new_lap();
       if (!levelChangeContext.loaded)
       {
         // Load the level
+        if (_currentLevel && _currentLevel->Name != "Init")
+        {
+          if (!loadingScreen)
+          {
+            loadingScreen = std::make_shared<AsyncLoadingScreen>();
+          }
+
+          screenThread = new std::thread(
+            [loadingScreen]()
+            {
+              loadingScreen->Run();
+            });
+        }
+
         {
           performance::register_guard perf("Level Load");
 
@@ -149,12 +167,21 @@ void Game::Run()
         Event::Raise(msg);
       }
       performance.update.end_lap();
-      
+
+      if (screenThread)
+      {
+        Sleep(100);
+        SendMessage(GameDevice->GetContextWindow(), WM_NOTIFY, 0, 0);
+        screenThread->join();
+        screenThread = nullptr;
+
+        GameDevice->D2D.Invalidate();
+      }
+
       // Raise draw event (and draw the frame)
       performance.draw.new_lap();
       if (_graphicsDevice->BeginFrame())
       {
-
         using namespace Events;
         static EventId drawId("draw");
         EventMessage msg{drawId, nullptr, false};
@@ -169,14 +196,14 @@ void Game::Run()
 
         // Run the GC while drawing
         std::thread gc_thread
-        {
-          [&mrb, this]()
           {
-            performance.gc.new_lap();
-            mrb_full_gc(mrb);
-            performance.gc.end_lap();
-          }
-        };
+            [&mrb, this]()
+            {
+              performance.gc.new_lap();
+              mrb_full_gc(mrb);
+              performance.gc.end_lap();
+            }
+          };
 
         // Do the draw
         RenderGroup::Instance.Draw(msg);
@@ -196,10 +223,10 @@ void Game::Run()
         // Done :D
         _graphicsDevice->EndFrame();
         performance.draw.end_lap();
-        
+
         // Update
         _gameTime.Update();
-        
+
         performance.gc_join.new_lap();
         gc_thread.join();
         performance.gc_join.end_lap();
@@ -207,7 +234,7 @@ void Game::Run()
       else
       {
         performance.draw.end_lap();
-        
+
         // Update
         _gameTime.Update();
       }
@@ -245,7 +272,7 @@ void Game::Run()
     MessageBox(nullptr, message.c_str(), nullptr, MB_ICONERROR);
   }
 #else
-  catch(void *) // please don't throw these >.>
+  catch (void *) // please don't throw these >.>
   {
   }
 #endif
@@ -267,7 +294,7 @@ void Game::RestartLevel()
 
 // ----------------------------------------------------------------------------
 
-void Game::ChangeLevel(const std::string& name)
+void Game::ChangeLevel(const std::string &name)
 {
   levelChangeContext.name = name;
   levelChangeContext.loaded = false;
@@ -320,3 +347,4 @@ void Game::LevelEventProxy::Handle(Events::EventMessage &e)
 }
 
 // ----------------------------------------------------------------------------
+

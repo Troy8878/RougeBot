@@ -167,6 +167,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelDef.h" />
+    <ClInclude Include="Loading.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelBuilder.h" />
     <ClInclude Include="ParticleSystem.h" />
@@ -228,6 +229,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelDef.cpp" />
+    <ClCompile Include="Loading.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelBuilder.cpp" />
     <ClCompile Include="MrbActions.cpp" />

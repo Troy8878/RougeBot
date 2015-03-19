@@ -27,19 +27,19 @@ TextComponent::TextComponent()
 
 // ----------------------------------------------------------------------------
 
-void TextComponent::Initialize(Entity *owner, const std::string& name)
+void TextComponent::Initialize(Entity *owner, const std::string &name)
 {
   Component::Initialize(owner, name);
 
   drawing.textures = Owner->GetComponent<TextureComponent>("TextureComponent");
 
-  DEF_EVENT_ID(update);
-  Owner->AddEvent(this, update, &TextComponent::OnUpdate);
+  DEF_EVENT_ID(draw);
+  Owner->AddEvent(this, draw, &TextComponent::OnUpdate);
 }
 
 // ----------------------------------------------------------------------------
 
-const std::string& TextComponent::GetText(size_t index)
+const std::string &TextComponent::GetText(size_t index)
 {
   if (drawing.texts.size() <= index)
     drawing.texts.resize(index + 1);
@@ -48,8 +48,8 @@ const std::string& TextComponent::GetText(size_t index)
 }
 
 // ----------------------------------------------------------------------------
-  
-void TextComponent::SetText(size_t index, const std::string& text)
+
+void TextComponent::SetText(size_t index, const std::string &text)
 {
   if (drawing.texts.size() <= index)
     drawing.texts.resize(index + 1);
@@ -60,7 +60,7 @@ void TextComponent::SetText(size_t index, const std::string& text)
 
 // ----------------------------------------------------------------------------
 
-void TextComponent::AppendText(const std::string& text)
+void TextComponent::AppendText(const std::string &text)
 {
   drawing.texts.emplace_back(text);
   OnChanged();
@@ -76,15 +76,15 @@ void TextComponent::ClearText()
 
 // ----------------------------------------------------------------------------
 
-void TextComponent::PopulateTextureComponent(const D2D1_SIZE_F& size)
+void TextComponent::PopulateTextureComponent(const D2D1_SIZE_F &size)
 {
   drawing.populateSize = size;
   drawing.shouldPopulate = true;
 }
-  
+
 // ----------------------------------------------------------------------------
 
-void TextComponent::OnUpdate(Events::EventMessage&)
+void TextComponent::OnUpdate(Events::EventMessage &)
 {
   drawing.Validate();
 }
@@ -105,7 +105,7 @@ void TextComponent::DrawingResources::Validate()
   if (!textures)
     return;
 
-  auto& d2d = GetGame()->GameDevice->D2D;
+  auto &d2d = GetGame()->GameDevice->D2D;
 
   if (timestamp >= d2d.ResourceTimestamp)
     return;
@@ -127,7 +127,7 @@ void TextComponent::DrawingResources::Validate()
   bgBrush = scBrush;
 
   hr = d2d.WriteFactory->CreateTextFormat(
-    font.c_str(), 
+    font.c_str(),
     nullptr,
     DWRITE_FONT_WEIGHT_NORMAL,
     DWRITE_FONT_STYLE_NORMAL,
@@ -152,18 +152,18 @@ void TextComponent::DrawingResources::Validate()
 
 void TextComponent::DrawingResources::Draw()
 {
-  auto& d2d = GetGame()->GameDevice->D2D;
-  auto& textures = this->textures->Textures;
+  auto &d2d = GetGame()->GameDevice->D2D;
+  auto &textures = this->textures->Textures;
 
   for (size_t i = 0; i < texts.size() && i < textures.size(); ++i)
   {
     d2d.DrawTo(textures[i]);
-    
+
     auto targetSize = d2d.DeviceContext->GetSize();
     auto rect = D2D1::RectF(0, 0, targetSize.width, targetSize.height);
 
     auto text = widen(texts[i]);
-    
+
     // Clear the buffer and draw the new content
     d2d.DeviceContext->Clear(D2D1::ColorF(1, 1, 1, 0));
     d2d.DeviceContext->FillRectangle(rect, bgBrush);
@@ -179,7 +179,7 @@ void TextComponent::DrawingResources::Draw()
 
 void TextComponent::DrawingResources::DoPopulate()
 {
-  auto& tc = *textures;
+  auto &tc = *textures;
 
   // Clear old textures in case someone defined them
   while (tc.TextureCount)
@@ -205,9 +205,9 @@ TextComponentFactory::TextComponentFactory()
 // ----------------------------------------------------------------------------
 
 Component *TextComponentFactory::CreateObject(
-  void *memory, component_factory_data& data)
+  void *memory, component_factory_data &data)
 {
-  auto *component = new (memory) TextComponent;
+  auto *component = new(memory) TextComponent;
 
   component_factory_data::iterator it;
 
@@ -220,13 +220,13 @@ Component *TextComponentFactory::CreateObject(
   it = data.find("texts");
   if (it != data.end())
   {
-    auto& texts = it->second.as_array();
-    for (auto& text : texts)
+    auto &texts = it->second.as_array();
+    for (auto &text : texts)
     {
       component->AppendText(text.as_string());
     }
   }
-  
+
   it = data.find("text_color");
   if (it != data.end())
     component->TextColor = StringToColor(it->second.as_string());
@@ -237,8 +237,8 @@ Component *TextComponentFactory::CreateObject(
 
   component->Font = widen(data["font"].as_string());
   component->FontSize = static_cast<FLOAT>(map_fetch(data, "font_size", 48).as_number());
-  
-  auto& talign = data["text_align"].as_string();
+
+  auto &talign = data["text_align"].as_string();
   if (talign == "center")
     component->TextAlign = DWRITE_TEXT_ALIGNMENT_CENTER;
   else if (talign == "justified")
@@ -247,8 +247,8 @@ Component *TextComponentFactory::CreateObject(
     component->TextAlign = DWRITE_TEXT_ALIGNMENT_LEADING;
   else if (talign == "trailing")
     component->TextAlign = DWRITE_TEXT_ALIGNMENT_TRAILING;
-  
-  auto& palign = data["paragraph_align"].as_string();
+
+  auto &palign = data["paragraph_align"].as_string();
   if (palign == "center")
     component->ParagraphAlign = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
   else if (palign == "near")
@@ -277,7 +277,10 @@ static RClass *cbase;
 static mrb_data_type mrb_textcomp_data_type;
 
 static mrb_value mrb_textcomp_new(mrb_state *mrb, TextComponent *comp);
-static void mrb_textcomp_free(mrb_state *, void *) {}
+
+static void mrb_textcomp_free(mrb_state *, void *)
+{
+}
 
 static mrb_value mrb_textcomp_on_update(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self);
@@ -299,13 +302,13 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
 {
   mrb_textcomp_data_type.dfree = mrb_textcomp_free;
   mrb_textcomp_data_type.struct_name = typeid(TextComponent).name();
-  
+
   auto rmod = mrb_module_get(mrb, "Components");
   auto rclass = mrb_define_class_under(mrb, rmod, "TextComponent", cbase);
 
   mrb_define_class_method(mrb, rclass, "new", mrb_nop, ARGS_ANY());
   mrb_define_method(mrb, rclass, "on_access", mrb_textcomp_on_update, ARGS_ANY());
-  
+
   mrb_define_method(mrb, rclass, "to_a", mrb_textcomp_to_a, ARGS_NONE());
   mrb_define_method(mrb, rclass, "get_text_at", mrb_textcomp_get_text_at, ARGS_REQ(1));
   mrb_define_method(mrb, rclass, "set_text_at", mrb_textcomp_set_text_at, ARGS_REQ(2));
@@ -333,7 +336,7 @@ static void mrb_textcomp_gem_init(mrb_state *mrb)
 mrb_value TextComponent::GetRubyWrapper()
 {
   RUN_ONCE(cbase = Component::GetComponentRClass(),
-           mrb_textcomp_gem_init(*mrb_inst));
+    mrb_textcomp_gem_init(*mrb_inst));
 
   return mrb_textcomp_new(*mrb_inst, this);
 }
@@ -363,10 +366,10 @@ static mrb_value mrb_textcomp_on_update(mrb_state *mrb, mrb_value self)
 static mrb_value mrb_textcomp_to_a(mrb_state *mrb, mrb_value self)
 {
   mrb_value ary = mrb_ary_new(mrb);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
 
-  for (auto& text : *tcomp)
+  for (auto &text : *tcomp)
   {
     mrb_ary_push(mrb, ary, mrb_str_new(mrb, text.c_str(), text.size()));
   }
@@ -380,9 +383,9 @@ static mrb_value mrb_textcomp_get_text_at(mrb_state *mrb, mrb_value self)
 {
   mrb_int index;
   mrb_get_args(mrb, "i", &index);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
-  auto& text = tcomp->GetText(static_cast<size_t>(index));
+  auto &text = tcomp->GetText(static_cast<size_t>(index));
 
   return mrb_str_new(mrb, text.c_str(), text.size());
 }
@@ -394,7 +397,7 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
   mrb_int index;
   mrb_value str;
   mrb_get_args(mrb, "iS", &index, &str);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto text = mrb_str_to_stdstring(str);
 
@@ -409,7 +412,7 @@ static mrb_value mrb_textcomp_texts_set(mrb_state *mrb, mrb_value self)
 {
   mrb_value ary;
   mrb_get_args(mrb, "A", &ary);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->ClearText();
 
@@ -428,7 +431,7 @@ static mrb_value mrb_textcomp_font_get(mrb_state *mrb, mrb_value self)
 {
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto font = narrow(tcomp->Font);
-  
+
   return mrb_str_new(mrb, font.c_str(), font.size());
 }
 
@@ -438,10 +441,10 @@ static mrb_value mrb_textcomp_font_set(mrb_state *mrb, mrb_value self)
 {
   mrb_value str;
   mrb_get_args(mrb, "S", &str);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->Font = widen(mrb_str_to_stdstring(str));
-  
+
   return str;
 }
 
@@ -451,7 +454,7 @@ static mrb_value mrb_textcomp_font_size_get(mrb_state *mrb, mrb_value self)
 {
   auto *tcomp = static_cast<TextComponent *>(mrb_data_get_ptr(mrb, self, &mrb_textcomp_data_type));
   auto size = mrb_float_value(mrb, tcomp->FontSize);
-  
+
   return size;
 }
 
@@ -461,10 +464,10 @@ static mrb_value mrb_textcomp_font_size_set(mrb_state *mrb, mrb_value self)
 {
   mrb_float size;
   mrb_get_args(mrb, "f", &size);
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->FontSize = static_cast<FLOAT>(size);
-  
+
   return mrb_float_value(mrb, size);
 }
 
@@ -492,7 +495,7 @@ static mrb_value mrb_textcomp_text_color_set(mrb_state *mrb, mrb_value self)
   {
     color = ruby::get_ruby_vector(rcolor);
   }
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->TextColor = color;
 
@@ -523,7 +526,7 @@ static mrb_value mrb_textcomp_bg_color_set(mrb_state *mrb, mrb_value self)
   {
     color = ruby::get_ruby_vector(rcolor);
   }
-  
+
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   tcomp->BGColor = color;
 

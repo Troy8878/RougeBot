@@ -23,6 +23,7 @@ GraphicsDevice::GraphicsDevice()
     _DepthStencilState(nullptr),
     _DepthStencilView(nullptr)
 {
+  D2D.drawLock = &drawLock;
 }
 
 // ----------------------------------------------------------------------------
@@ -68,7 +69,7 @@ bool GraphicsDevice::IsPatched()
   return wndpatch != nullptr;
 }
 
-void GraphicsDevice::PatchWndProc(WndProcPatch& patch)
+void GraphicsDevice::PatchWndProc(WndProcPatch &patch)
 {
   wndpatch = &patch;
   patchContinue = true;
@@ -160,6 +161,7 @@ class Iterator
 
 public:
   auto begin() -> decltype(container.begin())
+  
   {
     return container.begin();
   }
@@ -216,7 +218,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
   switch (msg)
   {
-    case WM_PAINT:
+  case WM_PAINT:
     {
       PAINTSTRUCT ps;
       BeginPaint(hwnd, &ps);
@@ -224,13 +226,13 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       return 0;
     }
 
-    case WM_CLOSE:
+  case WM_CLOSE:
     {
       GetGame()->Stop();
       return 0;
     }
 
-    case WM_KILLFOCUS:
+  case WM_KILLFOCUS:
     {
       SetMrbGVolume(0);
       if (is_fullscreen)
@@ -240,7 +242,7 @@ LRESULT WindowDevice::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
       break;
     }
 
-    case WM_SETFOCUS:
+  case WM_SETFOCUS:
     {
       SetMrbGVolume(1);
       break;
@@ -331,6 +333,8 @@ bool WindowDevice::BeginFrame()
   if (DeviceContext == nullptr)
     return false;
 
+  drawLock.enter();
+
   DeviceContext->ClearRenderTargetView(RenderTargetView, backgroundColor.buffer());
   DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -355,6 +359,8 @@ void WindowDevice::EndFrame()
     while (time.CurrFrameTime < min_frame)
       Sleep(0);
   }
+
+  drawLock.leave();
 }
 
 // ----------------------------------------------------------------------------
@@ -715,6 +721,8 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 {
   assert(texture.RenderTarget);
 
+  drawLock->enter();
+
   DeviceContext->SetTarget(texture.RenderTarget);
   DeviceContext->BeginDraw();
   DeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -724,7 +732,16 @@ void GraphicsDevice::D2DData::DrawTo(Texture2D texture)
 
 HRESULT GraphicsDevice::D2DData::EndDraw()
 {
-  return DeviceContext->EndDraw();
+  auto result = DeviceContext->EndDraw();
+  drawLock->leave();
+  return result;
+}
+
+// ----------------------------------------------------------------------------
+
+void GraphicsDevice::D2DData::Invalidate()
+{
+  ResourceTimestamp = clock::now();
 }
 
 // ----------------------------------------------------------------------------
@@ -743,7 +760,7 @@ void WindowDevice::SetFullscreen(bool value)
   if (is_fullscreen)
   {
     HMONITOR hmon = MonitorFromWindow(Window, 0);
-    MONITORINFO mi = { sizeof(mi) };
+    MONITORINFO mi = {sizeof(mi)};
     GetMonitorInfo(hmon, &mi);
 
     GetWindowRect(Window, &pre_fullscreen_rect);
@@ -752,7 +769,7 @@ void WindowDevice::SetFullscreen(bool value)
                  mi.rcMonitor.left,
                  mi.rcMonitor.top,
                  mi.rcMonitor.right - mi.rcMonitor.left,
-                 mi.rcMonitor.bottom - mi.rcMonitor.top, 
+                 mi.rcMonitor.bottom - mi.rcMonitor.top,
                  SWP_SHOWWINDOW);
   }
   else
@@ -768,3 +785,4 @@ void WindowDevice::SetFullscreen(bool value)
 }
 
 // ----------------------------------------------------------------------------
+

@@ -87,6 +87,12 @@ public:
 
     void DrawTo(Texture2D texture);
     HRESULT EndDraw();
+
+    void Invalidate();
+
+  private:
+    critical_section *drawLock;
+    friend class GraphicsDevice;
   };
 
   IR_PROPERTY(D2DData, D2D);
@@ -100,6 +106,7 @@ protected:
 
 public:
   math::Vector backgroundColor;
+  critical_section drawLock;
 };
 
 // ----------------------------------------------------------------------------

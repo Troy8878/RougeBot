@@ -28,7 +28,7 @@ public:
                const std::string &negatory = "\xEE\x84\x8B");
 
   LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont) override;
-  void Update(const GameTime& time) override;
+  void Update(const GameTime& time, bool &) override;
 
 private:
   void ValidateFont();

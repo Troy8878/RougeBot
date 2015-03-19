@@ -36,6 +36,9 @@ AsyncLoadingScreen::~AsyncLoadingScreen()
 
 void AsyncLoadingScreen::Run()
 {
+  if (!cont)
+    return;
+
   GetWindowRect(GetGame()->GameDevice->GetContextWindow(), &windowSize);
 
   WINDOWINFO info;
@@ -50,10 +53,22 @@ void AsyncLoadingScreen::Run()
   //SetWindowLong(GetGame()->GameDevice->GetContextWindow(), GWL_STYLE, info.dwStyle);
 }
 
+void AsyncLoadingScreen::Init()
+{
+  cont = true;
+  time = 0;
+}
+
+void AsyncLoadingScreen::Stop()
+{
+  cont = false;
+}
+
 // ----------------------------------------------------------------------------
 
 LRESULT AsyncLoadingScreen::PatchedWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, bool &cont)
 {
+  cont = this->cont;
   switch (msg)
   {
   case WM_SIZING:
@@ -69,7 +84,6 @@ LRESULT AsyncLoadingScreen::PatchedWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARA
       return 0;
     }
   case WM_NOTIFY:
-    cont = false;
     return 0;
   }
 
@@ -78,11 +92,12 @@ LRESULT AsyncLoadingScreen::PatchedWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARA
 
 // ----------------------------------------------------------------------------
 
-void AsyncLoadingScreen::Update(const GameTime &time)
+void AsyncLoadingScreen::Update(const GameTime &time, bool &cont)
 {
   using namespace DirectX;
 
-  this->time += time.Dt;
+  this->time = this->time + time.Dt;
+  cont = this->cont || this->time < 0.25;
 
   // Rotate the spinner
   SpinnerRot = SpinnerRot * XMMatrixRotationZ(static_cast<float>(time.Dt * 2 * math::pi));

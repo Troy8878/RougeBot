@@ -21,7 +21,7 @@ class Texture2D;
 __interface WndProcPatch
 {
   LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont);
-  void Update(const GameTime &time);
+  void Update(const GameTime &time, bool &cont);
 };
 
 // ----------------------------------------------------------------------------

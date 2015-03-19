@@ -117,10 +117,12 @@ void Game::Run()
           {
             loadingScreen = std::make_shared<AsyncLoadingScreen>();
           }
-
+          
+          loadingScreen->Init();
           screenThread = new std::thread(
             [loadingScreen]()
             {
+              Sleep(100);
               loadingScreen->Run();
             });
         }
@@ -170,11 +172,9 @@ void Game::Run()
 
       if (screenThread)
       {
-        SendMessage(GameDevice->GetContextWindow(), WM_NOTIFY, 0, 0);
+        loadingScreen->Stop();
         screenThread->join();
         screenThread = nullptr;
-
-        GameDevice->D2D.Invalidate();
       }
 
       // Raise draw event (and draw the frame)

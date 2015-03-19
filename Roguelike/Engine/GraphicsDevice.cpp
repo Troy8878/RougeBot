@@ -82,7 +82,7 @@ void GraphicsDevice::PatchWndProc(WndProcPatch &patch)
     this->ProcessMessages();
 
     this->BeginFrame();
-    patch.Update(time);
+    patch.Update(time, patchContinue);
     this->EndFrame();
   }
 

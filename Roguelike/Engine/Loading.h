@@ -25,8 +25,11 @@ public:
 
   void Run();
 
+  void Init();
+  void Stop();
+
   LRESULT PatchedWndProc(HWND, UINT msg, WPARAM wp, LPARAM lp, bool &cont) override;
-  void Update(const GameTime& time) override;
+  void Update(const GameTime& time, bool &cont) override;
 
 private:
 
@@ -52,7 +55,7 @@ private:
 
   int highlight = 0;
   std::atomic<bool> cont = true;
-  double time = 0;
+  std::atomic<double> time = 0;
 };
 
 // ----------------------------------------------------------------------------

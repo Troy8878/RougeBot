@@ -133,7 +133,7 @@ LRESULT ConfirmationOfDestructiveAction::
 // ----------------------------------------------------------------------------
 
 void ConfirmationOfDestructiveAction::
-  Update(const GameTime &)
+  Update(const GameTime &, bool &)
 {
   using namespace DirectX;
 

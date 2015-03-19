@@ -64,6 +64,10 @@ struct ResPackImpl
 
 struct ResMemoryContainer : public ResourceContainer
 {
+  virtual ~ResMemoryContainer()
+  {
+  }
+
   ResMemoryContainer(const MemContainerMapping &mapping,
                      FileMapping &file, const fs::wpath &fallback);
 
@@ -96,6 +100,10 @@ struct ResMemoryContainer : public ResourceContainer
 
 struct MemoryResource : public Resource
 {
+  virtual ~MemoryResource()
+  {
+  }
+
   MemoryResource(const MemResourceMapping &mapping, FileMapping &file);
 
   void Release() override;
@@ -125,6 +133,10 @@ struct MemoryResource : public Resource
 
 struct ResFallbackContainer : public ResourceContainer
 {
+  virtual ~ResFallbackContainer()
+  {
+  }
+
   ResFallbackContainer(const fs::wpath &folder, const std::wstring &name);
 
   void Release() override;
@@ -148,6 +160,10 @@ struct ResFallbackContainer : public ResourceContainer
 
 struct FileResource : public Resource
 {
+  virtual ~FileResource()
+  {
+  }
+
   explicit FileResource(const fs::wpath &path);
   explicit FileResource(const fs::wpath &path, shared_array<byte> cached);
 
@@ -507,6 +523,7 @@ Resource *ResFallbackContainer::GetResource(const std::string &name)
   else
   {
     resource = new FileResource(folder / widen(name));
+    resource->GetData();
     cache[name] = resource->data;
   }
   return resource;
@@ -526,8 +543,8 @@ std::vector<std::string> ResFallbackContainer::GetResources()
 MemoryResource::MemoryResource(const MemResourceMapping &mapping, FileMapping &file)
   : mapping(mapping),
     view(file.mapView(mapping.map_offset, mapping.header.resource_size)),
-    databuf{nullptr, 0},
-    datastream{&databuf}
+    datastream{&databuf},
+    databuf{nullptr, 0}
 {
 }
 
@@ -597,7 +614,7 @@ std::istream &MemoryResource::GetStream()
 void MemoryResource::ResetStream()
 {
   if (!streaminit)
-    databuf = ibufferstream<char>{(char *) Data, Size};
+    databuf = ibufferstream<char>{reinterpret_cast<char *>(Data), Size};
 
   datastream.rdbuf(&databuf);
   datastream.seekg(0);
@@ -641,6 +658,10 @@ bool FileResource::IsFileBased(fs::path *path)
 
 size_t FileResource::GetSize()
 {
+  if (loaded)
+  {
+    return data.size();
+  }
   return fs::file_size(path);
 }
 

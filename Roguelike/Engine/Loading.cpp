@@ -103,6 +103,8 @@ void AsyncLoadingScreen::Update(const GameTime &time)
   SpriteModel->tint = math::Vector{1, 1, 1, 1};
   SpriteModel->texture = Spinner;
   SpriteModel->Draw(SpinnerPos * SpinnerRot);
+
+  Sleep(4);
 }
 
 // ----------------------------------------------------------------------------

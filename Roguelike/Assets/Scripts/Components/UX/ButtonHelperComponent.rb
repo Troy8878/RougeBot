@@ -31,7 +31,7 @@ class ButtonHelperComponent < ComponentBase
     build_button data
     build_background data
 
-    if data.has_key? "image"
+    if data.fetch("image", "") != ""
       @image = true
       build_image data
     else

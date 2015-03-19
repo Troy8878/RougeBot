@@ -294,17 +294,17 @@
                 },
                 "TextureComponent": {
                   "textures": [
-                    "HUBWorldPrototype.png"
+                    "SPECIAL/NULL"
                   ]
                 },
                 "SpriteComponent": {
                   "render_target": "WorldLayer",
                   "shader": "",
                   "tint": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0
+                    0.391572505235672,
+                    0.58407843112945557,
+                    0.9301108717918396,
+                    0.60000002384185791
                   ]
                 }
               },

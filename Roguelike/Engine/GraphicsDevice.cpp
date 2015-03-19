@@ -142,10 +142,11 @@ HWND WindowDevice::InitializeWindow(const WindowCreationOptions &options)
     NULL, NULL, options.hInstance,
     reinterpret_cast<void *>(this));
 
-  ShowWindow(window, SW_SHOWNORMAL);
+  ShowWindow(window, SW_SHOW);
   UpdateWindow(window);
 
-  SwitchToThisWindow(window, TRUE);
+  SwitchToThisWindow(window, FALSE);
+  ShowWindow(window, SW_SHOW);
 
   is_fullscreen = false;
 

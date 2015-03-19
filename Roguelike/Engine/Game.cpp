@@ -170,7 +170,6 @@ void Game::Run()
 
       if (screenThread)
       {
-        Sleep(100);
         SendMessage(GameDevice->GetContextWindow(), WM_NOTIFY, 0, 0);
         screenThread->join();
         screenThread = nullptr;

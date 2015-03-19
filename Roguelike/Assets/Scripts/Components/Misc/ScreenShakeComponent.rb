@@ -9,39 +9,45 @@ class ScreenShakeComponent < ComponentBase
 
   # Describe what goes in the json file
   serialized_input do |p|
-    p.float :strength, default: 0.3
-    p.float :length, default: 0.5
+    p.float :frequency, default: 12
+    p.float :strength, default: 0.5
+    p.float :length, default: 1
     p.string :shake_child, default: "CameraRoot"
   end
 
   def initialize(data)
     super data
 
-    @strength = data["strength"]
-    @length = data["length"]
+    @frequency = data["frequency"].to_f
+    @strength = data["strength"].to_f
+    @length = data["length"].to_f
     @shake_child = data["shake_child"]
-
-    @shaking = false
-
-    register_event :update, :update
   end
 
-  def shake(_ = nil)
-    @shaking = true
-    @shake_time = 0
-    @shake_target = owner.local_find(@shake_child).transform_component
-  end
+  def shake(modifier = 1.0)
+    shake_target = owner.local_find(@shake_child).transform_component
 
-  def update(e)
-    return unless @shaking
-    @shake_time += e.dt
-    if @shake_time > @length
-      @shaking = false
-      return
+    strength = @strength * Math.log(modifier + Math::E - 1)
+    length = @length * Math.log(modifier + Math::E - 1)
+
+    pos = shake_target.position
+    seq = owner.action_sequence :screen_shake
+    interval = 1.0 / @frequency
+
+    orig_pos = pos.dup
+    prev_pos = pos.dup
+    (0 .. @frequency * length).each do |i|
+      new_pos = Vector.new(
+        pos.x + Random.float_range(-strength, strength),
+        pos.y + Random.float_range(-strength, strength),
+        pos.z, 1
+      )
+
+      seq.interpolate pos, from: prev_pos, to: new_pos, over: interval
+      prev_pos = new_pos
     end
 
-    @shake_target.rotation.x = Math.sin(@shake_time)
-    @shake_target.rotation.y = Math.cos(@shake_time)
+    seq.interpolate pos, from: prev_pos, to: orig_pos, over: interval
   end
 
   register_component

@@ -47,6 +47,10 @@ class DefenseComponent < ComponentBase
     total_dmg = 1 if total_dmg < 1
     total_dmg = 0 if owner.player_controller_component && cheat.god?
 
+    if owner.screen_shake_component
+      owner.screen_shake_component.shake(total_dmg / 5)
+    end
+
     @health -= total_dmg
 
     # Notify that the health has changed

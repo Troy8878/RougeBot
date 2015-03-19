@@ -111,8 +111,18 @@
   },
   "AiComponent": {},
   "AiScriptComponent": {
-    "brains": ["Idle"],
-    "target": "Player"
+    "brains": [
+      "Idle"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "params": {}
+  },
+  "ScreenShakeComponent": {
+    "frequency": 15.0,
+    "strength": 0.2,
+    "length": 0.2,
+    "shake_child": "CameraRoot"
   },
   "ChildHierarchy": {
     "children": [

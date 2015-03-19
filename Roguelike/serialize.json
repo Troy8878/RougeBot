@@ -608,13 +608,23 @@
     "dependencies": [],
     "properties": [
       {
+        "property": "frequency",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 12
+        }
+      },
+      {
         "property": "strength",
         "usage": {
           "type": "float",
           "required": false,
           "semantics": null,
           "locked": false,
-          "default": 0.3
+          "default": 0.5
         }
       },
       {
@@ -624,7 +634,7 @@
           "required": false,
           "semantics": null,
           "locked": false,
-          "default": 0.5
+          "default": 1
         }
       },
       {

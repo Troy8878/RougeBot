@@ -8,10 +8,15 @@
 class GameQuitComponent < ComponentBase
 
   serialized_input do |p|
+    p.bool :disable, default: false
   end
   
   def initialize(data)
     super data
+
+    if data["disable"]
+      return
+    end
 
     register_event :key_down, :on_key
   end

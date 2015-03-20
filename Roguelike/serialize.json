@@ -1274,7 +1274,18 @@
   },
   {
     "dependencies": [],
-    "properties": [],
+    "properties": [
+      {
+        "property": "speed",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 2
+        }
+      }
+    ],
     "name": "SplashZoomComponent"
   },
   {

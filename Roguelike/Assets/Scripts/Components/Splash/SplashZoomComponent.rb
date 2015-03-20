@@ -8,18 +8,20 @@
 class SplashZoomComponent < ComponentBase
 
   serialized_input do |p|
+    p.float :speed, default: 2
   end
   
   def initialize(data)
     super data
 
-    @transform = self.owner.transform_component
+    @speed = data["speed"] || 2
+    @pos = self.owner.transform_component.position
 
     register_event :update, :on_update
   end
 
   def on_update(e)
-    @transform.position.z -= e.dt * 2
+    @pos.z -= e.dt * @speed
   end
 
   register_component

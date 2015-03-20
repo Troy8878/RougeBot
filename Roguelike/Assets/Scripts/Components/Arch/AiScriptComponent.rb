@@ -56,8 +56,11 @@ class AiScriptComponent < ComponentBase
   def tick
     puts "WARNING: double-dipping AI actions" if @pending
 
+    current_target = find_target
+    return unless current_target
+
     @pending = true
-    @ai.enqueue brains[brain_index], owner, find_target, @params
+    @ai.enqueue brains[brain_index], owner, current_target, @params
   end
 
   def find_target
@@ -81,7 +84,7 @@ class AiScriptComponent < ComponentBase
     when "attack"
 
       floor = current_floor
-      tile = floor[result["y"]][result["x"]]
+      tile = floor[floor.length - 1 - result["y"]][result["x"]]
       if tile.actor
         self.owner.attack_component.do_attack tile.actor
       end
@@ -95,6 +98,17 @@ class AiScriptComponent < ComponentBase
         when "message"
           message = result["text"]
         when "colorize"
+          message = false#"I am red with anger"
+
+          sprite = owner.local_find("Sprite").sprite_component
+          old_color = sprite.tint.dup
+          sprite.tint = Vector.from_color(result["color"])
+          seq = owner.action_sequence :colorize
+          seq.delay 0.5
+          seq.once do
+            sprite.tint = old_color
+          end
+
           #TODO: Colorize for a specific number of turns
         end
 
@@ -102,7 +116,7 @@ class AiScriptComponent < ComponentBase
         message = "failed to interpret hivemind action"
       end
 
-      if message
+      if message == nil
         message = StatusMessage.new message, 1, "Red", 20, 3
         message.display owner
       end

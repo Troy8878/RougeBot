@@ -131,6 +131,7 @@ AIDecisionRef AISystem::QueueBehavior(AIFactory& factory, json::value params,
 void AISystem::UpdateSnapshot()
 {
   static size_t turns = 0;
+
   auto snapshot = this->snapshot.write();
   *snapshot = WorldSnapshot(turns++);
 }

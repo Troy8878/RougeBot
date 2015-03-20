@@ -65,8 +65,8 @@
     </DataTemplate>
     
     <DataTemplate x:Key="PropRawTemplate" DataType="properties:Raw">
-        <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="175"
-                 Height="75" FontSize="14" VerticalScrollBarVisibility="Auto">
+        <TextBox AcceptsReturn="True" TextWrapping="Wrap" MinWidth="175" MaxWidth="300"
+                 MaxHeight="200" FontSize="14" VerticalScrollBarVisibility="Auto">
             <TextBox.Text>
                 <Binding Path="RawValue" ValidatesOnExceptions="True">
                 </Binding>

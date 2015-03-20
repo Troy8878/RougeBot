@@ -25,10 +25,5 @@ public:
 private:
   void MoveTowards(const WorldSnapshot &world);
 
-
-
   Entity *target;
-
-
-
 };

@@ -19,10 +19,19 @@ class GoToSplash < ComponentBase
       ary << Object.new
     end
 
-    register_event :update, :first_update
+    @frames = 0
+
+    #precache these beautiful 4K textures
+    Texture.load "MainMenu/MainMenu.png"
+    Texture.load "MainMenu/OtherMenu.png"
+
+    register_event :update, :update
   end
 
-  def first_update(e)
+  def update(e)
+    @frames += 1
+    return unless @frames > 20
+
     Game.switch_level "Splash"
   end
 

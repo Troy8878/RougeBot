@@ -8,83 +8,268 @@
       "name": "CameraRoot",
       "components": {
         "TransformComponent": {
-          "rotation": [0, 0, 0]
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       },
       "children": [
         {
           "name": "WorldLayer",
           "components": {
-            "TransformComponent": {},
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
             "CameraComponent": {
               "target_name": "WorldLayer",
               "layer": 1,
-              "fov": 45,
+              "copy": "",
+              "type": "ManualCamera",
+              "fov": 45.0,
               "near": 0.01,
-              "far": 100
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "ConsoleLayer",
           "components": {
             "CameraComponent": {
-              "copy": "WorldLayer",
               "target_name": "ConsoleLayer",
-              "layer": 9000
+              "layer": 9000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
             }
-          }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
         },
         {
           "name": "HUD_ROOT",
           "components": {
             "TransformComponent": {
-              "scale": [0.3, 0.3, 0.3, 1],
-              "position": [0, 0, 1]
+              "position": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                0.3,
+                0.3,
+                0.3
+              ]
+            },
+            "ChildHierarchy": {
+              "children": [
+                {
+                  "name": "BG",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [
+                        0.0,
+                        0.0,
+                        1.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        6.3111111111111109,
+                        3.55,
+                        10.0
+                      ]
+                    },
+                    "TextureComponent": {
+                      "textures": [
+                        "MainMenu/OtherMenu.png"
+                      ]
+                    },
+                    "SpriteComponent": {
+                      "render_target": "WorldLayer",
+                      "shader": "",
+                      "tint": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
+                    }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
+                }
+              ]
             }
           },
           "children": [
             {
               "name": "Console",
+              "components": {
+                "TransformComponent": {},
+                "ChildHierarchy": {}
+              },
+              "children": [],
               "archetype": "HUD/Console/Console"
             },
             {
+              "name": "Term",
               "components": {
                 "TransformComponent": {
-                  "scale": [1.7777777777777777777777777777778,1,1]
+                  "position": [
+                    0.0,
+                    0.0,
+                    2.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    1.7777777777777777,
+                    1.0,
+                    1.0
+                  ]
                 }
               },
               "children": [
                 {
+                  "name": "Sprite",
                   "components": {
                     "TransformComponent": {
-                      "scale": [0.2, 0.2, 0.2]
+                      "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.3,
+                        0.3,
+                        0.2
+                      ]
                     },
                     "TextureComponent": {
                       "textures": [
-                        "Splash/WP_20141002_10_26_28_Pro.png"
+                        "SPECIAL/SURFACE/400:400"
                       ]
                     },
                     "SpriteComponent": {
-                      "render_target": "WorldLayer"
+                      "render_target": "WorldLayer",
+                      "shader": "",
+                      "tint": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
                     },
-                    "SplashZoomComponent": {}
-                  }
+                    "SplashZoomComponent": {},
+                    "TextComponent": {
+                      "texts": [
+                        "TERMINAL AUDACITY"
+                      ],
+                      "text_color": "White",
+                      "bg_color": "",
+                      "font": "Impact",
+                      "font_size": 100.0,
+                      "text_align": "center",
+                      "paragraph_align": "center",
+                      "autocreate_textures": [
+                        0.0,
+                        0.0
+                      ]
+                    }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 }
-              ]
+              ],
+              "archetype": "NoArchetype"
             },
             {
+              "name": "dP",
               "components": {
                 "TransformComponent": {
-                  "scale": [4.1457489878542510121457489878543,1,1]
+                  "position": [
+                    0.0,
+                    0.0,
+                    2.0
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    4.1457489878542511,
+                    1.0,
+                    1.0
+                  ]
                 }
               },
               "children": [
                 {
+                  "name": "Sprite",
                   "components": {
                     "TransformComponent": {
-                      "scale": [0.08, 0.08, 0.08],
-                      "position": [0, 0, 4]
+                      "position": [
+                        0.0,
+                        0.0,
+                        4.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.08,
+                        0.08,
+                        0.08
+                      ]
                     },
                     "TextureComponent": {
                       "textures": [
@@ -92,21 +277,37 @@
                       ]
                     },
                     "SpriteComponent": {
-                      "render_target": "WorldLayer"
+                      "render_target": "WorldLayer",
+                      "shader": "",
+                      "tint": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
                     },
                     "SplashZoomComponent": {}
-                  }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
                 }
-              ]
+              ],
+              "archetype": "NoArchetype"
             }
-          ]
+          ],
+          "archetype": "NoArchetype"
         }
-      ]
+      ],
+      "archetype": "NoArchetype"
     },
     {
       "components": {
-        "SplashLevelSwitcher": {}
-      }
+        "SplashLevelSwitcher": {
+          "splash_time": 5.5
+        }
+      },
+      "children": [],
+      "archetype": "NoArchetype"
     }
   ]
 }

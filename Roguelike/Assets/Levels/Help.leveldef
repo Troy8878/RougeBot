@@ -227,7 +227,7 @@
                 },
                 "TextureComponent": {
                   "textures": [
-                    "HowTo/HowTo1.png"
+                    "HowTo/HowTo1White.png"
                   ]
                 },
                 "SpriteComponent": {
@@ -259,14 +259,14 @@
                     0.0
                   ],
                   "scale": [
-                    10.0,
-                    10.0,
+                    6.3111111111111109,
+                    3.55,
                     1.0
                   ]
                 },
                 "TextureComponent": {
                   "textures": [
-                    "SPECIAL/NULL"
+                    "MainMenu/OtherMenu.png"
                   ]
                 },
                 "SpriteComponent": {

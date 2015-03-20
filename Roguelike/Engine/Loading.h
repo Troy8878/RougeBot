@@ -46,9 +46,13 @@ private:
 
   // Textures
   Texture2D Spinner;
+  Texture2D Background;
 
+  Camera Camera;
+    
+  math::Matrix BackgroundPos;
   math::Matrix SpinnerPos;
-  math::Matrix SpinnerRot;
+  float SpinnerRot;
 
   // Don't change anything, we're locking down in this mode
   RECT windowSize;

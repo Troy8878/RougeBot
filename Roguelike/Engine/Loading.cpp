@@ -19,11 +19,18 @@ AsyncLoadingScreen::AsyncLoadingScreen()
   SpriteShader = RegisteredShaders["Textured"];
   SpriteModel = SpriteComponent::GetSpriteModel();
   Spinner = TextureManager::Instance.LoadTexture("Spinner.png");
+  Background = TextureManager::Instance.LoadTexture("MainMenu/OtherMenu.png");
 
   using namespace DirectX;
 
-  SpinnerPos = XMMatrixScaling(0.15, 0.15, 0.15);
-  SpinnerRot = XMMatrixIdentity();
+  SpinnerPos =
+    XMMatrixScaling(0.15, 0.15, 0.15) *
+    XMMatrixTranslation(0, 0, 1.0f);
+  SpinnerRot = 0;
+
+  BackgroundPos =
+    XMMatrixScaling(6.31111111111111f * 0.3f, 3.55 * 0.3f, 1 * 0.3f) *
+    XMMatrixTranslation(0, 0, 1.3f);
 }
 
 // ----------------------------------------------------------------------------
@@ -39,22 +46,17 @@ void AsyncLoadingScreen::Run()
   if (!cont)
     return;
 
-  GetWindowRect(GetGame()->GameDevice->GetContextWindow(), &windowSize);
-
-  WINDOWINFO info;
-  GetWindowInfo(GetGame()->GameDevice->GetContextWindow(), &info);
-
-  //info.dwStyle &= ~WS_MAXIMIZEBOX;
-  //SetWindowLong(GetGame()->GameDevice->GetContextWindow(), GWL_STYLE, info.dwStyle);
-
   GetGame()->GameDevice->PatchWndProc(*this);
-
-  //info.dwStyle |= WS_MAXIMIZEBOX;
-  //SetWindowLong(GetGame()->GameDevice->GetContextWindow(), GWL_STYLE, info.dwStyle);
 }
 
 void AsyncLoadingScreen::Init()
 {
+  using namespace DirectX;
+  Camera = *SpriteModel->shader->camera;
+  auto mx = Camera.viewMatrix.get();
+  mx.r[3] = XMVectorSet(0, 0, 0, 1);
+  Camera.viewMatrix = mx;
+
   cont = true;
   time = 0;
 }
@@ -100,24 +102,18 @@ void AsyncLoadingScreen::Update(const GameTime &time, bool &cont)
   cont = this->cont || this->time < 0.25;
 
   // Rotate the spinner
-  SpinnerRot = SpinnerRot * XMMatrixRotationZ(static_cast<float>(time.Dt * 2 * math::pi));
+  SpinnerRot += static_cast<float>(time.Dt * 2 * math::pi);
 
-  // Clear the depth buffer
-  GetGame()->GameDevice->DeviceContext->ClearDepthStencilView(
-             GetGame()->GameDevice->DepthStencilView,
-             D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL,
-             1.0f, 0
-           );
-
-  SpriteModel->shader->camera->viewMatrix = XMMatrixLookAtLH(
-    math::Vector{0, 0, 1, 1},
-    math::Vector{0, 0, -1, 0},
-    math::Vector{0, 1, 0, 0});
+  SpriteModel->shader->camera = &Camera;
 
   SpriteModel->tintTexture = Texture2D();
   SpriteModel->tint = math::Vector{1, 1, 1, 1};
+
+  SpriteModel->texture = Background;
+  SpriteModel->Draw(BackgroundPos);
+
   SpriteModel->texture = Spinner;
-  SpriteModel->Draw(SpinnerPos * SpinnerRot);
+  SpriteModel->Draw(SpinnerPos * XMMatrixRotationZ(SpinnerRot));
 
   Sleep(4);
 }

@@ -285,7 +285,7 @@
                 },
                 "TextureComponent": {
                   "textures": [
-                    "SPECIAL/NULL"
+                    "MainMenu/OtherMenu.png"
                   ]
                 },
                 "SpriteComponent": {

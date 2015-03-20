@@ -25,7 +25,9 @@ class ScreenShakeComponent < ComponentBase
   end
 
   def shake(modifier = 1.0)
-    shake_target = owner.local_find(@shake_child).transform_component
+    shake_child = owner.local_find(@shake_child)
+    return unless shake_child
+    shake_target = shake_child.transform_component
 
     if @shake_child == "."
       modifier = 2.2 - Math::E

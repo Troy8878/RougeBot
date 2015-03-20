@@ -181,7 +181,7 @@ public:
 class TextureManager
 {
 public:
-  typedef std::unordered_map<std::string, std::weak_ptr<Texture2D::TextureResource>> map_type;
+  typedef std::unordered_map<std::string, std::shared_ptr<Texture2D::TextureResource>> map_type;
 
   static TextureManager Instance;
 

@@ -196,7 +196,7 @@ Texture2D TextureManager::LoadTexture(const std::string &_asset)
   if (it != _resources.end())
   {
     auto weak_ref = it->second;
-    auto strong_ref = weak_ref.lock();
+    auto strong_ref = weak_ref;
     if (strong_ref)
     {
       return Texture2D{strong_ref};
@@ -255,7 +255,7 @@ Texture2D TextureManager::LoadTexture(const std::string &_asset)
 bool TextureManager::IsTextureCached(const std::string &asset)
 {
   auto it = _resources.find(asset);
-  return it != _resources.end() && !it->second.expired();
+  return it != _resources.end();
 }
 
 // ----------------------------------------------------------------------------

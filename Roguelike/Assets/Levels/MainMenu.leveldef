@@ -144,7 +144,11 @@
                 "TransformComponent": {},
                 "TextureComponent": {},
                 "SpriteComponent": {},
-                "TextComponent": {}
+                "TextComponent": {
+                  "texts": [
+                    ""
+                  ]
+                }
               },
               "children": [],
               "archetype": "Menu/Title"
@@ -183,7 +187,7 @@
                 "TransformComponent": {
                   "position": [
                     -1.2,
-                    0.4,
+                    0.1,
                     0.0
                   ],
                   "rotation": [
@@ -192,9 +196,9 @@
                     0.0
                   ],
                   "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.75,
+                    0.75,
+                    0.75
                   ]
                 }
               },
@@ -204,7 +208,14 @@
                   "components": {
                     "TransformComponent": {},
                     "TextureComponent": {},
-                    "SpriteComponent": {},
+                    "SpriteComponent": {
+                      "tint": [
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.686274528503418
+                      ]
+                    },
                     "ButtonComponent": {},
                     "EvalOnEventComponent": {},
                     "ButtonSoundsComponent": {},
@@ -218,7 +229,14 @@
                   "components": {
                     "TransformComponent": {},
                     "TextureComponent": {},
-                    "SpriteComponent": {},
+                    "SpriteComponent": {
+                      "tint": [
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.686274528503418
+                      ]
+                    },
                     "ButtonComponent": {},
                     "EvalOnEventComponent": {},
                     "ButtonSoundsComponent": {},
@@ -232,7 +250,14 @@
                   "components": {
                     "TransformComponent": {},
                     "TextureComponent": {},
-                    "SpriteComponent": {},
+                    "SpriteComponent": {
+                      "tint": [
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.686274528503418
+                      ]
+                    },
                     "ButtonComponent": {},
                     "EvalOnEventComponent": {},
                     "ButtonSoundsComponent": {},
@@ -246,7 +271,14 @@
                   "components": {
                     "TransformComponent": {},
                     "TextureComponent": {},
-                    "SpriteComponent": {},
+                    "SpriteComponent": {
+                      "tint": [
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.686274528503418
+                      ]
+                    },
                     "ButtonComponent": {},
                     "EvalOnEventComponent": {},
                     "ButtonSoundsComponent": {},
@@ -258,9 +290,22 @@
                 {
                   "name": "Credits",
                   "components": {
-                    "TransformComponent": {},
+                    "TransformComponent": {
+                      "position": [
+                        1.25,
+                        -1.5,
+                        0.0
+                      ]
+                    },
                     "TextureComponent": {},
-                    "SpriteComponent": {},
+                    "SpriteComponent": {
+                      "tint": [
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.49693301320075989,
+                        0.686274528503418
+                      ]
+                    },
                     "ButtonComponent": {},
                     "EvalOnEventComponent": {},
                     "ButtonSoundsComponent": {},
@@ -294,17 +339,17 @@
                 },
                 "TextureComponent": {
                   "textures": [
-                    "SPECIAL/NULL"
+                    "MainMenu/MainMenu.png"
                   ]
                 },
                 "SpriteComponent": {
                   "render_target": "WorldLayer",
                   "shader": "",
                   "tint": [
-                    0.391572505235672,
-                    0.58407843112945557,
-                    0.9301108717918396,
-                    0.60000002384185791
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
                   ]
                 }
               },

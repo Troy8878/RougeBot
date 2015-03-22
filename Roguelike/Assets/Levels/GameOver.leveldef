@@ -188,7 +188,7 @@
                       "render_target": "HUDLayer",
                       "width": 1.0,
                       "bg_color": "White, 0.6",
-                      "bg_hover": "",
+                      "bg_hover": "White, 0.51",
                       "text_scale": 48.0,
                       "image": "MenuPrerender/Back.png",
                       "text_color": "White",

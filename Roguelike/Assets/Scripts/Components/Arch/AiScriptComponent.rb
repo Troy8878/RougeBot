@@ -74,8 +74,6 @@ class AiScriptComponent < ComponentBase
   def ai_complete(result)
     @pending = false
 
-    puts result.to_s
-
     case result["result"]
     when "move"
 

@@ -56,8 +56,8 @@ public:
     CannotMoveDiagonally
   };
   
-  Tile &GetTile(mrb_int x, mrb_int y);
-  const Tile &GetTile(mrb_int x, mrb_int y) const;
+  Tile &GetTile(mrb_int x, mrb_int y, bool inverty = true);
+  const Tile &GetTile(mrb_int x, mrb_int y, bool inverty = true) const;
   BlockedReason CanMove(mrb_int ox, mrb_int oy, mrb_int dx, mrb_int dy) const;
 
   size_t TurnNumber() const { return turn_number; }

@@ -143,6 +143,7 @@
     <ClInclude Include="AIRoaming.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="AStarPathfinding.h" />
+    <ClInclude Include="Autoplay.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="Camera.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="AStarPathfinding.cpp" />
+    <ClCompile Include="Autoplay.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Camera.cpp" />

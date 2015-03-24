@@ -208,6 +208,9 @@
     <ClInclude Include="Loading.h">
       <Filter>Header Files\Arch</Filter>
     </ClInclude>
+    <ClInclude Include="Autoplay.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="Loading.cpp">
       <Filter>Source Files\Arch</Filter>
+    </ClCompile>
+    <ClCompile Include="Autoplay.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

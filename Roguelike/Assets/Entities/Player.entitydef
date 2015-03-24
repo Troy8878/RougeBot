@@ -112,10 +112,11 @@
   "AiComponent": {},
   "AiScriptComponent": {
     "brains": [
-      "Idle"
+      "Autoplay"
     ],
     "brain_index": 0,
     "target": "Player",
+    "auto_exec": false,
     "params": {}
   },
   "ScreenShakeComponent": {

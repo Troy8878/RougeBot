@@ -214,11 +214,13 @@ static mrb_value mrb_aisys_update_snapshot(mrb_state *mrb, mrb_value self)
 #include "AIDerp.h"
 #include "IdleBehaviour.h"
 #include "AIRoaming.h"
+#include "Autoplay.h"
 
 void AIFactory::RegisterDefaultFactories()
 {
   Register("Idle", new DefaultAIFactory<IdleBehaviour>);
   Register("Roaming", new DefaultAIFactory<AIRoaming>);
+  Register("Autoplay", new DefaultAIFactory<Autoplay>);
   Register("Derp", new DefaultAIFactory<AIDerp>);
 }
 

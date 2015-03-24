@@ -77,7 +77,7 @@ WorldSnapshot::WorldSnapshot(size_t turn)
 
     for (auto mrbtile : ruby::array_each(mrb, row))
     {
-      auto &tile = GetTile(x, y);
+      auto &tile = GetTile(x, y, false);
 
       tile.x = x;
       tile.y = y;
@@ -105,25 +105,29 @@ WorldSnapshot::WorldSnapshot(size_t turn)
 
 // ----------------------------------------------------------------------------
 
-WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y)
+WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y, bool inverty)
 {
   if (y >= height || y < 0)
     throw basic_exception("Y value out of range");
 
   if (x >= width || x < 0)
     throw basic_exception("X value out of range");
-
+  
+  if (inverty)
+    y = height - 1 - y;
   return map[(y * width) + x];
 }
 
-const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y) const
+const WorldSnapshot::Tile& WorldSnapshot::GetTile(mrb_int x, mrb_int y, bool inverty) const
 {
   if (y >= height || y < 0)
     throw basic_exception("Y value out of range");
 
   if (x >= width || x < 0)
     throw basic_exception("X value out of range");
-
+  
+  if (inverty)
+    y = height - 1 - y;
   return map[(y * width) + x];
 }
 
@@ -147,7 +151,7 @@ WorldSnapshot::BlockedReason WorldSnapshot::CanMove(mrb_int ox, mrb_int oy, mrb_
     return OutOfBounds;
 
   // Get the tile they are trying to move to.
-  auto &tile = GetTile(ox + dx, oy + dy);
+  auto &tile = GetTile(ox + dx, oy + dy, false);
 
   // Make sure the player isn't trying to move into another Actor.
   if (tile.actor != Tile::Empty)

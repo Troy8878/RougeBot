@@ -58,6 +58,8 @@ class PlayerControllerComponent < ComponentBase
 
     self.register_event :skip_floor, :skip_floor
     self.register_event :skip_to_win, :skip_to_win
+
+    self.register_event :ai_complete, :ai_complete
   end
 
   def on_pause(val)
@@ -176,6 +178,11 @@ class PlayerControllerComponent < ComponentBase
   def on_move(e)
     set_kb_mode
     move *e
+  end
+
+  # For autoplay
+  def ai_complete(e)
+    yield_to_enemies
   end
 
   def enemies_nearby?

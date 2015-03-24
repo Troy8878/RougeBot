@@ -207,7 +207,7 @@
                       ]
                     },
                     "SplashZoomComponent": {
-                      "speed": 1.5
+                      "speed": 1.0
                     },
                     "TextComponent": {
                       "texts": [
@@ -289,7 +289,7 @@
                       ]
                     },
                     "SplashZoomComponent": {
-                      "speed": 1.5
+                      "speed": 1.0
                     }
                   },
                   "children": [],
@@ -307,7 +307,7 @@
     {
       "components": {
         "SplashLevelSwitcher": {
-          "splash_time": 7.0
+          "splash_time": 10.0
         }
       },
       "children": [],

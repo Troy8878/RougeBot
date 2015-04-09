@@ -24,6 +24,24 @@ static void CreateConsole()
   //std::ios::sync_with_stdio();
 }
 
+static bool IsWindowsAtLeast(DWORD major, DWORD minor, WORD spMajor, WORD spMinor)
+{
+    DWORDLONG condition = 0;
+    OSVERSIONINFOEX info = {sizeof(info)};
+    info.dwMajorVersion = major;
+    info.dwMinorVersion = minor;
+    info.wServicePackMajor = spMajor;
+    info.wServicePackMinor = spMinor;
+
+    VER_SET_CONDITION(condition, VER_MAJORVERSION, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(condition, VER_MINORVERSION, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(condition, VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(condition, VER_SERVICEPACKMINOR, VER_GREATER_EQUAL);
+
+    return !!VerifyVersionInfoA(&info, VER_MAJORVERSION | VER_MINORVERSION |
+                                VER_SERVICEPACKMAJOR | VER_SERVICEPACKMINOR, condition);
+}
+
 extern "C" int IsAvxSupported();
 extern "C" __declspec(noreturn) void GameRunGame()
 {
@@ -59,5 +77,12 @@ extern "C" __declspec(noreturn) void GameRunGame()
 
 INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
+  if (!IsWindowsAtLeast(6, 1, 1, 0))
+  {
+    MessageBoxA(nullptr, "Please install Windows 7 (Service Pack 1) or better",
+                "Missing Requirement", MB_ICONERROR);
+    return;
+  }
+
   GameRunGame();
 }

@@ -81,7 +81,7 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
   {
     MessageBoxA(nullptr, "Please install Windows 7 (Service Pack 1) or better",
                 "Missing Requirement", MB_ICONERROR);
-    return;
+    return 0;
   }
 
   GameRunGame();

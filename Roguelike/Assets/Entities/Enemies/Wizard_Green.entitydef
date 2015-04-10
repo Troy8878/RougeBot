@@ -36,13 +36,17 @@
   },
   "EnemyLogicComponent": {
     "stationary": false,
-    "move_skip": 2
+    "move_skip": 2,
+    "new_system": false
   },
   "ScreenShakeComponent": {
     "frequency": 12.0,
     "strength": 0.5,
     "length": 1.0,
     "shake_child": "."
+  },
+  "TooltipComponent": {
+    "text": "I'm an edgelord, come at me bro"
   },
   "ChildHierarchy": {
     "children": [

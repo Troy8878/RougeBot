@@ -36,7 +36,7 @@ class InventoryComponent < ComponentBase
 
   def give_random_weapon(level)
     if PLAYER_INVENTORY.room_in_inventory == true
-      @inventory.pickup ItemGenerate.generate_weapon({}, level)
+      @inventory.pickup ItemGenerate.generate_mundane_weapon({}, level)
     end
   end
 

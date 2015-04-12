@@ -28,10 +28,10 @@ class Weapon < Item
   AXE_TYPE = 2
   SPEAR_TYPE = 3
 
-  LEFT = 4
-  RIGHT = 5
-  TOP = 6
-  BOTTOM = 7
+  LEFT = 6
+  RIGHT = 7
+  TOP = 8
+  BOTTOM = 9
 
   ANIM_NAMES = {
     DAGGER_TYPE => "Dagger",
@@ -67,7 +67,7 @@ class Weapon < Item
       right: [ [1, 0], [2, 0] ],
       up: [ [0, 1], [0, 2] ],
       down: [ [0, -1], [0, -2] ]
-    }
+    },
   }
 
   def initialize(data)

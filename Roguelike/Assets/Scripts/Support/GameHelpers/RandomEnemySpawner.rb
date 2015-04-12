@@ -48,7 +48,7 @@ module Enemy
       }
     )
 
-    enemy.defense_component.health *= GAME_STATE[:floor]
+    #enemy.defense_component.health *= GAME_STATE[:floor]
     enemy
   end
 

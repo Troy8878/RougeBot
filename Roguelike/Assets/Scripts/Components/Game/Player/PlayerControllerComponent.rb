@@ -375,6 +375,11 @@ class PlayerControllerComponent < ComponentBase
 
     set_kb_mode
 
+    if GAME_STATE[:tutorial] == -1
+      owner.local_find("HealthBar").zombify!
+      owner.local_find("HealthDisplay").zombify!
+    end
+
     register_event :update, :on_update
   end
 

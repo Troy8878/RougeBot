@@ -11,7 +11,7 @@
       0.0
     ],
     "scale": [
-      2.0,
+      3.0,
       0.5,
       1.0
     ]
@@ -30,7 +30,7 @@
   },
   "TextureComponent": {
     "textures": [
-      "SPECIAL/SURFACE/400:100"
+      "SPECIAL/SURFACE/600:100"
     ]
   },
   "SpriteComponent": {
@@ -45,7 +45,7 @@
   },
   "TextComponent": {
     "texts": [
-      "<- Tutorial"
+      "Use [W][A][S][D] to move"
     ],
     "text_color": "White",
     "bg_color": "Black, 0",

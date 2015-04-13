@@ -9,7 +9,6 @@ end
 
 def init_floor_text(entity)
   if !GAME_STATE[:tutorial].nil?
-    puts "u wot"
     owner.raise_event :send, [:set_text_at, [0, ""]]
   else
     message = "Floor #{GAME_STATE[:floor]} / #{$DungeonLength}\nGet to the stairs!"

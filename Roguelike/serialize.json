@@ -606,7 +606,18 @@
   },
   {
     "dependencies": [],
-    "properties": [],
+    "properties": [
+      {
+        "property": "disable",
+        "usage": {
+          "type": "bool",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": false
+        }
+      }
+    ],
     "name": "GameQuitComponent"
   },
   {
@@ -730,6 +741,22 @@
       }
     ],
     "name": "SpinnyThingComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
+        "property": "text",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": "Enter some text, why doncha?"
+        }
+      }
+    ],
+    "name": "TooltipComponent"
   },
   {
     "dependencies": [],

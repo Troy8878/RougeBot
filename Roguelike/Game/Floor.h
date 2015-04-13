@@ -56,7 +56,7 @@ private:
 
   size_t MapTiles;
   mrb_int *Map;
-  inline mrb_int& TileAt(size_t x, size_t y)
+  inline mrb_int &TileAt(size_t x, size_t y)
   {
     return *(Map + (y * Width) + x);
   }
@@ -98,13 +98,16 @@ private:
   mrb_int StairX, StairY;
 
   size_t MapTiles;
-  mrb_int *Map;
+  std::unique_ptr<mrb_int[]> Map;
+
+  mrb_bool IsDungeon = false;
+  std::string DungeonName;
 
   std::vector<std::tuple<TileType, size_t, size_t, json::value>> Entities;
 
-  inline mrb_int& TileAt(size_t x, size_t y)
+  inline mrb_int &TileAt(size_t x, size_t y)
   {
-    return *(Map + (y * Width) + x);
+    return Map[(y * Width) + x];
   }
 
   void ParseOptions(mrb_state *mrb, mrb_value options);
@@ -113,6 +116,8 @@ private:
   void MakeStairs(size_t x, size_t y);
   void MakeRoom(size_t x, size_t y);
   void MakeRoom(json::value room, size_t x, size_t y);
+
+  void MakeRect(json::value room, size_t x, size_t y, size_t width, size_t height);
 
   void MakeBarriers();
 

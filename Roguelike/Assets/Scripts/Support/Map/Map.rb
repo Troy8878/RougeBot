@@ -15,8 +15,6 @@ class Map
   attr_reader :player_start
 
   def generate(opts = {})
-    GAME_STATE[:tutorial] = -1
-
     opts[:level] = GAME_STATE[:floor]
 
     tutnum = GAME_STATE[:tutorial]

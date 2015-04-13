@@ -6,8 +6,6 @@
 #######################
 
 class DoorComponent < ComponentBase
-  include Actor
-  
   attr_reader :tutnum
 
   serialized_input do |p|
@@ -17,7 +15,7 @@ class DoorComponent < ComponentBase
   def initialize(data)
     super data
 
-    @tutnum = data[:tutnum]
+    @tutnum = data["tutnum"]
     if @tutnum == -2
       @tutnum = nil
     end
@@ -28,9 +26,11 @@ class DoorComponent < ComponentBase
   def first_update(e)
     remove_event :update
 
-    shape = MapItem::ELLIPSE
-    actor_init(shape, "Yellow")
+    pos = owner.position_component.position
+    room = current_floor
+    room[room.size - pos.y - 1][pos.x].door = self
   end
 
   register_component
 end
+

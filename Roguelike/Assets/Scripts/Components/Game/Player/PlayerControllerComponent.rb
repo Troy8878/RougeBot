@@ -413,9 +413,32 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_zombification(e)
-    # TODO: Lose Condition
-    puts "Player ded"
-    Game.switch_level 'GameOver'
+    find_entity("Minimap").zombify!
+    find_entity("TileCursor").zombify!
+
+    overlay = owner.local_find("DefeatOverlay")
+    overlay.add_component "ButtonComponent", {
+      "render_target" => "HUDLayer"
+    }
+
+    transient = owner.parent.create_child
+    transient.add_component "TransformComponent", {
+      "position" => owner.transform_component.position.to_a,
+      "scale" => owner.transform_component.scale.to_a
+    }
+    transient.add_child owner.local_find("CameraRoot")
+
+    tint = overlay.sprite_component.tint
+    tint.w = 0.49
+
+    ntint = tint.dup
+    ntint.w = 1
+
+    seq = transient.action_sequence :display_defeat
+    seq.interpolate tint, to: ntint, over: 4.seconds
+    seq.once do
+      Game.switch_level "GameOver"
+    end
   end
 
   register_component

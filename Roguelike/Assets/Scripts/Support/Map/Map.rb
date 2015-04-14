@@ -15,14 +15,13 @@ class Map
   attr_reader :player_start
 
   def generate(opts = {})
-    #GAME_STATE[:tutorial] = -1
-
     opts[:level] = GAME_STATE[:floor]
 
     tutnum = GAME_STATE[:tutorial]
     if tutnum.is_a? Fixnum
       dungeon = TUTORIAL_PROGRESSION[tutnum]
       if dungeon.nil? || tutnum == -1
+        GAME_STATE[:tutorial] = -1
         dungeon = "Hubworld"
       end
       opts[:dungeon] = dungeon

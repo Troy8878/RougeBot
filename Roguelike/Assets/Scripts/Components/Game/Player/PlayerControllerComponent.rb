@@ -74,7 +74,11 @@ class PlayerControllerComponent < ComponentBase
     # Check if the player is on the stairs
     if @pos.near? STAIR_POSITION, 0.5
       # Make sure we aren't on the last floor already.
-      if GAME_STATE[:floor] == $DungeonLength
+      if GAME_STATE[:tutorial].is_a? Fixnum
+        GAME_STATE[:floor] += 1
+        GAME_STATE[:tutorial] += 1
+        Game.reload_level
+      elsif GAME_STATE[:floor] == $DungeonLength
         Game.switch_level "Victory"
       # Otherwise, to the next floor!
       else
@@ -85,6 +89,17 @@ class PlayerControllerComponent < ComponentBase
     end
 
     tile = current_tile
+
+    if tile.door
+      tut = tile.door.tutnum
+      puts "tut: #{tut}"
+      if tut == -2
+        play_dungeon!(1, nil)
+      else
+        play_dungeon!(1, tut)
+      end
+    end
+
     if tile.item?
       if PLAYER_INVENTORY.room_in_inventory == true
         item = tile.pickup_item
@@ -359,6 +374,11 @@ class PlayerControllerComponent < ComponentBase
     @logic_initialized = true
 
     set_kb_mode
+
+    if GAME_STATE[:tutorial] == -1
+      owner.local_find("HealthBar").zombify!
+      owner.local_find("HealthDisplay").zombify!
+    end
 
     register_event :update, :on_update
   end

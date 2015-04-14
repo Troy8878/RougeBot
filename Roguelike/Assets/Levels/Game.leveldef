@@ -318,7 +318,7 @@
                   ],
                   "text_color": "White",
                   "bg_color": "",
-                  "font": "Jokerman",
+                  "font": "",
                   "font_size": 48.0,
                   "text_align": "center",
                   "paragraph_align": "center",
@@ -329,7 +329,7 @@
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
-                    "level_load": "if !GAME_STATE[:tutnum].nil?; owner.raise_event :send, [:set_text_at, [0, \"\"]]; else; owner.raise_event :send, [:set_text_at, [0, \"Floor #{GAME_STATE[:floor]} / #{$DungeonLength}\\nGet to the stairs!\"]]; end"
+                    "level_load": "init_floor_text(owner)"
                   }
                 }
               },
@@ -358,7 +358,7 @@
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
-                    "combat_log": "seq = owner.action_sequence :log; seq.once { msg = owner.create_child(archetype: 'HUD/LogMessage'); msg.text_component.texts[0] = e.to_s }; seq.delay 0.4"
+                    "combat_log": "run_combat_log(e)"
                   }
                 }
               },

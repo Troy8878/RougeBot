@@ -608,6 +608,22 @@
     "dependencies": [],
     "properties": [
       {
+        "property": "tutnum",
+        "usage": {
+          "type": "integer",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": -2
+        }
+      }
+    ],
+    "name": "DoorComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
         "property": "disable",
         "usage": {
           "type": "bool",

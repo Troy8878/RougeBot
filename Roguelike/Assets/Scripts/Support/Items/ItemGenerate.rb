@@ -32,7 +32,7 @@ module ItemGenerate
   end
 
   def self.generate_mundane_weapon(data, itemLevel)
-    itemLevel = itemLevel * 2
+    itemLevel = (itemLevel * 2) - 1
 
     data["damage"] ||= [5, 10]
     data["durability"] ||= 20
@@ -72,26 +72,26 @@ module ItemGenerate
     result = Random.die_roll 100
 	
 	  if result > 75
-      data["damage"][0] = 5
-      data["damage"][1] = 8
+      data["damage"][0] = 8
+      data["damage"][1] = 10
       data["weaponType"] = Weapon::SPEAR_TYPE
 
       name = "Spear"
     elsif result > 50
-      data["damage"][0] = 4
-      data["damage"][1] = 9
+      data["damage"][0] = 6
+      data["damage"][1] = 12
       data["weaponType"] = Weapon::SABER_TYPE
 
       name = "Saber"
     elsif result > 20
-      data["damage"][0] = 3
-      data["damage"][1] = 10
+      data["damage"][0] = 4
+      data["damage"][1] = 8
       data["weaponType"] = Weapon::AXE_TYPE
 
       name = "Axe"
     else
       data["damage"][0] = 8
-      data["damage"][1] = 12
+      data["damage"][1] = 14
       data["weaponType"] = Weapon::DAGGER_TYPE
 
       name = "Dagger"
@@ -106,7 +106,7 @@ module ItemGenerate
 
       data["attributes"] << ItemAttribute.new(:material, "Wooden")
     elsif result == 2
-      self.modify_weapon_stats(data, "Plastic ", -1, -1, 5, false)
+      self.modify_weapon_stats(data, "Plastic ", 1, 1, 5, false)
 
       data["attributes"] << ItemAttribute.new(:material, "Plastic")
 
@@ -148,7 +148,7 @@ module ItemGenerate
     elsif result >= 10
       self.modify_weapon_stats(data, "Anti-Matter ", 16, 22, 50, false)
 
-      data["attributes"] << ItemAttribute.new(:material, "Obsidian")
+      data["attributes"] << ItemAttribute.new(:material, "Anti-Matter")
     end
   end
 
@@ -161,16 +161,15 @@ module ItemGenerate
 
       result = Random.die_roll(3)
       if result == 1
-        self.modify_weapon_stats(data, "Dull ", -2, -2, 0, false)
+        self.modify_weapon_stats(data, "Dull ", -1, -1, 0, false)
 
         data["attributes"] << ItemAttribute.new(:augment, "Dull")
       elsif result == 2
-        self.modify_weapon_stats(data, "Shoddy ", 0, 0, 2, false)
-        data["value"] = data["value"] + 2
+        self.modify_weapon_stats(data, "Shoddy ", -2, -2, -2, false)
 
         data["attributes"] << ItemAttribute.new(:augment, "Shoddy")
       elsif result == 3
-        self.modify_weapon_stats(data, "Rusty ", 0, 0, -2, false)
+        self.modify_weapon_stats(data, "Rusty ", -3, -1, -5, false)
 
         data["attributes"] << ItemAttribute.new(:augment, "Rusty")
       end
@@ -209,46 +208,53 @@ module ItemGenerate
   end
 
   def self.add_element(data, result)
-    weaponMod = Random.die_roll(10 + result)
+
+    roll = Random.bell_curve((2), 2)
+
+    weaponMod = roll.to_i
+    if weaponMod < 1
+      weaponMod = 1;
+    end
+
     levelMod = 0;
 
-    if weaponMod < 8
+    if weaponMod <= 1
       levelMod = 0
       data["element"] = "physical"
 
       data["attributes"] << ItemAttribute.new(:element, "Physical")
-    elsif weaponMod < 12
+    elsif weaponMod == 2
       levelMod = 1
 
-      self.modify_weapon_stats(data, " of Flames", 1, 1, 5, true)
+      self.modify_weapon_stats(data, " of Flames", 2, 2, 5, true)
       data["element"] = "flame"
 
       data["attributes"] << ItemAttribute.new(:element, "Flame")
-    elsif weaponMod < 15
+    elsif weaponMod == 3
       levelMod = 2
 
-      self.modify_weapon_stats(data, " of Freezing", 2, 2, 10, true)
+      self.modify_weapon_stats(data, " of Freezing", 4, 4, 10, true)
       data["element"] = "freezing"
 
       data["attributes"] << ItemAttribute.new(:element, "Freezing")
-    elsif weaponMod < 18
+    elsif weaponMod == 4
       levelMod = 2
 
-      self.modify_weapon_stats(data, " of Zapping", 3, 3, 15, true)
+      self.modify_weapon_stats(data, " of Zapping", 6, 6, 15, true)
       data["element"] = "zapping"
 
       data["attributes"] << ItemAttribute.new(:element, "Zapping")
-    elsif weaponMod < 20
+    elsif weaponMod == 5
       levelMod = 3
 
-      self.modify_weapon_stats(data, " of Radiactivity", 4, 4, 20, true)
+      self.modify_weapon_stats(data, " of Radiactivity", 8, 8, 20, true)
       data["element"] = "radioactive"
 
       data["attributes"] << ItemAttribute.new(:element, "Radioactive")
     else
       levelMod = 4
 
-      self.modify_weapon_stats(data, " of Exploding", 6, 6, 25, true)
+      self.modify_weapon_stats(data, " of Exploding", 10, 10, 25, true)
       data["element"] = "exploding"
 
       data["attributes"] << ItemAttribute.new(:element, "Exploding")
@@ -265,17 +271,23 @@ module ItemGenerate
     result = roll.to_i
     if result < 1
       result = 1;
+    elsif result > 10
+      result = 10;
     end
 
     asp1 = result
 
     self.add_material(data, result)
 
-    asp2 = self.add_attribute(data, result)
+    asp2 = 0
+
+    if result <= ((itemLevel * 2))
+      asp2 = self.add_attribute(data, result)
+    end
 
     asp3 = 0
 
-    if itemLevel > 1
+    if result + asp2 <= ((itemLevel * 2))
       asp3 = self.add_element(data, result)
     end
 

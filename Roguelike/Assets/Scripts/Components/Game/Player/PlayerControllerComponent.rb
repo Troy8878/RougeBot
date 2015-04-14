@@ -79,6 +79,8 @@ class PlayerControllerComponent < ComponentBase
         GAME_STATE[:tutorial] += 1
         Game.reload_level
       elsif GAME_STATE[:floor] == $DungeonLength
+        Config[:dungeon_completed] = true
+        Config.save
         Game.switch_level "Victory"
       # Otherwise, to the next floor!
       else
@@ -191,7 +193,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_move(e)
-    set_kb_mode
     move *e
   end
 
@@ -373,8 +374,6 @@ class PlayerControllerComponent < ComponentBase
 
     @logic_initialized = true
 
-    set_kb_mode
-
     if GAME_STATE[:tutorial] == -1
       owner.local_find("HealthBar").zombify!
       owner.local_find("HealthDisplay").zombify!
@@ -411,19 +410,6 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def mouse_move(e)
-    set_mouse_mode
-  end
-
-  def set_kb_mode
-    return if Config[:touch_mode]
-    @cursor ||= find_entity("TileCursor")
-    @cursor.children[0].sprite_component.visible = false
-  end
-
-  def set_mouse_mode
-    return if Config[:touch_mode]
-    @cursor ||= find_entity("TileCursor")
-    @cursor.children[0].sprite_component.visible = true
   end
 
   def on_zombification(e)

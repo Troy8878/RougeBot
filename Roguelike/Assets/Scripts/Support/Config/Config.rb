@@ -68,7 +68,10 @@ module Config
   def self.load_defaults(&block)
     @@defaulting = true
     @@defaults = {}
-    @@items = {}
+    @@items = {
+      tutorial_completed: @@items[:tutorial_completed],
+      dungeon_completed: @@items[:dungeon_completed]
+    }
 
     if block_given?
       yield

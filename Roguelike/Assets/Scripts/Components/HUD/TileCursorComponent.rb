@@ -34,6 +34,7 @@ module HUD
 
     def first_update(e)
       @camera = find_entity("CameraRoot").find_entity(@camera).camera_component
+      @player = find_entity("Player")
       @mouse_pos = Vector.new
 
       register_event :mouse_move, :mouse_move
@@ -42,9 +43,30 @@ module HUD
 
     def update_transform
       position = @camera.screen_to_world(@mouse_pos)
+      playerpos = @player.position_component.position
 
-      position.x = Math.round(position.x)
-      position.y = Math.round(position.y)
+      diff = position - playerpos
+
+      if diff.length2 > 9
+        @transform.position = Vector.new(0, 0, 500)
+        return
+      end
+
+      angle = Math.atan2(diff.y, diff.x)
+      angle -= Math::PI / 4
+      angle %= 2 * Math::PI
+      angle = (angle / (2 * Math::PI) * 4).to_i
+
+      case angle
+      when 0
+        position = playerpos + Vector.new(0, 1)
+      when 1
+        position = playerpos + Vector.new(-1, 0)
+      when 2
+        position = playerpos + Vector.new(0, -1)
+      when 3
+        position = playerpos + Vector.new(1, 0)
+      end
 
       @transform.position = position
     end

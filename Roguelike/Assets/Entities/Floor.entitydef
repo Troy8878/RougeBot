@@ -24,6 +24,11 @@
           "World/Wall.png",
           "World/Floor.png"
         ]
+      },
+      {
+        "zipped": [
+          ""
+        ]
       }
     ]
   },

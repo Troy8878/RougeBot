@@ -172,42 +172,22 @@ void Entity::HandleProxies(Events::EventMessage& e)
   auto it = proxies.find(e.EventId);
   if (it != proxies.end())
   {
-    static Entity *processed[1024];
-    size_t process_count = 0;
+    auto &maps = it->second.maps;
 
-    auto &proxy = it->second.maps;
-
-    if (proxies.size() > 1024)
+    if (maps.size() > 1024)
       throw basic_exception("I can't process more than 1024 proxies on a single entity");
 
-    proxies_invalidated = false;
-    bool was_invalidated = false;
+    EventProxyList::Func proxy_list[1024];
+    size_t proxy_count = 0;
 
-    for (auto it = proxy.begin(); it != proxy.end(); ++it)
+    for (auto &proxy : maps)
     {
-      if (was_invalidated)
-      {
-        auto begin = processed;
-        auto end = processed + process_count;
-        if (std::find(begin, end, it->first) != end)
-        {
-          continue;
-        }
-      }
+      proxy_list[proxy_count++] = proxy.second;
+    }
 
-      it->second(e);
-      processed[process_count++] = it->first;
-
-      if (proxies_invalidated)
-      {
-        proxies_invalidated = false;
-        was_invalidated = true;
-
-        if (proxy.size() == 0)
-          break;
-
-        it = proxy.begin();
-      }
+    for (auto &proxy : array_iterator(proxy_list, proxy_count))
+    {
+      proxy(e);
     }
   }
 }

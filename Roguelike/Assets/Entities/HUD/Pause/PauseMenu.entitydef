@@ -103,6 +103,16 @@
                 },
                 "children": [],
                 "archetype": "HUD/Pause/Restart"
+              },
+              {
+                "name": "Options",
+                "archetype": "Menu/AllOptions",
+                "components": {
+                  "TransformComponent": {
+                    "scale": [0.09, 0.09, 0.09],
+                    "position": [-0.3575, -0.32, 0]
+                  }
+                }
               }
             ]
           }

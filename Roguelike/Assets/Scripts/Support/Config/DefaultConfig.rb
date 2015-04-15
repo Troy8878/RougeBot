@@ -17,6 +17,11 @@ Config.load_defaults do
   Config[:graphics_fullscreen] = true
 
   ######################
+  # Audio
+  Config[:music_muted] = false
+  Config[:sound_muted] = false
+
+  ######################
   # Key Bindings
 
   Config[:keybind_actions] = {}

@@ -51,6 +51,8 @@ void SoundClass::Initialize()
   // Initialize FMOD
   FMODresult = SoundSystem->init(512, FMOD_INIT_NORMAL, nullptr);
   CheckResult(FMODresult == FMOD_OK);
+
+  SoundSystem->createSoundGroup("music_group", &MusicGroup);
 }
 
 // ----------------------------------------------------------------------------
@@ -218,7 +220,7 @@ SoundClass::Sound::Sound(const char *name, SoundClass &Sys, SOUND_TYPE type, FMO
           break;
       }
     }
-
+    
     FMODresult = Sys.SoundSystem->createSound(name, mode, &ex, &sound);
     CheckResult(FMODresult == FMOD_OK);
   }
@@ -226,6 +228,11 @@ SoundClass::Sound::Sound(const char *name, SoundClass &Sys, SOUND_TYPE type, FMO
   {
     FMODresult = Sys.SoundSystem->createSound(name, mode, nullptr, &sound);
     CheckResult(FMODresult == FMOD_OK);
+  }
+
+  if (type == SOUND_TYPE::MUSIC)
+  {
+    sound->setSoundGroup(Sys.MusicGroup);
   }
 
   // Save the Sys for later
@@ -239,7 +246,9 @@ SoundClass::Sound::Sound(const char *name, SoundClass &Sys, SOUND_TYPE type, FMO
 SoundClass::Sound *SoundClass::Sound::CreateSound(const char *name, SoundClass &Sys, std::vector<ExInfo> Infos)
 {
   // Just a quick wrapper for easy SFX construction
-  return new Sound(name, Sys, SOUND_TYPE::SFX, 0, Infos);
+  auto sound = new Sound(name, Sys, SOUND_TYPE::SFX, 0, Infos);
+  sound->is_music = false;
+  return sound;
 }
 
 // ----------------------------------------------------------------------------
@@ -247,7 +256,9 @@ SoundClass::Sound *SoundClass::Sound::CreateSound(const char *name, SoundClass &
 SoundClass::Sound *SoundClass::Sound::CreateMusic(const char *name, SoundClass &Sys, std::vector<ExInfo> Infos)
 {
   // Just a quick wrapper for easy music construction
-  return new Sound(name, Sys, SOUND_TYPE::MUSIC, 0, Infos);
+  auto music = new Sound(name, Sys, SOUND_TYPE::MUSIC, 0, Infos);
+  music->is_music = true;
+  return music;
 }
 
 // ----------------------------------------------------------------------------
@@ -345,10 +356,11 @@ int SoundClass::Sound::GetCurrentChan()
 void SoundClass::Sound::SetVolume(double value)
 {
   volume = value;
+  auto realvolume = static_cast<float>(muted ? 0 : volume * gvolume);
 
   FMOD::SoundGroup *group;
   CheckResult(sound->getSoundGroup(&group));
-  group->setVolume(static_cast<float>(volume * gvolume));
+  group->setVolume(realvolume);
 }
 
 // ----------------------------------------------------------------------------
@@ -358,6 +370,27 @@ void SoundClass::Sound::UpdateGVolume(double value)
   gvolume = value;
   SetVolume(volume);
 }
+
+// ----------------------------------------------------------------------------
+
+void SoundClass::Sound::MuteMusic(bool muted)
+{
+  if (is_music)
+  {
+    this->muted = muted;
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void SoundClass::Sound::MuteSound(bool muted)
+{
+  if (!is_music)
+  {
+    this->muted = muted;
+  }
+}
+
 
 // ----------------------------------------------------------------------------
 

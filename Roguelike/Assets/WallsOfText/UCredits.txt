@@ -1,0 +1,25 @@
+President of DigiPen
+    Claude Comair
+
+Instructors
+    Ellen Beeman
+    Ben Ellinger
+    Rachel Rutherford
+
+The Team
+    Producer
+        Leonardo Saikali
+    Teachnical Lead
+        Connor Hilarides
+    Lead Designer
+        Troy K. B. de Magro
+    Systems Engineer
+        Claire Robsahm
+    Gameplay Architect
+        Enrique Rodriguez
+
+Technologies
+    Audio
+        FMOD (Copyright © 2015 Firelight Technologies PTY)
+    Scripting
+        MRuby (Copyright © 2015 mruby developers)

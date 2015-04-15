@@ -20,6 +20,8 @@ public:
   void Initialize();
   void Update();
 
+  FMOD::System *Handle() { return SoundSystem; }
+
   class Sound
   {
   public:
@@ -120,6 +122,9 @@ public:
     double GetVolume();
     void SetVolume(double value);
 
+    void MuteSound(bool muted);
+    void MuteMusic(bool muted);
+
   private:
     std::vector<ExInfo> Infos = {};
     FMOD::Sound *sound;
@@ -128,6 +133,8 @@ public:
     FMOD_RESULT FMODresult;
     double volume = 1;
     double gvolume = 1;
+    bool muted = false;
+    bool is_music;
 
     void CheckResult(bool isOkay);
     void CheckResult(FMOD_RESULT res) { CheckResult(res == FMOD_OK); }
@@ -141,6 +148,7 @@ public:
 private:
   void CheckResult(bool isOkay);
   FMOD::System *SoundSystem;
+  FMOD::SoundGroup *MusicGroup;
   FMOD_RESULT FMODresult;
   FMOD_SPEAKERMODE speakermode = FMOD_SPEAKERMODE_DEFAULT;
   unsigned int version;

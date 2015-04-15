@@ -1,0 +1,186 @@
+{
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Vsync",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.95,
+              0.95,
+              0.95
+            ]
+          },
+          "CheckboxHelperComponent": {
+            "render_target": "HUDLayer",
+            "is_checked": false,
+            "box_color": "#AFAFAFFF",
+            "alt_color": "#007FCFFF",
+            "text_color": "White",
+            "text_width": 3.0,
+            "text_scale": 48.0,
+            "font": "",
+            "text": "Vsync",
+            "config_bind": "graphics_vsync"
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "Fullscreen",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -2.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.95,
+              0.95,
+              0.95
+            ]
+          },
+          "CheckboxHelperComponent": {
+            "render_target": "HUDLayer",
+            "is_checked": false,
+            "box_color": "#AFAFAFFF",
+            "alt_color": "#007FCFFF",
+            "text_color": "White",
+            "text_width": 3.0,
+            "text_scale": 48.0,
+            "font": "",
+            "text": "Fullscreen",
+            "config_bind": "graphics_fullscreen"
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "EnableConsole",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -3.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.95,
+              0.95,
+              0.95
+            ]
+          },
+          "CheckboxHelperComponent": {
+            "render_target": "HUDLayer",
+            "is_checked": false,
+            "box_color": "#AFAFAFFF",
+            "alt_color": "#007FCFFF",
+            "text_color": "White",
+            "text_width": 5.0,
+            "text_scale": 48.0,
+            "font": "",
+            "text": "Enable Console",
+            "config_bind": "console_enabled"
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "MuteMusic",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -4.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.95,
+              0.95,
+              0.95
+            ]
+          },
+          "CheckboxHelperComponent": {
+            "render_target": "HUDLayer",
+            "is_checked": false,
+            "box_color": "#AFAFAFFF",
+            "alt_color": "#007FCFFF",
+            "text_color": "White",
+            "text_width": 5.0,
+            "text_scale": 48.0,
+            "font": "",
+            "text": "Mute Music",
+            "config_bind": "music_muted"
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "MuteSound",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              -5.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              0.95,
+              0.95,
+              0.95
+            ]
+          },
+          "CheckboxHelperComponent": {
+            "render_target": "HUDLayer",
+            "is_checked": false,
+            "box_color": "#AFAFAFFF",
+            "alt_color": "#007FCFFF",
+            "text_color": "White",
+            "text_width": 5.0,
+            "text_scale": 48.0,
+            "font": "",
+            "text": "Mute SFX",
+            "config_bind": "sound_muted"
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      }
+    ]
+  }
+}

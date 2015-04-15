@@ -137,9 +137,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actions.h" />
+    <ClInclude Include="AIAngstMage.h" />
     <ClInclude Include="AIBehaviour.h" />
+    <ClInclude Include="AIBlueMage.h" />
     <ClInclude Include="AiComponent.h" />
     <ClInclude Include="AIDerp.h" />
+    <ClInclude Include="AIPurpleMage.h" />
     <ClInclude Include="AIRoaming.h" />
     <ClInclude Include="AISystem.h" />
     <ClInclude Include="AStarPathfinding.h" />
@@ -195,9 +198,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actions.cpp" />
+    <ClCompile Include="AIAngstMage.cpp" />
     <ClCompile Include="AIBehaviour.cpp" />
+    <ClCompile Include="AIBlueMage.cpp" />
     <ClCompile Include="AiComponent.cpp" />
     <ClCompile Include="AIDerp.cpp" />
+    <ClCompile Include="AIPurpleMage.cpp" />
     <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="AISystem.cpp" />
     <ClCompile Include="AStarPathfinding.cpp" />

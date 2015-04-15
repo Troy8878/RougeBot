@@ -45,7 +45,7 @@
   },
   "TextComponent": {
     "texts": [
-      "Press E"
+      "Press E to enter"
     ],
     "text_color": "White",
     "bg_color": "Black, 0",

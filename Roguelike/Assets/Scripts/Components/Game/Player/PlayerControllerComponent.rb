@@ -33,6 +33,7 @@ class PlayerControllerComponent < ComponentBase
   def initialize(data)
     super data
 
+    @score = 0
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
@@ -129,6 +130,7 @@ class PlayerControllerComponent < ComponentBase
     end
 
     self.owner.defense_component.heal item.value
+    @score = @score + item.value
   end
 
   def skip_floor(e)

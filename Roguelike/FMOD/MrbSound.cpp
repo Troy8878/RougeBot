@@ -14,7 +14,9 @@
 // ----------------------------------------------------------------------------
 
 static std::list<ManagedSound> allSounds;
-double gvolume;
+double gvolume = 1.0;
+bool gmmute = false;
+bool gsmute = false;
 
 struct SoundRef
 {
@@ -23,6 +25,10 @@ struct SoundRef
   {
     allSounds.push_front(sound);
     iter = allSounds.begin();
+    
+    this->sound->MuteMusic(gmmute);
+    this->sound->MuteSound(gsmute);
+    this->sound->UpdateGVolume(gvolume);
   }
 
   NO_ASSIGNMENT_OPERATOR(SoundRef);
@@ -38,6 +44,18 @@ struct SoundRef
   static void UpdateGV(ManagedSound s, double vol)
   {
     s->UpdateGVolume(vol);
+  }
+
+  static void MuteSound(ManagedSound s, bool muted)
+  {
+    s->MuteSound(muted);
+    s->UpdateGVolume(gvolume);
+  }
+
+  static void MuteMusic(ManagedSound s, bool muted)
+  {
+    s->MuteMusic(muted);
+    s->UpdateGVolume(gvolume);
   }
 
 private:
@@ -62,7 +80,12 @@ static mrb_value mrb_sound_paused_p(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_sound_volume_get(mrb_state *mrb, mrb_value self);
 static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self);
 
+static mrb_value mrb_sound_music_mute_set(mrb_state *mrb, mrb_value self);
+static mrb_value mrb_sound_sound_mute_set(mrb_state *mrb, mrb_value self);
+
 void SetMrbGVolume(double vol);
+void SetMrbMusicMute(bool muted);
+void SetMrbSoundMute(bool muted);
 
 // ----------------------------------------------------------------------------
 
@@ -84,6 +107,9 @@ EXTERN_C void mrb_mruby_sound_init(mrb_state *mrb)
 
   mrb_define_method(mrb, klass, "volume", mrb_sound_volume_get, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "volume=", mrb_sound_volume_set, MRB_ARGS_REQ(1));
+
+  mrb_define_class_method(mrb, klass, "music_muted=", mrb_sound_music_mute_set, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, klass, "sound_muted=", mrb_sound_sound_mute_set, MRB_ARGS_REQ(1));
 }
 
 // ----------------------------------------------------------------------------
@@ -205,12 +231,58 @@ static mrb_value mrb_sound_volume_set(mrb_state *mrb, mrb_value self)
 
 // ----------------------------------------------------------------------------
 
+static mrb_value mrb_sound_music_mute_set(mrb_state *mrb, mrb_value)
+{
+  mrb_bool muted;
+  mrb_get_args(mrb, "b", &muted);
+
+  SetMrbMusicMute(!!muted);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
+static mrb_value mrb_sound_sound_mute_set(mrb_state *mrb, mrb_value)
+{
+  mrb_bool muted;
+  mrb_get_args(mrb, "b", &muted);
+
+  SetMrbSoundMute(!!muted);
+
+  return mrb_nil_value();
+}
+
+// ----------------------------------------------------------------------------
+
 void SetMrbGVolume(double vol)
 {
   gvolume = vol;
   for (auto &sound : allSounds)
   {
     SoundRef::UpdateGV(sound, gvolume);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void SetMrbMusicMute(bool muted)
+{
+  gmmute = muted;
+  for (auto &sound : allSounds)
+  {
+    SoundRef::MuteMusic(sound, muted);
+  }
+}
+
+// ----------------------------------------------------------------------------
+
+void SetMrbSoundMute(bool muted)
+{
+  gsmute = muted;
+  for (auto &sound : allSounds)
+  {
+    SoundRef::MuteSound(sound, muted);
   }
 }
 

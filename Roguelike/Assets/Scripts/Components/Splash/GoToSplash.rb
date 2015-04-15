@@ -32,7 +32,7 @@ class GoToSplash < ComponentBase
     @frames += 1
     return unless @frames > 20
 
-    Game.switch_level "Splash"
+    Game.switch_level "DPSplash"
   end
 
   register_component

@@ -1,0 +1,195 @@
+{
+  "name": "DPSplash",
+  "components": {
+    "MenuQuitBlocker": {}
+  },
+  "entities": [
+    {
+      "name": "CameraRoot",
+      "components": {
+        "TransformComponent": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "children": [
+        {
+          "name": "WorldLayer",
+          "components": {
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            "CameraComponent": {
+              "target_name": "WorldLayer",
+              "layer": 1,
+              "copy": "",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
+            }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
+        },
+        {
+          "name": "ConsoleLayer",
+          "components": {
+            "CameraComponent": {
+              "target_name": "ConsoleLayer",
+              "layer": 9000,
+              "copy": "WorldLayer",
+              "type": "ManualCamera",
+              "fov": 45.0,
+              "near": 0.01,
+              "far": 100.0
+            }
+          },
+          "children": [],
+          "archetype": "NoArchetype"
+        },
+        {
+          "name": "HUD_ROOT",
+          "components": {
+            "TransformComponent": {
+              "position": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "scale": [
+                0.3,
+                0.3,
+                0.3
+              ]
+            }
+          },
+          "children": [
+            {
+              "name": "Console",
+              "components": {
+                "TransformComponent": {},
+                "ChildHierarchy": {}
+              },
+              "children": [],
+              "archetype": "HUD/Console/Console"
+            },
+            {
+              "name": "dP",
+              "components": {
+                "TransformComponent": {
+                  "position": [
+                    0.0,
+                    0.0,
+                    -2.75
+                  ],
+                  "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "scale": [
+                    4.1457489878542511,
+                    1.0,
+                    1.0
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "Sprite",
+                  "components": {
+                    "TransformComponent": {
+                      "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "rotation": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "scale": [
+                        0.08,
+                        0.08,
+                        0.08
+                      ]
+                    },
+                    "TextureComponent": {
+                      "textures": [
+                        "Splash/DigiPen_RED_1024px.png"
+                      ]
+                    },
+                    "SpriteComponent": {
+                      "render_target": "WorldLayer",
+                      "shader": "",
+                      "tint": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                      ]
+                    },
+                    "SplashFadeComponent": {
+                      "pre_wait": 2.0,
+                      "fade_time": 1.0,
+                      "wait_time": 3.0
+                    }
+                  },
+                  "children": [],
+                  "archetype": "NoArchetype"
+                }
+              ],
+              "archetype": "NoArchetype"
+            }
+          ],
+          "archetype": "NoArchetype"
+        }
+      ],
+      "archetype": "NoArchetype"
+    },
+    {
+      "components": {
+        "SplashLevelSwitcher": {
+          "splash_time": 7.0,
+          "level": "Splash"
+        }
+      },
+      "children": [],
+      "archetype": "NoArchetype"
+    }
+  ]
+}

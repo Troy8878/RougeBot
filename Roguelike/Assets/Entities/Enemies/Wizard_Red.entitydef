@@ -50,7 +50,7 @@
     "auto_exec": true,
     "params": {
       "attack_ticktock": true,
-      "attack_range": 3,
+      "attack_range": 3.5,
       "aggro_range": 5
     }
   },

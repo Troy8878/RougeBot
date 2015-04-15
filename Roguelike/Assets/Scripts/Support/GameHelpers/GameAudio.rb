@@ -11,3 +11,18 @@ module SFX
   SLASH = Sound.load 'SFX/Slash'
   UGH = Sound.load 'SFX/Ugh'
 end
+
+module MUSIC
+  MENU_MUSIC = Sound.load 'Music/Creepy'
+
+  @@old_music = nil
+  def self.play(music)
+    if @@old_music
+      @@old_music.stop
+    end
+    music.play
+    @@old_music = music
+  end
+end
+
+MUSIC.play(MUSIC::MENU_MUSIC)

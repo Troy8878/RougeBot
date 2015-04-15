@@ -111,7 +111,7 @@ class DefenseComponent < ComponentBase
   end
 
   def drop_random_weapon
-    return unless Random.die_roll(6) > 4
+    return unless Random.die_roll(10) > 9
 
     tile = current_tile
     weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])

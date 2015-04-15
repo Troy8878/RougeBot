@@ -266,7 +266,7 @@ module ItemGenerate
   def self.set_weapon_stats(data, itemLevel)
     data["attributes"] ||= []
 
-    roll = Random.bell_curve((itemLevel * 2), 1)
+    roll = Random.bell_curve((itemLevel), 0.5)
 
     result = roll.to_i
     if result < 1

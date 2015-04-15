@@ -16,6 +16,8 @@
 
 PLAYER_INVENTORY = Inventory.new
 
+GAME_STATE[:score] = 0
+
 class PlayerControllerComponent < ComponentBase
   include Actor
   dependency "TransformComponent", "PositionComponent"
@@ -33,7 +35,6 @@ class PlayerControllerComponent < ComponentBase
   def initialize(data)
     super data
 
-    @score = 0
     @transform = self.owner.transform_component
     @pos = self.owner.position_component.position
 
@@ -58,8 +59,8 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :player_drop, :player_drop
     self.register_event :player_eat, :player_eat
 
-    self.register_event :skip_floor, :skip_floor
-    self.register_event :skip_to_win, :skip_to_win
+    #self.register_event :skip_floor, :skip_floor
+    #self.register_event :skip_to_win, :skip_to_win
 
     self.register_event :ai_complete, :ai_complete
   end
@@ -130,7 +131,8 @@ class PlayerControllerComponent < ComponentBase
     end
 
     self.owner.defense_component.heal item.value
-    @score = @score + item.value
+    GAME_STATE[:score] += item.value
+    find_entity(0).raise_event :score_change, nil
   end
 
   def skip_floor(e)
@@ -429,6 +431,8 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def on_zombification(e)
+    find_entity(0).raise_event :ai_is_kill, nil
+
     find_entity("Minimap").zombify!
     find_entity("TileCursor").zombify!
 

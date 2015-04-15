@@ -39,6 +39,10 @@ class CheatState
     find_entity("Minimap").raise_event :map_update, nil
   end
 
+  def ded
+    find_entity("Player").defense_component.be_attacked 9000
+  end
+
   def help
     puts "       Cheat help       "
     puts "========================"

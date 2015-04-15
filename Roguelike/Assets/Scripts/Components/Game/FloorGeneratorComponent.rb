@@ -31,11 +31,11 @@ class FloorGeneratorComponent < ComponentBase
     if GAME_STATE[:tutorial].is_a? Fixnum
       if GAME_STATE[:tutorial] > -1
         owner.local_event :set_model_tex, 3
-      elsif GAME_STATE[:tutorial] == -3
-        owner.local_event :set_model_tex, Random.die_roll(2)
       end
     else
-      if GAME_STATE[:dungeon_num] == 2
+      if GAME_STATE[:endless] == true
+        owner.local_event :set_model_tex, Random.die_roll(2)
+      elsif GAME_STATE[:act2] == true
         owner.local_event :set_model_tex, 2
       else
         owner.local_event :set_model_tex, 1

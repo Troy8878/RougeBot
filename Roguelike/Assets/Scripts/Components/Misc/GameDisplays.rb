@@ -11,7 +11,12 @@ def init_floor_text(entity)
   if !GAME_STATE[:tutorial].nil?
     owner.raise_event :send, [:set_text_at, [0, ""]]
   else
-    message = "Floor #{GAME_STATE[:floor]} / #{$DungeonLength}\nGet to the stairs!"
+    score = "Score #{GAME_STATE[:score]}"
+
+    maxfloor = GAME_STATE[:endless] ? "" : " / #{$DungeonLength}"
+    floor = "Floor #{GAME_STATE[:floor]}#{maxfloor}\nGet to the stairs!"
+    
+    message = "#{score}\n#{floor}"
     owner.raise_event :send, [:set_text_at, [0, message]]
   end
 end

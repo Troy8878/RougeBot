@@ -63,6 +63,9 @@ void CustomModelComponent::OnSetTexture(Events::EventMessage &e)
   {
     auto index = mrb_fixnum(rdata->ruby_obj);
     TextureIndex = index;
+
+    if (texture && customModel)
+      customModel->texture = texture->Textures[TextureIndex % texture->TextureCount];
   }
 }
 

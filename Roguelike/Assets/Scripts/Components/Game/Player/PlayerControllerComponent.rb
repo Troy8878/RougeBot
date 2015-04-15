@@ -55,6 +55,7 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :on_pause, :on_pause
     self.register_event :player_use, :player_use
     self.register_event :player_drop, :player_drop
+    self.register_event :player_eat, :player_eat
 
     self.register_event :skip_floor, :skip_floor
     self.register_event :skip_to_win, :skip_to_win
@@ -122,6 +123,12 @@ class PlayerControllerComponent < ComponentBase
     find_entity("Hotbar").raise_event :extract_selected, hsh
 
     item = hsh[:item]
+
+    if item == nil
+      return
+    end
+
+    self.owner.defense_component.heal item.value
   end
 
   def skip_floor(e)

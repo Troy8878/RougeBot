@@ -28,7 +28,7 @@ class Weapon < Item
       seq.once do
         tooltip_text = base_view.local_find "TooltipText"
         texts = tooltip_text.text_component.texts
-        texts[0] = "#{@item.name}\nDamage #{@item.damage}\nItem Level #{@item.item_level}\nItem Value #{@item.value}"
+        texts[0] = "#{@item.name}\nDamage #{@item.damage}\nItem Level #{@item.item_level}\nValue #{@item.value}"
       end
 
       add_attributes base_view
@@ -55,7 +55,7 @@ class Weapon < Item
       "Plastic"     => Vector.new(0.9, 0.9,  0.0, 1.0),
       "Mahogany"    => Vector.new(0.3, 0.15,  0.0, 1.0),
       "Alleged"     => Vector.new(0.0, 0.0,  0.0, 0.6),
-      "Wooden"      => Vector.new(0.2, 0.1,  0.0, 1.0),
+      "Wooden"      => Vector.new(0.3, 0.2,  0.1, 1.0),
     }
 
     def mod_material(base_view, value)

@@ -32,6 +32,7 @@ Config.load_defaults do
   Config.bind_action "skip_turn",   { held: [:move,  [ 0,  0] ] }
   Config.bind_action "player_use",  { down: [:player_use, nil ] }
   Config.bind_action "player_drop", { down: [:player_drop, nil] }
+  Config.bind_action "player_eat",  { down: [:player_eat, nil] }
 
   # Some Cheats
   Config.bind_action "skip_floor", { down: [:skip_floor, nil] }
@@ -44,6 +45,7 @@ Config.load_defaults do
   Config.bind_key "Player", [Keys::SPACE], "skip_turn"
   Config.bind_key "Player", [Keys::E    ], "player_use"
   Config.bind_key "Player", [Keys::Q    ], "player_drop"
+  Config.bind_key "Player", [Keys::R    ], "player_eat"
 
   # Some Cheats
   Config.bind_key "Player", [Keys::N    ], "skip_floor"
@@ -63,23 +65,23 @@ Config.load_defaults do
 
   # Player ranged weapons firing
 
-  Config.bind_action "fire_up",         { held: [:fire, [ 0,  1]] }
-  Config.bind_action "fire_left",       { held: [:fire, [-1,  0]] }
-  Config.bind_action "fire_down",       { held: [:fire, [ 0, -1]] }
-  Config.bind_action "fire_right",      { held: [:fire, [ 1,  0]] }
-  Config.bind_action "fire_ul",         { held: [:fire, [-1,  1]] }
-  Config.bind_action "fire_ur",         { held: [:fire, [ 1,  1]] }
-  Config.bind_action "fire_dl",         { held: [:fire, [-1, -1]] }
-  Config.bind_action "fire_dr",         { held: [:fire, [ 1, -1]] }
+  #Config.bind_action "fire_up",         { held: [:fire, [ 0,  1]] }
+  #Config.bind_action "fire_left",       { held: [:fire, [-1,  0]] }
+  #Config.bind_action "fire_down",       { held: [:fire, [ 0, -1]] }
+  #Config.bind_action "fire_right",      { held: [:fire, [ 1,  0]] }
+  #Config.bind_action "fire_ul",         { held: [:fire, [-1,  1]] }
+  #Config.bind_action "fire_ur",         { held: [:fire, [ 1,  1]] }
+  #Config.bind_action "fire_dl",         { held: [:fire, [-1, -1]] }
+  #Config.bind_action "fire_dr",         { held: [:fire, [ 1, -1]] }
 
-  Config.bind_key "Player", [Keys::I,          Keys::NUMPAD8], "fire_up"
-  Config.bind_key "Player", [Keys::J,          Keys::NUMPAD4], "fire_left"
-  Config.bind_key "Player", [Keys::OEM_COMMA,  Keys::NUMPAD2], "fire_down"
-  Config.bind_key "Player", [Keys::L,          Keys::NUMPAD6], "fire_right"
-  Config.bind_key "Player", [Keys::U,          Keys::NUMPAD7], "fire_ul"
-  Config.bind_key "Player", [Keys::O,          Keys::NUMPAD9], "fire_ur"
-  Config.bind_key "Player", [Keys::M,          Keys::NUMPAD1], "fire_dl"
-  Config.bind_key "Player", [Keys::OEM_PERIOD, Keys::NUMPAD3], "fire_dr"
+  #Config.bind_key "Player", [Keys::I,          Keys::NUMPAD8], "fire_up"
+  #Config.bind_key "Player", [Keys::J,          Keys::NUMPAD4], "fire_left"
+  #Config.bind_key "Player", [Keys::OEM_COMMA,  Keys::NUMPAD2], "fire_down"
+  #Config.bind_key "Player", [Keys::L,          Keys::NUMPAD6], "fire_right"
+  #Config.bind_key "Player", [Keys::U,          Keys::NUMPAD7], "fire_ul"
+  #Config.bind_key "Player", [Keys::O,          Keys::NUMPAD9], "fire_ur"
+  #Config.bind_key "Player", [Keys::M,          Keys::NUMPAD1], "fire_dl"
+  #Config.bind_key "Player", [Keys::OEM_PERIOD, Keys::NUMPAD3], "fire_dr"
 
   ######################
   # Minimap

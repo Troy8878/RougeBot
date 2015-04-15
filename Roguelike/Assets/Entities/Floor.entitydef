@@ -20,9 +20,30 @@
     "textures": [
       {
         "zipped": [
-          "World/Full.png",
-          "World/Wall.png",
-          "World/Floor.png"
+          "World/Full0.png",
+          "World/Buffer.png",
+          "World/Floor0.png"
+        ]
+      },
+      {
+        "zipped": [
+          "World/Full1.png",
+          "World/Buffer.png",
+          "World/Floor1.png"
+        ]
+      },
+      {
+        "zipped": [
+          "World/Full2.png",
+          "World/Buffer.png",
+          "World/Floor2.png"
+        ]
+      },
+      {
+        "zipped": [
+          "World/OldFull.png",
+          "World/Buffer.png",
+          "World/OldFloor.png"
         ]
       }
     ]

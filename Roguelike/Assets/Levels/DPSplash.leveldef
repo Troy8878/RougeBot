@@ -113,7 +113,7 @@
                   "position": [
                     0.0,
                     0.0,
-                    2.0
+                    -2.75
                   ],
                   "rotation": [
                     0.0,
@@ -164,8 +164,9 @@
                       ]
                     },
                     "SplashFadeComponent": {
+                      "pre_wait": 2.0,
                       "fade_time": 1.0,
-                      "wait_time": 3.0,
+                      "wait_time": 3.0
                     }
                   },
                   "children": [],
@@ -183,7 +184,8 @@
     {
       "components": {
         "SplashLevelSwitcher": {
-          "splash_time": 5.0
+          "splash_time": 7.0,
+          "level": "Splash"
         }
       },
       "children": [],

@@ -156,7 +156,7 @@
                   "position": [
                     0.0,
                     0.0,
-                    2.0
+                    -2.0
                   ],
                   "rotation": [
                     0.0,
@@ -207,7 +207,7 @@
                       ]
                     },
                     "SplashZoomComponent": {
-                      "speed": 1.0
+                      "speed": 1.3
                     },
                     "TextComponent": {
                       "texts": [
@@ -240,7 +240,8 @@
     {
       "components": {
         "SplashLevelSwitcher": {
-          "splash_time": 10.0
+          "splash_time": 5.0,
+          "level": "MainMenu"
         }
       },
       "children": [],

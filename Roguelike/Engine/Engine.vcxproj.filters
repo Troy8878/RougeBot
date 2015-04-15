@@ -211,6 +211,15 @@
     <ClInclude Include="Autoplay.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="AIAngstMage.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AIBlueMage.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AIPurpleMage.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -402,6 +411,15 @@
       <Filter>Source Files\Arch</Filter>
     </ClCompile>
     <ClCompile Include="Autoplay.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIAngstMage.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIBlueMage.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIPurpleMage.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@ class SplashLevelSwitcher < ComponentBase
 
   serialized_input do |p|
     p.float :splash_time, default: 4.0
+    p.string :level, default: "MainMenu"
   end
   
   def initialize(data)
@@ -20,7 +21,7 @@ class SplashLevelSwitcher < ComponentBase
     seq.delay data.fetch("splash_time", 4.0).to_f
     seq.once do
       next if @cancelled
-      Game.switch_level "MainMenu"
+      Game.switch_level data["level"]
     end
 
     register_event :key_down, :key_down

@@ -1303,6 +1303,42 @@
     "dependencies": [],
     "properties": [
       {
+        "property": "pre_wait",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 2
+        }
+      },
+      {
+        "property": "fade_time",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 1
+        }
+      },
+      {
+        "property": "wait_time",
+        "usage": {
+          "type": "float",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": 3
+        }
+      }
+    ],
+    "name": "SplashFadeComponent"
+  },
+  {
+    "dependencies": [],
+    "properties": [
+      {
         "property": "splash_time",
         "usage": {
           "type": "float",
@@ -1310,6 +1346,16 @@
           "semantics": null,
           "locked": false,
           "default": 4
+        }
+      },
+      {
+        "property": "level",
+        "usage": {
+          "type": "string",
+          "required": false,
+          "semantics": null,
+          "locked": false,
+          "default": "MainMenu"
         }
       }
     ],

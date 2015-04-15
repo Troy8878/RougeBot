@@ -23,22 +23,22 @@ void AIAngstMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 
   query(params).at("aggro_range").is_number().assign(aggro_range);
   query(params).at("attack_range").is_number().assign(attack_range);
-  query(params).at("heal_value").is_number().assign(aggro_range);
+  query(params).at("heal_value").is_number().assign(heal_value);
 
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 
   if (distance < attack_range)
   {
-    int result = rand() % 3;
+    int res = rand() % 3;
     
-    if (result == 0)
+    if (res == 0)
     {
-      result.action = AICustom::Custom;
+      result.action = AIResult::Custom;
       result.custom = R"( {"action":"heal", "value": heal_value} )";
       result.x = tx;
       result.y = ty;
     }
-    else if (result == 1)
+    else if (res == 1)
     {
       IdleBehaviour::ApplyBehaviour(world, params);
     }

@@ -1,0 +1,6 @@
+{
+    "name": "DPSplash",
+    "components": {
+        "SpriteComponent": {}
+    }
+}

@@ -128,14 +128,14 @@ void AIRoaming::MoveTowards(const WorldSnapshot &world)
   }
 
   // Check if we are below the target.
-  if (dy < 0 && canMoveDown)
+  if (dy > 0 && canMoveDown)
   {
     MoveDown();
     return;
   }
 
   // Check if we are above the target.
-  if (dy > 0 && canMoveUp)
+  if (dy < 0 && canMoveUp)
   {
     MoveUp();
     return;

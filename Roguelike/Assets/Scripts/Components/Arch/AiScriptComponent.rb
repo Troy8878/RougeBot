@@ -109,6 +109,8 @@ class AiScriptComponent < ComponentBase
 
           #TODO: Colorize for a specific number of turns
         end
+        
+        
 
       rescue
         message = "failed to interpret hivemind action"

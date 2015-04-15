@@ -117,9 +117,15 @@ class DefenseComponent < ComponentBase
   def drop_random_weapon
     return unless Random.die_roll(10) > 9
 
-    tile = current_tile
-    weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
-    tile.drop_item weap
+    if GAME_STATE[:tutorial] == nil
+      tile = current_tile
+      weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
+      tile.drop_item weap
+    else
+      tile = current_tile
+      weap = ItemGenerate.generate_mundane_weapon({}, 1)
+      tile.drop_item weap
+    end
   end
 
  #def heal(amount)

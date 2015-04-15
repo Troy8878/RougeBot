@@ -36,7 +36,18 @@
   },
   "EnemyLogicComponent": {
     "stationary": false,
-    "move_skip": 2
+    "move_skip": 0,
+    "new_system": true
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "Roaming"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {}
   },
   "ChildHierarchy": {
     "children": [

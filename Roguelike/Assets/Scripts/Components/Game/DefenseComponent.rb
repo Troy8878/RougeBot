@@ -84,13 +84,17 @@ class DefenseComponent < ComponentBase
   def heal(amt)
     @health += amt
     
+    if @health > 100
+      @health = 100
+    end
+
     self.owner.raise_event :health_changed, {
       kind: :heal,
       amount: amt,
       new_value: @health
     }
 
-    message = StatusMessage.new("#{amt}", 1, "Green, 0.8")
+    message = StatusMessage.new("#{amt}", 1, "LimeGreen, 0.8")
     message.display self.owner
   end
 
@@ -111,19 +115,23 @@ class DefenseComponent < ComponentBase
   end
 
   def drop_random_weapon
-    return unless Random.die_roll(6) > 4
+    return unless Random.die_roll(10) > 9
 
     tile = current_tile
     weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
     tile.drop_item weap
   end
 
-  def heal(amount)
-    @health += amount
+ #def heal(amount)
+ #  @health += amount
 
-    message = StatusMessage.new("#{amount}", 1, "Green")
-    message.display self.owner
-  end
+ #  if @health > 100
+ #    @health = 100
+ #  end
+
+ #  message = StatusMessage.new("#{amount}", 1, "LimeGreen")
+ #  message.display self.owner
+ #end
 
   def equip_armor()
     # Pull the chest and shield items.

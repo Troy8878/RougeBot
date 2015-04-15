@@ -17,8 +17,8 @@
     ]
   },
   "DefenseComponent": {
-    "max_health": 100.0,
-    "health": 100.0
+    "max_health": 10.0,
+    "health": 10.0
   },
   "AttackComponent": {
     "damage": [
@@ -34,15 +34,28 @@
     ],
     "mode": "linear"
   },
-  "SlimeLogicComponent": {
-    "stationary": false,
-    "move_skip": 1
-  },
   "ScreenShakeComponent": {
     "frequency": 12.0,
     "strength": 0.5,
     "length": 1.0,
     "shake_child": "."
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "Roaming"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {
+      "aggro_range": 0
+    }
+  },
+  "EnemyLogicComponent": {
+    "stationary": false,
+    "move_skip": 0,
+    "new_system": true
   },
   "ChildHierarchy": {
     "children": [

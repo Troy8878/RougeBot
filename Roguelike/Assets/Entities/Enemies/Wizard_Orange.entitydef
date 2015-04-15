@@ -36,13 +36,26 @@
   },
   "EnemyLogicComponent": {
     "stationary": false,
-    "move_skip": 2
+    "move_skip": 0,
+    "new_system": true
   },
   "ScreenShakeComponent": {
     "frequency": 12.0,
     "strength": 0.5,
     "length": 1.0,
     "shake_child": "."
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "Roaming"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {
+      "aggro_range": 5
+    }
   },
   "ChildHierarchy": {
     "children": [

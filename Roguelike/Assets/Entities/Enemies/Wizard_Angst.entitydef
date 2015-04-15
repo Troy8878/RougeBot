@@ -1,0 +1,152 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "DefenseComponent": {
+    "max_health": 25.0,
+    "health": 25.0
+  },
+  "PositionComponent": {
+    "move_speed": 3.0,
+    "position": [
+      0.0,
+      0.0
+    ],
+    "mode": "linear"
+  },
+  "EnemyLogicComponent": {
+    "stationary": false,
+    "move_skip": 0,
+    "new_system": true
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "Idle",
+      "AngstMage"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {
+      "aggro_range": 0,
+      "heal_value": 5
+    }
+  },
+  "ScreenShakeComponent": {
+    "frequency": 12.0,
+    "strength": 0.5,
+    "length": 1.0,
+    "shake_child": "."
+  },
+  "ChildHierarchy": {
+    "children": [
+      {
+        "name": "Sprite",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              0.0,
+              -0.1
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "TextureComponent": {
+            "textures": [
+              "Enemies/Wizard_Yellow - Copy/Wizard0.png",
+              "Enemies/Wizard_Yellow - Copy/Wizard1.png",
+              "Enemies/Wizard_Yellow - Copy/Wizard2.png",
+              "Enemies/Wizard_Yellow - Copy/Wizard3.png"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "WorldLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "AnimatedComponent": {
+            "paused": "",
+            "frame_time": 0.3,
+            "frame_range": [
+              0.0,
+              4.0
+            ],
+            "loops": true,
+            "random_start": true
+          }
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      },
+      {
+        "name": "HealthBar",
+        "components": {
+          "TransformComponent": {
+            "position": [
+              0.0,
+              0.5,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              0.5,
+              1.0
+            ]
+          },
+          "TextureComponent": {
+            "textures": [
+              "HealthBar.png"
+            ]
+          },
+          "SpriteComponent": {
+            "render_target": "TranslucentLayer",
+            "shader": "",
+            "tint": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "HealthBarComponent": {}
+        },
+        "children": [],
+        "archetype": "NoArchetype"
+      }
+    ]
+  }
+}

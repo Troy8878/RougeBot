@@ -1,0 +1,61 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      2.0,
+      0.5,
+      1.0
+    ]
+  },
+  "PositionComponent": {
+    "move_speed": 5.0,
+    "position": [
+      0.0,
+      0.0
+    ],
+    "mode": "jump"
+  },
+  "DefenseComponent": {
+    "max_health": 25.0,
+    "health": 10.0
+  },
+  "TextureComponent": {
+    "textures": [
+      "SPECIAL/SURFACE/400:100"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "ItemLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "TextComponent": {
+    "texts": [
+      "ACT II"
+    ],
+    "text_color": "White",
+    "bg_color": "Black, 0",
+    "font": "",
+    "font_size": 48.0,
+    "text_align": "center",
+    "paragraph_align": "center",
+    "autocreate_textures": [
+      0.0,
+      0.0
+    ]
+  }
+}

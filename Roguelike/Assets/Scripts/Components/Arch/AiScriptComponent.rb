@@ -95,6 +95,7 @@ class AiScriptComponent < ComponentBase
         case result["action"]
         when "message"
           message = result["text"]
+          
         when "colorize"
           message = false#"I am red with anger"
 
@@ -108,6 +109,23 @@ class AiScriptComponent < ComponentBase
           end
 
           #TODO: Colorize for a specific number of turns
+          
+        when "attack-move"
+          self.owner.local_event :actor_move, [result["x"], result["y"]]
+          
+          floor = current_floor
+          tile = floor[floor.length - 1 - result["ty"]][result["tx"]]
+          if tile.actor
+            self.owner.attack_component.do_attack tile.actor
+          end
+          
+        when "heal"
+          floor = current_floor
+          tile = floor[floor.length - 1 - result["y"]][result["x"]]
+          if tile.actor
+            target = find_target("Player")
+            target.defense_component.heal result["value"]
+          end
         end
 
       rescue

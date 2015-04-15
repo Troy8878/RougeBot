@@ -48,7 +48,12 @@ class BasicEnemySpawnerComponent < ComponentBase
         end
 
         tile = current_floor[y][x]
-        tile.drop_item ItemGenerate.generate_weapon({}, meta)
+        if GAME_STATE[:tutorial] == nil
+          tile.drop_item ItemGenerate.generate_weapon({}, meta)
+        else
+          tile.drop_item ItemGenerate.generate_mundane_weapon({}, 1)
+        end
+        
         next
       else
         next

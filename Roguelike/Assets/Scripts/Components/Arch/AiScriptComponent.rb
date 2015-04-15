@@ -35,6 +35,7 @@ class AiScriptComponent < ComponentBase
     @ai = owner.ai_component
     @pos = owner.position_component
     @pending = false
+    @is_kill = false
 
     register_event :ai_complete, :ai_complete
     register_event :update, :first_update
@@ -42,6 +43,8 @@ class AiScriptComponent < ComponentBase
     if data.fetch("auto_exec", false)
       register_event :logic_update, :logic_update
     end
+
+    register_event :ai_is_kill, :on_kill
   end
 
   def first_update(e)
@@ -72,12 +75,17 @@ class AiScriptComponent < ComponentBase
   end
 
   def ai_complete(result)
+    return if @is_kill
+
     @pending = false
 
     case result["result"]
     when "move"
 
-      self.owner.local_event :actor_move, [result["x"], result["y"]]
+      tile = current_floor[current_floor.size - 1 - result["y"]][result["x"]]
+      if !tile.actor
+        self.owner.local_event :actor_move, [result["x"], result["y"]]
+      end
 
     when "attack"
 
@@ -137,6 +145,10 @@ class AiScriptComponent < ComponentBase
         message.display owner
       end
     end
+  end
+
+  def on_kill(e)
+    @is_kill = true
   end
 
   register_component

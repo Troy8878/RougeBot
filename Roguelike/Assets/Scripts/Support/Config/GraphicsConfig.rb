@@ -6,10 +6,9 @@
 #######################
 
 class Graphics
-
   HOOKS = [
     :vsync,
-    :fullscreen
+    :fullscreen,
   ]
 
   def self.load_config
@@ -36,3 +35,13 @@ class Graphics
     Graphics.send(:"#{hook}=", Config[:"graphics_#{hook}"] || Graphics.send(hook))
   end
 end
+
+Config.hook(:music_muted) do |value|
+  Sound.music_muted = value
+end
+Sound.music_muted = Config[:music_muted]
+
+Config.hook(:sound_muted) do |value|
+  Sound.sound_muted = value
+end
+Sound.sound_muted = Config[:sound_muted]

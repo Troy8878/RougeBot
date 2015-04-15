@@ -101,6 +101,11 @@ class DefenseComponent < ComponentBase
   def notify_death
     return unless self.owner.parent
 
+    unless self.owner.player_controller_component
+      GAME_STATE[:score] += 5
+      find_entity(0).raise_event :score_change, nil
+    end
+
     drop_random_weapon
 
     transient = self.owner.parent.create_child components: {
@@ -117,9 +122,15 @@ class DefenseComponent < ComponentBase
   def drop_random_weapon
     return unless Random.die_roll(10) > 9
 
-    tile = current_tile
-    weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
-    tile.drop_item weap
+    if GAME_STATE[:tutorial] == nil
+      tile = current_tile
+      weap = ItemGenerate.generate_weapon({}, GAME_STATE[:floor])
+      tile.drop_item weap
+    else
+      tile = current_tile
+      weap = ItemGenerate.generate_mundane_weapon({}, 1)
+      tile.drop_item weap
+    end
   end
 
  #def heal(amount)

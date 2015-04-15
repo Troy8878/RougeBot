@@ -58,8 +58,8 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :player_drop, :player_drop
     self.register_event :player_eat, :player_eat
 
-    self.register_event :skip_floor, :skip_floor
-    self.register_event :skip_to_win, :skip_to_win
+    #self.register_event :skip_floor, :skip_floor
+    #self.register_event :skip_to_win, :skip_to_win
 
     self.register_event :ai_complete, :ai_complete
   end

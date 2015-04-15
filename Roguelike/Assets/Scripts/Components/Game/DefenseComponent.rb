@@ -101,6 +101,11 @@ class DefenseComponent < ComponentBase
   def notify_death
     return unless self.owner.parent
 
+    unless self.owner.player_controller_component
+      GAME_STATE[:score] += 5
+      find_entity(0).raise_event :score_change, nil
+    end
+
     drop_random_weapon
 
     transient = self.owner.parent.create_child components: {

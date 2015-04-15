@@ -411,7 +411,8 @@
                 },
                 "EvalOnEventComponent": {
                   "bindings": {
-                    "level_load": "init_floor_text(owner)"
+                    "level_load": "init_floor_text(owner)",
+                    "score_change": "init_floor_text(owner)"
                   }
                 }
               },

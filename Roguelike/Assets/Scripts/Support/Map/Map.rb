@@ -18,8 +18,23 @@ class Map
 
   def generate(opts = {})
     opts[:level] = GAME_STATE[:floor]
-
     tutnum = GAME_STATE[:tutorial]
+
+    if tutnum == -3
+      GAME_STATE[:tutorial] = nil
+      GAME_STATE[:act2] = true
+      GAME_STATE[:endless] = false
+      tutnum = nil
+    elsif tutnum == -4
+      GAME_STATE[:tutorial] = nil
+      GAME_STATE[:act2] = true
+      GAME_STATE[:endless] = true
+      tutnum = nil
+    else
+      GAME_STATE[:act2] = false
+      GAME_STATE[:endless] = false
+    end
+
     if tutnum.is_a? Fixnum
       dungeon = TUTORIAL_PROGRESSION[tutnum]
       if dungeon.nil? || tutnum == -1

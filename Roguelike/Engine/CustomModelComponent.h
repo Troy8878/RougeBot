@@ -37,6 +37,10 @@ public:
   PROPERTY(get = _GetCustomModel, put = _SetCustomModel) Model *CustomModel;
   IR_PROPERTY(Shader *, ModelShader);
 
+  size_t TextureIndex = 0;
+
+  void OnSetTexture(Events::EventMessage &e);
+
   static CustomModelComponentFactory factory;
 
 private:

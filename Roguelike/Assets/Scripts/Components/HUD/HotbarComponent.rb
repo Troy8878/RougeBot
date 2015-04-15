@@ -22,6 +22,7 @@ class HotbarComponent < ComponentBase
     register_event :quick_equip, :quick_equip
     register_event :click_equip, :click_equip
     register_event :drop_selected, :drop_selected
+    register_event :extract_selected, :extract_selected
   end
 
   def first_update(e)
@@ -103,6 +104,15 @@ class HotbarComponent < ComponentBase
     return unless @item
 
     tile.drop_item @item
+    PLAYER_INVENTORY.inventory[@inv_slot] = nil
+    PLAYER_INVENTORY.update_slot @inv_slot
+  end
+
+  def extract_selected(hsh)
+    return unless @is_selected
+    return unless @item
+
+    hsh[:item] = @item
     PLAYER_INVENTORY.inventory[@inv_slot] = nil
     PLAYER_INVENTORY.update_slot @inv_slot
   end

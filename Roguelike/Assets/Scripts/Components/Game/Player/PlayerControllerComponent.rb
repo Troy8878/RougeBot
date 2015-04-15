@@ -117,6 +117,13 @@ class PlayerControllerComponent < ComponentBase
     find_entity("Hotbar").raise_event :drop_selected, current_tile
   end
 
+  def player_eat(e)
+    hsh = {}
+    find_entity("Hotbar").raise_event :extract_selected, hsh
+
+    item = hsh[:item]
+  end
+
   def skip_floor(e)
   end
 

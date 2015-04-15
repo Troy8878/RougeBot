@@ -38,6 +38,13 @@
           "World/Buffer.png",
           "World/Floor2.png"
         ]
+      },
+      {
+        "zipped": [
+          "World/OldFull.png",
+          "World/Buffer.png",
+          "World/OldFloor.png"
+        ]
       }
     ]
   },

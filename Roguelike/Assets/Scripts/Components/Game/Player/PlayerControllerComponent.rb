@@ -430,7 +430,20 @@ class PlayerControllerComponent < ComponentBase
   def mouse_move(e)
   end
 
+  def expunge_inventory
+    PLAYER_INVENTORY.inventory.each_with_index do |item, index|
+      roll = Random.die_roll 9
+      if roll > 2
+        PLAYER_INVENTORY.inventory[index] = nil
+      end
+    end
+  end
+
   def on_zombification(e)
+    
+    self.expunge_inventory
+    @score = 0
+
     find_entity(0).raise_event :ai_is_kill, nil
 
     find_entity("Minimap").zombify!

@@ -116,6 +116,10 @@ class Inventory
     end
   end
 
+  def empty?
+    @inventory.empty?
+  end
+
   private
   def on_update(*args)
     if @update_callback

@@ -24,9 +24,9 @@ class InventoryComponent < ComponentBase
     if data["is_player"] == true
       @inventory = PLAYER_INVENTORY
 
-      #if GAME_STATE[:floor] == 1 && GAME_STATE[:tutorial] == nil
-      #  give_random_weapon 1
-      #end
+      if GAME_STATE[:tutorial] == nil && @inventory.empty?
+        give_random_weapon 1
+      end
 
       # I need to delay it because otherwise the hotbar won't render it
       refresh_hotbar

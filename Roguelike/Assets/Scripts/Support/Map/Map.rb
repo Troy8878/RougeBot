@@ -30,7 +30,7 @@ class Map
       GAME_STATE[:act2] = true
       GAME_STATE[:endless] = true
       tutnum = nil
-    else
+    elsif tutnum == -1
       GAME_STATE[:act2] = false
       GAME_STATE[:endless] = false
     end

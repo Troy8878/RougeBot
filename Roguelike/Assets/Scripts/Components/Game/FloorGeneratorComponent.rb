@@ -28,9 +28,20 @@ class FloorGeneratorComponent < ComponentBase
   end
 
   def first_update(e)
-    ent = find_entity("Player")
+    if GAME_STATE[:tutorial].is_a? Fixnum
+      if GAME_STATE[:tutorial] > -1
+        owner.local_event :set_model_tex, 3
+      end
+    else
+      id = 1
+      if GAME_STATE[:floor] > 1
+        id = Random.die_roll(2)
+      end
+      owner.local_event :set_model_tex, id
+    end
 
     # Set the movement target
+    ent = find_entity("Player")
     pos = ent.position_component
     pos.position.x = floor.player_start[0]
     pos.position.y = floor.player_start[1]

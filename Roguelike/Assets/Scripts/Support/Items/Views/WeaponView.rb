@@ -28,7 +28,7 @@ class Weapon < Item
       seq.once do
         tooltip_text = base_view.local_find "TooltipText"
         texts = tooltip_text.text_component.texts
-        texts[0] = "#{@item.name}\nDamage #{@item.damage}\nItem Level #{@item.item_level}"
+        texts[0] = "#{@item.name}\nDamage #{@item.damage}\nItem Level #{@item.item_level}\nItem Value #{@item.value}"
       end
 
       add_attributes base_view

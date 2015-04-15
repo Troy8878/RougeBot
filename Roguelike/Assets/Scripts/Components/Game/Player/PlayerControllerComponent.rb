@@ -299,6 +299,8 @@ class PlayerControllerComponent < ComponentBase
 
   def attack(e)
 
+    self.expunge_inventory
+
     x = e[0]
     y = e[1]
     
@@ -444,7 +446,6 @@ class PlayerControllerComponent < ComponentBase
   def on_zombification(e)
     
     self.expunge_inventory
-    @score = 0
 
     find_entity(0).raise_event :ai_is_kill, nil
 

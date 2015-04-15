@@ -8,7 +8,9 @@
 GENERATE_ENTITIES = []
 
 TUTORIAL_PROGRESSION = [
-  "Tutorial1"
+  "Tutorial1",
+  "Tutorial2",
+  "Tutorial3"
 ]
 
 class Map

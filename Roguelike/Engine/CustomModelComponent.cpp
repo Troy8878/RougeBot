@@ -9,6 +9,9 @@
 #include "CustomModelComponent.h"
 #include "Shader.h"
 #include "TextureComponent.h"
+#include "EventTypes.h"
+#include "Event.h"
+#include "Entity.h"
 
 // ----------------------------------------------------------------------------
 
@@ -36,6 +39,9 @@ void CustomModelComponent::Initialize(Entity *owner, const std::string &name)
 
   texture = static_cast<TextureComponent *>(Owner->GetComponent("TextureComponent"));
   renderTarget->AddDrawable(this, ModelShader);
+
+  DEF_EVENT_ID(set_model_tex);
+  Owner->AddEvent(this, set_model_tex, &CustomModelComponent::OnSetTexture);
 }
 
 // ----------------------------------------------------------------------------
@@ -50,13 +56,28 @@ void CustomModelComponent::Draw()
 
 // ----------------------------------------------------------------------------
 
+void CustomModelComponent::OnSetTexture(Events::EventMessage &e)
+{
+  auto rdata = dynamic_cast<Events::RubyEvent *>(e.Data);
+  if (rdata && mrb_fixnum_p(rdata->ruby_obj))
+  {
+    auto index = mrb_fixnum(rdata->ruby_obj);
+    TextureIndex = index;
+
+    if (texture && customModel)
+      customModel->texture = texture->Textures[TextureIndex % texture->TextureCount];
+  }
+}
+
+// ----------------------------------------------------------------------------
+
 void CustomModelComponent::_SetCustomModel(Model *model)
 {
   model->shader = ModelShader;
   customModel = model;
 
   if (texture)
-    customModel->texture = texture->Textures[0];
+    customModel->texture = texture->Textures[TextureIndex % texture->TextureCount];
 }
 
 // ----------------------------------------------------------------------------

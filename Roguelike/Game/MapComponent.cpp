@@ -15,6 +15,7 @@
 #include "mruby/array.h"
 #include "Engine/RubyWrappers.h"
 #include "Engine/TransformComponent.h"
+#include "Game/PositionComponent.h"
 
 #pragma warning (disable : 4127) // This doesn't even need to be a warning really :/
 
@@ -279,10 +280,10 @@ void MapComponent::DrawMap()
 void MapComponent::GetPlayerPosition(int &x, int &y)
 {
   auto player = GetGame()->CurrentLevel->RootEntity->FindEntity("Player");
-  auto transform = player->GetComponent<TransformComponent>("TransformComponent");
+  auto position = player->GetComponent<PositionComponent>("PositionComponent");
 
-  x = static_cast<int>(transform->Position.x);
-  y = static_cast<int>(_explored.size()) - 1 - static_cast<int>(transform->Position.y);
+  x = static_cast<int>(position->Position.x);
+  y = static_cast<int>(_explored.size()) - 1 - static_cast<int>(position->Position.y);
 }
 
 bool MapComponent::DrawingResources::Validate()

@@ -56,10 +56,10 @@ Config.load_defaults do
   Config.bind_action "attack_down",  { held: [:swing_weapon, :down] }
   Config.bind_action "attack_right", { held: [:swing_weapon, :right] }
 
-  Config.bind_key "Player", [Keys::UP   ], "attack_up"
-  Config.bind_key "Player", [Keys::LEFT ], "attack_left"
-  Config.bind_key "Player", [Keys::DOWN ], "attack_down"
-  Config.bind_key "Player", [Keys::RIGHT], "attack_right"
+  #Config.bind_key "Player", [Keys::UP   ], "attack_up"
+  #Config.bind_key "Player", [Keys::LEFT ], "attack_left"
+  #Config.bind_key "Player", [Keys::DOWN ], "attack_down"
+  #Config.bind_key "Player", [Keys::RIGHT], "attack_right"
 
   # Player ranged weapons firing
 

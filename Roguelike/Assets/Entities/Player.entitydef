@@ -106,7 +106,6 @@
   "KeybindingComponent": {},
   "EvalOnEventComponent": {
     "bindings": {
-      "actor_death": "Game.switch_level 'MainMenu'"
     }
   },
   "AiComponent": {},

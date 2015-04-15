@@ -21,6 +21,10 @@ class Map
     if tutnum.is_a? Fixnum
       dungeon = TUTORIAL_PROGRESSION[tutnum]
       if dungeon.nil? || tutnum == -1
+        if tutnum >= TUTORIAL_PROGRESSION.length
+          Config[:tutorial_completed] = true
+          Config.save
+        end
         GAME_STATE[:tutorial] = -1
         dungeon = "Hubworld"
       end

@@ -84,6 +84,10 @@ class Vector
       default || Vector.one
     end
   end
+
+  def to_a
+    [x, y, z, w]
+  end
 end
 
 class Float

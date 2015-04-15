@@ -24,9 +24,11 @@ class SplashFadeComponent < ComponentBase
 
     start = Vector.new(0, 0, 0, 0.5)
     finish = Vector::ONE
-    @sprite.tint = start
 
     seq = owner.action_sequence :fade
+    seq.once do
+      @sprite.tint = Vector::ZERO
+    end
     seq.delay pre_wait
     seq.interpolate @sprite.tint, from: start, to: finish, over: fade_time
     seq.delay wait_time

@@ -13,6 +13,8 @@
 #include "WorldSnapshot.h"
 #include <json/jquery.h>
 
+// Conner, I'm sorry...
+static bool beam = false;
 
 // ----------------------------------------------------------------------------
 
@@ -30,21 +32,24 @@ void AIRoaming::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 
   if (distance < attack_range)
   {
-    if (world.TurnNumber() % 2 || !attack_ticktock)
+    if (beam || !attack_ticktock)
     {
       result.action = AIResult::Attack;
       result.x = tx;
       result.y = ty;
+      beam = false;
     }
     else
     {
       result.action = AIResult::Custom;
       result.custom = R"( {"action":"colorize", "color": "Red", "turns": 1} )";
+      beam = true;
     }
   }
   else if (distance < aggro_range)
   {
     MoveTowards(world);
+    beam = false;
   }
   else
   {

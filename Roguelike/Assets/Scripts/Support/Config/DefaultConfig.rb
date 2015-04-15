@@ -35,8 +35,8 @@ Config.load_defaults do
   Config.bind_action "player_eat",  { down: [:player_eat, nil] }
 
   # Some Cheats
-  Config.bind_action "skip_floor", { down: [:skip_floor, nil] }
-  Config.bind_action "skip_to_win", { down: [:skip_to_win, nil] }
+  #Config.bind_action "skip_floor", { down: [:skip_floor, nil] }
+  #Config.bind_action "skip_to_win", { down: [:skip_to_win, nil] }
 
   Config.bind_key "Player", [Keys::W    ], "move_up"
   Config.bind_key "Player", [Keys::A    ], "move_left"
@@ -48,8 +48,8 @@ Config.load_defaults do
   Config.bind_key "Player", [Keys::R    ], "player_eat"
 
   # Some Cheats
-  Config.bind_key "Player", [Keys::N    ], "skip_floor"
-  Config.bind_key "Player", [Keys::B    ], "skip_to_win"
+  #Config.bind_key "Player", [Keys::N    ], "skip_floor"
+  #Config.bind_key "Player", [Keys::B    ], "skip_to_win"
 
   # Player melee weapon firing
 

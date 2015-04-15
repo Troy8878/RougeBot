@@ -48,14 +48,14 @@
   "AiComponent": {},
   "AiScriptComponent": {
     "brains": [
-      "Roaming"
+      "Roaming",
+      "PurpleMage"
     ],
     "brain_index": 0,
     "target": "Player",
     "auto_exec": true,
     "params": {
-      "attack_ticktock": true,
-      "attack_range": 3,
+      "attack_range": 1,
       "aggro_range": 5
     }
   },

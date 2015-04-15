@@ -36,13 +36,15 @@
   "AiComponent": {},
   "AiScriptComponent": {
     "brains": [
-      "Idle"
+      "Idle",
+      "AngstMage"
     ],
     "brain_index": 0,
     "target": "Player",
     "auto_exec": true,
     "params": {
-      "uwot": "m8"
+      "aggro_range": 0,
+      "heal_value": 5
     }
   },
   "ScreenShakeComponent": {

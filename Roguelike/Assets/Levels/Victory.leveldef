@@ -247,7 +247,7 @@
                 },
                 "TextComponent": {
                   "texts": [
-                    "Victory!"
+                    "Act Complete!"
                   ],
                   "text_color": "White",
                   "bg_color": "CornflowerBlue, 0.49",

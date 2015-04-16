@@ -83,6 +83,9 @@ class PlayerControllerComponent < ComponentBase
         Game.reload_level
       elsif GAME_STATE[:floor] == $DungeonLength && GAME_STATE[:endless] != true
         Config[:dungeon_completed] = true
+        if GAME_STATE[:act2] == true
+          Config[:act2_completed] = true
+        end
         Config.save
 
         Game.switch_level "Victory"

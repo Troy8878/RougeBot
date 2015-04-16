@@ -49,8 +49,12 @@ class Map
           Config[:tutorial_completed] = true
           Config.save
         end
-        GAME_STATE[:tutorial] = -1
-        dungeon = "Hubworld"
+        if tutnum == -5
+          dungeon = "Outro"
+        else
+          GAME_STATE[:tutorial] = -1
+          dungeon = "Hubworld"
+        end
       else
         MUSIC.play(MUSIC::TUT)
       end

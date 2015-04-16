@@ -8,6 +8,13 @@
 module ItemGenerate
 
   def self.generate_weapon(data, itemLevel)
+    
+    if GAME_STATE[:act2] == true
+      itemLevel = itemLevel + 5
+    elsif GAME_STATE[:endless] == true
+      itemLevel = Random.die_roll 10
+    end
+
     result = Random.die_roll 100
 
     if(result > 90)
@@ -32,7 +39,12 @@ module ItemGenerate
   end
 
   def self.generate_mundane_weapon(data, itemLevel)
-    itemLevel = (itemLevel * 2) - 1
+
+    if GAME_STATE[:act2] == true
+      itemLevel = itemLevel + 5
+    elsif GAME_STATE[:endless] == true
+      itemLevel = Random.die_roll 10
+    end
 
     data["damage"] ||= [5, 10]
     data["durability"] ||= 20

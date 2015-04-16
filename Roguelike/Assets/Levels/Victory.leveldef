@@ -3,7 +3,7 @@
   "components": {
     "EvalOnEventComponent": {
       "bindings": {
-        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'",
+        "quit": "e[:quit] = false; play_dungeon!",
         "level_load": "MUSIC.play(nil); SFX::DUNGEON_CLEAR.play"
       }
     }

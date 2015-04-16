@@ -139,7 +139,9 @@ class PlayerControllerComponent < ComponentBase
       return
     end
 
-    self.owner.defense_component.heal item.value
+    amount = ((Math.sqrt item.value) + 5).to_i
+
+    self.owner.defense_component.heal amount
     GAME_STATE[:score] += item.value
     find_entity(0).raise_event :score_change, nil
   end

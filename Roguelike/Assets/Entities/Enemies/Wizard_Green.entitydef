@@ -45,9 +45,6 @@
     "length": 1.0,
     "shake_child": "."
   },
-  "TooltipComponent": {
-    "text": "I'm an edgelord, come at me bro"
-  },
   "AiComponent": {},
   "AiScriptComponent": {
     "brains": [

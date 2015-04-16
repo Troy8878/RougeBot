@@ -1,10 +1,10 @@
 {
-  "name": "Victory",
+  "name": "Score",
   "components": {
     "EvalOnEventComponent": {
       "bindings": {
-        "quit": "e[:quit] = false; play_dungeon!",
-        "level_load": "MUSIC.play(nil); SFX::DUNGEON_CLEAR.play"
+        "quit": "e[:quit] = false; Game.switch_level 'Credits'",
+        "level_load": "MUSIC.play(nil); SFX::DUNGEON_CLEAR.play; display_final_score!"
       }
     }
   },
@@ -200,7 +200,7 @@
                     },
                     "EvalOnEventComponent": {
                       "bindings": {
-                        "button_clicked": "play_dungeon!"
+                        "button_clicked": "Game.switch_level 'Credits'"
                       }
                     }
                   },
@@ -211,7 +211,7 @@
               "archetype": "NoArchetype"
             },
             {
-              "name": "Victory!",
+              "name": "Score!",
               "components": {
                 "TransformComponent": {
                   "position": [
@@ -225,14 +225,14 @@
                     0.0
                   ],
                   "scale": [
-                    2.0,
-                    2.0,
+                    4.0,
+                    4.0,
                     1.0
                   ]
                 },
                 "TextureComponent": {
                   "textures": [
-                    "SPECIAL/SURFACE/2048:2048"
+                    "SPECIAL/SURFACE/4096:4096"
                   ]
                 },
                 "SpriteComponent": {
@@ -247,7 +247,7 @@
                 },
                 "TextComponent": {
                   "texts": [
-                    "Act Complete!"
+                    ""
                   ],
                   "text_color": "White",
                   "bg_color": "CornflowerBlue, 0.49",

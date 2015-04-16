@@ -20,7 +20,7 @@ class Map
     opts[:level] = GAME_STATE[:floor]
     tutnum = GAME_STATE[:tutorial]
 
-    if tutnum == nil
+    if tutnum == nil && Config[:act2] != true
       MUSIC.play(MUSIC::ACT1)
     end
 

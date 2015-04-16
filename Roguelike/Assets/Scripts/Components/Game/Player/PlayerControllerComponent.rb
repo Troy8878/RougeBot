@@ -402,7 +402,7 @@ class PlayerControllerComponent < ComponentBase
 
     @logic_initialized = true
 
-    if GAME_STATE[:tutorial] < 0
+    if GAME_STATE[:tutorial] != nil && GAME_STATE[:tutorial] < 0
       owner.local_find("HealthBar").zombify!
       owner.local_find("HealthDisplay").zombify!
     end

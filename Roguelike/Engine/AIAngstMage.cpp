@@ -30,7 +30,8 @@ void AIAngstMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
   std::cout << "1" << std::endl;
   if (distance < attack_range)
   {
-    int res = std::uniform_int_distribution<int>(0, 2)(std::random_device());
+    std::random_device rng;
+    int res = std::uniform_int_distribution<int>(0, 2)(rng);
     
     std::cout << "2 => " << res << std::endl;
     if (res == 0)

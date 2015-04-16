@@ -21,6 +21,7 @@ class HealthBarComponent < ComponentBase
     remove_event :update
     if owner.parent.player_controller_component
       @max_health = 100
+      on_change(nil)
     else
       @max_health = owner.parent.defense_component.health
     end

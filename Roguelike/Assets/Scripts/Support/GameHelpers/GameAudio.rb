@@ -12,6 +12,7 @@ module SFX
   UGH = Sound.load 'SFX/Ugh'
   PLAYER_WALK = Sound.load 'SFX/Normal_Walk'
   EDGE_WALK = Sound.load 'SFX/EdgeLord_Walk'
+  EAT = Sound.load 'SFX/Fire'
 
   FAILURE = Sound.load 'SFX/You_Have_Failed'
   DUNGEON_CLEAR = Sound.load 'SFX/Dungeon_Clear'

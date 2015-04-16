@@ -129,6 +129,9 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def player_eat(e)
+
+    SFX::EAT.play
+
     hsh = {}
     find_entity("Hotbar").raise_event :extract_selected, hsh
 

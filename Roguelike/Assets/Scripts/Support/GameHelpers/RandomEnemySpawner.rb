@@ -40,9 +40,15 @@ module Enemy
   def self.spawn_in(type, slot)
     if GAME_STATE[:act2] != true
       case type
+      when "Enemies/Wizard_Purple"
+        if GAME_STATE[:floor] < 3
+          type = "Enemies/Wizard_Orange"
+        end
       when "Enemies/Wizard_Green"
         type = "Enemies/Wizard_Orange"
       when "Enemies/Wizard_Red"
+        type = "Enemies/Wizard_Orange"
+      when "Enemies/Wizard_Angst"
         type = "Enemies/Wizard_Orange"
       end
     end

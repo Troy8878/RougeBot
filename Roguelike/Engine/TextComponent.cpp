@@ -396,7 +396,12 @@ static mrb_value mrb_textcomp_set_text_at(mrb_state *mrb, mrb_value self)
 {
   mrb_int index;
   mrb_value str;
-  mrb_get_args(mrb, "iS", &index, &str);
+  mrb_get_args(mrb, "io", &index, &str);
+
+  if (!mrb_string_p(str))
+  {
+    return mrb_nil_value();
+  }
 
   auto *tcomp = ruby::data_get<TextComponent>(mrb, self);
   auto text = mrb_str_to_stdstring(str);

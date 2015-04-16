@@ -84,26 +84,26 @@ module ItemGenerate
     result = Random.die_roll 100
 	
 	  if result > 75
-      data["damage"][0] = 8
-      data["damage"][1] = 10
+      data["damage"][0] = 6
+      data["damage"][1] = 12
       data["weaponType"] = Weapon::SPEAR_TYPE
 
       name = "Spear"
     elsif result > 50
-      data["damage"][0] = 6
-      data["damage"][1] = 12
+      data["damage"][0] = 8
+      data["damage"][1] = 10
       data["weaponType"] = Weapon::SABER_TYPE
 
       name = "Saber"
     elsif result > 20
       data["damage"][0] = 4
-      data["damage"][1] = 8
+      data["damage"][1] = 10
       data["weaponType"] = Weapon::AXE_TYPE
 
       name = "Axe"
     else
-      data["damage"][0] = 8
-      data["damage"][1] = 14
+      data["damage"][0] = 10
+      data["damage"][1] = 12
       data["weaponType"] = Weapon::DAGGER_TYPE
 
       name = "Dagger"
@@ -293,13 +293,13 @@ module ItemGenerate
 
     asp2 = 0
 
-    if result <= ((itemLevel * 2))
+    if result <= itemLevel
       asp2 = self.add_attribute(data, result)
     end
 
     asp3 = 0
 
-    if result + asp2 <= ((itemLevel * 2))
+    if result + asp2 <= itemLevel
       asp3 = self.add_element(data, result)
     end
 

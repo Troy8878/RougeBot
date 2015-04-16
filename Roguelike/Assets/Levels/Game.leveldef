@@ -364,7 +364,7 @@
               "components": {
                 "TransformComponent": {
                   "position": [
-                    -1.6,
+                    -1.4,
                     0.6,
                     0.0
                   ],
@@ -402,7 +402,7 @@
                   "bg_color": "",
                   "font": "",
                   "font_size": 48.0,
-                  "text_align": "center",
+                  "text_align": "leading",
                   "paragraph_align": "center",
                   "autocreate_textures": [
                     0.0,
@@ -424,7 +424,7 @@
               "components": {
                 "TransformComponent": {
                   "position": [
-                    -0.9,
+                    -0.7,
                     -0.8,
                     0.0
                   ],

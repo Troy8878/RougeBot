@@ -85,9 +85,7 @@ class PlayerControllerComponent < ComponentBase
         Config[:dungeon_completed] = true
         Config.save
 
-        Config[:tutorial] = -1
-        Config[:floor] = 1
-        Game.reload_level
+        Game.switch_level "Victory"
       else
         GAME_STATE[:floor] += 1
         Game.reload_level

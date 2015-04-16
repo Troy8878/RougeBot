@@ -34,8 +34,19 @@ void AIBlueMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
   else if (distance < attack_range + 1)
   {
     MoveTowards(world);
-    result.action = AIResult::Custom;
-    result.custom = R"( {"action":"attack-move", "tx": tx, "ty", ty} )";
+    
+    if(result.x != ox || result.y != oy)
+    {
+      result.action = AIResult::Custom;
+      
+      auto data = json::value::object();
+      data["action"] = json::value::string("attack-move");
+      data["tx"] = json::value::number(static_cast<double>(tx));
+      data["ty"] = json::value::number(static_cast<double>(ty));
+      data["x"] = json::value::number(static_cast<double>(result.x));
+      data["y"] = json::value::number(static_cast<double>(result.y));
+      result.custom = data.serialize();
+    }
   }
   else if (distance < aggro_range)
   {
@@ -135,4 +146,7 @@ void AIBlueMage::MoveTowards(const WorldSnapshot &world)
     MoveUp();
     return;
   }
+  
+  result.x = ox;
+  result.y = oy;
 }

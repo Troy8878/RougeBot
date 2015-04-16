@@ -40,9 +40,20 @@
     "length": 1.0,
     "shake_child": "."
   },
-  "BlueMageLogicComponent": {
+  "EnemyLogicComponent": {
     "stationary": false,
-    "move_skip": 0
+    "move_skip": 0,
+    "new_system": true
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "BlueMage"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {}
   },
   "ChildHierarchy": {
     "children": [

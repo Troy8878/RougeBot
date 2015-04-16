@@ -1,5 +1,5 @@
 /*********************************
- * AIBlueMage.cpp
+ * AIEdgeLord.cpp
  * Claire Robsahm
  * Created 2015/4/09
  * Copyright ｩ 2014 DigiPen Institute of Technology, All Rights Reserved
@@ -8,16 +8,16 @@
 // This is a test AI behaviour! It is written like shit, and works even shittier. Don't use it in production!
 
 #include "Common.h"
-#include "AIPurpleMage.h"
+#include "AIEdgeLord.h"
 #include "RubyWrappers.h"
 #include "WorldSnapshot.h"
 #include <json/jquery.h>
 
-static bool teleport = false;
+static bool able_to_turn = false;
 
 // ----------------------------------------------------------------------------
 
-void AIPurpleMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
+void AIEdgeLord::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 {
   double aggro_range = 3.5;
   double attack_range = 1.1;
@@ -29,22 +29,28 @@ void AIPurpleMage::ApplyBehaviour(const WorldSnapshot &world, json::value params
 
   if (distance < attack_range)
   {
-    result.action = AIResult::Attack;
-    result.x = tx;
-    result.y = ty;
-    teleport = false;
-  }
-  else if (distance < aggro_range)
-  {
-    if(teleport)
+    if(able_to_turn)
     {
-      TeleportTowards(world);
-      teleport = false;
+      result.action = AIResult::Attack;
+      result.x = tx;
+      result.y = ty;
+      able_to_turn = false;
     }
     else
     {
+      able_to_turn = true;
+    }
+  }
+  else if (distance < aggro_range)
+  {
+    if(able_to_turn)
+    {
       MoveTowards(world);
-      teleport = true;
+      able_to_turn = false;
+    }
+    else
+    {
+      able_to_turn = true;
     }
   }
   else
@@ -55,7 +61,7 @@ void AIPurpleMage::ApplyBehaviour(const WorldSnapshot &world, json::value params
 
 // ----------------------------------------------------------------------------
 
-void AIPurpleMage::Prepare()
+void AIEdgeLord::Prepare()
 {
   IdleBehaviour::Prepare();
 
@@ -77,21 +83,21 @@ void AIPurpleMage::Prepare()
 
 // ----------------------------------------------------------------------------
 
-void AIPurpleMage::InitializeTarget(Entity *target)
+void AIEdgeLord::InitializeTarget(Entity *target)
 {
   this->target = target;
 }
 
 // ----------------------------------------------------------------------------
 
-void AIPurpleMage::InitilizeOwner(Entity *thisEntity)
+void AIEdgeLord::InitilizeOwner(Entity *thisEntity)
 {
   owner = thisEntity;
 }
 
 // ----------------------------------------------------------------------------
 
-AIResult AIPurpleMage::GetResult()
+AIResult AIEdgeLord::GetResult()
 {
   return result;
 }
@@ -99,58 +105,7 @@ AIResult AIPurpleMage::GetResult()
 // ----------------------------------------------------------------------------
 // Private functions
 
-void AIPurpleMage::TeleportTowards(const WorldSnapshot &world)
-{
-  // Difference between owner and target.
-  mrb_int dx = ox - tx;
-  mrb_int dy = oy - ty;
-
-  // Store whether we can move in each direction ahead of time.
-  bool canMoveUp = world.CanMove(tx, ty, 0, 1) == WorldSnapshot::NotBlocked;
-  bool canMoveDown = world.CanMove(tx, ty, 0, -1) == WorldSnapshot::NotBlocked;
-  bool canMoveRight = world.CanMove(tx, ty, 1, 0) == WorldSnapshot::NotBlocked;
-  bool canMoveLeft = world.CanMove(tx, ty, -1, 0) == WorldSnapshot::NotBlocked;
-
-  // Check if we are to the right of the target.
-  if (dx > 0 && canMoveLeft)
-  {
-    result.action = AIResult::Move;
-    result.x = tx - 1;
-    result.y = ty;
-    return;
-  }
-
-  // Check if we are to the left of the target.
-  else if (dx < 0 && canMoveRight)
-  {
-    result.action = AIResult::Move;
-    result.x = tx + 1;
-    result.y = ty;
-    return;
-  }
-
-  // Check if we are below the target.
-  else if (dy > 0 && canMoveDown)
-  {
-    result.action = AIResult::Move;
-    result.x = tx;
-    result.y = ty - 1;
-    return;
-  }
-
-  // Check if we are above the target.
-  else if (dy < 0 && canMoveUp)
-  {
-    result.action = AIResult::Move;
-    result.x = tx;
-    result.y = ty + 1;
-    return;
-  }
-  
-  IdleBehaviour::ApplyBehaviour(world, json::value::null());
-}
-
-void AIPurpleMage::MoveTowards(const WorldSnapshot &world)
+void AIEdgeLord::MoveTowards(const WorldSnapshot &world)
 {
   // Difference between owner and target.
   mrb_int dx = ox - tx;

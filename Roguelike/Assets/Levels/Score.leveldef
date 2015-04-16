@@ -249,9 +249,9 @@
                   "texts": [
                     ""
                   ],
-                  "text_color": "White",
-                  "bg_color": "CornflowerBlue, 0.49",
-                  "font": "",
+                  "text_color": "#18C045FF",
+                  "bg_color": "White, 0.49",
+                  "font": "IMPACT",
                   "font_size": 200.0,
                   "text_align": "center",
                   "paragraph_align": "center",
@@ -286,17 +286,17 @@
                 },
                 "TextureComponent": {
                   "textures": [
-                    "MainMenu/OtherMenu.png"
+                    "Ending.png"
                   ]
                 },
                 "SpriteComponent": {
                   "render_target": "WorldLayer",
                   "shader": "",
                   "tint": [
-                    0.39215686917304993,
-                    0.58431375026702881,
-                    0.929411768913269,
-                    0.60000002384185791
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
                   ]
                 }
               },

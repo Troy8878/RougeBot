@@ -727,7 +727,7 @@
       },
       {
         "id": 2,
-        "meta": "\"Sign/Outro1\""
+        "meta": "\"Signs/Outro1\""
       },
       {
         "id": 0,
@@ -2185,7 +2185,7 @@
       },
       {
         "id": 2,
-        "meta": "\"Signs/Outro4"
+        "meta": "\"Signs/Outro4\""
       },
       {
         "id": 0,
@@ -3318,7 +3318,7 @@
         "meta": ""
       },
       {
-        "id": 0,
+        "id": 6,
         "meta": ""
       },
       {
@@ -3480,8 +3480,8 @@
         "meta": ""
       },
       {
-        "id": 1,
-        "meta": ""
+        "id": 2,
+        "meta": "\"Signs/LightRay\""
       },
       {
         "id": 1,

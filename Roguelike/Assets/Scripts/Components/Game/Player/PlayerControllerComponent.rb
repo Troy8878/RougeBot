@@ -78,9 +78,13 @@ class PlayerControllerComponent < ComponentBase
     if @pos.near? STAIR_POSITION, 0.5
       # Make sure we aren't on the last floor already.
       if GAME_STATE[:tutorial].is_a? Fixnum
-        GAME_STATE[:floor] += 1
-        GAME_STATE[:tutorial] += 1
-        Game.reload_level
+        if GAME_STATE[:tutorial] == -5
+          Game.switch_level "Credits"
+        else
+          GAME_STATE[:floor] += 1
+          GAME_STATE[:tutorial] += 1
+          Game.reload_level
+        end
       elsif GAME_STATE[:floor] == $DungeonLength && GAME_STATE[:endless] != true
         Config[:dungeon_completed] = true
         if GAME_STATE[:act2] == true

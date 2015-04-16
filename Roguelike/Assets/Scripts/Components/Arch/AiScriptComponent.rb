@@ -101,10 +101,7 @@ class AiScriptComponent < ComponentBase
       message = nil
 
       begin
-        puts "Custom event!"
-        puts "#{result["result"].class} => #{result["result"].inspect}"
         result = JSON.parse result["result"]
-        puts "parse result: #{result.class} => #{result.inspect}"
         
         case result["action"]
         when "message"
@@ -116,9 +113,8 @@ class AiScriptComponent < ComponentBase
           sprite = owner.local_find("Sprite").sprite_component
           old_color = sprite.tint.dup
           sprite.tint = Vector.from_color(result["color"])
-          puts "Sprite tint: #{sprite.tint}"
           seq = owner.action_sequence :colorize
-          seq.delay 0.5
+          seq.delay 0.65
           seq.once do
             sprite.tint = old_color
           end
@@ -134,19 +130,14 @@ class AiScriptComponent < ComponentBase
             self.owner.attack_component.do_attack tile.actor
           end
           
-          puts "Move Attack!"
-          
         when "heal"
           floor = current_floor
           tile = floor[floor.length - 1 - result["y"]][result["x"]]
           if tile.actor
             tile.actor.defense_component.heal result["value"]
           end
-          
-          puts "Dere~"
         end
 
-        puts "End Custom event!"
       rescue Exception => ex
         puts "Error Custom event!"
         puts "#{ex.inspect}"

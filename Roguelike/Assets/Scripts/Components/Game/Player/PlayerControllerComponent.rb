@@ -85,9 +85,7 @@ class PlayerControllerComponent < ComponentBase
         Config[:dungeon_completed] = true
         Config.save
 
-        Config[:tutorial] = -1
-        Config[:floor] = 1
-        Game.reload_level
+        Game.switch_level "Victory"
       else
         GAME_STATE[:floor] += 1
         Game.reload_level
@@ -99,7 +97,6 @@ class PlayerControllerComponent < ComponentBase
 
     if tile.door
       tut = tile.door.tutnum
-      puts "tut: #{tut}"
       if tut == -2
         play_dungeon!(1, nil)
       else
@@ -269,7 +266,6 @@ class PlayerControllerComponent < ComponentBase
     element = weapon ? weapon.element : "physical"
     weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE
 
-    puts element
     element ||= "physical"
 
     weaponType ||= Weapon::DAGGER_TYPE

@@ -27,13 +27,11 @@ void AIAngstMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 
-  std::cout << "1" << std::endl;
   if (distance < attack_range)
   {
     std::random_device rng;
     int res = std::uniform_int_distribution<int>(0, 2)(rng);
     
-    std::cout << "2 => " << res << std::endl;
     if (res == 0)
     {
       result.action = AIResult::Custom;

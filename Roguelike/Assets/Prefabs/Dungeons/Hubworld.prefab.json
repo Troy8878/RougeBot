@@ -3339,7 +3339,7 @@
       },
       {
         "id": 1,
-        "meta": ":empty if Config[:dungeon_completed]"
+        "meta": ":empty if Config[:act2_completed]"
       },
       {
         "id": 0,

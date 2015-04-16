@@ -231,30 +231,30 @@ module ItemGenerate
 
       data["attributes"] << ItemAttribute.new(:element, "Flame")
     elsif weaponMod == 3
-      levelMod = 2
+      levelMod = 1
 
-      self.modify_weapon_stats(data, " of Freezing", 4, 4, 10, true)
+      self.modify_weapon_stats(data, " of Freezing", 2, 2, 5, true)
       data["element"] = "freezing"
 
       data["attributes"] << ItemAttribute.new(:element, "Freezing")
     elsif weaponMod == 4
       levelMod = 2
 
-      self.modify_weapon_stats(data, " of Zapping", 6, 6, 15, true)
+      self.modify_weapon_stats(data, " of Zapping", 4, 4, 10, true)
       data["element"] = "zapping"
 
       data["attributes"] << ItemAttribute.new(:element, "Zapping")
     elsif weaponMod == 5
-      levelMod = 3
+      levelMod = 2
 
-      self.modify_weapon_stats(data, " of Radiactivity", 8, 8, 20, true)
+      self.modify_weapon_stats(data, " of Radiactivity", 4, 4, 10, true)
       data["element"] = "radioactive"
 
       data["attributes"] << ItemAttribute.new(:element, "Radioactive")
     else
-      levelMod = 4
+      levelMod = 3
 
-      self.modify_weapon_stats(data, " of Exploding", 10, 10, 25, true)
+      self.modify_weapon_stats(data, " of Exploding", 6, 6, 15, true)
       data["element"] = "exploding"
 
       data["attributes"] << ItemAttribute.new(:element, "Exploding")

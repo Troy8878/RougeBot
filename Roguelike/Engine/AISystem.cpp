@@ -217,6 +217,7 @@ static mrb_value mrb_aisys_update_snapshot(mrb_state *mrb, mrb_value self)
 #include "AIBlueMage.h"
 #include "AIPurpleMage.h"
 #include "AIAngstMage.h"
+#include "AIEdgeLord.h"
 #include "Autoplay.h"
 
 void AIFactory::RegisterDefaultFactories()
@@ -228,6 +229,7 @@ void AIFactory::RegisterDefaultFactories()
   Register("BlueMage", new DefaultAIFactory<AIBlueMage>);
   Register("PurpleMage", new DefaultAIFactory<AIPurpleMage>);
   Register("AngstMage", new DefaultAIFactory<AIAngstMage>);
+  Register("EdgeLord", new DefaultAIFactory<AIEdgeLord>);
 }
 
 // ----------------------------------------------------------------------------

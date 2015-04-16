@@ -106,46 +106,48 @@ void AIPurpleMage::TeleportTowards(const WorldSnapshot &world)
   mrb_int dy = oy - ty;
 
   // Store whether we can move in each direction ahead of time.
-  bool canMoveUp = world.CanMove(ox, oy, dx, dy + 1) == WorldSnapshot::NotBlocked;
-  bool canMoveDown = world.CanMove(ox, oy, dx, dy - 1) == WorldSnapshot::NotBlocked;
-  bool canMoveRight = world.CanMove(ox, oy, dx + 1, dy) == WorldSnapshot::NotBlocked;
-  bool canMoveLeft = world.CanMove(ox, oy, dx- 1 , dy) == WorldSnapshot::NotBlocked;
+  bool canMoveUp = world.CanMove(tx, ty, 0, 1) == WorldSnapshot::NotBlocked;
+  bool canMoveDown = world.CanMove(tx, ty, 0, -1) == WorldSnapshot::NotBlocked;
+  bool canMoveRight = world.CanMove(tx, ty, 1, 0) == WorldSnapshot::NotBlocked;
+  bool canMoveLeft = world.CanMove(tx, ty, -1, 0) == WorldSnapshot::NotBlocked;
 
   // Check if we are to the right of the target.
   if (dx > 0 && canMoveLeft)
   {
     result.action = AIResult::Move;
-    result.x = dx - 1;
-    result.y = dy;
+    result.x = tx - 1;
+    result.y = ty;
     return;
   }
 
   // Check if we are to the left of the target.
-  if (dx < 0 && canMoveRight)
+  else if (dx < 0 && canMoveRight)
   {
     result.action = AIResult::Move;
-    result.x = dx + 1;
-    result.y = dy;
+    result.x = tx + 1;
+    result.y = ty;
     return;
   }
 
   // Check if we are below the target.
-  if (dy > 0 && canMoveDown)
+  else if (dy > 0 && canMoveDown)
   {
     result.action = AIResult::Move;
-    result.x = dx;
-    result.y = dy - 1;
+    result.x = tx;
+    result.y = ty - 1;
     return;
   }
 
   // Check if we are above the target.
-  if (dy < 0 && canMoveUp)
+  else if (dy < 0 && canMoveUp)
   {
     result.action = AIResult::Move;
-    result.x = dx;
-    result.y = dy + 1;
+    result.x = tx;
+    result.y = ty + 1;
     return;
   }
+  
+  IdleBehaviour::ApplyBehaviour(world, json::value::null());
 }
 
 void AIPurpleMage::MoveTowards(const WorldSnapshot &world)

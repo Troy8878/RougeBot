@@ -142,6 +142,7 @@
     <ClInclude Include="AIBlueMage.h" />
     <ClInclude Include="AiComponent.h" />
     <ClInclude Include="AIDerp.h" />
+    <ClInclude Include="AIEdgeLord.h" />
     <ClInclude Include="AIPurpleMage.h" />
     <ClInclude Include="AIRoaming.h" />
     <ClInclude Include="AISystem.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="AIBlueMage.cpp" />
     <ClCompile Include="AiComponent.cpp" />
     <ClCompile Include="AIDerp.cpp" />
+    <ClCompile Include="AIEdgeLord.cpp" />
     <ClCompile Include="AIPurpleMage.cpp" />
     <ClCompile Include="AIRoaming.cpp" />
     <ClCompile Include="AISystem.cpp" />

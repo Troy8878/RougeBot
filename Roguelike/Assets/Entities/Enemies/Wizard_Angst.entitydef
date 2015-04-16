@@ -36,7 +36,6 @@
   "AiComponent": {},
   "AiScriptComponent": {
     "brains": [
-      "Idle",
       "AngstMage"
     ],
     "brain_index": 0,
@@ -52,6 +51,12 @@
     "strength": 0.5,
     "length": 1.0,
     "shake_child": "."
+  },
+  "AttackComponent": {
+    "damage": [
+      3.0,
+      7.0
+    ]
   },
   "ChildHierarchy": {
     "children": [

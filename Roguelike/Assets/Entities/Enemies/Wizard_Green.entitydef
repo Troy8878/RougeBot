@@ -37,7 +37,7 @@
   "EnemyLogicComponent": {
     "stationary": false,
     "move_skip": 2,
-    "new_system": false
+    "new_system": true
   },
   "ScreenShakeComponent": {
     "frequency": 12.0,
@@ -47,6 +47,18 @@
   },
   "TooltipComponent": {
     "text": "I'm an edgelord, come at me bro"
+  },
+  "AiComponent": {},
+  "AiScriptComponent": {
+    "brains": [
+      "EdgeLord"
+    ],
+    "brain_index": 0,
+    "target": "Player",
+    "auto_exec": true,
+    "params": {
+      "aggro_range": 5
+    }
   },
   "ChildHierarchy": {
     "children": [

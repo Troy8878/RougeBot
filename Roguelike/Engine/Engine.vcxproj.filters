@@ -220,6 +220,9 @@
     <ClInclude Include="AIPurpleMage.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="AIEdgeLord.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common.h">
@@ -420,6 +423,9 @@
       <Filter>Source Files\AI</Filter>
     </ClCompile>
     <ClCompile Include="AIPurpleMage.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIEdgeLord.cpp">
       <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>

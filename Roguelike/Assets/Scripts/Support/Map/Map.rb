@@ -20,17 +20,24 @@ class Map
     opts[:level] = GAME_STATE[:floor]
     tutnum = GAME_STATE[:tutorial]
 
+    if tutnum == nil
+      MUSIC.play(MUSIC::ACT1)
+    end
+
     if tutnum == -3
+      MUSIC.play(MUSIC::ACT2)
       GAME_STATE[:tutorial] = nil
       GAME_STATE[:act2] = true
       GAME_STATE[:endless] = false
       tutnum = nil
     elsif tutnum == -4
+      MUSIC.play(MUSIC::ACT2)
       GAME_STATE[:tutorial] = nil
       GAME_STATE[:act2] = true
       GAME_STATE[:endless] = true
       tutnum = nil
-    else
+    elsif tutnum == -1
+      MUSIC.play(MUSIC::TUT)
       GAME_STATE[:act2] = false
       GAME_STATE[:endless] = false
     end
@@ -44,6 +51,8 @@ class Map
         end
         GAME_STATE[:tutorial] = -1
         dungeon = "Hubworld"
+      else
+        MUSIC.play(MUSIC::TUT)
       end
       opts[:dungeon] = dungeon
     end

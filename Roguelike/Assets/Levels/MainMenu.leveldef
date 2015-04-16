@@ -1,7 +1,12 @@
 {
   "name": "MainMenu",
   "components": {
-    "MenuQuitBlocker": {}
+    "MenuQuitBlocker": {},
+    "EvalOnEventComponent": {
+      "bindings": {
+        "level_load": "MUSIC.play(MUSIC::MENU_MUSIC)"
+      }
+    }
   },
   "entities": [
     {

@@ -81,11 +81,13 @@ class PlayerControllerComponent < ComponentBase
         GAME_STATE[:floor] += 1
         GAME_STATE[:tutorial] += 1
         Game.reload_level
-      elsif GAME_STATE[:floor] == $DungeonLength
+      elsif GAME_STATE[:floor] == $DungeonLength && GAME_STATE[:endless] != true
         Config[:dungeon_completed] = true
         Config.save
-        Game.switch_level "Victory"
-      # Otherwise, to the next floor!
+
+        Config[:tutorial] = -1
+        Config[:floor] = 1
+        Game.reload_level
       else
         GAME_STATE[:floor] += 1
         Game.reload_level
@@ -297,6 +299,8 @@ class PlayerControllerComponent < ComponentBase
 
   def attack(e)
 
+    self.expunge_inventory
+
     x = e[0]
     y = e[1]
     
@@ -430,7 +434,19 @@ class PlayerControllerComponent < ComponentBase
   def mouse_move(e)
   end
 
+  def expunge_inventory
+    PLAYER_INVENTORY.inventory.each_with_index do |item, index|
+      roll = Random.die_roll 9
+      if roll > 2
+        PLAYER_INVENTORY.inventory[index] = nil
+      end
+    end
+  end
+
   def on_zombification(e)
+    
+    self.expunge_inventory
+
     find_entity(0).raise_event :ai_is_kill, nil
 
     find_entity("Minimap").zombify!
@@ -454,9 +470,13 @@ class PlayerControllerComponent < ComponentBase
     ntint = tint.dup
     ntint.w = 1
 
+    MUSIC.play(nil)
+    SFX::FAILURE.play
+
     seq = transient.action_sequence :display_defeat
-    seq.interpolate tint, to: ntint, over: 4.seconds
+    seq.interpolate tint, to: ntint, over: 5.seconds
     seq.once do
+      MUSIC.play(MUSIC::TUT)
       Game.switch_level "GameOver"
     end
   end

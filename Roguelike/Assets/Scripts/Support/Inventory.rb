@@ -117,7 +117,7 @@ class Inventory
   end
 
   def empty?
-    @inventory.empty?
+    @inventory.filter{|i|!i.nil?}.empty?
   end
 
   private

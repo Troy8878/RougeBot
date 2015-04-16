@@ -45,9 +45,13 @@ class PlayerControllerComponent < ComponentBase
     @logic_initialized = false
     @logic_cooldown = 0
 
+    self.register_event :update, :first_update
+    self.register_event :ai_complete, :ai_complete
+  end
+
+  def hook_events
     self.register_event :move, :on_move
     self.register_event :fire, :fire
-    self.register_event :update, :first_update
     self.register_event :attack, :attack
     self.register_event :swing_weapon, :swing_weapon
 
@@ -59,11 +63,6 @@ class PlayerControllerComponent < ComponentBase
     self.register_event :player_use, :player_use
     self.register_event :player_drop, :player_drop
     self.register_event :player_eat, :player_eat
-
-    #self.register_event :skip_floor, :skip_floor
-    #self.register_event :skip_to_win, :skip_to_win
-
-    self.register_event :ai_complete, :ai_complete
   end
 
   def on_pause(val)
@@ -391,6 +390,8 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def first_update(e)
+    hook_events
+
     shape = MapItem::ELLIPSE
     actor_init(shape, "Yellow")
 

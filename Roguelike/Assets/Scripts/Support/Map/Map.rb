@@ -40,6 +40,7 @@ class Map
       MUSIC.play(MUSIC::TUT)
       GAME_STATE[:act2] = false
       GAME_STATE[:endless] = false
+      GAME_STATE[:phealth] = 100.to_f
     end
 
     if tutnum.is_a? Fixnum

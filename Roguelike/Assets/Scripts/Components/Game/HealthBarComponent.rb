@@ -26,7 +26,7 @@ class HealthBarComponent < ComponentBase
     health = owner.parent.defense_component.health
 
     bar = self.owner.transform_component
-    bar.scale = Vector.new *[health / @max_health, 0.5, 1]
+    bar.scale = Vector.new *[health / @max_health, 0.5, 1.0]
   end
 
   register_component "HealthBarComponent"

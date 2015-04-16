@@ -17,6 +17,7 @@
 PLAYER_INVENTORY = Inventory.new
 
 GAME_STATE[:score] = 0
+GAME_STATE[:phealth] = 100.to_f
 
 class PlayerControllerComponent < ComponentBase
   include Actor
@@ -74,6 +75,8 @@ class PlayerControllerComponent < ComponentBase
   end
 
   def player_use(e)
+    GAME_STATE[:phealth] = owner.defense_component.health
+
     # Check if the player is on the stairs
     if @pos.near? STAIR_POSITION, 0.5
       # Make sure we aren't on the last floor already.
@@ -388,6 +391,8 @@ class PlayerControllerComponent < ComponentBase
   def first_update(e)
     shape = MapItem::ELLIPSE
     actor_init(shape, "Yellow")
+
+    owner.defense_component.health = GAME_STATE[:phealth]
 
     move 0, 0
 

@@ -36,7 +36,7 @@ class DefenseComponent < ComponentBase
   def on_access
     self.owner.raise_event :health_changed, {
       kind: :touch,
-      amount: 0,
+      amount: 0.to_f,
       new_value: @health
     }
   end

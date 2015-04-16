@@ -82,7 +82,7 @@ class PlayerControllerComponent < ComponentBase
       # Make sure we aren't on the last floor already.
       if GAME_STATE[:tutorial].is_a? Fixnum
         if GAME_STATE[:tutorial] == -5
-          Game.switch_level "Credits"
+          Game.switch_level "Score"
         else
           GAME_STATE[:floor] += 1
           GAME_STATE[:tutorial] += 1

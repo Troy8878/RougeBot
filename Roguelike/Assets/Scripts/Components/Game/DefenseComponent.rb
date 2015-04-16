@@ -106,15 +106,18 @@ class DefenseComponent < ComponentBase
       find_entity(0).raise_event :score_change, nil
     end
 
-    drop_random_weapon
+    enemy = self.owner.enemy_logic_component
+    if !enemy || !enemy.stationary
+      drop_random_weapon
 
-    transient = self.owner.parent.create_child components: {
-      "TransformComponent" => self.owner.transform_component.dup_for_hash
-    }
+      transient = self.owner.parent.create_child components: {
+        "TransformComponent" => self.owner.transform_component.dup_for_hash
+      }
 
-    message = StatusMessage.new("👻", 2, "Cyan")
-    message.delete_owner!
-    message.display transient
+      message = StatusMessage.new("👻", 2, "Cyan")
+      message.delete_owner!
+      message.display transient
+    end
 
     owner.raise_event :actor_death, self.owner
   end

@@ -99,7 +99,6 @@ class PlayerControllerComponent < ComponentBase
 
     if tile.door
       tut = tile.door.tutnum
-      puts "tut: #{tut}"
       if tut == -2
         play_dungeon!(1, nil)
       else
@@ -269,7 +268,6 @@ class PlayerControllerComponent < ComponentBase
     element = weapon ? weapon.element : "physical"
     weaponType = weapon ? weapon.weaponType : Weapon::DAGGER_TYPE
 
-    puts element
     element ||= "physical"
 
     weaponType ||= Weapon::DAGGER_TYPE

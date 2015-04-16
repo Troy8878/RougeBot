@@ -200,7 +200,7 @@
                     },
                     "EvalOnEventComponent": {
                       "bindings": {
-                        "button_clicked": "Game.switch_level 'MainMenu'"
+                        "button_clicked": "play_dungeon!"
                       }
                     }
                   },

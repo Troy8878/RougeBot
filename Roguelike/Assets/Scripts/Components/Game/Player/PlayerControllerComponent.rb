@@ -487,6 +487,8 @@ class PlayerControllerComponent < ComponentBase
 end
 
 def expunge_inventory
+  GAME_STATE[:score] = 0
+
   PLAYER_INVENTORY.inventory.each_with_index do |item, index|
     roll = Random.die_roll 9
     if roll > 2

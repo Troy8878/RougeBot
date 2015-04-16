@@ -27,16 +27,23 @@ void AIAngstMage::ApplyBehaviour(const WorldSnapshot &world, json::value params)
 
   float distance = sqrtf(static_cast<float>((ox - tx) * (ox - tx) + (oy - ty) * (oy - ty)));
 
+  std::cout << "1" << std::endl;
   if (distance < attack_range)
   {
-    int res = rand() % 3;
+    std::random_device rng;
+    int res = std::uniform_int_distribution<int>(0, 2)(rng);
     
+    std::cout << "2 => " << res << std::endl;
     if (res == 0)
     {
       result.action = AIResult::Custom;
-      result.custom = R"( {"action":"heal", "value": heal_value} )";
-      result.x = tx;
-      result.y = ty;
+      
+      auto data = json::value::object();
+      data["action"] = json::value::string("heal");
+      data["value"] = json::value::number(static_cast<double>(heal_value));
+      data["x"] = json::value::number(static_cast<double>(tx));
+      data["y"] = json::value::number(static_cast<double>(ty));
+      result.custom = data.serialize();
     }
     else if (res == 1)
     {

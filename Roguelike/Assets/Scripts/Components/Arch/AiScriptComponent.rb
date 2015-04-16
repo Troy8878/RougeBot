@@ -95,11 +95,17 @@ class AiScriptComponent < ComponentBase
         self.owner.attack_component.do_attack tile.actor
       end
 
+    when nil
+      # do nothing
     else
       message = nil
 
       begin
-        result = JSON.parse
+        puts "Custom event!"
+        puts "#{result["result"].class} => #{result["result"].inspect}"
+        result = JSON.parse result["result"]
+        puts "parse result: #{result.class} => #{result.inspect}"
+        
         case result["action"]
         when "message"
           message = result["text"]
@@ -110,6 +116,7 @@ class AiScriptComponent < ComponentBase
           sprite = owner.local_find("Sprite").sprite_component
           old_color = sprite.tint.dup
           sprite.tint = Vector.from_color(result["color"])
+          puts "Sprite tint: #{sprite.tint}"
           seq = owner.action_sequence :colorize
           seq.delay 0.5
           seq.once do
@@ -127,16 +134,25 @@ class AiScriptComponent < ComponentBase
             self.owner.attack_component.do_attack tile.actor
           end
           
+          puts "Move Attack!"
+          
         when "heal"
           floor = current_floor
           tile = floor[floor.length - 1 - result["y"]][result["x"]]
           if tile.actor
-            target = find_target("Player")
-            target.defense_component.heal result["value"]
+            tile.actor.defense_component.heal result["value"]
           end
+          
+          puts "Dere~"
         end
 
-      rescue
+        puts "End Custom event!"
+      rescue Exception => ex
+        puts "Error Custom event!"
+        puts "#{ex.inspect}"
+        ex.backtrace.each do |line|
+          puts "  at #{line}"
+        end
         message = "failed to interpret hivemind action"
       end
 

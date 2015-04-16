@@ -299,8 +299,6 @@ class PlayerControllerComponent < ComponentBase
 
   def attack(e)
 
-    self.expunge_inventory
-
     x = e[0]
     y = e[1]
     
@@ -434,19 +432,7 @@ class PlayerControllerComponent < ComponentBase
   def mouse_move(e)
   end
 
-  def expunge_inventory
-    PLAYER_INVENTORY.inventory.each_with_index do |item, index|
-      roll = Random.die_roll 9
-      if roll > 2
-        PLAYER_INVENTORY.inventory[index] = nil
-      end
-    end
-  end
-
   def on_zombification(e)
-    
-    self.expunge_inventory
-
     find_entity(0).raise_event :ai_is_kill, nil
 
     find_entity("Minimap").zombify!
@@ -482,4 +468,13 @@ class PlayerControllerComponent < ComponentBase
   end
 
   register_component
+end
+
+def expunge_inventory
+  PLAYER_INVENTORY.inventory.each_with_index do |item, index|
+    roll = Random.die_roll 9
+    if roll > 2
+      PLAYER_INVENTORY.inventory[index] = nil
+    end
+  end
 end

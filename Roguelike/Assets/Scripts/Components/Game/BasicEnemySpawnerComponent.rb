@@ -14,7 +14,9 @@ class BasicEnemySpawnerComponent < ComponentBase
     "Enemies/Wizard_Yellow",
     "Enemies/Wizard_Green",
     "Enemies/Wizard_Blue",
-    "Enemies/Wizard_Purple"
+    "Enemies/Wizard_Purple",
+    "Enemies/Wizard_Angst",
+    "Enemies/Derpaderp"
   ]
 
   serialized_input do |p|

@@ -3,7 +3,8 @@
   "components": {
     "EvalOnEventComponent": {
       "bindings": {
-        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'"
+        "quit": "e[:quit] = false; Game.switch_level 'MainMenu'",
+        "level_load": "expunge_inventory()"
       }
     }
   },

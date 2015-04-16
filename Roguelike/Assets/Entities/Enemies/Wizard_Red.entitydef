@@ -17,13 +17,13 @@
     ]
   },
   "DefenseComponent": {
-    "max_health": 20.0,
-    "health": 20.0
+    "max_health": 29.0,
+    "health": 29.0
   },
   "AttackComponent": {
     "damage": [
-      6.0,
-      8.0
+      4.0,
+      6.0
     ]
   },
   "PositionComponent": {

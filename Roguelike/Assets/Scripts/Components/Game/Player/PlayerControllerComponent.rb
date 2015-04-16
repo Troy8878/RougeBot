@@ -115,6 +115,8 @@ class PlayerControllerComponent < ComponentBase
 
     if tile.item?
       if PLAYER_INVENTORY.room_in_inventory == true
+
+        SFX::ITEM_PICKUP.play
         item = tile.pickup_item
         PLAYER_INVENTORY.pickup item
         Event.raise_event :combat_log, "Picked up #{item.name}"
@@ -130,8 +132,6 @@ class PlayerControllerComponent < ComponentBase
 
   def player_eat(e)
 
-    SFX::EAT.play
-
     hsh = {}
     find_entity("Hotbar").raise_event :extract_selected, hsh
 
@@ -140,6 +140,8 @@ class PlayerControllerComponent < ComponentBase
     if item == nil
       return
     end
+
+    SFX::EAT.play
 
     amount = (((Math.sqrt item.value) * 2) + 5).to_i
 

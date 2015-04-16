@@ -103,6 +103,8 @@ class HotbarComponent < ComponentBase
     return unless @is_selected
     return unless @item
 
+    SFX::ITEM_DROP.play
+    
     tile.drop_item @item
     PLAYER_INVENTORY.inventory[@inv_slot] = nil
     PLAYER_INVENTORY.update_slot @inv_slot

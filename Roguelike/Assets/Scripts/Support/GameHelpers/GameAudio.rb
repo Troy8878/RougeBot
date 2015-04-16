@@ -16,6 +16,9 @@ module SFX
 
   FAILURE = Sound.load 'SFX/You_Have_Failed'
   DUNGEON_CLEAR = Sound.load 'SFX/Dungeon_Clear'
+
+  ITEM_DROP = Sound.load 'SFX/ItemDrop'
+  ITEM_PICKUP = Sound.load 'SFX/ItemGet'
 end
 
 module MUSIC

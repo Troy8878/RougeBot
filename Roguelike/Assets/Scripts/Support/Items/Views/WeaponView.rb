@@ -52,8 +52,8 @@ class Weapon < Item
       "Lead"        => Vector.new(0.4, 0.4,  1.0, 1.0),
       "Asbestos"    => Vector.new(1.6, 1.6,  1.0, 1.0),
       "Iron"        => Vector.new(0.8, 0.8,  0.8, 1.0),
-      "Plastic"     => Vector.new(0.9, 0.9,  0.0, 1.0),
-      "Mahogany"    => Vector.new(0.3, 0.15,  0.0, 1.0),
+      "Plastic"     => Vector.new(0.8, 0.7,  0.7, 1.0),
+      "Gold"        => Vector.new(0.9, 0.9,  0.0, 1.0),
       "Alleged"     => Vector.new(0.0, 0.0,  0.0, 0.6),
       "Wooden"      => Vector.new(0.3, 0.2,  0.1, 1.0),
     }

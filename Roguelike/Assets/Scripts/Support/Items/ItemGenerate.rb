@@ -11,7 +11,9 @@ module ItemGenerate
     
     if GAME_STATE[:act2] == true
       itemLevel = itemLevel + 5
-    elsif GAME_STATE[:endless] == true
+    end
+
+    if GAME_STATE[:endless] == true
       itemLevel = Random.die_roll 10
     end
 
@@ -42,7 +44,9 @@ module ItemGenerate
 
     if GAME_STATE[:act2] == true
       itemLevel = itemLevel + 5
-    elsif GAME_STATE[:endless] == true
+    end
+
+    if GAME_STATE[:endless] == true
       itemLevel = Random.die_roll 10
     end
 
@@ -148,9 +152,9 @@ module ItemGenerate
       data["attributes"] << ItemAttribute.new(:material, "Steel")
 
     elsif result == 8
-      self.modify_weapon_stats(data, "Mahogany ", 0, 0, 40, false)
+      self.modify_weapon_stats(data, "Gold ", 6, 6, 40, false)
 
-      data["attributes"] << ItemAttribute.new(:material, "Mahogany")
+      data["attributes"] << ItemAttribute.new(:material, "Gold")
 
     elsif result == 9
       self.modify_weapon_stats(data, "Diamond ", 14, 18, 30, false)

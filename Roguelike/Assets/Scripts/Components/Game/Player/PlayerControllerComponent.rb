@@ -177,6 +177,8 @@ class PlayerControllerComponent < ComponentBase
       @pos.y += y
       @logic_cooldown = 0.2
 
+      SFX::PLAYER_WALK.play
+
       actor_moved
     end
 

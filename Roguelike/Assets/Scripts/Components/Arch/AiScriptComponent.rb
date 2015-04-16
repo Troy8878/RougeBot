@@ -84,6 +84,10 @@ class AiScriptComponent < ComponentBase
 
       tile = current_floor[current_floor.size - 1 - result["y"]][result["x"]]
       if !tile.actor
+        if brains[brain_index] == "EdgeLord"
+          SFX::EDGE_WALK.play
+        end
+
         self.owner.local_event :actor_move, [result["x"], result["y"]]
       end
 

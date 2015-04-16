@@ -43,7 +43,7 @@ class BasicEnemySpawnerComponent < ComponentBase
       when 3 # Breakable wall
         meta = "BorkWall"
       when 5 # Item spawn
-        if meta.is_a? Float || meta.is_a? Fixnum
+        if meta.is_a? Float or meta.is_a? Fixnum
           meta = meta.to_i
         elsif meta == "empty"
           next

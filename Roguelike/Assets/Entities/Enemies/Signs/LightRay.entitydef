@@ -1,0 +1,46 @@
+{
+  "TransformComponent": {
+    "position": [
+      0.5,
+      0.0,
+      0.0
+    ],
+    "rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": [
+      2.0,
+      5.0,
+      1.0
+    ]
+  },
+  "PositionComponent": {
+    "move_speed": 5.0,
+    "position": [
+      0.0,
+      0.0
+    ],
+    "mode": "jump"
+  },
+  "DefenseComponent": {
+    "max_health": 25.0,
+    "health": 10.0
+  },
+  "TextureComponent": {
+    "textures": [
+      "World/CaveEnter.png"
+    ]
+  },
+  "SpriteComponent": {
+    "render_target": "ItemLayer",
+    "shader": "",
+    "tint": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  }
+}

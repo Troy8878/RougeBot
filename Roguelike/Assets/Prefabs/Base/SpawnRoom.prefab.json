@@ -3,7 +3,7 @@
     [
       {
         "id": 5,
-        "meta": ":empty unless $ctx[:door][:left].closed?"
+        "meta": ":empty unless $ctx[:door][:right].closed?"
       },
       {
         "id": 1,
@@ -39,7 +39,7 @@
       },
       {
         "id": 5,
-        "meta": ":empty unless $ctx[:door][:top].closed?"
+        "meta": ":empty unless $ctx[:door][:bottom].closed?"
       }
     ],
     [
@@ -381,7 +381,7 @@
     [
       {
         "id": 5,
-        "meta": ":empty unless $ctx[:door][:bottom].closed?"
+        "meta": ":empty unless $ctx[:door][:top].closed?"
       },
       {
         "id": 1,
@@ -417,7 +417,7 @@
       },
       {
         "id": 5,
-        "meta": ":empty unless $ctx[:door][:right].closed?"
+        "meta": ":empty unless $ctx[:door][:left].closed?"
       }
     ]
   ]

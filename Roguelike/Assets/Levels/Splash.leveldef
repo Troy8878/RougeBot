@@ -1,7 +1,7 @@
 {
   "name": "Splash",
   "components": {
-    "MenuQuitBlocker": {}
+    "MenuQuitBlocker": {"splash":true}
   },
   "entities": [
     {

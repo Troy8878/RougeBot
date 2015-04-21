@@ -2,7 +2,7 @@
 # EnemyLogicComponent.rb
 # Claire Robsahm, Enrique Rodriguez
 # Created 2014/10/20
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class BlueMageLogicComponent < ComponentBase

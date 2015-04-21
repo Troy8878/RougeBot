@@ -2,7 +2,7 @@
 # DefaultConfig.rb
 # Connor Hilarides, Troy
 # Created 2014/10/07
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 Config.load_defaults do

@@ -2,7 +2,7 @@
 # StairComponent.rb
 # Claire Robsahm
 # Created 2014/12/04
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 STAIR_POSITION = Vector.new

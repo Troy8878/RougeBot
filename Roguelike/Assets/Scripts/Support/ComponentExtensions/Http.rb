@@ -2,7 +2,7 @@
 # Http.rb
 # Connor Hilarides
 # Created 2014/10/17
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 module Http

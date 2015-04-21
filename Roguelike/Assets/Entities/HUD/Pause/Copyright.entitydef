@@ -10,7 +10,7 @@
     "render_target": "PauseLayer"
   },
   "TextComponent": {
-    "texts": ["Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved"],
+    "texts": ["Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved"],
     "font_size": 36,
     "text_color": "White"
   }

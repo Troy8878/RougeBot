@@ -6,7 +6,7 @@
 # FileName.rb
 # Your Name
 # Created Year/Month/Day
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 #Paste this on top of all classes!#

@@ -2,7 +2,7 @@
 # HealthBarComponent.rb
 # Enrique Rodriguez
 # Created 2014/12/05
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class HealthBarComponent < ComponentBase

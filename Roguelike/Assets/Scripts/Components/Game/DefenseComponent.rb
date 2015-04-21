@@ -2,7 +2,7 @@
 # DefenseComponent.rb
 # Claire Robsahm, Leonardo Saikali
 # Created 2014/09/05
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 #########################Class Details##########################

@@ -2,7 +2,7 @@
 # AiScriptComponent.rb
 # Connor Hilarides
 # Created 2015/03/16
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class AiScriptComponent < ComponentBase

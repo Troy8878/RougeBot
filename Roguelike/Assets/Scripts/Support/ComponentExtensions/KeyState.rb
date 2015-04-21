@@ -2,7 +2,7 @@
 # KeyState.rb
 # Connor Hilarides
 # Created 2014/10/08
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 # If you're looking for END, it's ENDKEY

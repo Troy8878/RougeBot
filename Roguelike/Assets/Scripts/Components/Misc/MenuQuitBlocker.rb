@@ -2,7 +2,7 @@
 # MenuQuitBlocker.rb
 # YOURNAME
 # Created 2014/DATEHERE
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class MenuQuitBlocker < ComponentBase

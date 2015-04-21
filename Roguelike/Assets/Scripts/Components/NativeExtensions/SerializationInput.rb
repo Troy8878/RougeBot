@@ -2,7 +2,7 @@
 # SerializationInput.rb
 # Connor Hilarides
 # Created 2015/01/27
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class TransformComponent < ComponentBase

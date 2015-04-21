@@ -2,7 +2,7 @@
 # EvalOnEventComponent.rb
 # Connor Hilarides
 # Created 2014/11/18
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class EvalOnEventComponent < ComponentBase

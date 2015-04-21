@@ -2,7 +2,7 @@
 # ChildHierarchy.rb
 # Connor Hilarides
 # Created 2014/09/16
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class ChildHierarchy < ComponentBase

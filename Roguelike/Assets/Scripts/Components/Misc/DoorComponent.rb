@@ -2,7 +2,7 @@
 # DoorComponent.rb
 # Connor Hilarides
 # Created 2015/04/13
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #######################
 
 class DoorComponent < ComponentBase

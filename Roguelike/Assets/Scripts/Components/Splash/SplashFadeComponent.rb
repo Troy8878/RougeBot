@@ -2,7 +2,7 @@
 # SplashFadeComponent.rb
 # Connor Hilarides
 # Created 2015/04/15
-# Copyright © 2014 DigiPen Institute of Technology, All Rights Reserved
+# Copyright © 2015 DigiPen Institute of Technology, All Rights Reserved
 #########################
 
 class SplashFadeComponent < ComponentBase

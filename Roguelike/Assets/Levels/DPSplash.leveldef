@@ -1,7 +1,7 @@
 {
   "name": "DPSplash",
   "components": {
-    "MenuQuitBlocker": {}
+    "MenuQuitBlocker": {"splash":true}
   },
   "entities": [
     {

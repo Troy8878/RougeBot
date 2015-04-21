@@ -8,16 +8,23 @@
 class MenuQuitBlocker < ComponentBase
 
   serialized_input do |p|
+    p.bool :splash
   end
   
   def initialize(data)
     super data
 
+    @is_splash = !!data.fetch("splash", false)
+
     register_event :quit, :quit
   end
 
   def quit(e)
-    e[:quit] = coda! "Are you sure you want to quit?"
+    if @is_splash
+      e[:quit] = false
+    else
+      e[:quit] = coda! "Are you sure you want to quit?"
+    end
   end
 
   register_component
